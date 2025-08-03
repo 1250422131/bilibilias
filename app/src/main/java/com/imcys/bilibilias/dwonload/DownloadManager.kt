@@ -1,18 +1,18 @@
 package com.imcys.bilibilias.dwonload
 
 import android.Manifest
-import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
 import android.os.Environment
+import android.os.IBinder
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.imcys.bilibilias.BILIBILIASApplication
-import com.imcys.bilibilias.MainActivity
-import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.utils.DOWNLOAD_NOTIFICATION_CHANNEL_ID
 import com.imcys.bilibilias.common.utils.DOWNLOAD_NOTIFICATION_ID
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
@@ -27,6 +27,7 @@ import com.imcys.bilibilias.database.entity.download.DownloadStage
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
+import com.imcys.bilibilias.dwonload.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -48,6 +49,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import java.io.File
+import java.io.FileOutputStream
 
 
 class DownloadManager(
@@ -123,9 +125,7 @@ class DownloadManager(
         }
 
         // 用协程异步启动下载队列，避免阻塞当前协程
-        GlobalScope.launch(Dispatchers.IO) {
-            if (!isDownloading) startDownloadQueue()
-        }
+        if (!isDownloading) startDownloadQueueService()
     }
 
     /**
@@ -186,7 +186,8 @@ class DownloadManager(
      */
     private fun updateTaskState(task: AppDownloadTask, state: DownloadState) {
         val currentTasks = _downloadTasks.value.toMutableList()
-        val index = currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
+        val index =
+            currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
         if (index != -1) {
             currentTasks[index] = task.copy(
                 downloadSegment = task.downloadSegment.copy(downloadState = state),
@@ -201,23 +202,66 @@ class DownloadManager(
      */
     private fun updateTaskStage(task: AppDownloadTask, stage: DownloadStage) {
         val currentTasks = _downloadTasks.value.toMutableList()
-        val index = currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
+        val index =
+            currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
         if (index != -1) {
             currentTasks[index] = task.copy(downloadStage = stage)
             _downloadTasks.value = currentTasks
         }
     }
 
+
+    private var downloadService: DownloadService? = null
+    private val downloadConn = object : ServiceConnection {
+        @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+        override fun onServiceConnected(
+            p0: ComponentName?,
+            iBinder: IBinder?
+        ) {
+            val binder = iBinder as DownloadService.DownloadBinder
+            downloadService = binder.service
+            // 绑定成功后，获取服务实例
+            GlobalScope.launch(Dispatchers.IO) {
+                binder.service?.let {
+                    startDownloadQueue(it)
+                }
+            }
+
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+        }
+
+    }
+
     /**
      * 启动下载队列
      */
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    suspend fun startDownloadQueue() {
+    fun startDownloadQueueService() {
         if (isDownloading) return
-        val notification = buildProcessImageNotification()
-        val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.notify(DOWNLOAD_NOTIFICATION_ID, notification.build())
+        val intent = Intent(context, DownloadService::class.java)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
+        val result = context.bindService(intent, downloadConn, Context.BIND_AUTO_CREATE)
+        if (!result) {
+            downloadService?.let {
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    startDownloadQueue(it)
+                }
+            }
+
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    suspend fun startDownloadQueue(
+        downloadService: DownloadService,
+    ) {
         isDownloading = true
         while (_downloadTasks.value.isNotEmpty()) {
             val currentTask = _downloadTasks.value.first()
@@ -227,20 +271,23 @@ class DownloadManager(
             }
 
             // 下载当前任务
-            val result = downloadAppTask(currentTask, notification, notificationManager)
+            val result = downloadAppTask(currentTask, downloadService)
             if (result) {
                 if (currentTask.downloadSubTasks.size >= 2) {
                     // 进入合并阶段
-                    mergeTask(currentTask, notification, notificationManager)
+                    mergeTask(currentTask, downloadService)
                 }
                 removeCurrentTask()
             } else {
                 removeCurrentTask()
             }
         }
-        notificationManager.cancelAll()
+
+        downloadService.onDownloadFinished()
+        context.unbindService(downloadConn)
         isDownloading = false
     }
+
 
     /**
      * 下载AppDownloadTask的所有子任务，全部成功返回true，否则false
@@ -248,17 +295,17 @@ class DownloadManager(
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private suspend fun downloadAppTask(
         task: AppDownloadTask,
-        notification: NotificationCompat.Builder,
-        notificationManager: NotificationManagerCompat
+        downloadService: DownloadService,
     ): Boolean {
         if (task.downloadSubTasks.isEmpty()) return false
 
         // 进度回调，统一处理通知和状态
         fun updateProgress(progress: Float) {
-            notification.setProgress(100, (progress * 100).toInt(), false)
-                .setContentTitle(task.downloadSegment.title)
-                .setContentText("下载阶段")
-            notificationManager.notify(DOWNLOAD_NOTIFICATION_ID, notification.build())
+            downloadService.updateNotification(
+                task.downloadSegment.title,
+                "下载阶段",
+                (progress * 100).toInt(),
+            )
             updateTaskState(task.copy(progress = progress), DownloadState.DOWNLOADING)
         }
 
@@ -321,45 +368,67 @@ class DownloadManager(
     ): Boolean = withContext(Dispatchers.IO) {
         val file = File(subTask.savePath)
         val tempFile = File("${subTask.savePath}.downloading")
-        try {
-            if (file.exists()) file.delete()
-            if (tempFile.exists()) tempFile.delete()
+        val maxRetry = 5
+        var attempt = 0
+        var success = false
 
-            val ref = if (task.downloadTask.platformId.all { it.isDigit() }) {
-                "https://www.bilibili.com/bangumi/play/ss${task.downloadTask.platformId}"
-            } else {
-                "https://www.bilibili.com/video/${task.downloadTask.platformId}"
-            }
-            val request = okhttp3.Request.Builder()
-                .url(subTask.downloadUrl)
-                .addHeader("Referer", ref)
-                .build()
-            val response = okHttpClient.newCall(request).execute()
-            val body = response.body ?: return@withContext false
-            val total = body.contentLength()
-            if (total == 0L) return@withContext true
+        // 获取已下载长度
+        fun getDownloadedLength(): Long {
+            return if (tempFile.exists()) tempFile.length() else 0L
+        }
 
-            body.byteStream().use { input ->
-                tempFile.outputStream().buffered().use { output ->
-                    val buffer = ByteArray(64 * 1024)
-                    var downloaded = 0L
-                    var read: Int
-                    while (input.read(buffer).also { read = it } != -1) {
-                        output.write(buffer, 0, read)
-                        downloaded += read
-                        onUpdateProgress(downloaded.toFloat() / total)
+        while (attempt < maxRetry && !success) {
+            try {
+                val ref = if (task.downloadTask.platformId.all { it.isDigit() }) {
+                    "https://www.bilibili.com/bangumi/play/ss${task.downloadTask.platformId}"
+                } else {
+                    "https://www.bilibili.com/video/${task.downloadTask.platformId}"
+                }
+
+                val downloaded = getDownloadedLength()
+                val requestBuilder = okhttp3.Request.Builder()
+                    .url(subTask.downloadUrl)
+                    .addHeader("Referer", ref)
+                if (downloaded > 0) {
+                    requestBuilder.addHeader("Range", "bytes=$downloaded-")
+                }
+                val request = requestBuilder.build()
+                val response = okHttpClient.newCall(request).execute()
+                val body = response.body ?: return@withContext false
+                val total = if (downloaded > 0) {
+                    downloaded + body.contentLength()
+                } else {
+                    body.contentLength()
+                }
+                if (total == 0L) return@withContext true
+
+                body.byteStream().use { input ->
+                    // 用追加模式写入断点续传
+                    tempFile.parentFile?.mkdirs()
+                    FileOutputStream(tempFile, downloaded > 0).use { output ->
+                        val buffer = ByteArray(64 * 1024)
+                        var currentDownloaded = downloaded
+                        var read: Int
+                        while (input.read(buffer).also { read = it } != -1) {
+                            output.write(buffer, 0, read)
+                            currentDownloaded += read
+                            onUpdateProgress(currentDownloaded.toFloat() / total)
+                        }
                     }
                 }
-            }
 
-            if (file.exists()) file.delete()
-            tempFile.renameTo(file)
-            true
-        } catch (e: Exception) {
-            tempFile.delete()
-            e.printStackTrace()
-            false
+                if (file.exists()) file.delete()
+                tempFile.renameTo(file)
+                success = true
+            } catch (e: Exception) {
+                attempt++
+                e.printStackTrace()
+                if (attempt < maxRetry) {
+                    delay(3000L)
+                }
+            }
         }
+        success
     }
 
     /**
@@ -368,16 +437,16 @@ class DownloadManager(
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private suspend fun mergeTask(
         task: AppDownloadTask,
-        notification: NotificationCompat.Builder,
-        notificationManager: NotificationManagerCompat
+        downloadService: DownloadService,
     ) {
         updateTaskStage(task, DownloadStage.MERGE)
 
         fun updateProgress(progress: Int) {
-            notification.setProgress(100, progress, false)
-                .setContentTitle(task.downloadSegment.title)
-                .setContentText("合并阶段")
-            notificationManager.notify(DOWNLOAD_NOTIFICATION_ID, notification.build())
+            downloadService.updateNotification(
+                task.downloadSegment.title,
+                "合并阶段",
+                progress,
+            )
             updateTaskState(task.copy(progress = progress / 100f), DownloadState.MERGING)
         }
 
@@ -424,13 +493,20 @@ class DownloadManager(
     /**
      * 将下载完成的文件移动到公共Download目录，并注册到媒体库（协程挂起）
      */
-    private suspend fun moveToDownloadAndRegister(file: File, fileName: String, mimeType: String): String? = withContext(Dispatchers.IO) {
+    private suspend fun moveToDownloadAndRegister(
+        file: File,
+        fileName: String,
+        mimeType: String
+    ): String? = withContext(Dispatchers.IO) {
         val resolver = context.contentResolver
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
                 put(MediaStore.Downloads.MIME_TYPE, mimeType)
-                put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS")
+                put(
+                    MediaStore.Downloads.RELATIVE_PATH,
+                    Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
+                )
             }
             val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
             if (uri != null) {
@@ -449,7 +525,8 @@ class DownloadManager(
             return@withContext null
         } else {
             // Android Q以下代码不变
-            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val downloadsDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val targetDir = File(downloadsDir, "BILIBILIAS")
             if (!targetDir.exists()) targetDir.mkdirs()
             val targetFile = File(targetDir, fileName)
@@ -507,7 +584,11 @@ class DownloadManager(
         }
 
         if (videoInfo.status != ApiStatus.SUCCESS) {
-            throw IllegalStateException("视频接口异常")
+            throw IllegalStateException("""
+                视频接口异常:
+                平台ID：${segment.platformId}
+                任务平台ID：${getSegmentBvId(segment)}
+            """.trimIndent())
         }
 
         val videoData = when (val result = videoInfo.data) {
@@ -665,25 +746,4 @@ class DownloadManager(
         )
     }
 
-    /**
-     * 构造通知
-     */
-    private fun buildProcessImageNotification() =
-        run {
-            val intent = Intent(context, MainActivity::class.java)
-            val pIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-            NotificationCompat.Builder(
-                context,
-                DOWNLOAD_NOTIFICATION_CHANNEL_ID
-            ).apply {
-                setContentTitle("缓存进度")
-                setContentText("AS视频缓存进度")
-                setContentIntent(pIntent)
-                setSmallIcon(R.drawable.ic_logo_mini)
-                setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                setOnlyAlertOnce(true) //设置提示音只响一次
-            }
-        }
 }

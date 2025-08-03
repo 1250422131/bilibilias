@@ -120,7 +120,7 @@ data class BILISpaceArchiveInfo(
                 @SerialName("id")
                 val id: Long,
                 @SerialName("Longro")
-                val Longro: String,
+                val Longro: String = "",
                 @SerialName("mid")
                 val mid: Long,
                 @SerialName("ptime")

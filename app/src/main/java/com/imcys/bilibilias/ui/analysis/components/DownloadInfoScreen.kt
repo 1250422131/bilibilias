@@ -52,7 +52,7 @@ fun AudioQualitySelectScreen(
         selectValue = downloadInfo?.selectAudioQualityId ?: 0
     }
 
-    if (audioList != null) {
+    if (!audioList.isNullOrEmpty()) {
         ExposedDropdownMenuBox(
             expanded = modelExpanded,
             onExpandedChange = {
@@ -148,6 +148,9 @@ fun VideoSupportFormatsSelectScreen(
             // FLV模式
             mSupportFormats?.filter { supportFormat ->
                 durlVideoList?.any { item -> item.quality == supportFormat.quality } == true
+            }?.ifEmpty {
+                // 充电视频下有可能找不到对应的清晰度
+                mSupportFormats
             } ?: emptyList()
         }
         selectVideoFormatValue = supportFormats.firstOrNull {

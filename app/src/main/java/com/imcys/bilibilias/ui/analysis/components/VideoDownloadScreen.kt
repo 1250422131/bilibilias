@@ -3,19 +3,25 @@ package com.imcys.bilibilias.ui.analysis.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.ReportGmailerrorred
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +45,8 @@ import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.ui.weight.tip.AsErrorTip
+import com.imcys.bilibilias.ui.weight.tip.AsWarringTip
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
 
@@ -54,6 +62,11 @@ fun VideoDownloadScreen(
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {}
 ) {
+
+    if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
+        // 拦截缓存，暂不支持
+        return
+    }
 
     var selectSectionId by remember { mutableStateOf<Long?>(null) }
     var currentSectionPageListIndex by remember { mutableIntStateOf(0) }
@@ -79,6 +92,22 @@ fun VideoDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            AsErrorTip {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Outlined.Info,
+                        contentDescription = "警告",
+                    )
+                    Spacer(Modifier.width(2.dp))
+                    Text(
+                        "未经作者允许禁止转载",
+                        fontSize = 14.sp,
+                    )
+                }
+            }
             Text("缓存倾向")
             AsAutoError(videoPlayerInfo, onSuccessContent = {
                 Column {

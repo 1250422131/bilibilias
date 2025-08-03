@@ -29,6 +29,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_getFFmpegVersion(
 }
 
 // 合并音视频 JNI 方法
+// 合并音视频 JNI 方法
 extern "C" JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         JNIEnv *env,
@@ -146,6 +147,11 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         }
     }
 
+    // 为了保留杜比视界等非标准元数据，需要设置 "strict" 选项
+    // 这等同于命令行中的 -strict unofficial
+    av_opt_set(ofmt_ctx, "strict", "unofficial", 0);
+    // ----------------------
+
     // 写文件头
     if (avformat_write_header(ofmt_ctx, nullptr) < 0) {
         jclass listenerCls = env->GetObjectClass(listener);
@@ -165,41 +171,46 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
 
     // 读取并写入视频帧
     AVPacket pkt;
-    av_init_packet(&pkt);
+    // av_init_packet(&pkt); // av_init_packet 在新版本中已弃用, av_packet_alloc() 是更好的选择，但为了最小改动，暂时保留
     bool video_eof = false, audio_eof = false;
     while (!video_eof || !audio_eof) {
         // 选择读取哪个流
-        bool read_video = false;
         if (!video_eof && (audio_eof ||
                            (av_compare_ts(video_pts, ifmt_ctx_v->streams[video_index_in]->time_base,
                                           audio_pts,
                                           ifmt_ctx_a->streams[audio_index_in]->time_base) <= 0))) {
             // 读视频
             ret = av_read_frame(ifmt_ctx_v, &pkt);
-            if (ret >= 0 && pkt.stream_index == video_index_in) {
-                pkt.stream_index = video_index_out;
-                // 时间戳转换
-                pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_v->streams[video_index_in]->time_base,
-                                           ofmt_ctx->streams[video_index_out]->time_base,
-                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_v->streams[video_index_in]->time_base,
-                                           ofmt_ctx->streams[video_index_out]->time_base,
-                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                pkt.duration = av_rescale_q(pkt.duration,
-                                            ifmt_ctx_v->streams[video_index_in]->time_base,
-                                            ofmt_ctx->streams[video_index_out]->time_base);
-                video_pts = pkt.pts;
-                av_interleaved_write_frame(ofmt_ctx, &pkt);
-                av_packet_unref(&pkt);
-                // 进度回调
-                int progress = (int) (100 * video_pts *
-                                      av_q2d(ofmt_ctx->streams[video_index_out]->time_base) *
-                                      AV_TIME_BASE / total_duration);
-                if (progress > last_progress && progress <= 100) {
-                    jclass listenerCls = env->GetObjectClass(listener);
-                    jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
-                    env->CallVoidMethod(listener, onProgress, progress);
-                    last_progress = progress;
+            if (ret >= 0) {
+                if(pkt.stream_index == video_index_in) {
+                    pkt.stream_index = video_index_out;
+                    // 时间戳转换
+                    pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_v->streams[video_index_in]->time_base,
+                                               ofmt_ctx->streams[video_index_out]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_v->streams[video_index_in]->time_base,
+                                               ofmt_ctx->streams[video_index_out]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    pkt.duration = av_rescale_q(pkt.duration,
+                                                ifmt_ctx_v->streams[video_index_in]->time_base,
+                                                ofmt_ctx->streams[video_index_out]->time_base);
+                    video_pts = pkt.pts;
+                    av_interleaved_write_frame(ofmt_ctx, &pkt);
+                    av_packet_unref(&pkt);
+                    // 进度回调
+                    if (total_duration > 0) {
+                        int progress = (int) (100 * video_pts *
+                                              av_q2d(ofmt_ctx->streams[video_index_out]->time_base) *
+                                              AV_TIME_BASE / total_duration);
+                        if (progress > last_progress && progress <= 100) {
+                            jclass listenerCls = env->GetObjectClass(listener);
+                            jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
+                            env->CallVoidMethod(listener, onProgress, progress);
+                            last_progress = progress;
+                        }
+                    }
+                } else {
+                    av_packet_unref(&pkt); // 忽略非目标流的包
                 }
             } else {
                 video_eof = true;
@@ -207,29 +218,35 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         } else if (!audio_eof) {
             // 读音频
             ret = av_read_frame(ifmt_ctx_a, &pkt);
-            if (ret >= 0 && pkt.stream_index == audio_index_in) {
-                pkt.stream_index = audio_index_out;
-                pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_a->streams[audio_index_in]->time_base,
-                                           ofmt_ctx->streams[audio_index_out]->time_base,
-                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_a->streams[audio_index_in]->time_base,
-                                           ofmt_ctx->streams[audio_index_out]->time_base,
-                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                pkt.duration = av_rescale_q(pkt.duration,
-                                            ifmt_ctx_a->streams[audio_index_in]->time_base,
-                                            ofmt_ctx->streams[audio_index_out]->time_base);
-                audio_pts = pkt.pts;
-                av_interleaved_write_frame(ofmt_ctx, &pkt);
-                av_packet_unref(&pkt);
-                // 进度回调
-                int progress = (int) (100 * audio_pts *
-                                      av_q2d(ofmt_ctx->streams[audio_index_out]->time_base) *
-                                      AV_TIME_BASE / total_duration);
-                if (progress > last_progress && progress <= 100) {
-                    jclass listenerCls = env->GetObjectClass(listener);
-                    jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
-                    env->CallVoidMethod(listener, onProgress, progress);
-                    last_progress = progress;
+            if (ret >= 0) {
+                if (pkt.stream_index == audio_index_in) {
+                    pkt.stream_index = audio_index_out;
+                    pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_a->streams[audio_index_in]->time_base,
+                                               ofmt_ctx->streams[audio_index_out]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_a->streams[audio_index_in]->time_base,
+                                               ofmt_ctx->streams[audio_index_out]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    pkt.duration = av_rescale_q(pkt.duration,
+                                                ifmt_ctx_a->streams[audio_index_in]->time_base,
+                                                ofmt_ctx->streams[audio_index_out]->time_base);
+                    audio_pts = pkt.pts;
+                    av_interleaved_write_frame(ofmt_ctx, &pkt);
+                    av_packet_unref(&pkt);
+                    // 进度回调 (可以根据需要保留或移除音频部分的进度计算)
+                    if (total_duration > 0) {
+                        int progress = (int) (100 * audio_pts *
+                                              av_q2d(ofmt_ctx->streams[audio_index_out]->time_base) *
+                                              AV_TIME_BASE / total_duration);
+                        if (progress > last_progress && progress <= 100) {
+                            jclass listenerCls = env->GetObjectClass(listener);
+                            jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
+                            env->CallVoidMethod(listener, onProgress, progress);
+                            last_progress = progress;
+                        }
+                    }
+                } else {
+                    av_packet_unref(&pkt); // 忽略非目标流的包
                 }
             } else {
                 audio_eof = true;

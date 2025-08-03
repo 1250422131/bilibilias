@@ -137,7 +137,7 @@ private fun MainScaffold() {
 
                     // Dialog注册区域
                     PrivacyPolicyDialog(
-                        showState = appSettings.agreePrivacyPolicyValue <= 1, // 如果未同意则显示对话框
+                        showState = appSettings.agreePrivacyPolicyValue <= 1 && appSettings.knowAboutAppValue == 1, // 如果未同意则显示对话框
                         onClickConfirm = {
                             // 同意
                             coroutineScope.launch {

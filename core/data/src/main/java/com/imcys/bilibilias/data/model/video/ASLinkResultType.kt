@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.data.model.video
 
+import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
@@ -10,7 +11,14 @@ sealed interface ASLinkResultType {
         data class Video(
             val currentBvId: String,
             val viewInfo: NetWorkResult<BILIVideoViewInfo?>
-        ) : BILI
+        ) : BILI {
+            fun isCanPlay(): Boolean {
+                if (viewInfo.status != ApiStatus.SUCCESS) {
+                    return true
+                }
+                return if (viewInfo.data?.isUpowerExclusive == true) viewInfo.data?.isUpowerPlay == true else true
+            }
+        }
 
         // Anime
         data class Donghua(
@@ -20,6 +28,6 @@ sealed interface ASLinkResultType {
 
         data class User(
             val userInfo: NetWorkResult<BILIUserSpaceAccInfo?>
-        ): BILI
+        ) : BILI
     }
 }

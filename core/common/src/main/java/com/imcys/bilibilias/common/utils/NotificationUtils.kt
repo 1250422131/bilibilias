@@ -19,7 +19,7 @@ fun Context.createDownloadNotificationChannel() {
     val channelId = DOWNLOAD_NOTIFICATION_CHANNEL_ID
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val name = "视频缓存通知"
-        val descriptionText = "方便你观察下载进度，但是记得要锁后台。"
+        val descriptionText = "方便观察下载进度"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(
             channelId,
