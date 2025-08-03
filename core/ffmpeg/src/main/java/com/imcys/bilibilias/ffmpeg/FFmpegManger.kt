@@ -34,23 +34,33 @@ object FFmpegManger {
         audioPath: String,
         outputPath: String,
         listener: FFmpegMergeListener
-    ): Result<String> = suspendCancellableCoroutine { cont ->
-        mergeVideoAndAudio(videoPath, audioPath, outputPath, object : FFmpegMergeListener {
-            override fun onProgress(progress: Int) {
-                listener.onProgress(progress)
+    ): Result<String> {
+        return FFmpegExecutor.executeFFmpeg {
+            runCatching {
+                mergeVideoAndAudio(videoPath, audioPath, outputPath, listener)
+                "成功"
             }
-
-            override fun onError(errorMsg: String) {
-                if (cont.isActive) cont.resumeWith(Result.failure(Exception(errorMsg)))
-            }
-
-            override fun onComplete() {
-                if (cont.isActive) cont.resume(Result.success("成功")) { cause, _, _ ->
-                    Result.success(
-                        cause.message
-                    )
-                }
-            }
-        })
+        }
+//        suspendCancellableCoroutine { cont ->
+//            mergeVideoAndAudio(videoPath, audioPath, outputPath, object : FFmpegMergeListener {
+//                override fun onProgress(progress: Int) {
+//                    listener.onProgress(progress)
+//                }
+//
+//                override fun onError(errorMsg: String) {
+//                    if (cont.isActive) cont.resumeWith(Result.failure(Exception(errorMsg)))
+//                }
+//
+//                override fun onComplete() {
+//                    if (cont.isActive) cont.resume(Result.success("成功")) { cause, _, _ ->
+//                        Result.success(
+//                            cause.message
+//                        )
+//                    }
+//                }
+//            })
+//        }
     }
+
+
 }
