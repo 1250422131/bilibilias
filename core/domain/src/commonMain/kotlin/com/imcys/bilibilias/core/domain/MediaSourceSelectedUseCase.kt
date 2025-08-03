@@ -1,11 +1,12 @@
 package com.imcys.bilibilias.core.domain
 
+import com.imcys.bilibilias.core.datasource.Cdn
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.model.EpisodeInfo
-import com.imcys.bilibilias.core.model.Owner
-import com.imcys.bilibilias.core.model.StreamData
+import com.imcys.bilibilias.core.domain.model.EpisodeInfo
+import com.imcys.bilibilias.core.domain.model.Owner
+import com.imcys.bilibilias.core.domain.model.StreamData
 
 // TODO: 可以并行
 class MediaSourceSelectedUseCase {
@@ -32,10 +33,11 @@ class MediaSourceSelectedUseCase {
     }
 
     private fun VideoPlaybackInfo.AudioOrVideo.asStreamData(): StreamData {
+        val full = backupUrl1 + backupUrl2
+        val resources = full.mapNotNull { Cdn.parse(it) }
         return StreamData(
             id = id,
-            baseUrl = baseUrl,
-            backupUrl = backupUrl,
+            backupUrl = resources,
         )
     }
 

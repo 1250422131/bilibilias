@@ -1,4 +1,6 @@
-package com.imcys.bilibilias.core.model
+package com.imcys.bilibilias.core.domain.model
+
+import com.imcys.bilibilias.core.datasource.CdnResource
 
 data class EpisodeInfo(
     val bvid: String,
@@ -17,8 +19,7 @@ data class EpisodeInfo(
  */
 data class StreamData(
     val id: Int,
-    val baseUrl: String,
-    val backupUrl: List<String>,
+    val backupUrl: List<CdnResource>,
     val codecId: Int = 0,
     val description: String = ""
 )

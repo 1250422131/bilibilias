@@ -11,10 +11,10 @@ import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeInfo
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
-import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
@@ -91,13 +91,13 @@ class DefaultSearchComponent(
                 mediaCacheStorage.cacheEpisodeMetadata(metadata)
             }
             launch {
-                val videoDownloadState = download(episodeInfo.video.first().baseUrl)
+                val videoDownloadState = download(episodeInfo.video.first().backupUrl.first().url)
                 if (videoDownloadState != null) {
                     cachePartMetadata(metadata, videoDownloadState.downloadId)
                 }
             }
             launch {
-                val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
+                val audioDownloadState = download(episodeInfo.audio.first().backupUrl.first().url)
                 if (audioDownloadState != null) {
                     cachePartMetadata(metadata, audioDownloadState.downloadId)
                 }
