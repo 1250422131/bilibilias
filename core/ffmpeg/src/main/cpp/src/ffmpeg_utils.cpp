@@ -2,6 +2,10 @@
 #include <string>
 #include <map>
 #include <mutex>
+#include <string_view>
+
+#include "traits.hpp"
+#include "ffmpeg_free.hpp"
 
 extern "C" {
 #include "libavformat/avformat.h"
@@ -11,6 +15,49 @@ extern "C" {
 #include "libavutil/timestamp.h"
 #include "libswresample/swresample.h"
 #include "libswscale/swscale.h"
+}
+
+using namespace bilias::ffmpeg;
+
+namespace {
+    
+    class FFmpegMergeListener {
+        JNIEnv *env;
+        jobject o_listener;
+        jmethodID m_on_error;
+        jmethodID m_on_complete;
+        jmethodID m_on_progress;
+        
+    public:
+        FFmpegMergeListener(
+            JNIEnv *env, 
+            jobject o_listener,
+            jmethodID m_on_error,
+            jmethodID m_on_complete,
+            jmethodID m_on_progress
+        ) noexcept : env(env), o_listener(o_listener), m_on_error(m_on_error),
+        m_on_complete(m_on_complete), m_on_progress(m_on_progress) {}
+        
+        auto on_error(std::string_view msg) {
+            env->CallVoidMethod(o_listener, m_on_error, env->NewStringUTF(msg.data()));
+        }
+        
+        auto on_complete() {
+            env->CallVoidMethod(o_listener, m_on_complete);
+        }
+        
+        auto on_progress(int progress) {
+            env->CallVoidMethod(o_listener, m_on_progress, progress);
+        }
+        
+        static auto create(JNIEnv *env, jobject listener) -> FFmpegMergeListener {
+            auto listenerCls = env->GetObjectClass(listener);
+            auto onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
+            auto onComplete = env->GetMethodID(listenerCls, "onComplete", "()V");
+            auto onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
+            return FFmpegMergeListener{env, listener, onError, onComplete, onProgress};
+        }
+    };
 }
 
 extern "C" JNIEXPORT jstring JNICALL
@@ -42,7 +89,15 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     const char *audioPath = env->GetStringUTFChars(audioPath_, 0);
     const char *outputPath = env->GetStringUTFChars(outputPath_, 0);
 
-    AVFormatContext *ifmt_ctx_v = nullptr, *ifmt_ctx_a = nullptr, *ofmt_ctx = nullptr;
+    auto _defer = Defer{[&] {
+        env->ReleaseStringUTFChars(videoPath_, videoPath);
+        env->ReleaseStringUTFChars(audioPath_, audioPath);
+        env->ReleaseStringUTFChars(outputPath_, outputPath);
+    }};
+    
+    auto callback = FFmpegMergeListener::create(env, listener);
+
+    AVFormatContext *ifmt_ctx_v = nullptr, *ifmt_ctx_a = nullptr;
     int ret;
     int video_index_in = -1, audio_index_in = -1;
     int video_index_out = -1, audio_index_out = -1;
@@ -50,53 +105,29 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
 
     // 打开视频输入
     if ((ret = avformat_open_input(&ifmt_ctx_v, videoPath, nullptr, nullptr)) < 0) {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-        env->CallVoidMethod(listener, onError, env->NewStringUTF("无法打开视频文件"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
+        callback.on_error("无法打开视频文件");
         return;
     }
     if ((ret = avformat_find_stream_info(ifmt_ctx_v, nullptr)) < 0) {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-        env->CallVoidMethod(listener, onError, env->NewStringUTF("无法获取视频流信息"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
+        callback.on_error("无法获取视频流信息");
         return;
     }
 
     // 打开音频输入
     if ((ret = avformat_open_input(&ifmt_ctx_a, audioPath, nullptr, nullptr)) < 0) {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-        env->CallVoidMethod(listener, onError, env->NewStringUTF("无法打开音频文件"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
+        callback.on_error("无法打开音频文件");
         return;
     }
     if ((ret = avformat_find_stream_info(ifmt_ctx_a, nullptr)) < 0) {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-        env->CallVoidMethod(listener, onError, env->NewStringUTF("无法获取音频流信息"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
+        callback.on_error("无法获取音频流信息");
         return;
     }
 
     // 创建输出
-    avformat_alloc_output_context2(&ofmt_ctx, nullptr, nullptr, outputPath);
+    auto [ofmt_ctx, ctx_result] = bilias_avformat_alloc_output_context2(nullptr, nullptr, outputPath);
+
     if (!ofmt_ctx) {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-        env->CallVoidMethod(listener, onError, env->NewStringUTF("无法创建输出文件"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
+        callback.on_error("无法创建输出文件");
         return;
     }
 
@@ -104,7 +135,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     for (unsigned int i = 0; i < ifmt_ctx_v->nb_streams; i++) {
         if (ifmt_ctx_v->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             AVStream *in_stream = ifmt_ctx_v->streams[i];
-            AVStream *out_stream = avformat_new_stream(ofmt_ctx, nullptr);
+            AVStream *out_stream = avformat_new_stream(ofmt_ctx.get(), nullptr);
             video_index_in = i;
             video_index_out = out_stream->index;
             avcodec_parameters_copy(out_stream->codecpar, in_stream->codecpar);
@@ -116,7 +147,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     for (unsigned int i = 0; i < ifmt_ctx_a->nb_streams; i++) {
         if (ifmt_ctx_a->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
             AVStream *in_stream = ifmt_ctx_a->streams[i];
-            AVStream *out_stream = avformat_new_stream(ofmt_ctx, nullptr);
+            AVStream *out_stream = avformat_new_stream(ofmt_ctx.get(), nullptr);
             audio_index_in = i;
             audio_index_out = out_stream->index;
             avcodec_parameters_copy(out_stream->codecpar, in_stream->codecpar);
@@ -128,38 +159,27 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         jclass listenerCls = env->GetObjectClass(listener);
         jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
         env->CallVoidMethod(listener, onError, env->NewStringUTF("未找到有效的视频或音频流"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
         return;
     }
 
     // 打开输出文件
     if (!(ofmt_ctx->oformat->flags & AVFMT_NOFILE)) {
         if (avio_open(&ofmt_ctx->pb, outputPath, AVIO_FLAG_WRITE) < 0) {
-            jclass listenerCls = env->GetObjectClass(listener);
-            jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
-            env->CallVoidMethod(listener, onError, env->NewStringUTF("无法打开输出文件"));
-            env->ReleaseStringUTFChars(videoPath_, videoPath);
-            env->ReleaseStringUTFChars(audioPath_, audioPath);
-            env->ReleaseStringUTFChars(outputPath_, outputPath);
+            callback.on_error("无法打开输出文件");
             return;
         }
     }
 
     // 为了保留杜比视界等非标准元数据，需要设置 "strict" 选项
     // 这等同于命令行中的 -strict unofficial
-    av_opt_set(ofmt_ctx, "strict", "unofficial", 0);
+    av_opt_set(ofmt_ctx.get(), "strict", "unofficial", 0);
     // ----------------------
 
     // 写文件头
-    if (avformat_write_header(ofmt_ctx, nullptr) < 0) {
+    if (avformat_write_header(ofmt_ctx.get(), nullptr) < 0) {
         jclass listenerCls = env->GetObjectClass(listener);
         jmethodID onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
         env->CallVoidMethod(listener, onError, env->NewStringUTF("写入文件头失败"));
-        env->ReleaseStringUTFChars(videoPath_, videoPath);
-        env->ReleaseStringUTFChars(audioPath_, audioPath);
-        env->ReleaseStringUTFChars(outputPath_, outputPath);
         return;
     }
 
@@ -195,7 +215,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
                                                 ifmt_ctx_v->streams[video_index_in]->time_base,
                                                 ofmt_ctx->streams[video_index_out]->time_base);
                     video_pts = pkt.pts;
-                    av_interleaved_write_frame(ofmt_ctx, &pkt);
+                    av_interleaved_write_frame(ofmt_ctx.get(), &pkt);
                     av_packet_unref(&pkt);
                     // 进度回调
                     if (total_duration > 0) {
@@ -203,9 +223,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
                                               av_q2d(ofmt_ctx->streams[video_index_out]->time_base) *
                                               AV_TIME_BASE / total_duration);
                         if (progress > last_progress && progress <= 100) {
-                            jclass listenerCls = env->GetObjectClass(listener);
-                            jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
-                            env->CallVoidMethod(listener, onProgress, progress);
+                            callback.on_progress(progress);
                             last_progress = progress;
                         }
                     }
@@ -231,7 +249,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
                                                 ifmt_ctx_a->streams[audio_index_in]->time_base,
                                                 ofmt_ctx->streams[audio_index_out]->time_base);
                     audio_pts = pkt.pts;
-                    av_interleaved_write_frame(ofmt_ctx, &pkt);
+                    av_interleaved_write_frame(ofmt_ctx.get(), &pkt);
                     av_packet_unref(&pkt);
                     // 进度回调 (可以根据需要保留或移除音频部分的进度计算)
                     if (total_duration > 0) {
@@ -255,20 +273,11 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     }
 
     // 写文件尾
-    av_write_trailer(ofmt_ctx);
+    av_write_trailer(ofmt_ctx.get());
     // 完成回调
-    {
-        jclass listenerCls = env->GetObjectClass(listener);
-        jmethodID onComplete = env->GetMethodID(listenerCls, "onComplete", "()V");
-        env->CallVoidMethod(listener, onComplete);
-    }
+    callback.on_complete();
 
     if (ifmt_ctx_v) avformat_close_input(&ifmt_ctx_v);
     if (ifmt_ctx_a) avformat_close_input(&ifmt_ctx_a);
     if (ofmt_ctx && !(ofmt_ctx->oformat->flags & AVFMT_NOFILE)) avio_closep(&ofmt_ctx->pb);
-    if (ofmt_ctx) avformat_free_context(ofmt_ctx);
-
-    env->ReleaseStringUTFChars(videoPath_, videoPath);
-    env->ReleaseStringUTFChars(audioPath_, audioPath);
-    env->ReleaseStringUTFChars(outputPath_, outputPath);
 }
