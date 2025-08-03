@@ -31,9 +31,17 @@ add_library(swscale STATIC IMPORTED)
 set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/libswscale.so)
 
 # 4、你的 native 库
-add_library(${CMAKE_PROJECT_NAME} SHARED
-        ffmpeg_utils.cpp
-)
+
+file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/*.cpp")
+#file(GLOB_RECURSE BILI_AS_FFMPEG_MODULES "src/*.ixx")
+
+add_library(${CMAKE_PROJECT_NAME} SHARED ${BILI_AS_FFMPEG_SOURCES})
+
+#target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+#        FILE_SET CXX_MODULES
+#        TYPE CXX_MODULES
+#        FILES ${BILI_AS_FFMPEG_MODULES}
+#)
 
 
 # 5、链接静态库和安卓常用库

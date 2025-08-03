@@ -15,7 +15,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
-                cppFlags("-DCMAKE_CXX_FLAGS=-frtti -fexceptions -Wno-deprecated-declaration")
+                cppFlags("-DCMAKE_CXX_FLAGS=-frtti -fexceptions -Wno-deprecated-declaration -std=c++23")
             }
         }
     }
