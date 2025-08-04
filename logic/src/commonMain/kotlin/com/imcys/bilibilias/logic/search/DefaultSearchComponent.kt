@@ -91,13 +91,13 @@ class DefaultSearchComponent(
                 mediaCacheStorage.cacheEpisodeMetadata(metadata)
             }
             launch {
-                val videoDownloadState = download(episodeInfo.video.first().backupUrl.first().url)
+                val videoDownloadState = download(episodeInfo.video.backupUrl.random().url)
                 if (videoDownloadState != null) {
                     cachePartMetadata(metadata, videoDownloadState.downloadId)
                 }
             }
             launch {
-                val audioDownloadState = download(episodeInfo.audio.first().backupUrl.first().url)
+                val audioDownloadState = download(episodeInfo.audio.backupUrl.random().url)
                 if (audioDownloadState != null) {
                     cachePartMetadata(metadata, audioDownloadState.downloadId)
                 }

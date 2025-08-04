@@ -9,9 +9,8 @@ data class EpisodeInfo(
     val cover: String,
     val title: String,
     val owner: Owner,
-    val parts: List<EpisodePartInfo>,
-    val video: List<MediaStreamMetadata>,
-    val audio: List<MediaStreamMetadata>,
+    val video: MediaStreamMetadata,
+    val audio: MediaStreamMetadata,
 )
 
 /**
@@ -22,15 +21,6 @@ data class MediaStreamMetadata(
     val backupUrl: List<CdnResource>,
     val codecId: Int = 0,
     val description: String = ""
-)
-
-/**
- * [index] is the index of the episode in the series
- */
-data class EpisodePartInfo(
-    val cid: Long,
-    val title: String,
-    val index: Int
 )
 
 data class Owner(
