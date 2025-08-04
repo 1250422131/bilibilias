@@ -1,4 +1,4 @@
-package com.imcys.bilibilias
+package com.imcys.bilibilias.work
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,6 +10,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus

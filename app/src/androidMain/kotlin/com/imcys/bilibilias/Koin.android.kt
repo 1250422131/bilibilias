@@ -1,6 +1,7 @@
 package com.imcys.bilibilias
 
 import androidx.work.CoroutineWorker
+import com.imcys.bilibilias.work.CoroutineDownloadWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module

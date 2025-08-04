@@ -10,6 +10,7 @@ import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.work.Sync
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
