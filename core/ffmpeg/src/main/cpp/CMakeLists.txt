@@ -45,7 +45,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED ${BILI_AS_FFMPEG_SOURCES})
 
 
 # 5、链接静态库和安卓常用库
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
         avutil
         avcodec
         avdevice

@@ -26,6 +26,9 @@ import com.imcys.bilibilias.ui.login.navigation.loginScreen
 import com.imcys.bilibilias.ui.login.navigation.navigateToLogin
 import com.imcys.bilibilias.ui.login.navigation.navigateToQRCodeLogin
 import com.imcys.bilibilias.ui.login.navigation.qrCodeLoginScreen
+import com.imcys.bilibilias.ui.play.navigation.PlayRoute
+import com.imcys.bilibilias.ui.play.navigation.navigateToPlay
+import com.imcys.bilibilias.ui.play.navigation.playScreen
 import com.imcys.bilibilias.ui.setting.navigation.navigateToRoam
 import com.imcys.bilibilias.ui.setting.navigation.navigateToSetting
 import com.imcys.bilibilias.ui.setting.navigation.roamScreen
@@ -148,7 +151,14 @@ fun BILIBILIASNavHost(
                 }
             )
 
-            downloadScreen(onToBack = navController::popToRootAtMost)
+            downloadScreen(
+                onToBack = navController::popToRootAtMost,
+                onPlay = {
+                    navController.navigateToPlay(
+                        playRoute = PlayRoute.fromDownloadSegment(it)
+                    )
+                }
+            )
 
             settingScreen(
                 onToRoam = navController::navigateToRoam,
@@ -156,6 +166,10 @@ fun BILIBILIASNavHost(
             )
 
             roamScreen(onToBack = navController::popToRootAtMost)
+
+            playScreen(
+                onToBack = navController::popToRootAtMost
+            )
         }
     }
 }

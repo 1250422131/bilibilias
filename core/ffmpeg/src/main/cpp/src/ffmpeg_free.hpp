@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "traits.hpp"
 
 extern "C" {

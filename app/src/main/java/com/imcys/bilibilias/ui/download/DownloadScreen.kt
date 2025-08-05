@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -41,15 +42,20 @@ import com.imcys.bilibilias.weight.DownloadFinishTaskCard
 import com.imcys.bilibilias.weight.DownloadTaskCard
 import org.koin.androidx.compose.koinViewModel
 
+private const val DOWNLOADING_INDEX = 0
+private const val DOWNLOADED_INDEX = 1
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadScreen(onToBack: () -> Unit) {
+fun DownloadScreen(
+    onToBack: () -> Unit,
+    onPlay: (DownloadSegment) -> Unit,
+) {
     val vm = koinViewModel<DownloadViewModel>()
     val downloadListState by vm.downloadListState.collectAsState()
     val allDownloadSegment by vm.allDownloadSegment.collectAsState()
 
-    var selectIndex by remember { mutableIntStateOf(0) }
+    var selectIndex by remember { mutableIntStateOf(DOWNLOADING_INDEX) }
 
     val context = LocalContext.current
     DownloadScaffold(
@@ -60,18 +66,18 @@ fun DownloadScreen(onToBack: () -> Unit) {
                 Modifier.padding(10.dp)
             ) {
                 ToggleButton(
-                    checked = selectIndex == 0,
+                    checked = selectIndex == DOWNLOADING_INDEX,
                     onCheckedChange = {
-                        selectIndex = 0
+                        selectIndex = DOWNLOADING_INDEX
                     },
                 ) {
                     Text("正在下载")
                 }
                 Spacer(Modifier.width(10.dp))
                 ToggleButton(
-                    checked = selectIndex == 1,
+                    checked = selectIndex == DOWNLOADED_INDEX,
                     onCheckedChange = {
-                        selectIndex = 1
+                        selectIndex = DOWNLOADED_INDEX
                     },
                 ) {
                     Text("已完成下载")
@@ -82,19 +88,23 @@ fun DownloadScreen(onToBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(11.dp)
             ) {
                 when (selectIndex) {
-                    0 -> {
+                    DOWNLOADING_INDEX -> {
                         items(downloadListState, key = { it.downloadSegment.segmentId }) {
                             DownloadTaskCard(it)
                         }
                     }
 
-                    1 -> {
+                    DOWNLOADED_INDEX -> {
                         items(allDownloadSegment.filter {
                             it.downloadState == DownloadState.COMPLETED
                         }, key = { it.segmentId }) {
-                            DownloadFinishTaskCard(it, onDeleteTaskAndFile = {
-                                vm.deleteDownloadSegment(context, it)
-                            })
+                            DownloadFinishTaskCard(
+                                it,
+                                onDeleteTaskAndFile = {
+                                    vm.deleteDownloadSegment(context, it)
+                                },
+                                onPlay = onPlay,
+                            )
                         }
                     }
                 }

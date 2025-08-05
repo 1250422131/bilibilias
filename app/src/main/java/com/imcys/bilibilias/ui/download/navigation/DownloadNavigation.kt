@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
+import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.download.DownloadScreen
 import kotlinx.serialization.Serializable
 
@@ -24,8 +25,9 @@ fun NavController.navigateToDownload(
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.downloadScreen(
     onToBack: () -> Unit,
+    onPlay: (DownloadSegment) -> Unit,
 ) {
     composable<DownloadRoute> { navBackStackEntry ->
-        DownloadScreen(onToBack)
+        DownloadScreen(onToBack, onPlay)
     }
 }

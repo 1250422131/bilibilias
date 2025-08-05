@@ -215,7 +215,11 @@ fun DownloadTaskCard(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadFinishTaskCard(downloadSegment: DownloadSegment, onDeleteTaskAndFile: () -> Unit) {
+fun DownloadFinishTaskCard(
+    downloadSegment: DownloadSegment,
+    onDeleteTaskAndFile: () -> Unit,
+    onPlay: (DownloadSegment) -> Unit,
+) {
 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -223,6 +227,9 @@ fun DownloadFinishTaskCard(downloadSegment: DownloadSegment, onDeleteTaskAndFile
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = CardDefaults.shape,
         modifier = Modifier.fillMaxWidth()
+            .clickable { // TODO
+                onPlay(downloadSegment)
+            }
     ) {
         Row(
             modifier = Modifier

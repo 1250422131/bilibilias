@@ -13,6 +13,7 @@ import com.imcys.bilibilias.database.converter.download.DownloadStageConverter
 import com.imcys.bilibilias.database.converter.download.DownloadStateConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskNodeTypeConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskTypeConverter
+import kotlinx.serialization.Serializable
 import java.util.Date
 
 /**

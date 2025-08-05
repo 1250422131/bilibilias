@@ -18,6 +18,17 @@ android {
         versionName = "3.0.0-PlumBlossom-Alpha-3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a","x86_64")
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags("-std=c++23 -fexceptions")
+            }
+        }
+
     }
 
     buildTypes {
@@ -32,6 +43,23 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    externalNativeBuild {
+        cmake {
+            path("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
+    ndkVersion = "27.0.12077973"
+}
+
+kotlin {
+    sourceSets {
+        all {
+            languageSettings {
+                optIn("androidx.compose.material3.ExperimentalMaterial3Api")
+            }
+        }
     }
 }
 
