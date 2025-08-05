@@ -55,8 +55,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
+import com.google.firebase.Firebase
+import com.google.firebase.app
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.appErrorHandleChannel
 import com.imcys.bilibilias.common.event.loginErrorChannel

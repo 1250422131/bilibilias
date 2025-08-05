@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.home
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.model.BILILoginUserModel
@@ -38,7 +39,7 @@ class HomeViewModel(
         MutableStateFlow<List<BILIUsersEntity>>(emptyList())
     val userLoginPlatformList = _userLoginPlatformList.asStateFlow()
 
-    val downloadListState =  downloadManager.getAllDownloadTasks()
+    val downloadListState = downloadManager.getAllDownloadTasks()
 
     init {
         showBILIUserInfo()
@@ -75,6 +76,18 @@ class HomeViewModel(
         }
     }
 
+    /**
+     * 暂停下载任务
+     * [segmentId] 下载任务的ID
+     */
+    fun pauseDownloadTask(segmentId: Long) {
+       viewModelScope.launch { downloadManager.pauseTask(segmentId) }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun resumeDownloadTask(segmentId: Long) {
+        viewModelScope.launch { downloadManager.resumeTask(segmentId) }
+    }
 
     suspend fun initCurrentUserInfo() {
         if (!usersDataSource.isLogin()) return

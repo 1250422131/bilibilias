@@ -49,7 +49,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.inappmessaging.display)
     implementation(libs.firebase.config)
-    implementation(libs.firebase.config.ktx)
+//    implementation(libs.firebase.config.ktx)
     implementation(libs.firebase.perf)
 
     // 彩带

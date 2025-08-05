@@ -11,6 +11,7 @@ enum class DownloadTaskNodeType {
 
     BILI_DONGHUA_SECTION, // 番剧预告
 
+    BILI_DONGHUA_EPISOD, // 番剧正片 -> 首次于纪录片发现
 
     ACFUN_VIDEO_PAGE // AcFun暂无实现
 }

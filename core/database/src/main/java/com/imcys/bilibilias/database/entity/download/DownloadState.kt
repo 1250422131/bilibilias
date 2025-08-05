@@ -30,6 +30,9 @@ enum class DownloadState {
 
     /** 下载异常 */
     ERROR,
+
+    /** 已取消 */
+    CANCELLED,
 }
 
 enum class DownloadSubTaskType {

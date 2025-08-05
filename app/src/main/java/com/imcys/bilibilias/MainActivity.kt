@@ -7,8 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
+import com.google.firebase.Firebase
+import com.google.firebase.app
 import com.imcys.bilibilias.common.utils.createDownloadNotificationChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings

@@ -623,10 +623,10 @@ fun BILIVideoCard(
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
 
                 // 如果是充电视频，提示用户充电
                 if (!asLinkResultType.isCanPlay()) {
+                    Spacer(Modifier.height(16.dp))
                     AsWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enabledPadding = false
@@ -647,10 +647,10 @@ fun BILIVideoCard(
                     }
                 }
 
-                Spacer(Modifier.height(11.dp))
 
                 // 如果未登录B站账号，提示用户登录
                 if (!isBILILogin) {
+                    Spacer(Modifier.height(11.dp))
                     AsWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enabledPadding = false

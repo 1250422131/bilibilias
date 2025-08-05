@@ -201,33 +201,29 @@ fun VideoDownloadScreen(
                             items(
                                 episodeList.subList(startIndex, endIndex)
                             ) {
-                                Surface(
-                                    shape = CardDefaults.shape,
-                                    color = if (downloadInfo?.selectedCid?.contains(it.cid) == true) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.primaryContainer
-                                    },
+                                FilterChip(
+                                    selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
                                     onClick = {
                                         onUpdateSelectedCid.invoke(it.cid)
+                                    },
+                                    label = {
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(60.dp)
+                                                .padding(8.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                it.title,
+                                                maxLines = 2,
+                                                fontSize = 14.sp,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        }
                                     }
-                                ) {
-                                    Column(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(60.dp)
-                                            .padding(8.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            it.title,
-                                            maxLines = 2,
-                                            fontSize = 14.sp,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    }
-                                }
+                                )
                             }
                         }
                     }
@@ -275,33 +271,29 @@ fun VideoDownloadScreen(
                             items(
                                 episodeList.subList(startIndex, endIndex)
                             ) {
-                                Surface(
-                                    shape = CardDefaults.shape,
-                                    color = if (downloadInfo?.selectedCid?.contains(it.cid) == true) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.primaryContainer
-                                    },
+                                FilterChip(
+                                    selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
                                     onClick = {
                                         onUpdateSelectedCid.invoke(it.cid)
+                                    },
+                                    label = {
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(60.dp)
+                                                .padding(8.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                it.part,
+                                                maxLines = 2,
+                                                fontSize = 14.sp,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        }
                                     }
-                                ) {
-                                    Column(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(60.dp)
-                                            .padding(8.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            it.part,
-                                            maxLines = 2,
-                                            fontSize = 14.sp,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    }
-                                }
+                                )
                             }
                         }
                     }

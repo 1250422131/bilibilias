@@ -56,6 +56,10 @@ class UserViewModel(
 
     fun getUserPageIno(mid: Long) {
         if (mid == 0L) return
+        // 当请求的mid和当前加载的mid一致，并且已经成功获取，则不再请求
+        if (mid == _userPageInfoState.value.data?.mid) {
+            return
+        }
         viewModelScope.launch {
             userInfoRepository.getUserPageInfo(mid).collect {
                 _userPageInfoState.emit(it)
