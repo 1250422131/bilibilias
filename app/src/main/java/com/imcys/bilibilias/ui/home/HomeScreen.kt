@@ -99,7 +99,7 @@ internal fun HomeRoute(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
-    goToDownloadPage:()->Unit
+    goToDownloadPage: () -> Unit
 ) {
     HomeScreen(
         homeRoute,
@@ -121,7 +121,7 @@ internal fun HomeScreen(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
-    goToDownloadPage:()->Unit
+    goToDownloadPage: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
@@ -182,11 +182,20 @@ internal fun HomeScreen(
                 }
 
                 item {
-                    DownloadListCard(downloadListState, goToDownloadPage = goToDownloadPage)
+                    DownloadListCard(
+                        downloadListState,
+                        goToDownloadPage = goToDownloadPage,
+                        onPauseTask = {
+                            vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                        },
+                        onResumeTask = {
+                            vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                        })
                 }
 
                 item {
-                    Text("请在Download/BILIBILIAS目录下查看下载内容",
+                    Text(
+                        "请在Download/BILIBILIAS目录下查看下载内容",
                         fontSize = 14.sp,
                         fontWeight = FontWeight(330),
                         modifier = Modifier
@@ -227,7 +236,12 @@ internal fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadListCard(downloadListState: List<AppDownloadTask>,goToDownloadPage:()->Unit) {
+fun DownloadListCard(
+    downloadListState: List<AppDownloadTask>,
+    goToDownloadPage: () -> Unit,
+    onPauseTask: (task: AppDownloadTask) -> Unit,
+    onResumeTask: (task: AppDownloadTask) -> Unit
+) {
     SurfaceColorCard {
         Column(
             modifier = Modifier
@@ -264,12 +278,18 @@ fun DownloadListCard(downloadListState: List<AppDownloadTask>,goToDownloadPage:(
             Spacer(modifier = Modifier.height(12.dp))
 
             Column(
-                modifier = Modifier.fillMaxWidth().animateContentSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (downloadListState.isNotEmpty()) {
                     downloadListState.subList(0, min(3, downloadListState.size)).forEach { task ->
-                        DownloadTaskCard(task)
+                        DownloadTaskCard(task, {
+                            onPauseTask(task)
+                        }, onResume = {
+                            onResumeTask(task)
+                        })
                     }
                 } else {
                     Text(
@@ -353,7 +373,14 @@ private fun HomeScaffold(
                                 }
                             },
                             onErrorContent = { errorMsg, response ->
-                                AsErrorCopyIconButton(errorMsg ?: "未知错误")
+                                IconButton(onClick = {
+                                    goToLogin()
+                                }) {
+                                    Icon(
+                                        Icons.AutoMirrored.Outlined.Login,
+                                        contentDescription = "登录"
+                                    )
+                                }
                             })
                         Spacer(Modifier.width(15.dp))
                     }

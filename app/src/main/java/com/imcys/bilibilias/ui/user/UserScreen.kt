@@ -81,15 +81,12 @@ import com.imcys.bilibilias.weight.AsAutoError
 import org.koin.androidx.compose.koinViewModel
 
 
-@Preview
 @Composable
-@PreviewScreenSizes
-fun UserScreenPreview() {
-    UserScreen(UserRoute(), {}, {})
-}
-
-@Composable
-internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit, onToSettings: () -> Unit) {
+internal fun UserScreen(
+    userRoute: UserRoute,
+    onToBack: () -> Unit,
+    onToSettings: () -> Unit
+) {
 
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()

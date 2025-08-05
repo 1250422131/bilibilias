@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BILIDonghuaPlayerInfo(
     @SerialName("accept_description")
-    val acceptDescription: List<String>,
+    val acceptDescription: List<String> = emptyList(),
     @SerialName("accept_format")
     val acceptFormat: String,
     @SerialName("accept_quality")

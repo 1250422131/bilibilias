@@ -18,6 +18,7 @@ import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import kotlinx.coroutines.flow.last
 import kotlinx.serialization.json.Json
 import java.util.Date
+import kotlin.text.ifEmpty
 
 class DownloadTaskRepository(
     private val json: Json,
@@ -182,6 +183,12 @@ class DownloadTaskRepository(
             }
         }
 
+
+        // 3. 构建特殊的正片
+        val epList = data.episodes.filter { selectedEpId.contains(it.epId) }
+        if (epList.isNotEmpty()){
+            roots += buildNoeEpisodeNode(taskId, data, epList, downloadMode)
+        }
         return roots
     }
 
@@ -299,6 +306,42 @@ class DownloadTaskRepository(
                 duration = episode.duration,
                 downloadMode = downloadMode,
                 childTaskId = null  // 番剧预告不需要子任务
+            )
+        }
+
+        return DownloadTreeNode(node, segments, emptyList())
+    }
+
+
+    /**
+     * 构建番剧正片节点
+     */
+    private suspend fun buildNoeEpisodeNode(
+        taskId: Long,
+        data: BILIDonghuaSeasonInfo,
+        episodes: List<BILIDonghuaSeasonInfo.Episode>,
+        downloadMode: DownloadMode
+    ) : DownloadTreeNode {
+
+        val node = getOrCreateNode(
+            taskId = taskId,
+            platformId = "${data.seasonId}",
+            title = data.title,
+            nodeType = DownloadTaskNodeType.BILI_DONGHUA_EPISOD
+        )
+
+        val segments = episodes.map { episode ->
+
+            createSegment(
+                nodeId = node.nodeId,
+                title = episode.longTitle.ifEmpty { episode.title },
+                cover = episode.cover,
+                platformId = episode.epId.toString(),
+                segmentOrder = 0L,
+                platformInfo = json.encodeToString(episode),
+                duration = episode.duration,
+                downloadMode = downloadMode,
+                childTaskId = null  // 番剧正片不需要子任务
             )
         }
 

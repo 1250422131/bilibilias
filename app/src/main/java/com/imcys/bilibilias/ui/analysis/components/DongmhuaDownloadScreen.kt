@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -189,31 +190,28 @@ fun DongmhuaDownloadScreen(
                                 val endIndex = minOf((currentEpListIndex + 1) * 12, episodeList.size)
 
                                 items(episodeList.subList(startIndex, endIndex)) {
-                                    Surface(
-                                        shape = CardDefaults.shape,
-                                        color = if (downloadInfo?.selectedEpId?.contains(it.epId) == true) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.primaryContainer
+                                    FilterChip(
+                                        selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
+                                        onClick = {
+                                            onUpdateSelectedEpId.invoke(it.epId)
                                         },
-                                        onClick = { onUpdateSelectedEpId.invoke(it.epId) }
-                                    ) {
-                                        Column(
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .height(60.dp)
-                                                .padding(8.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                it.longTitle.ifBlank { it.title },
-                                                maxLines = 2,
-                                                fontSize = 14.sp,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
+                                        label = {
+                                            Column(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .height(60.dp),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    it.longTitle.ifBlank { it.title },
+                                                    maxLines = 2,
+                                                    fontSize = 14.sp,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            }
                                         }
-                                    }
+                                    )
                                 }
                             }
                         }
@@ -252,32 +250,28 @@ fun DongmhuaDownloadScreen(
                                     donghuaViewInfo.data?.section?.firstOrNull { it.id == selectSectionId }?.episodes
                                         ?: emptyList()
                                 ) {
-                                    Surface(
-                                        shape = CardDefaults.shape,
-                                        color = if (downloadInfo?.selectedEpId?.contains(it.epId) == true) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.primaryContainer
-                                        },
+                                    FilterChip(
+                                        selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
                                         onClick = {
                                             onUpdateSelectedEpId.invoke(it.epId)
+                                        },
+                                        label = {
+                                            Column(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .height(60.dp)
+                                                    .padding(8.dp),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    it.longTitle.ifBlank { it.title }, maxLines = 2,
+                                                    fontSize = 14.sp,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            }
                                         }
-                                    ) {
-                                        Column(
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .height(60.dp)
-                                                .padding(8.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                it.longTitle.ifBlank { it.title }, maxLines = 2,
-                                                fontSize = 14.sp,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        }
-                                    }
+                                    )
                                 }
                             }
                         }

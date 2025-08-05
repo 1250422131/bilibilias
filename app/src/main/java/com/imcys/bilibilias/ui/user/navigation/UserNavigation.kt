@@ -22,10 +22,10 @@ fun NavController.navigateToUser(
 
 fun NavGraphBuilder.userScreen(
     onToBack: () -> Unit,
-    onToSettings:()-> Unit
+    onToSettings: () -> Unit
 ) {
     composable<UserRoute> { navBackStackEntry ->
         val userRoute = navBackStackEntry.toRoute<UserRoute>()
-        UserScreen(userRoute, onToBack,onToSettings)
+        UserScreen(userRoute, onToBack, onToSettings)
     }
 }

@@ -7,7 +7,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 data class BILIVideoPlayerInfo(
     @SerialName("accept_description")
-    val acceptDescription: List<String>,
+    val acceptDescription: List<String> = emptyList(),
     @SerialName("accept_format")
     val acceptFormat: String,
     @SerialName("accept_quality")
