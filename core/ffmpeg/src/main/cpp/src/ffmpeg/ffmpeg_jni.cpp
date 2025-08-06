@@ -4,8 +4,8 @@
 #include <mutex>
 #include <string_view>
 
-#include "traits.hpp"
-#include "ffmpeg_free.hpp"
+#include <traits.hpp>
+#include <ffmpeg/ffmpeg_free.hpp>
 
 extern "C" {
 #include "libavformat/avformat.h"
@@ -17,6 +17,7 @@ extern "C" {
 #include "libswscale/swscale.h"
 }
 
+using namespace bilias;
 using namespace bilias::ffmpeg;
 
 namespace {

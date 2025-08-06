@@ -1,5 +1,5 @@
 #include <jni.h>
-#include <renderer.hpp>
+#include "renderer.hpp"
 
 using namespace bilias;
 
@@ -36,4 +36,28 @@ JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_render_VideoRendererJNI_onDrawFrame(JNIEnv *env, jobject thiz, jlong ptr) {
     auto *renderer = reinterpret_cast<VideoRenderer *>(ptr);
     renderer->on_draw_frame();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_imcys_bilibilias_render_VideoRendererJNI_startPlayback(JNIEnv *env, jobject thiz,
+                                                                jlong ptr) {
+    auto *renderer = reinterpret_cast<bilias::VideoRenderer *>(ptr);
+    renderer->start_playback();
+
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_imcys_bilibilias_render_VideoRendererJNI_pausePlayback(JNIEnv *env, jobject thiz,
+                                                                jlong ptr) {
+    auto *renderer = reinterpret_cast<bilias::VideoRenderer *>(ptr);
+    renderer->pause_playback();
+
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_imcys_bilibilias_render_VideoRendererJNI_setVideoFd(JNIEnv *env, jobject thiz, jlong ptr,
+                                                             jint fd) {
+    auto *renderer = reinterpret_cast<bilias::VideoRenderer *>(ptr);
+    renderer->set_video_fd(fd);
 }

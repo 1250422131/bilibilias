@@ -32,10 +32,11 @@ set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/lib
 
 # 4、你的 native 库
 
-file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/*.cpp")
+file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/**.cpp")
 #file(GLOB_RECURSE BILI_AS_FFMPEG_MODULES "src/*.ixx")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED ${BILI_AS_FFMPEG_SOURCES})
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC include)
 
 #target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 #        FILE_SET CXX_MODULES
@@ -58,6 +59,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
         dl
         m
         atomic
+        GLESv3
+        EGL
 )
 
 set(ARCH_LINK_FLAGS "-Wl,-z,max-page-size=16384" )

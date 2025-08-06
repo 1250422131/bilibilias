@@ -2,7 +2,14 @@
 
 #include <concepts>
 
-namespace bilias::ffmpeg {
+namespace bilias {
+
+    class NonCopy {
+    public:
+        constexpr NonCopy() = default;
+        NonCopy(const NonCopy &) = delete;
+        NonCopy &operator=(const NonCopy &) = delete;
+    };
 
     template<typename F>
     requires std::is_invocable_v<F>

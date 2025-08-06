@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.play.PlayScreen
 import kotlinx.serialization.Serializable
@@ -14,7 +15,7 @@ data class PlayRoute(
     val title: String,
     val cover: String?,
     val savePath: String,
-) {
+) : NavKey {
     companion object {
 
         fun fromDownloadSegment(downloadSegment: DownloadSegment): PlayRoute {

@@ -25,10 +25,6 @@ object FFmpegManger {
         listener: FFmpegMergeListener
     )
 
-    init {
-        System.loadLibrary("ffmpeg")
-    }
-
     suspend fun mergeVideoAndAudioSuspend(
         videoPath: String,
         audioPath: String,

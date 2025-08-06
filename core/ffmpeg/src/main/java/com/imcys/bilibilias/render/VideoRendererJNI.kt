@@ -5,7 +5,7 @@ typealias Ptr = Long
 object VideoRendererJNI {
 
     init {
-        System.loadLibrary("bilibilias")
+        System.loadLibrary("ffmpeg")
     }
 
     external fun createRenderer(): Ptr
@@ -13,5 +13,9 @@ object VideoRendererJNI {
     external fun onSurfaceCreated(ptr: Ptr)
     external fun onSurfaceChanged(ptr: Ptr, width: Int, height: Int)
     external fun onDrawFrame(ptr: Ptr)
+    external fun setVideoFd(ptr: Ptr, fd: Int)
+    external fun startPlayback(renderer: Ptr)
+    external fun pausePlayback(renderer: Ptr)
+
 
 }

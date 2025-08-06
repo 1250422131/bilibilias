@@ -33,6 +33,8 @@ import com.imcys.bilibilias.ui.login.LoginScreen
 import com.imcys.bilibilias.ui.login.QRCodeLoginScreen
 import com.imcys.bilibilias.ui.login.navigation.LoginRoute
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
+import com.imcys.bilibilias.ui.play.PlayScreen
+import com.imcys.bilibilias.ui.play.navigation.PlayRoute
 import com.imcys.bilibilias.ui.setting.SettingScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
@@ -168,7 +170,13 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<DownloadRoute> {
-                    DownloadScreen(onToBack = { backStack.removeLastOrNull() })
+                    DownloadScreen(
+                        onToBack = { backStack.removeLastOrNull() },
+                        onPlay = {
+                            backStack.addWithReuse(
+                                PlayRoute.fromDownloadSegment(it)
+                            )
+                        })
                 }
                 entry<SettingRoute> {
                     SettingScreen(
@@ -180,6 +188,13 @@ fun BILIBILAISNavDisplay() {
                 }
                 entry<RoamRoute> {
                     RoamScreen (onToBack = { backStack.removeLastOrNull() })
+                }
+
+                entry<PlayRoute> {
+                    PlayScreen(
+                        onToBack = { backStack.removeLastOrNull() },
+                        route = it
+                    )
                 }
             }
         )
