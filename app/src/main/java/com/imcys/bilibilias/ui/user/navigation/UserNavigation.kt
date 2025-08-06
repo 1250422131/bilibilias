@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.ui.user.UserScreen
 import kotlinx.serialization.Serializable
 
@@ -12,7 +13,7 @@ import kotlinx.serialization.Serializable
 data class UserRoute(
     val mid: Long = 0,
     val isAnalysisUser: Boolean = false
-)
+): NavKey
 
 fun NavController.navigateToUser(
     userRoute: UserRoute = UserRoute(),

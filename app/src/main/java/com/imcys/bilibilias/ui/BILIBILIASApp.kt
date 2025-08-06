@@ -42,6 +42,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.imcys.bilibilias.R
@@ -64,8 +65,10 @@ import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
+import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay
 import com.imcys.bilibilias.navigation.BILIBILIASNavHost
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.*
+import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -96,7 +99,6 @@ private fun MainScaffold() {
     val appSettings by appSettingsRepository.appSettingsFlow.collectAsState(
         initial = AppSettings.getDefaultInstance()
     )
-    val navigatorController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val konfettiState = rememberKonfettiState(false)
     val vm = koinViewModel<BILIBILIASAppViewModel>()
@@ -131,9 +133,7 @@ private fun MainScaffold() {
         ) { targetUiState ->
             when (targetUiState) {
                 Default -> {
-                    BILIBILIASNavHost(
-                        navController = navigatorController
-                    )
+                    BILIBILAISNavDisplay()
 
                     // Dialog注册区域
                     PrivacyPolicyDialog(
