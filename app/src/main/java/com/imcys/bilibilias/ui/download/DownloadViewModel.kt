@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.download
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
@@ -37,6 +38,18 @@ class DownloadViewModel(
         }
     }
 
+    /**
+     * 暂停下载任务
+     * [segmentId] 下载任务的ID
+     */
+    fun pauseDownloadTask(segmentId: Long) {
+        viewModelScope.launch { downloadManager.pauseTask(segmentId) }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun resumeDownloadTask(segmentId: Long) {
+        viewModelScope.launch { downloadManager.resumeTask(segmentId) }
+    }
 
     fun deleteDownloadSegment(context: Context, segment: DownloadSegment) {
         viewModelScope.launch(Dispatchers.IO) {

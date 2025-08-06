@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.ui.home.HomeRoute
 import kotlinx.serialization.Serializable
 
@@ -16,7 +17,7 @@ const val HOME_PATH = "home"
 @Serializable
 data class HomeRoute(
     var isFormLogin: Boolean = false
-)
+): NavKey
 
 
 fun NavController.navigateToHome(

@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -13,14 +11,34 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavEntry
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
+import com.imcys.bilibilias.ui.analysis.AnalysisScreen
+import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
+import com.imcys.bilibilias.ui.download.DownloadScreen
+import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
+import com.imcys.bilibilias.ui.home.HomeScreen
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
+import com.imcys.bilibilias.ui.login.LoginScreen
+import com.imcys.bilibilias.ui.login.QRCodeLoginScreen
+import com.imcys.bilibilias.ui.login.navigation.LoginRoute
+import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
+import com.imcys.bilibilias.ui.setting.SettingScreen
+import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
+import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
+import com.imcys.bilibilias.ui.setting.roam.RoamScreen
+import com.imcys.bilibilias.ui.user.UserScreen
+import com.imcys.bilibilias.ui.user.navigation.UserRoute
 
 /**
  * BILIBILAIS导航显示组件
@@ -31,6 +49,32 @@ import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 @Composable
 fun BILIBILAISNavDisplay() {
     val backStack = remember { mutableStateListOf<Any>(HomeRoute()) }
+
+    val popTransitionSpec = remember {
+        ContentTransform(
+            // 返回导航：上一个页面进入 - 从放大状态恢复
+            scaleIn(
+                initialScale = 1.1F,
+                animationSpec = tween(
+                    durationMillis = 400,
+                    easing = FastOutSlowInEasing
+                )
+            ),
+            // 返回导航：当前页面退出 - 淡出+放大
+            scaleOut(
+                targetScale = 1.1F,
+                animationSpec = tween(
+                    durationMillis = 400,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(
+                animationSpec = tween(
+                    durationMillis = 400,
+                    easing = FastOutSlowInEasing
+                )
+            ))
+    }
+
     SharedTransitionLayout {
         NavDisplay(
             modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer),
@@ -56,38 +100,106 @@ fun BILIBILAISNavDisplay() {
                 )
             },
             popTransitionSpec = {
-                ContentTransform(
-                    // 返回导航：上一个页面进入 - 从放大状态恢复
-                    scaleIn(
-                        initialScale = 1.1F,
-                        animationSpec = tween(
-                            durationMillis = 400,
-                            easing = FastOutSlowInEasing
-                        )
-                    ),
-                    // 返回导航：当前页面退出 - 淡出+放大
-                    scaleOut(
-                        targetScale = 1.1F,
-                        animationSpec = tween(
-                            durationMillis = 400,
-                            easing = FastOutSlowInEasing
-                        )
-                    ) + fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 400,
-                            easing = FastOutSlowInEasing
-                        )
-                    )
-                )
+                popTransitionSpec
             },
-            entryProvider = { key ->
-                when (key) {
-                    else -> NavEntry(Unit) {
-                        Text("Unknown route")
-                    }
+            predictivePopTransitionSpec = {
+                popTransitionSpec
+            },
+            entryDecorators = listOf(
+                rememberSceneSetupNavEntryDecorator(),
+                rememberSavedStateNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
+            entryProvider = entryProvider {
+                entry<HomeRoute> {
+                    HomeScreen(
+                        it,
+                        this@SharedTransitionLayout,
+                        LocalNavAnimatedContentScope.current,
+                        goToLogin = {
+                            backStack.addWithReuse(LoginRoute)
+                        },
+                        goToUserPage = { mid ->
+                            backStack.addWithReuse(UserRoute(mid = mid))
+                        },
+                        goToAnalysis = {
+                            backStack.addWithReuse(AnalysisRoute())
+                        },
+                        goToDownloadPage = {
+                            backStack.addWithReuse(DownloadRoute)
+                        }
+                    )
+                }
+                entry<LoginRoute> {
+                    LoginScreen(
+                        onToBack = { backStack.removeLastOrNull() },
+                        goToQRCodeLogin = {
+                            backStack.addWithReuse(QRCodeLoginRoute)
+                        }
+                    )
+                }
+                entry<QRCodeLoginRoute> {
+                    QRCodeLoginScreen(
+                        onToBack = { backStack.removeLastOrNull() },
+                        onBackHomePage = {
+                            backStack.clear()
+                            backStack.add(HomeRoute(isFormLogin = true))
+                        }
+                    )
+                }
+                entry<UserRoute> {
+                    UserScreen(
+                        userRoute = it,
+                        onToBack = { backStack.removeLastOrNull() },
+                        onToSettings = {
+                            backStack.addWithReuse(SettingRoute)
+                        }
+                    )
+                }
+                entry<AnalysisRoute> {
+                    AnalysisScreen(
+                        it,
+                        this@SharedTransitionLayout,
+                        LocalNavAnimatedContentScope.current,
+                        onToBack = { backStack.removeLastOrNull() },
+                        goToUser = { mid ->
+                            backStack.addWithReuse(UserRoute(mid = mid, isAnalysisUser = true))
+                        }
+                    )
+                }
+                entry<DownloadRoute> {
+                    DownloadScreen(onToBack = { backStack.removeLastOrNull() })
+                }
+                entry<SettingRoute> {
+                    SettingScreen(
+                        onToRoam = {
+                            backStack.addWithReuse(RoamRoute)
+                        },
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<RoamRoute> {
+                    RoamScreen (onToBack = { backStack.removeLastOrNull() })
                 }
             }
         )
     }
 
+}
+
+
+/**
+ * 栈内复用扩展函数
+ * 如果栈中已存在相同类型的路由，则将其之后的所有元素移除（目标及之前的保留）
+ * 否则添加新的路由实例
+ */
+inline fun <reified T : Any> SnapshotStateList<Any>.addWithReuse(route: T) {
+    val existingIndex = indexOfFirst { it::class == T::class }
+
+    if (existingIndex != -1) {
+        // 移除目标之后的所有元素
+        repeat(size - existingIndex - 1) { removeAt(existingIndex + 1) }
+    } else {
+        add(route)
+    }
 }
