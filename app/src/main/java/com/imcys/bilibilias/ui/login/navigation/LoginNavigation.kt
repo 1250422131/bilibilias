@@ -4,16 +4,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.ui.login.LoginRoute
 import com.imcys.bilibilias.ui.login.QRCodeLoginRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-object LoginRoute
+object LoginRoute: NavKey
 
 @Serializable
-object QRCodeLoginRoute
+object QRCodeLoginRoute: NavKey
 
 
 fun NavController.navigateToLogin(navOptions: NavOptions? = null) =

@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.download.DownloadScreen
 import kotlinx.serialization.Serializable
@@ -13,7 +14,7 @@ const val DOWNLOAD_PATH = "download"
 
 
 @Serializable
-object DownloadRoute
+object DownloadRoute: NavKey
 
 
 fun NavController.navigateToDownload(

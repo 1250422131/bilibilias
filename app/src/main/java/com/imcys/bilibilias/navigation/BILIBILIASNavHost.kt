@@ -47,6 +47,7 @@ import com.imcys.bilibilias.ui.user.navigation.userScreen
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
+@Deprecated(message = "改用Nav3",replaceWith = ReplaceWith("BILIBILAISNavDisplay()"))
 fun BILIBILIASNavHost(
     navController: NavHostController,
 ) {

@@ -5,12 +5,12 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 androidTools = "31.9.0"
-androidDesugarJdkLibs = "2.1.4"
-navigationCompose = "2.9.2"
+androidDesugarJdkLibs = "2.1.5"
+navigationCompose = "2.9.3"
 koinBom = "4.1.0"
 viewmodelCompose = "2.9.2"
 ksp = "2.2.0-2.0.2"
@@ -23,15 +23,15 @@ gms = "4.4.3"
 firebase-crashlytics-plugin = "3.0.5"
 firebase-perf-plugin = "2.0.0"
 konfetti-compose-version = "2.0.5"
-ktorVersion = "3.1.3"
-mmkv = "2.2.2"
-coil = "3.2.0"
-material3Android = "1.4.0-alpha16"
+ktorVersion = "3.2.3"
+coil = "3.3.0"
+material3Android = "1.5.0-alpha01"
 cloudy = "0.2.7"
+splashscreen = "1.2.0-rc01"
 
-nav3Core = "1.0.0-alpha02"
+nav3Core = "1.0.0-alpha06"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
-material3AdaptiveNav3 = "1.2.0-alpha10"
+material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,21 +78,21 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref =
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktorVersion" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
-ktor-serialization-kotlinx-cbor = { group = "io.ktor", name = "ktor-serialization-kotlinx-cbor", version.ref = "ktorVersion" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktorVersion" }
-com-tencent-mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 # Optional add-on libraries
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-material3-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

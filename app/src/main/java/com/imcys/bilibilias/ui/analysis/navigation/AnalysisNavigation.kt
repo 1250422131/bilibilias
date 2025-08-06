@@ -7,13 +7,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AnalysisRoute(
     var asInputText: String = ""
-)
+): NavKey
 
 
 fun NavController.navigateToAnalysis(

@@ -4,15 +4,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.ui.setting.SettingScreen
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SettingRoute
+object SettingRoute: NavKey
 
 @Serializable
-object RoamRoute
+object RoamRoute: NavKey
 
 fun NavController.navigateToSetting(navOptions: NavOptions? = null) =
     navigate(SettingRoute, navOptions)
