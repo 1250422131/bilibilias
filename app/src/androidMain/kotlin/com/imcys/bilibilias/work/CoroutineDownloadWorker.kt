@@ -15,7 +15,7 @@ import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 class CoroutineDownloadWorker(
     context: Context,
@@ -26,13 +26,9 @@ class CoroutineDownloadWorker(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        applicationScope.launch {
-            httpDownloader.downloadStatesFlow
-                .collect { states ->
-                    states.filter { downloadState -> downloadState.status == DownloadStatus.PAUSED }
-                        .forEach { downloadState -> httpDownloader.resume(downloadState.downloadId) }
-                }
-        }
+        httpDownloader.downloadStatesFlow.first()
+            .filter { downloadState -> downloadState.status == DownloadStatus.PAUSED }
+            .forEach { downloadState -> httpDownloader.resume(downloadState.downloadId) }
         return Result.success()
     }
 
@@ -74,6 +70,7 @@ class CoroutineDownloadWorker(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
     }
+
     // 恢复逻辑
     //        val result = combine(
 //            httpDownloader.downloadStatesFlow,
