@@ -56,13 +56,6 @@ namespace bilias::ffmpeg {
             }
         }
 
-        auto operator()(AVCodecContext **ctx) const noexcept -> void {
-            if (ctx) {
-                auto *ptr = *ctx;
-                avcodec_free_context(&ptr);
-            }
-        }
-
         auto operator()(uint8_t *av_buf) const noexcept -> void {
             if (av_buf) {
                 av_free(av_buf);
@@ -77,6 +70,7 @@ namespace bilias::ffmpeg {
     using AVPacketPtr = std::unique_ptr<AVPacket, FFMPEGFree>;
     using AVCodecContextPtr = std::unique_ptr<AVCodecContext, FFMPEGFree>;
     using AVCodecPtr = std::unique_ptr<AVCodec, FFMPEGFree>;
+    using AVFramePtr = std::unique_ptr<AVFrame , FFMPEGFree>;
     using AVMallocPtr = std::unique_ptr<uint8_t, FFMPEGFree>;
 
     inline auto bilias_av_malloc(size_t size) noexcept -> AVMallocPtr {
@@ -89,6 +83,10 @@ namespace bilias::ffmpeg {
 
     inline auto bilias_avformat_alloc_context() -> AVFormatContextPtr {
         return AVFormatContextPtr(avformat_alloc_context());
+    }
+
+    inline auto bilias_av_frame_alloc() -> AVFramePtr {
+        return AVFramePtr(av_frame_alloc());
     }
 
     inline auto bilias_avformat_alloc_output_context2(

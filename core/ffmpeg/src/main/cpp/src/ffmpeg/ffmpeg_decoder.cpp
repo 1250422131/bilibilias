@@ -1,8 +1,64 @@
 
 #include <ffmpeg/ffmpeg_decoder.hpp>
 #include <stdexcept>
+#include <thread>
 
 namespace bilias::ffmpeg {
+
+    auto decode_frames(
+            AVFormatContext *format_ctx,
+            AVCodecContext *codec_ctx,
+            int video_stream_index
+    ) -> BufferedGenerator<AVFrame *> {
+
+        constexpr auto buffer_size = 2 << 8;
+        auto buffer = RingFrameBuffer<buffer_size>();
+        buffer.init();
+
+        std::atomic<bool> running = true;
+
+        std::thread decoder_thread([&] {
+            AVPacket packet{};
+            while (running && av_read_frame(format_ctx, &packet) >= 0) {
+                if (packet.stream_index != video_stream_index) {
+                    av_packet_unref(&packet);
+                    continue;
+                }
+
+                AVFrame *frame{};
+                do {
+                    auto o = buffer.try_pop();
+                    if (o.has_value()) {
+                        frame = o.value();
+                    } else {
+                        std::this_thread::yield();
+                    }
+                } while (!frame);
+
+                avcodec_send_packet(codec_ctx, &packet);
+                int ret = avcodec_receive_frame(codec_ctx, frame);
+                av_packet_unref(&packet);
+
+                if (ret == 0) {
+                    while (!buffer.try_push(frame)) {
+                        std::this_thread::yield();
+                    }
+                } else {
+                    buffer.try_push(frame);
+                }
+            }
+        });
+
+        while (running) {
+            auto frame = buffer.wait_pop();
+            if (!frame) break;
+            co_yield static_cast<AVFrame *&&>(frame);
+        }
+
+        running = false;
+        decoder_thread.join();
+        co_return;
+    }
 
 
     auto FFmpegDecoder::init() -> void {
@@ -49,6 +105,5 @@ namespace bilias::ffmpeg {
         if (avcodec_open2(codec_ctx.get(), codec, nullptr) < 0) {
             throw std::runtime_error("avcodec_open2 failed");
         }
-
     }
 }
