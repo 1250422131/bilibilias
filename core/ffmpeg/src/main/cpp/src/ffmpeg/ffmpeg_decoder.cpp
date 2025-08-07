@@ -50,7 +50,7 @@ namespace bilias::ffmpeg {
         });
 
         while (running) {
-            auto frame = buffer.wait_pop();
+            auto *frame = buffer.wait_pop();
             if (!frame) break;
             co_yield static_cast<AVFrame *&&>(frame);
         }

@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.imcys.bilibilias.render.NativeVideoRenderer
 import com.imcys.bilibilias.render.VideoSurfaceTextureListener
 import com.imcys.bilibilias.render.getFileDescriptorFromContentUri
 import com.imcys.bilibilias.ui.play.navigation.PlayRoute
