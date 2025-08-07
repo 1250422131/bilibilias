@@ -18,13 +18,14 @@ kotlin {
             api(libs.androidx.datastore)
             
             api(libs.kermit)
+            implementation(libs.kermit.crashlytics)
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
             api(libs.kotlinx.coroutines.core)
 
             api(libs.kotlinx.serialization.json)
 
-            api("com.eygraber:uri-kmp:0.0.20")
+            api(libs.uri.kmp)
         }
     }
 }
