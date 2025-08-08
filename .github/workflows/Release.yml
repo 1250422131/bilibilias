@@ -1,0 +1,67 @@
+# This file was generated using Kotlin DSL (.github/workflows/src.main.kts).
+# If you want to modify the workflow, please change the Kotlin file and regenerate this YAML file.
+# Generated with https://github.com/typesafegithub/github-workflows-kt
+
+name: 'GitHub Release with APKs'
+on:
+  workflow_dispatch: { }
+  push:
+    tags:
+      - 'v*'
+permissions:
+  actions: 'write'
+  contents: 'write'
+jobs:
+  BuildAndUpload:
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 50
+    steps:
+      - id: 'step-0'
+        name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - id: 'step-1'
+        name: 'Copy CI gradle.properties'
+        run: 'mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties'
+      - id: 'step-2'
+        name: 'Setup Java'
+        uses: 'actions/setup-java@v4'
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+      - id: 'step-3'
+        name: 'Setup Gradle'
+        uses: 'gradle/actions/setup-gradle@v4'
+      - id: 'step-4'
+        name: 'Check build-logic'
+        run: './gradlew :build-logic:convention:check'
+      - id: 'step-5'
+        name: 'Apk Sign'
+        run: |-
+          cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
+          echo -e '\n'                                              >> $GITHUB_WORKSPACE/gradle.properties
+          echo 'signing_release_storeFileFromRoot=./bilibilias.jks' >> $GITHUB_WORKSPACE/gradle.properties
+          echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
+          echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
+          echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
+      - id: 'step-6'
+        name: 'Build all build type and flavor permutations'
+        run: './gradlew :app:assembleRelease'
+      - id: 'step-7'
+        name: 'Create Release'
+        uses: 'softprops/action-gh-release@v2'
+        with:
+          name: '${{ github.ref }}'
+          tag_name: '${{ github.ref }}'
+          draft: 'true'
+          prerelease: 'false'
+          files: ''
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - id: 'step-8'
+        name: 'Upload app'
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: 'APKs'
+          path: '**/build/outputs/apk/**/*.apk'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
