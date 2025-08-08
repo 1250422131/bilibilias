@@ -46,4 +46,10 @@ class NativeVideoRenderer {
             inner = 0
         }
     }
+
+    fun testPlay() {
+        if (inner != 0L) {
+            RenderUtilJNI.testPlay(inner)
+        }
+    }
 }

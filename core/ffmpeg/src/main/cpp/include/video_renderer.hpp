@@ -37,5 +37,6 @@ namespace bilias {
 
         auto is_initialized() const noexcept -> bool { return initialized; }
 
+        auto test_play() -> void;
     };
 }

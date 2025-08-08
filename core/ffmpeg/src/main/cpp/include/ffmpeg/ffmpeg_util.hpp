@@ -10,4 +10,5 @@ namespace bilias::ffmpeg {
 
     auto bilias_avformat_find_stream_info(AVFormatContext *format_ctx) -> void;
 
+    auto debug_av1_support() -> void;
 }

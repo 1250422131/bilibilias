@@ -71,7 +71,7 @@ fun PlayScreen(
             Text("TODO 来点🐂")
             VideoPlayerScreen(
                 isPlaying = isPlaying,
-                onPlay = vm::play,
+                onPlay = vm::testPlay,
                 onPause = vm::pause,
                 onSurfaceReady = { surface, w, h ->
                     vm.initializeRenderer(surface, fd, w, h)

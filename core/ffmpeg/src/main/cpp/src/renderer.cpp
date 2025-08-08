@@ -20,6 +20,7 @@ namespace bilias {
 
     auto VideoRenderer::initialize(ANativeWindow *native_window, int fd) -> bool {
         LOGE("VideoRenderer::initialize window: %ld, fd: %d", (long)native_window, fd);
+        ffmpeg::debug_av1_support();
 
         if (fcntl(fd, F_GETFL) < 0) {
             auto msg = std::format("FD {} is invalid: {}", fd, strerror(errno));
@@ -116,5 +117,32 @@ namespace bilias {
             initialized.store(false);
         }
 
+    }
+
+    auto VideoRenderer::test_play() -> void {
+        std::thread a([this] {
+            try {
+                LOGI("VideoRenderer::test_play() thread");
+                auto g = decoder->new_generator();
+                g.start();
+                while (g.next()) {
+                    LOGI("VideoRenderer::test_play loop enter");
+                    auto *f = g.value();
+                    egl_manager->make_current();
+                    auto success = renderer->render_frame(f);
+                    LOGI("VideoRenderer::test_play render_frame result %d", success);
+                    if (success) {
+                        egl_manager->swap_buffers();
+                    }
+                    sleep(1);
+                }
+            } catch (std::exception &e) {
+                LOGE("VideoRenderer::test_play() ex: %s", e.what());
+            } catch (...) {
+                LOGE("VideoRenderer::test_play() unkown error");
+            }
+            LOGI("VideoRenderer::test_play thread finished");
+        });
+        a.detach();
     }
 }

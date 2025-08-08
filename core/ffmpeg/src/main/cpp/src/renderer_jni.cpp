@@ -42,3 +42,10 @@ Java_com_imcys_bilibilias_render_RenderUtilJNI_releaseRenderer(JNIEnv *env, jcla
     auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
     delete r;
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_imcys_bilibilias_render_RenderUtilJNI_testPlay(JNIEnv *env, jclass clazz, jlong renderer) {
+    auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
+    r->test_play();
+}

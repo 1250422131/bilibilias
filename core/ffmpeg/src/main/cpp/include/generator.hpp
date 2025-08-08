@@ -75,6 +75,10 @@ namespace bilias {
         auto value() -> T {
             return std::move(handle.promise().current_value).value();
         }
+
+        auto start() -> void {
+            handle();
+        }
     };
 
     namespace detail {
@@ -201,7 +205,7 @@ namespace bilias {
                 std::rethrow_exception(p.ex);
             }
             std::unique_lock lock(p.mtx);
-            p.cv_consumer.wait(lock, [this] {
+            p.cv_consumer.wait(lock, [&] {
                 return !p.buffer.empty() || p.done;
             });
 
@@ -224,6 +228,10 @@ namespace bilias {
                 throw std::runtime_error("No current value. Call next() first.");
             }
             return std::move(current_value).value();
+        }
+
+        auto start() -> void {
+            handle();
         }
     };
 

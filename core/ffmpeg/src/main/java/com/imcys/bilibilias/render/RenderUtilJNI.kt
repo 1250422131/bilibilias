@@ -24,4 +24,7 @@ object RenderUtilJNI {
 
     @JvmStatic
     external fun releaseRenderer(renderer: Ptr)
+
+    @JvmStatic
+    external fun testPlay(renderer: Ptr)
 }

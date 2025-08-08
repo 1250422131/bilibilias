@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <jni_log.hpp>
 
 #include <stdexcept>
 
@@ -66,6 +67,29 @@ namespace bilias::ffmpeg {
         }
         if (avformat_find_stream_info(format_ctx, nullptr) < 0) {
             throw std::runtime_error("can not find stream info");
+        }
+    }
+
+    auto debug_av1_support() -> void {
+        log_i("=== AV1 Debug Info ===");
+        log_i("FFmpeg version: {}", av_version_info());
+        const AVCodec *codec{};
+        void *iter{};
+        int av1_codec_count{};
+
+        while ((codec = av_codec_iterate(&iter))) {
+            if (codec->id == AV_CODEC_ID_AV1) {
+                av1_codec_count++;
+                std::string_view  type = av_codec_is_encoder(codec) ? "Encoder" : "Decoder";
+                log_i("Found AV! {}: {} ({})", type, codec->name, codec->long_name ? codec->long_name : "No Description");
+                log_i("Capabilities: {}", codec->capabilities);
+            }
+        }
+
+        if (av1_codec_count == 0) {
+            log_e("No AV1 codecs found at all!");
+        } else {
+            log_i("Found {} AV1 codec(s)", av1_codec_count);
         }
     }
 }

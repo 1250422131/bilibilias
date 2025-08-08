@@ -28,6 +28,10 @@ class PlayViewModel : ViewModel() {
         renderer.setViewport(width, height)
     }
 
+    fun testPlay() {
+        renderer.testPlay()
+    }
+
     fun play() {
         _isPlaying.value = true
         // TODO
