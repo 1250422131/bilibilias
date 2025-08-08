@@ -18,7 +18,6 @@ kotlin {
             api(libs.androidx.datastore)
             
             api(libs.kermit)
-            implementation(libs.kermit.crashlytics)
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
             api(libs.kotlinx.coroutines.core)
