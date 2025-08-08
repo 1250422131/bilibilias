@@ -8,6 +8,5 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "bilibilias",
     ) {
-        App()
     }
 }
