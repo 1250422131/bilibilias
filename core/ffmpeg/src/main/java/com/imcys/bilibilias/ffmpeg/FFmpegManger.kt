@@ -4,6 +4,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FFmpegManger {
 
+    init {
+        System.loadLibrary("ffmpeg")
+    }
+
     /**
      * A native method that is implemented by the 'ffmpeg' native library,
      * which is packaged with this application.

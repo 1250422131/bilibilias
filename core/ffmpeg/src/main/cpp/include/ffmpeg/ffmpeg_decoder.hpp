@@ -63,6 +63,21 @@ namespace bilias::ffmpeg {
             return frame;
         }
 
+        auto wait_push(AVFrame *frame) -> void {
+            std::unique_lock lock(mutex);
+            cv.wait(lock, [this] {
+                return (write_idx + 1) % N != read_idx;
+            });
+
+            buffer[write_idx] = frame;
+            write_idx = (write_idx + 1) % N;
+            cv.notify_one();
+        }
+
+        auto notify_all() noexcept {
+            cv.notify_all();
+        }
+
     private:
         auto release(size_t n) {
             for (int i = 0; i < n; ++i) {
@@ -85,10 +100,17 @@ namespace bilias::ffmpeg {
         AVIOContextPtr avio_ctx{nullptr};
         AVMallocPtr buffer{nullptr};
         AVFormatContextPtr format_ctx{nullptr};
+        AVCodecContextPtr codec_ctx{nullptr};
+        int video_stream_index{-1};
+
 
     public:
         explicit FFmpegDecoder(int fd) : fd(fd) {}
 
         auto init() -> void;
+
+        auto new_generator() -> BufferedGenerator<AVFrame *> {
+            return decode_frames(format_ctx.get(), codec_ctx.get(), video_stream_index);
+        }
     };
 }

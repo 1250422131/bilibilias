@@ -1,10 +1,13 @@
 package com.imcys.bilibilias.ui.play
 
 import android.opengl.GLSurfaceView
+import android.view.Surface
 import android.view.TextureView
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,12 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imcys.bilibilias.render.VideoSurfaceTextureListener
 import com.imcys.bilibilias.render.getFileDescriptorFromContentUri
 import com.imcys.bilibilias.ui.play.navigation.PlayRoute
@@ -39,7 +45,20 @@ private fun PlayScaffold(
 }
 
 @Composable
-fun PlayScreen(onToBack: () -> Unit, route: PlayRoute) {
+fun PlayScreen(
+    onToBack: () -> Unit,
+    route: PlayRoute,
+) {
+
+    val context = LocalContext.current
+    val vm: PlayViewModel = viewModel {
+        PlayViewModel()
+    }
+    val fd = remember {
+        getFileDescriptorFromContentUri(context, route.savePath)!!
+    }
+
+    val isPlaying by vm.isPlaying.collectAsState()
 
     PlayScaffold(
         onToBack = onToBack
@@ -50,56 +69,86 @@ fun PlayScreen(onToBack: () -> Unit, route: PlayRoute) {
                 .padding(it.calculateTopPadding())
         ) {
             Text("TODO 来点🐂")
-            VideoPlayerScreen(route.savePath)
+            VideoPlayerScreen(
+                isPlaying = isPlaying,
+                onPlay = vm::play,
+                onPause = vm::pause,
+                onSurfaceReady = { surface, w, h ->
+                    vm.initializeRenderer(surface, fd, w, h)
+                },
+                onSurfaceChanged = vm::updateViewport,
+                onSurfaceDestroyed = vm::release
+            )
         }
     }
 }
 
 @Composable
 private fun VideoPlayerScreen(
-    videoPath: String
+    isPlaying: Boolean,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
+    onSurfaceReady: (Surface, Int, Int) -> Unit,
+    onSurfaceChanged: (Int, Int) -> Unit,
+    onSurfaceDestroyed: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .border(1.dp, Color.Red),
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        VideoSurface(videoPath, modifier = Modifier.fillMaxSize())
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .border(1.dp, Color.Red),
+        ) {
+            VideoSurface(
+                onSurfaceReady = onSurfaceReady,
+                onSurfaceChanged = onSurfaceChanged,
+                onSurfaceDestroyed = onSurfaceDestroyed,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { if (isPlaying) onPause() else onPlay() }
+            ) {
+                Text(if (isPlaying) "Pause" else "Play")
+            }
+        }
     }
 
-    Button(onClick = {
-
-    }) {
-        Text("Play")
-    }
-
-    Button(onClick = {
-
-    }) {
-        Text("Pause")
-    }
 }
 
 @Composable
 private fun VideoSurface(
-    videoPath: String,
+    onSurfaceReady: (Surface, Int, Int) -> Unit,
+    onSurfaceChanged: (Int, Int) -> Unit,
+    onSurfaceDestroyed: () -> Unit,
     modifier: Modifier = Modifier
+
 ) {
-
-    val context = LocalContext.current
-
-    val textureView = remember { TextureView(context) }
-
-    Column(modifier = modifier) {
-        AndroidView(
-            factory = { ctx ->
-                textureView.apply {
-                    surfaceTextureListener = VideoSurfaceTextureListener()
-                }
-            },
-        )
-
+    DisposableEffect(Unit) {
+        onDispose {
+            onSurfaceDestroyed()
+        }
     }
+
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx ->
+            TextureView(ctx).apply {
+                surfaceTextureListener = VideoSurfaceTextureListener(
+                    onSurfaceReady = onSurfaceReady,
+                    onSurfaceChanged = onSurfaceChanged,
+                    onSurfaceDestroyed = onSurfaceDestroyed
+                )
+            }
+        }
+    )
 }

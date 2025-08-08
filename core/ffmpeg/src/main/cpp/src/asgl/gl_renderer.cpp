@@ -221,6 +221,6 @@ namespace bilias::gl {
     }
 
     auto GLRenderer::create() -> std::unique_ptr<GLRenderer> {
-        return std::unique_ptr<YUVRenderer>();
+        return std::make_unique<YUVRenderer>();
     }
 }

@@ -1,18 +1,34 @@
 
 #include <ffmpeg/ffmpeg_util.hpp>
 #include <unistd.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include <stdexcept>
 
 namespace {
-    auto read_packet(void* opaque, uint8_t* buf, int buf_size) -> int {
+    auto read_packet(void *opaque, uint8_t *buf, int buf_size) -> int {
         int fd = (int)(intptr_t)opaque;
-        return read(fd, buf, buf_size);
+
+        int ret;
+        do {
+            ret = read(fd, buf, buf_size);
+        } while (ret < 0 && errno == EINTR);
+
+        if (ret < 0) {
+            return AVERROR(errno);
+        }
+
+        return ret;
     }
 
-    auto seek_packet(void* opaque, int64_t offset, int whence) -> int64_t {
+    auto seek_packet(void *opaque, int64_t offset, int whence) -> int64_t {
         int fd = (int)(intptr_t)opaque;
-        return lseek64(fd, offset, whence);
+        off64_t ret = lseek64(fd, offset, whence);
+        if (ret < 0) {
+            return AVERROR(errno);
+        }
+        return ret;
     }
 }
 
@@ -24,7 +40,7 @@ namespace bilias::ffmpeg {
             buffer.get(),
             4096,
             0,
-            &fd,
+            reinterpret_cast<void *>(fd),
             read_packet,
             nullptr,
             seek_packet
@@ -36,8 +52,10 @@ namespace bilias::ffmpeg {
         auto frame = bilias_avformat_alloc_context();
         frame->pb = avio_ctx;
         auto frame_ptr = frame.get();
-        if (avformat_open_input(&frame_ptr, nullptr, nullptr, nullptr) < 0) {
-            throw std::runtime_error("无法打开文件");
+        if (auto ret = avformat_open_input(&frame_ptr, nullptr, nullptr, nullptr); ret  < 0) {
+            char errbuf[256]{};
+            av_strerror(ret, errbuf, sizeof(errbuf));
+            throw std::runtime_error("avformat_open_input failed");
         }
         return frame;
     }

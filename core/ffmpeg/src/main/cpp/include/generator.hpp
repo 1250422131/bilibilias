@@ -49,7 +49,7 @@ namespace bilias {
     }
 
     template<typename T>
-    class Generator {
+    class Generator final : NonCopy  {
     public:
         using promise_type = detail::GeneratorPromise<T>;
 
@@ -174,7 +174,7 @@ namespace bilias {
     }
 
     template<typename T>
-    class BufferedGenerator {
+    class BufferedGenerator final : NonCopy {
     public:
         using promise_type = detail::BufferedGeneratorPromise<T>;
     private:
@@ -227,7 +227,7 @@ namespace bilias {
         }
     };
 
-    auto set_generator_buffer_size(size_t size) -> detail::BufferedGeneratorSizeSetter {
+    inline auto set_generator_buffer_size(size_t size) -> detail::BufferedGeneratorSizeSetter {
         return detail::BufferedGeneratorSizeSetter{size};
     }
 

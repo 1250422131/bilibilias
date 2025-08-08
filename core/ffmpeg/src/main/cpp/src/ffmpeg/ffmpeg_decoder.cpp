@@ -2,6 +2,7 @@
 #include <ffmpeg/ffmpeg_decoder.hpp>
 #include <stdexcept>
 #include <thread>
+#include <format>
 
 namespace bilias::ffmpeg {
 
@@ -12,6 +13,7 @@ namespace bilias::ffmpeg {
     ) -> BufferedGenerator<AVFrame *> {
 
         constexpr auto buffer_size = 2 << 8;
+        co_await set_generator_buffer_size(buffer_size);
         auto buffer = RingFrameBuffer<buffer_size>();
         buffer.init();
 
@@ -25,27 +27,25 @@ namespace bilias::ffmpeg {
                     continue;
                 }
 
-                AVFrame *frame{};
-                do {
-                    auto o = buffer.try_pop();
-                    if (o.has_value()) {
-                        frame = o.value();
-                    } else {
-                        std::this_thread::yield();
-                    }
-                } while (!frame);
+                AVFrame *frame = buffer.wait_pop();
+                if (!running) break;
 
-                avcodec_send_packet(codec_ctx, &packet);
-                int ret = avcodec_receive_frame(codec_ctx, frame);
+                int send_ret = avcodec_send_packet(codec_ctx, &packet);
                 av_packet_unref(&packet);
 
-                if (ret == 0) {
-                    while (!buffer.try_push(frame)) {
-                        std::this_thread::yield();
-                    }
-                } else {
-                    buffer.try_push(frame);
+                if (send_ret < 0) {
+                    buffer.wait_push(frame);
+                    continue;
                 }
+
+                int recv_ret = avcodec_receive_frame(codec_ctx, frame);
+                if (recv_ret == 0) {
+                    buffer.wait_push(frame);
+                } else {
+                    av_frame_unref(frame);
+                    buffer.wait_push(frame);
+                }
+
             }
         });
 
@@ -56,6 +56,7 @@ namespace bilias::ffmpeg {
         }
 
         running = false;
+        buffer.notify_all();
         decoder_thread.join();
         co_return;
     }
@@ -73,9 +74,11 @@ namespace bilias::ffmpeg {
         }
 
         this->format_ctx = fd_create_and_bind_avframe(this->avio_ctx.get());
+        if (!format_ctx) {
+            throw std::runtime_error("Failed to create format context");
+        }
         bilias_avformat_find_stream_info(format_ctx.get());
 
-        int video_stream_index = -1;
         for (int i = 0; i < format_ctx->nb_streams; i++) {
             if (format_ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
                 video_stream_index = i;
@@ -93,7 +96,7 @@ namespace bilias::ffmpeg {
             throw std::runtime_error("avcodec_find_decoder failed");
         }
 
-        auto codec_ctx = bilias_avcodec_alloc_context3(codec);
+        codec_ctx = bilias_avcodec_alloc_context3(codec);
         if (!codec_ctx) {
             throw std::runtime_error("bilias_avcodec_alloc_context3 failed");
         }

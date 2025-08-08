@@ -1,6 +1,8 @@
 #include "video_renderer.hpp"
 #include <mutex>
 #include <jni_log.hpp>
+#include <unistd.h>
+#include <fcntl.h>
 
 namespace {
 
@@ -16,7 +18,20 @@ namespace bilias {
         destroy();
     }
 
-    auto VideoRenderer::initialize(ANativeWindow *native_window) -> bool {
+    auto VideoRenderer::initialize(ANativeWindow *native_window, int fd) -> bool {
+        LOGE("VideoRenderer::initialize window: %ld, fd: %d", (long)native_window, fd);
+
+        if (fcntl(fd, F_GETFL) < 0) {
+            auto msg = std::format("FD {} is invalid: {}", fd, strerror(errno));
+            throw std::runtime_error(msg);
+        }
+
+        if (lseek64(fd, 0, SEEK_SET) < 0) { // 测试 seek 权限
+            perror("lseek64 failed");
+            throw std::runtime_error("FD seek failed");
+        }
+
+
         std::lock_guard lock(render_mutex);
 
         if (initialized.load()) return true;
@@ -32,6 +47,9 @@ namespace bilias {
 
             renderer = gl::GLRenderer::create();
             renderer->initialize();
+
+            decoder = std::make_unique<ffmpeg::FFmpegDecoder>(fd);
+            decoder->init();
 
             initialized.store(true);
             LOGI("VideoRenderer initialized successfully");

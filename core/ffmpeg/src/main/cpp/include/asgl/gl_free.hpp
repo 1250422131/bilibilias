@@ -40,8 +40,8 @@ namespace bilias::gl {
             if (this != &other) {
                 if (this->value > 0) {
                     Fn(this->value);
-                    this->value = std::exchange(other.value, 0);
                 }
+                this->value = std::exchange(other.value, 0);
             }
             return *this;
         }
@@ -62,8 +62,12 @@ namespace bilias::gl {
             }
         }
 
+        auto release() noexcept -> GLuint {
+            return std::exchange(value, 0);
+        }
+
         ~GLFree() {
-            auto v = std::exchange(this->value, -1);
+            auto v = std::exchange(this->value, 0);
             if (v > 0) {
                 Fn(v);
             }
