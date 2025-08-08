@@ -29,7 +29,9 @@ kotlinx-io = "0.8.0"
 kotlinx-serialization = "1.9.0"
 ktor = "3.2.3"
 androidx-material3-adaptive = "1.1.2"
+lifecycleCoroutines = "2.5.0"
 qr = "1.0.1"
+settings-ui = "2.13.0"
 uriKmp = "0.0.20"
 
 [libraries]
@@ -79,6 +81,7 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "lifecycleCoroutines" }
 qr-kit = { module = "io.github.alexzhirkevich:qrose", version.ref = "qr" }
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -87,6 +90,7 @@ compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "androidx-room" }
+settings-ui = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "settings-ui" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version.ref = "uriKmp" }
 
 [plugins]

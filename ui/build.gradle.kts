@@ -32,9 +32,8 @@ kotlin {
             implementation(libs.qr.kit)
 
             implementation(mediampLibs.mediamp.api)
-
-            implementation("me.zhanghai.compose.preference:preference:2.1.0")
-            implementation("com.arkivanov.essenty:lifecycle-coroutines:2.5.0")
+            implementation(libs.settings.ui)
+            implementation(libs.lifecycle.coroutines)
         }
     }
 }
