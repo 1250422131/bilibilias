@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -53,7 +54,7 @@ val LocalUseColorfulIcon = compositionLocalOf { true }
 val LocalVerticalPadding = compositionLocalOf { 16.dp }
 
 @Composable
-fun BannerItem(content: @Composable () -> Unit) {
+fun BannerItem(shape: Shape = RoundedCornerShape(36), content: @Composable () -> Unit) {
     Column {
         Spacer(modifier = Modifier.height(16.dp))
         CompositionLocalProvider(

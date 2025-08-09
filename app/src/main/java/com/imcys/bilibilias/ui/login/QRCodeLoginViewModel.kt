@@ -147,6 +147,7 @@ class QRCodeLoginViewModel(
                 mid = biliLoginUserModel.mid ?: 0L,
                 face = biliLoginUserModel.face ?: "",
                 level = biliLoginUserModel.level ?: 0,
+                vipState = biliLoginUserModel.vipState ?: 0,
                 loginPlatform = uiState.selectedLoginPlatform,
                 accessToken = currentQrCodePollInfo?.accessToken,
                 refreshToken = currentQrCodePollInfo?.refreshToken

@@ -11,6 +11,7 @@ data class DownloadViewInfo(
     val downloadMode: DownloadMode = DownloadMode.AUDIO_VIDEO,
     val selectedCid: List<Long> = listOf(),
     val selectedEpId: List<Long> = listOf(),
+    val downloadCover: Boolean = false,
 ) {
     fun toggleCid(cid: Long): DownloadViewInfo = copy(
         selectedCid = if (selectedCid.contains(cid)) {
@@ -52,7 +53,8 @@ data class DownloadViewInfo(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
-            selectedCid = if (defaultCid != null && !selectedCid.contains(defaultCid)) selectedCid + defaultCid else selectedCid,
+            // 防止重复添加和 0L 添加
+            selectedCid = (if (defaultCid != null && !selectedCid.contains(defaultCid)) selectedCid + defaultCid else selectedCid).filter { it != 0L },
             selectedEpId = emptyList() // 清空番剧选择
         )
 
@@ -60,7 +62,8 @@ data class DownloadViewInfo(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
-            selectedEpId = if (defaultEpId != null && !selectedEpId.contains(defaultEpId)) selectedEpId + defaultEpId else selectedEpId,
+            // 防止重复添加和 0L 添加
+            selectedEpId = (if (defaultEpId != null && !selectedEpId.contains(defaultEpId)) selectedEpId + defaultEpId else selectedEpId).filter { it != 0L },
             selectedCid = emptyList() // 清空视频选择
         )
 

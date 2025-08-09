@@ -38,6 +38,9 @@ data class DownloadTask(
     @ColumnInfo(name = "title")
     val title: String,
 
+    @ColumnInfo(name = "description")
+    val description: String = "",
+
     @ColumnInfo(name = "cover")
     val cover: String,
 

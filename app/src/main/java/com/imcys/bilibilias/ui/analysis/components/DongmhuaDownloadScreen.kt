@@ -1,9 +1,9 @@
 package com.imcys.bilibilias.ui.analysis.components
 
 import androidx.compose.ui.unit.sp
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,9 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -49,6 +52,7 @@ import kotlin.math.ceil
 fun DongmhuaDownloadScreen(
     downloadInfo: DownloadViewInfo?,
     donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
+    currentUserInfo: BILIUsersEntity?,
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
@@ -66,6 +70,7 @@ fun DongmhuaDownloadScreen(
     }
     var currentEpListIndex by remember { mutableIntStateOf(0) }
 
+    val isVip = currentUserInfo?.isVip() == true
 
     LaunchedEffect(donghuaViewInfo.data?.seasonId, donghuaViewInfo.data?.seasons) {
         selectSeasonsId = donghuaViewInfo.data?.seasons
@@ -187,31 +192,54 @@ fun DongmhuaDownloadScreen(
                             ) {
                                 val episodeList = donghuaViewInfo.data?.episodes ?: emptyList()
                                 val startIndex = currentEpListIndex * 12
-                                val endIndex = minOf((currentEpListIndex + 1) * 12, episodeList.size)
+                                val endIndex =
+                                    minOf((currentEpListIndex + 1) * 12, episodeList.size)
 
                                 items(episodeList.subList(startIndex, endIndex)) {
-                                    FilterChip(
-                                        selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
-                                        onClick = {
-                                            onUpdateSelectedEpId.invoke(it.epId)
-                                        },
-                                        label = {
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .height(60.dp),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
+                                    Box {
+                                        FilterChip(
+                                            enabled = !(!isVip && it.badge == "会员"),
+                                            selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
+                                            onClick = {
+                                                onUpdateSelectedEpId.invoke(it.epId)
+                                            },
+                                            label = {
+                                                Column(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .height(60.dp),
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Text(
+                                                        it.longTitle.ifBlank { it.title },
+                                                        maxLines = 2,
+                                                        fontSize = 14.sp,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                    )
+                                                }
+                                            }
+                                        )
+                                        if (it.badge.isNotEmpty()) {
+                                            Surface(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopEnd),
+                                                shape = FilterChipDefaults.shape,
+                                                color = MaterialTheme.colorScheme.primary,
                                             ) {
                                                 Text(
-                                                    it.longTitle.ifBlank { it.title },
-                                                    maxLines = 2,
-                                                    fontSize = 14.sp,
-                                                    overflow = TextOverflow.Ellipsis,
+                                                    it.badge, modifier = Modifier.padding(3.dp),
+                                                    fontSize = 8.sp,
+                                                    style = TextStyle(
+                                                        platformStyle = PlatformTextStyle(
+                                                            includeFontPadding = false
+                                                        )
+                                                    )
                                                 )
                                             }
                                         }
-                                    )
+
+                                    }
                                 }
                             }
                         }

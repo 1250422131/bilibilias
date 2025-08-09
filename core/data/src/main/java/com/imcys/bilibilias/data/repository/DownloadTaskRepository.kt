@@ -63,12 +63,13 @@ class DownloadTaskRepository(
         selectedEpId: List<Long>
     ): Result<DownloadTaskTree> = runCatching {
         val donghuaInfo = videoInfoRepository.getDonghuaSeasonViewInfo(currentEpId).last()
-        if (donghuaInfo.status != ApiStatus.SUCCESS) error("番剧接口异常")
+        if (donghuaInfo.status != ApiStatus.SUCCESS) error("番剧接口异常:${donghuaInfo.errorMsg}")
         val data = donghuaInfo.data!!
 
         val task = getOrCreateTask(
             platformId = data.seasonId.toString(),
             title = data.title,
+            description = data.evaluate,
             cover = data.cover,
             type = DownloadTaskType.BILI_DONGHUA
         )
@@ -86,7 +87,7 @@ class DownloadTaskRepository(
         selectedCid: List<Long>
     ): Result<DownloadTaskTree> = runCatching {
         val videoInfo = videoInfoRepository.getVideoView(bvid).last()
-        if (videoInfo.status != ApiStatus.SUCCESS) error("视频接口异常")
+        if (videoInfo.status != ApiStatus.SUCCESS) error("视频接口异常:${videoInfo.errorMsg}")
         val data = videoInfo.data!!
 
         // 判断是否为合集
@@ -97,6 +98,7 @@ class DownloadTaskRepository(
             getOrCreateTask(
                 platformId = data.ugcSeason!!.id.toString(),
                 title = data.ugcSeason!!.title,
+                description = data.desc,
                 cover = data.ugcSeason!!.cover,
                 type = DownloadTaskType.BILI_VIDEO_SECTION
             ) to DownloadTaskType.BILI_VIDEO_SECTION
@@ -105,6 +107,7 @@ class DownloadTaskRepository(
             getOrCreateTask(
                 platformId = data.bvid,
                 title = data.title,
+                description = data.desc,
                 cover = data.pic,
                 type = DownloadTaskType.BILI_VIDEO
             ) to DownloadTaskType.BILI_VIDEO
@@ -130,6 +133,7 @@ class DownloadTaskRepository(
     private suspend fun getOrCreateTask(
         platformId: String,
         title: String,
+        description: String,
         cover: String,
         type: DownloadTaskType
     ): DownloadTask {
@@ -137,6 +141,7 @@ class DownloadTaskRepository(
             downloadTaskDao.updateTask(it)
         } ?: DownloadTask(
             title = title,
+            description = description,
             platformId = platformId,
             downloadPlatform = DownloadPlatform.BILIBILI,
             cover = cover,
@@ -370,6 +375,7 @@ class DownloadTaskRepository(
                 platformId = episode.bvid,
                 title = episode.title,
                 cover = episode.arc.pic,
+                description = episode.arc.desc,
                 type = DownloadTaskType.BILI_VIDEO
             )
 
