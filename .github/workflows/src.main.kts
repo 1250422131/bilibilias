@@ -51,18 +51,10 @@ workflow(
             name = "Copy CI gradle.properties",
             command = "mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties"
         )
-        uses(
-            name = "Setup Java",
-            action = SetupJava(
-                distribution = SetupJava.Distribution.Zulu,
-                javaVersion = "21"
-            )
-        )
+        setupJava()
         uses(
             name = "Setup Gradle",
-            action = ActionsSetupGradle(
-                cacheDisabled = true,
-            )
+            action = ActionsSetupGradle()
         )
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
         prepareSigningKey()
