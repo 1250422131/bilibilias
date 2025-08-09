@@ -10,7 +10,6 @@ import com.imcys.bilibilias.core.datastore.DataStoreModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
-import com.imcys.bilibilias.core.di.CommonModule
 import com.imcys.bilibilias.core.di.applicationScope
 import com.imcys.bilibilias.core.domain.UseCaseModule
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
@@ -55,7 +54,6 @@ fun KoinApplication.commonModules() = module {
     includes(
         otherModules(),
         UseCaseModule,
-        CommonModule,
         DataSourceModule,
         LogicModule,
         DataStoreModule
@@ -98,6 +96,7 @@ private fun KoinApplication.otherModules() = module {
             } + SupervisorJob() + Dispatchers.IO,
         )
     }
+    single { KmpContext }
 }
 
 fun KoinApplication.startCommonKoinModule(
