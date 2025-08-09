@@ -90,14 +90,16 @@ workflow(
             name = "Build release variant",
             command = "./gradlew :app:assembleRelease"
         )
-        val gitTag = getGitTag()
+//        val gitTag = getGitTag()
         val createRelease = uses(
             name = "Create Release",
             action = ActionGhRelease(
-                tagName = expr { gitTag.tagExpr },
-                name = expr { gitTag.tagVersionExpr },
+                tagName = "test-tag",
+//                tagName = expr { gitTag.tagExpr },
+//                name = expr { gitTag.tagVersionExpr },
+                name = "test-name",
                 draft = true,
-                prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
+//                prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
                 files = listOf(
                     "app/build/outputs/apk/release/app-release.apk",
                     "build/outputs/apk/release/app-release.apk",
