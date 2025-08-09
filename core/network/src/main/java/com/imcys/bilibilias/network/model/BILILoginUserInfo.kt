@@ -18,16 +18,18 @@ data class BILILoginUserInfo(
     @SerialName("uname")
     val uname: String?,
     @SerialName("wbi_img")
-    val wbiImg: WbiImg?
+    val wbiImg: WbiImg?,
+    @SerialName("vip")
+    val vip: BILIUserVip? = null
 ) {
     @Serializable
     data class LevelInfo(
         @SerialName("current_exp")
-        val currentExp: Int,
+        val currentExp: Long,
         @SerialName("current_level")
         val currentLevel: Int,
         @SerialName("current_min")
-        val currentMin: Int,
+        val currentMin: Long,
         @SerialName("next_exp")
         val nextExp: String
     )
@@ -37,11 +39,11 @@ data class BILILoginUserInfo(
         @SerialName("desc")
         val desc: String,
         @SerialName("role")
-        val role: Int,
+        val role: Long,
         @SerialName("title")
         val title: String,
         @SerialName("type")
-        val type: Int
+        val type: Long
     )
 
     @Serializable
@@ -49,13 +51,13 @@ data class BILILoginUserInfo(
         @SerialName("desc")
         val desc: String,
         @SerialName("type")
-        val type: Int
+        val type: Long
     )
 
     @Serializable
     data class Pendant(
         @SerialName("expire")
-        val expire: Int,
+        val expire: Long,
         @SerialName("image")
         val image: String,
         @SerialName("image_enhance")
@@ -65,73 +67,15 @@ data class BILILoginUserInfo(
         @SerialName("name")
         val name: String,
         @SerialName("pid")
-        val pid: Int
+        val pid: Long
     )
-
-    @Serializable
-    data class Vip(
-        @SerialName("avatar_subscript")
-        val avatarSubscript: Int,
-        @SerialName("avatar_subscript_url")
-        val avatarSubscriptUrl: String,
-        @SerialName("due_date")
-        val dueDate: Long,
-        @SerialName("label")
-        val label: Label,
-        @SerialName("nickname_color")
-        val nicknameColor: String,
-        @SerialName("role")
-        val role: Int,
-        @SerialName("status")
-        val status: Int,
-        @SerialName("theme_type")
-        val themeType: Int,
-        @SerialName("tv_due_date")
-        val tvDueDate: Int,
-        @SerialName("tv_vip_pay_type")
-        val tvVipPayType: Int,
-        @SerialName("tv_vip_status")
-        val tvVipStatus: Int,
-        @SerialName("type")
-        val type: Int,
-        @SerialName("vip_pay_type")
-        val vipPayType: Int
-    ) {
-        @Serializable
-        data class Label(
-            @SerialName("bg_color")
-            val bgColor: String,
-            @SerialName("bg_style")
-            val bgStyle: Int,
-            @SerialName("border_color")
-            val borderColor: String,
-            @SerialName("img_label_uri_hans")
-            val imgLabelUriHans: String,
-            @SerialName("img_label_uri_hans_static")
-            val imgLabelUriHansStatic: String,
-            @SerialName("img_label_uri_hant")
-            val imgLabelUriHant: String,
-            @SerialName("img_label_uri_hant_static")
-            val imgLabelUriHantStatic: String,
-            @SerialName("label_theme")
-            val labelTheme: String,
-            @SerialName("path")
-            val path: String,
-            @SerialName("text")
-            val text: String,
-            @SerialName("text_color")
-            val textColor: String,
-            @SerialName("use_img_label")
-            val useImgLabel: Boolean
-        )
-    }
 
     @Serializable
     data class VipLabel(
         @SerialName("bg_color")
         val bgColor: String,
         @SerialName("bg_style")
-        val bgStyle: Int,
+        val bgStyle: Long,
         @SerialName("border_color")
         val borderColor: String,
         @SerialName("img_label_uri_hans")
@@ -157,13 +101,13 @@ data class BILILoginUserInfo(
     @Serializable
     data class Wallet(
         @SerialName("bcoin_balance")
-        val bcoinBalance: Int,
+        val bcoinBalance: Long,
         @SerialName("coupon_balance")
-        val couponBalance: Int,
+        val couponBalance: Long,
         @SerialName("coupon_due_time")
-        val couponDueTime: Int,
+        val couponDueTime: Long,
         @SerialName("mid")
-        val mid: Int
+        val mid: Long
     )
 
     @Serializable
@@ -175,6 +119,65 @@ data class BILILoginUserInfo(
     )
 }
 
+
+/**
+ * 用户会员信息
+ */
+@Serializable
+data class BILIUserVip(
+    @SerialName("due_date")
+    val dueDate: Long,
+    @SerialName("label")
+    val label: Label,
+    @SerialName("nickname_color")
+    val nicknameColor: String,
+    @SerialName("role")
+    val role: Long? = -1,
+    @SerialName("status")
+    val status: Int,
+    @SerialName("theme_type")
+    val themeType: Long,
+    @SerialName("tv_due_date")
+    val tvDueDate: Long? = 0,
+    @SerialName("tv_vip_pay_type")
+    val tvVipPayType: Long? = -1,
+    @SerialName("tv_vip_status")
+    val tvVipStatus: Long? = -1,
+    @SerialName("type")
+    val type: Long,
+    @SerialName("vip_pay_type")
+    val vipPayType: Long
+) {
+    @Serializable
+    data class Label(
+        @SerialName("bg_color")
+        val bgColor: String,
+        @SerialName("bg_style")
+        val bgStyle: Long,
+        @SerialName("border_color")
+        val borderColor: String,
+        @SerialName("img_label_uri_hans")
+        val imgLabelUriHans: String,
+        @SerialName("img_label_uri_hans_static")
+        val imgLabelUriHansStatic: String,
+        @SerialName("img_label_uri_hant")
+        val imgLabelUriHant: String,
+        @SerialName("img_label_uri_hant_static")
+        val imgLabelUriHantStatic: String,
+        @SerialName("label_theme")
+        val labelTheme: String,
+        @SerialName("path")
+        val path: String,
+        @SerialName("text")
+        val text: String,
+        @SerialName("text_color")
+        val textColor: String,
+        @SerialName("use_img_label")
+        val useImgLabel: Boolean
+    )
+}
+
+
 @Serializable
 data class TVBILILoginUserInfo(
     @SerialName("face")
@@ -185,6 +188,8 @@ data class TVBILILoginUserInfo(
     val mid: Long?,
     @SerialName("name")
     val name: String?,
+    @SerialName("vip")
+    val vip: BILIUserVip? = null
 )
 typealias APPBILILoginUserInfo = TVBILILoginUserInfo
 

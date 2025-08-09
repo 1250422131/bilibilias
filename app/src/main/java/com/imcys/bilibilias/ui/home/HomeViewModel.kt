@@ -113,7 +113,8 @@ class HomeViewModel(
                                     mid = it.data?.mid ?: 0L,
                                     name = it.data?.name ?: "",
                                     face = it.data?.face ?: "",
-                                    level = it.data?.level ?: 0
+                                    level = it.data?.level ?: 0,
+                                    vipState = it.data?.vipState ?: 0,
                                 )
                             )
                             _userLoginPlatformList.emit(biliUserList)

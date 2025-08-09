@@ -4,7 +4,9 @@ import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
 import com.imcys.bilibilias.data.model.BILIUserStatModel
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
+import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.datastore.User
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.mapData
@@ -28,6 +30,11 @@ class UserInfoRepository(
     private val biliUsersDao: BILIUsersDao,
     private val usersDataSource: UsersDataSource
 ) {
+
+    // 获取当前用户信息
+    suspend fun getCurrentUser(): BILIUsersEntity? {
+        return biliUsersDao.getBILIUserByUid(usersDataSource.getUserId())
+    }
 
     suspend fun getUserPageInfo(mid: Long) = webApiService.getUserAccInfo(mid)
 

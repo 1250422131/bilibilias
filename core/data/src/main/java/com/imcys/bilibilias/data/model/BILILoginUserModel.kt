@@ -11,4 +11,5 @@ data class BILILoginUserModel(
     val level: Int?,
     val mid: Long?,
     val name: String?,
+    val vipState:Int?
 )

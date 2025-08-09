@@ -33,6 +33,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    kotlin  {
+        compilerOptions {
+            freeCompilerArgs.add("-XXLanguage:+WhenGuards")
+        }
+    }
 }
 
 dependencies {
@@ -57,6 +63,8 @@ dependencies {
     // 高斯模糊
     implementation(libs.compose.cloudy)
 
+    // 启动屏
+    // implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

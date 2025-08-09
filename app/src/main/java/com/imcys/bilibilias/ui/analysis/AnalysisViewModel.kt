@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.utils.AsRegexUtil
@@ -10,6 +10,7 @@ import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
+import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.dwonload.DownloadManager
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @OptIn(FlowPreview::class)
@@ -60,6 +62,10 @@ class AnalysisViewModel(
         MutableStateFlow<NetWorkResult<BILIVideoPlayerInfo?>>(emptyNetWorkResult())
     val videoPlayerInfo = _videoPlayerInfo.asStateFlow()
 
+    private val _currentUserInfo = MutableStateFlow<BILIUsersEntity?>(null)
+
+    val currentUserInfo = _currentUserInfo.asStateFlow()
+
 
     private val debounceTime = 1000L // 防抖时间
     private val debounceJob: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -83,6 +89,35 @@ class AnalysisViewModel(
                 }
         }
 
+        viewModelScope.launch {
+            _currentUserInfo.value = userInfoRepository.getCurrentUser()
+        }
+
+    }
+
+    /**
+     * 下载封面
+     */
+    suspend fun downloadImageToAlbum(
+        context: Context,
+        imageUrl: String?,
+        saveDirName: String
+    ) = withContext(Dispatchers.IO) {
+        if (imageUrl.isNullOrEmpty()) {
+            Toast.makeText(context, "图片链接不能为空", Toast.LENGTH_SHORT).show()
+            return@withContext
+        }
+        val type = imageUrl.substringAfterLast(".")
+        downloadManager.downloadImageToAlbum(
+            imageUrl, when (val result = _uiState.value.asLinkResultType) {
+                is ASLinkResultType.BILI.Donghua -> "${result.currentEpId}_pic.${type}"
+                is ASLinkResultType.BILI.Video -> "${result.viewInfo.data?.cid}_pic.${type}"
+                else -> "${System.currentTimeMillis()}.${type}"
+            }, saveDirName
+        )
+        launch(Dispatchers.Main) {
+            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
+        }
     }
 
     /**
@@ -94,6 +129,13 @@ class AnalysisViewModel(
         )
         if (inputAsText.isEmpty()) return
         debounceJob.value = inputAsText
+    }
+
+
+    fun updateDownloadCover(downloadCover: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(downloadCover = downloadCover)
+        )
     }
 
     fun updateSelectedCidList(cid: Long?) {
@@ -198,27 +240,45 @@ class AnalysisViewModel(
                         it.data?.durls,
                         it.data?.supportFormats
                     ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
-                        val defaultEpId = if (epId == null || epId == 0L) {
-                            viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
-                        } else epId
 
-                        val currentMediaType = _uiState.value.asLinkResultType
-                        if (currentMediaType is ASLinkResultType.BILI.Donghua) {
-                            _uiState.value = _uiState.value.copy(
-                                downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
-                                    mediaType = currentMediaType,
-                                    qualityId = selectVideoQualityId,
-                                    code = selectVideoCode,
-                                    audioQualityId = selectAudioQualityId,
-                                    defaultEpId = defaultEpId
-                                ) ?: DownloadViewInfo(
-                                    selectVideoCode = selectVideoCode,
-                                    selectVideoQualityId = selectVideoQualityId,
-                                    selectAudioQualityId = selectAudioQualityId,
-                                    selectedEpId = listOf(defaultEpId)
+                        launch(Dispatchers.IO) {
+                            val currentUser = userInfoRepository.getCurrentUser()
+
+                            // 如果epId为null或0，则默认选择第一个非会员的epId
+                            val defaultEpId = if (epId == null || epId == 0L) {
+                                if (currentUser?.isVip() != true) {
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.badge != "会员" }?.epId
+                                        ?: 0L
+                                } else viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
+                            } else {
+                                // 如果当前用户不是会员，则选择第一个非会员的epId，否则选择传入的epId
+                                if (currentUser?.isVip() != true) {
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.epId == epId && ep.badge != "会员" }?.epId
+                                        ?: 0L
+                                } else {
+                                    epId
+                                }
+                            }
+
+                            val currentMediaType = _uiState.value.asLinkResultType
+                            if (currentMediaType is ASLinkResultType.BILI.Donghua) {
+                                _uiState.value = _uiState.value.copy(
+                                    downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
+                                        mediaType = currentMediaType,
+                                        qualityId = selectVideoQualityId,
+                                        code = selectVideoCode,
+                                        audioQualityId = selectAudioQualityId,
+                                        defaultEpId = defaultEpId
+                                    ) ?: DownloadViewInfo(
+                                        selectVideoCode = selectVideoCode,
+                                        selectVideoQualityId = selectVideoQualityId,
+                                        selectAudioQualityId = selectAudioQualityId,
+                                        selectedEpId = listOf(defaultEpId).filter { ep -> ep != 0L }
+                                    )
                                 )
-                            )
+                            }
                         }
+
                     }
                 }
 
@@ -260,9 +320,11 @@ class AnalysisViewModel(
                     mVideoCodingList.add(code.split(".")[0])
                 }
             }
-            selectVideoCode = mVideoCodingList.firstOrNull() ?: ""
             mSupportFormats?.filter { supportFormat ->
                 dashVideoList.any { item -> item.id == supportFormat.quality }
+            }?.also {
+                // 选择支持清晰度的第一个视频编码
+                selectVideoCode = it.firstOrNull()?.codecs?.firstOrNull()?.split(".")[0] ?: ""
             }
         } else {
             // FLV模式
@@ -309,7 +371,7 @@ class AnalysisViewModel(
                                     selectVideoCode = selectVideoCode,
                                     selectVideoQualityId = selectVideoQualityId,
                                     selectAudioQualityId = selectAudioQualityId,
-                                    selectedCid = listOf(cid),
+                                    selectedCid = listOf(cid).filter { cid -> cid != 0L },
                                 )
                             )
                         }

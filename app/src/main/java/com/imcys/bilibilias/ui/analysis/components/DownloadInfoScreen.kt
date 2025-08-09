@@ -123,24 +123,35 @@ fun VideoSupportFormatsSelectScreen(
 ) {
     var videoModelExpanded by remember { mutableStateOf(false) }
     var videoCodeModelExpanded by remember { mutableStateOf(false) }
+    // 选择的视频分辨率
     var selectVideoFormatValue: String by remember { mutableStateOf("") }
+    // 选择的视频编码
     var selectVideoCodeValue: String by remember { mutableStateOf("") }
 
     var supportFormats by remember { mutableStateOf(listOf<BILIVideoSupportFormat>()) }
     var videoCodingList by remember { mutableStateOf(setOf<String>()) }
 
-    LaunchedEffect(downloadInfo?.selectVideoQualityId, downloadInfo?.selectVideoCode) {
+    LaunchedEffect(downloadInfo?.selectVideoCode) {
+        selectVideoCodeValue = downloadInfo?.selectVideoCode ?: ""
+    }
+
+    LaunchedEffect(downloadInfo?.selectVideoQualityId) {
         supportFormats = if (dashVideoList != null) {
             // Dash模式
             val mVideoCodingList = mutableSetOf<String>()
-            mSupportFormats?.forEach {
+            mSupportFormats?.filter {
+                // 筛选出支持的清晰度
+                it.quality == downloadInfo?.selectVideoQualityId
+            }?.forEach {
                 it.codecs.forEach { code ->
                     mVideoCodingList.add(code.split(".")[0])
                 }
             }
             videoCodingList = mVideoCodingList
-            selectVideoCodeValue = downloadInfo?.selectVideoCode ?: ""
-
+            // 更新视频编码选择
+            mVideoCodingList.firstOrNull()?.let {
+                onVideoCodeChange(it)
+            }
             mSupportFormats?.filter { supportFormat ->
                 dashVideoList.any { item -> item.id == supportFormat.quality }
             } ?: emptyList()

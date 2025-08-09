@@ -28,6 +28,7 @@ coil = "3.3.0"
 material3Android = "1.5.0-alpha01"
 cloudy = "0.2.7"
 splashscreen = "1.2.0-rc01"
+youtubedlAndroid = "0.17.3"
 
 nav3Core = "1.0.0-alpha06"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
@@ -86,6 +87,8 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+youtubedl-android-library = { group = "io.github.junkfood02.youtubedl-android", name = "library", version.ref = "youtubedlAndroid" }
+youtubedl-android-aria2c = { group = "io.github.junkfood02.youtubedl-android", name = "aria2c", version.ref = "youtubedlAndroid" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
