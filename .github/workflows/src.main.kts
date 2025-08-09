@@ -26,6 +26,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
 import io.github.typesafegithub.workflows.dsl.JobBuilder
 import io.github.typesafegithub.workflows.dsl.expressions.contexts.EnvContext.GITHUB_WORKSPACE
+import io.github.typesafegithub.workflows.dsl.expressions.contexts.SecretsContext
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
@@ -47,15 +48,9 @@ workflow(
 ) {
     job(id = "BuildAndUpload", runsOn = UbuntuLatest, timeoutMinutes = 50) {
         uses(name = "Checkout", action = Checkout())
-        run(
-            name = "Copy CI gradle.properties",
-            command = "mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties"
-        )
+        copyCiGradleProperties()
         setupJava()
-        uses(
-            name = "Setup Gradle",
-            action = ActionsSetupGradle()
-        )
+        setupGradle()
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
         prepareSigningKey()
         run(
@@ -83,23 +78,16 @@ workflow(
     ),
     sourceFile = __FILE__,
     targetFileName = "Release.yml",
-    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled
+    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled,
 ) {
-    job(id = "BuildAndUpload", runsOn = UbuntuLatest, timeoutMinutes = 50) {
+    job(id = "BuildAndUpload", runsOn = UbuntuLatest, timeoutMinutes = 120) {
         uses(name = "Checkout", action = Checkout())
-        run(
-            name = "Copy CI gradle.properties",
-            command = "mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties"
-        )
+        copyCiGradleProperties()
         setupJava()
-        uses(
-            name = "Setup Gradle",
-            action = ActionsSetupGradle(),
-        )
-        run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
+        setupGradle()
         prepareSigningKey()
         run(
-            name = "Build all build type and flavor permutations",
+            name = "Build release variant",
             command = "./gradlew :app:assembleRelease"
         )
         val gitTag = getGitTag()
@@ -118,6 +106,13 @@ workflow(
         )
     }
 }
+fun JobBuilder<*>.copyCiGradleProperties() {
+    run(
+        name = "Copy CI gradle.properties",
+        command = "mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties"
+    )
+}
+
 fun JobBuilder<*>.setupJava() {
     uses(
         name = "Setup Java",
@@ -125,6 +120,19 @@ fun JobBuilder<*>.setupJava() {
             distribution = SetupJava.Distribution.Zulu,
             javaVersion = "21"
         )
+    )
+}
+
+fun JobBuilder<*>.setupGradle() {
+    val GRADLE_ENCRYPTION_KEY by SecretsContext
+    uses(
+        name = "Setup Gradle",
+        action = ActionsSetupGradle(
+            cacheEncryptionKey = expr { GRADLE_ENCRYPTION_KEY },
+            buildScanPublish = true,
+            buildScanTermsOfUseUrl = ActionsSetupGradle.BuildScanTermsOfUseUrl.HttpsGradleComTermsOfService,
+            buildScanTermsOfUseAgree = ActionsSetupGradle.BuildScanTermsOfUseAgree.Yes,
+        ),
     )
 }
 

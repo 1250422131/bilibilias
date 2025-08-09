@@ -14,7 +14,7 @@ permissions:
 jobs:
   BuildAndUpload:
     runs-on: 'ubuntu-latest'
-    timeout-minutes: 50
+    timeout-minutes: 120
     steps:
       - id: 'step-0'
         name: 'Checkout'
@@ -31,10 +31,12 @@ jobs:
       - id: 'step-3'
         name: 'Setup Gradle'
         uses: 'gradle/actions/setup-gradle@v4'
+        with:
+          cache-encryption-key: '${{ secrets.GRADLE_ENCRYPTION_KEY }}'
+          build-scan-publish: 'true'
+          build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'
+          build-scan-terms-of-use-agree: 'yes'
       - id: 'step-4'
-        name: 'Check build-logic'
-        run: './gradlew :build-logic:convention:check'
-      - id: 'step-5'
         name: 'Apk Sign'
         run: |-
           cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
@@ -43,25 +45,26 @@ jobs:
           echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
           echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
           echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
-      - id: 'step-6'
-        name: 'Build all build type and flavor permutations'
+      - id: 'step-5'
+        name: 'Build release variant'
         run: './gradlew :app:assembleRelease'
+      - id: 'step-6'
+        name: 'Get Tag'
+        uses: 'dawidd6/action-get-tag@v1'
       - id: 'step-7'
+        uses: 'bhowell2/github-substring-action@v1.0.0'
+        with:
+          value: '${{ steps.step-6.outputs.tag }}'
+          index_of_str: 'v'
+          default_return_value: '${{ steps.step-6.outputs.tag }}'
+      - id: 'step-8'
         name: 'Create Release'
         uses: 'softprops/action-gh-release@v2'
         with:
-          name: '${{ github.ref }}'
-          tag_name: '${{ github.ref }}'
+          name: '${{ steps.step-7.outputs.substring }}'
+          tag_name: '${{ steps.step-6.outputs.tag }}'
           draft: 'true'
-          prerelease: 'false'
-          files: ''
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      - id: 'step-8'
-        name: 'Upload app'
-        uses: 'actions/upload-artifact@v4'
-        with:
-          name: 'APKs'
-          path: '**/build/outputs/apk/**/*.apk'
+          prerelease: '${{ contains(steps.step-6.outputs.tag, ''-'') }}'
+          files: 'app/build/outputs/apk/github/release/app-release.apk'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
