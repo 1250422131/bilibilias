@@ -99,7 +99,7 @@ workflow(
                 draft = true,
                 prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
                 files = listOf(
-                    "app/build/outputs/apk/github/release/*.apk",
+                    "**/build/outputs/apk/github/release/*.apk",
                 )
             ),
             env = mapOf("GITHUB_TOKEN" to expr { secrets.GITHUB_TOKEN }),
