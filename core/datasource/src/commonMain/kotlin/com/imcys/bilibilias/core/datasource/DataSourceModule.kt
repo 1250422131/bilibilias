@@ -48,7 +48,8 @@ val DataSourceModule = module {
                     level = LogLevel.BODY
                     logger = object : Logger {
                         override fun log(message: String) {
-                            co.touchlab.kermit.Logger.i("BilibiliLoginApi") { message }
+                            io.github.smyrgeorge.log4k.Logger.of("BilibiliLoginApi")
+                                .info { message }
                         }
                     }
                 }

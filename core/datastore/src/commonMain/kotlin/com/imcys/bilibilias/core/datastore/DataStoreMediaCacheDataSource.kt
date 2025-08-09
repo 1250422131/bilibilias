@@ -45,15 +45,15 @@ internal class DataStoreMediaCacheDataSource(
     override suspend fun delete(episodeMetadata: EpisodeMetadata): Boolean {
         var deleted = false
         val key = "${episodeMetadata.bvid}-${episodeMetadata.cid}" // For logging
-        logger.d { "Attempting to delete $key" }
+        logger.debug { "Attempting to delete $key" }
         store.updateData { list ->
             val originalSize = list.size
             val newList = list.filterNot { isSameEpisode(it, episodeMetadata) }
             deleted = newList.size < originalSize
             if (deleted) {
-                logger.i { "Deleted $key from cache" } // Info if successful
+                logger.info { "Deleted $key from cache" } // Info if successful
             } else {
-                logger.d { "$key not found in cache for deletion" }
+                logger.debug { "$key not found in cache for deletion" }
             }
             newList
         }

@@ -1,11 +1,11 @@
 package com.imcys.bilibilias.logic.cache
 
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.domain.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.ffmpeg.createMediaMultiplexer
+import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.core.storage.AsMediaStore
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,21 +40,21 @@ class DefaultCacheComponent(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
+    private val logger = logger<CacheComponent>()
     override fun onCombine(state: CacheEpisodeState) {
         if (lock.value) {
-            logger.i { "Muxing task for ${state.episodeMetadata} rejected: Another muxing task is in progress." }
+            logger.info { "Muxing task for ${state.episodeMetadata} rejected: Another muxing task is in progress." }
             return
         }
         lock.update { true }
         try {
-            logger.d { "Attempting to combine media cache for episode: ${state.episodeMetadata}" }
+            logger.info { "Attempting to combine media cache for episode: ${state.episodeMetadata}" }
             val uris = state.mediaCacheMetadata.metadata.map { it.filePath.toString() }
             val filename = Clock.System.now().toEpochMilliseconds()
             val videoUri =
                 AsMediaStore.createVideo(KmpContext, filename.toString(), "video/mp4", "BilibiliAs")
                     ?: run {
-                        logger.w { "Failed to create video file for episode: ${state.episodeMetadata}" }
+                        logger.warn { "Failed to create video file for episode: ${state.episodeMetadata}" }
                         lock.update { false }
                         return
                     }
@@ -62,11 +62,13 @@ class DefaultCacheComponent(
                 multiplexer.muxMedia(uris, videoUri.toString())
             }.invokeOnCompletion {
                 lock.update { false }
-                logger.d(it) { "Muxing task finished (or failed) for ${state.episodeMetadata}. Lock released." }
+                it?.let {
+                    logger.debug(it) { "Muxing task finished (or failed) for ${state.episodeMetadata}. Lock released." }
+                }
             }
         } catch (e: Exception) {
             lock.update { false }
-            logger.e(e) { "An unexpected error occurred before starting muxing for ${state.episodeMetadata}" }
+            logger.error(e) { "An unexpected error occurred before starting muxing for ${state.episodeMetadata}" }
         }
     }
 
@@ -74,23 +76,23 @@ class DefaultCacheComponent(
         applicationScope.launch {
             try {
                 // todo 下载记录也要删除
-                Logger.d { "Attempting to delete media cache metadata for episode: ${state.episodeMetadata}" }
+                logger.info { "Attempting to delete media cache metadata for episode: ${state.episodeMetadata}" }
                 val metadataSuccess = state.mediaCacheMetadata.delete()
                 if (metadataSuccess) {
-                    Logger.d { "Media cache metadata deleted successfully." }
+                    logger.info { "Media cache metadata deleted successfully." }
 
-                    Logger.d { "Attempting to delete media cache storage for episode: ${state.episodeMetadata}" }
+                    logger.info { "Attempting to delete media cache storage for episode: ${state.episodeMetadata}" }
                     val storageDeleted = mediaCacheStorage.delete(state.episodeMetadata)
                     if (!storageDeleted) {
-                        Logger.w { "Failed to delete from media cache storage, but metadata might be deleted." }
+                        logger.warn { "Failed to delete from media cache storage, but metadata might be deleted." }
                         return@launch
                     }
-                    Logger.d { "Media cache storage deleted successfully." }
+                    logger.info { "Media cache storage deleted successfully." }
                 } else {
-                    Logger.w { "Failed to delete media cache metadata." }
+                    logger.warn { "Failed to delete media cache metadata." }
                 }
             } catch (e: Exception) {
-                Logger.e(e) { "Error deleting cache for episode: ${state.episodeMetadata}" }
+                logger.error(e) { "Error deleting cache for episode: ${state.episodeMetadata}" }
             }
         }
     }

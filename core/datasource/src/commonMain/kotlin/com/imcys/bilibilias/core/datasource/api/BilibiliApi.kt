@@ -7,6 +7,7 @@ import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.core.logging.logger
 import io.ktor.client.call.body
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -44,7 +45,7 @@ object BilibiliApi : KoinComponent {
             level = LogLevel.BODY
             logger = object : Logger {
                 override fun log(message: String) {
-                    co.touchlab.kermit.Logger.i("BilibiliApi") { message }
+                    logger<BilibiliApi>().info { message }
                 }
             }
         }

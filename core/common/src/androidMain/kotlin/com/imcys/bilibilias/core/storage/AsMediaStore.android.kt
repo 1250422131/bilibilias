@@ -4,17 +4,17 @@ import android.content.ContentValues
 import android.content.Context
 import android.os.Environment
 import android.provider.MediaStore
-import co.touchlab.kermit.Logger
 import com.eygraber.uri.Uri
 import com.eygraber.uri.toAndroidUri
 import com.eygraber.uri.toKmpUri
 import com.eygraber.uri.toKmpUriOrNull
 import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.logging.logger
 import java.io.File
 import android.net.Uri as AndroidUri
 
 actual object AsMediaStore {
-    private val logger = Logger.withTag("MediaStore")
+    private val logger = logger<AsMediaStore>()
     actual fun createVideo(
         context: KmpContext,
         displayName: String,
@@ -78,11 +78,11 @@ actual object AsMediaStore {
         uri: AndroidUri,
         contentValues: ContentValues
     ): Uri? {
-        logger.i { "Inserting media file.Display name: ${contentValues.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)}" }
+        logger.info { "Inserting media file.Display name: ${contentValues.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)}" }
         val result = try {
             context.contentResolver.insert(uri, contentValues)
         } catch (e: Exception) {
-            logger.e(e) { "Failed to insert media file." }
+            logger.error(e) { "Failed to insert media file." }
             null
         }
         return result?.toKmpUriOrNull()

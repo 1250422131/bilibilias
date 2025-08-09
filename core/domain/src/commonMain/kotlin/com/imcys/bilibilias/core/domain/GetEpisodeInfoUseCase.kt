@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.core.domain
 
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.coroutines.MonoTasker
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
@@ -11,6 +10,7 @@ import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 import com.imcys.bilibilias.core.domain.model.MediaStream
 import com.imcys.bilibilias.core.flow.flowFromSuspend
+import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -20,6 +20,7 @@ import kotlinx.coroutines.supervisorScope
 class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheDataSource
 ) {
+    private val logger = logger<GetEpisodeInfoUseCase>()
     operator fun invoke(query: String): Flow<EpisodeCacheListState> {
         return when (val result = TextExtraction.textExtract(query)) {
             is TextExtraction.MatchResult.BV -> bv(result.id)
@@ -81,7 +82,7 @@ class GetEpisodeInfoUseCase(
         val videoStreams = playUrl.dash.video.mapNotNull { video ->
             val qualityDescription = backendQualityDescriptions[video.id]
             if (qualityDescription == null) {
-                Logger.w { "Missing description for video quality ID: ${video.id}" }
+                logger.warn { "Missing description for video quality ID: ${video.id}" }
                 null
             } else {
                 MediaStream(

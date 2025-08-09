@@ -2,9 +2,7 @@ package com.imcys.bilibilias
 
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.coroutines.AsDispatchers.applicationScope
 import com.imcys.bilibilias.core.datasource.DataSourceModule
 import com.imcys.bilibilias.core.datastore.DataStoreModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
@@ -17,6 +15,7 @@ import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.logic.LogicModule
+import io.github.smyrgeorge.log4k.Logger
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
@@ -45,7 +44,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         } else {
             printLogger()
         }
-        startCommonKoinModule(applicationScope)
+        startCommonKoinModule(koin.get())
         modules(platformModule())
     }
 }
@@ -78,7 +77,7 @@ private fun KoinApplication.otherModules() = module {
                     level = LogLevel.HEADERS
                     logger = object : io.ktor.client.plugins.logging.Logger {
                         override fun log(message: String) {
-                            Logger.i("HttpDownloader") { message }
+                            Logger.of("HttpDownloader").info { message }
                         }
                     }
                 }
@@ -90,7 +89,7 @@ private fun KoinApplication.otherModules() = module {
     single<CoroutineScope> {
         CoroutineScope(
             CoroutineExceptionHandler { coroutineContext, throwable ->
-                Logger.w("ApplicationScope", throwable) {
+                Logger.of("ApplicationScope").warn(throwable) {
                     "Uncaught exception in coroutine $coroutineContext"
                 }
             } + SupervisorJob() + Dispatchers.IO,

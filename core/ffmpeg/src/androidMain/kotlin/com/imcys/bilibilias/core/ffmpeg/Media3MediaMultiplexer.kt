@@ -11,9 +11,9 @@ import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.Transformer
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.flow.interval
+import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +24,7 @@ import java.io.File
 
 @OptIn(UnstableApi::class)
 internal class Media3MediaMultiplexer : MediaMultiplexer {
-    private val logger = Logger.withTag("MediaMultiplexer")
+    private val logger = logger<Media3MediaMultiplexer>()
 
     override val progress = MutableStateFlow(0)
     override val isRunning = MutableStateFlow(false)
@@ -48,7 +48,7 @@ internal class Media3MediaMultiplexer : MediaMultiplexer {
                         exportResult: ExportResult
                     ) {
                         setRunState(false)
-                        logger.i { "onCompleted" }
+                        logger.info { "onCompleted" }
                         copyFile(tempFile, Uri.parse(outputPath))
                     }
 
@@ -57,7 +57,7 @@ internal class Media3MediaMultiplexer : MediaMultiplexer {
                         exportResult: ExportResult,
                         exportException: ExportException
                     ) {
-                        logger.e(exportException) { "onError" }
+                        logger.error(exportException) { "onError" }
                         setRunState(false)
                     }
                 }

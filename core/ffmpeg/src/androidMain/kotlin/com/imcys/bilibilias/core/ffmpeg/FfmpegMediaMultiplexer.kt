@@ -1,24 +1,24 @@
 package com.imcys.bilibilias.core.ffmpeg
 
 import android.net.Uri
-import co.touchlab.kermit.Logger
 import com.antonkarpenko.ffmpegkit.FFmpegKit
 import com.antonkarpenko.ffmpegkit.FFmpegKitConfig
 import com.antonkarpenko.ffmpegkit.ReturnCode
 import com.antonkarpenko.ffmpegkit.SessionState
 import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
 internal class FfmpegMediaMultiplexer : MediaMultiplexer {
     override val isRunning = MutableStateFlow(false)
     override val progress = MutableStateFlow(0)
-    private val logger = Logger.withTag("MediaMultiplexer")
+    private val logger = logger<MediaMultiplexer>()
     override suspend fun muxMedia(
         inputPaths: List<String>,
         outputPath: String
     ) {
-        logger.d { "Input: " + inputPaths.joinToString() + " OutPutPath: $outputPath" }
+        logger.debug { "Input: " + inputPaths.joinToString() + " OutPutPath: $outputPath" }
         val context = KmpContext.get()
         val inputs = inputPaths.map { path ->
             FFmpegKitConfig.getSafParameterForRead(
@@ -32,18 +32,18 @@ internal class FfmpegMediaMultiplexer : MediaMultiplexer {
             " ",
             " "
         ) { "-i $it" } + " -c:v copy -c:a copy " + output
-        Logger.d { "Command $command" }
+        logger.debug { "Command $command" }
         FFmpegKit.executeAsync(command) { session ->
             val state: SessionState = session.getState()
             setSessionState(state)
             val returnCode: ReturnCode = session.getReturnCode()
 
             if (returnCode.isValueSuccess) {
-                Logger.i { "FFmpeg process exited with state $state and Success" }
+                logger.info { "Ffmpeg process exited with state $state and Success" }
             } else if (returnCode.isValueError) {
-                Logger.e { "FFmpeg process exited with state $state and rc Error." }
+                logger.error { "Ffmpeg process exited with state $state and rc Error." }
             } else {
-                Logger.w { "FFmpeg process exited with state $state and rc Cancle." }
+                logger.warn { "Ffmpeg process exited with state $state and rc Cancle." }
             }
         }
     }

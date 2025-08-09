@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.logic.login
 
-import co.touchlab.kermit.Logger
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.freeletics.flowredux2.FlowReduxStateMachineFactory
 import com.freeletics.flowredux2.initializeWith
@@ -14,6 +13,7 @@ import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.model.SelfInfo
+import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -27,14 +27,13 @@ class LoginStateMachine(
     private val preferences: AsPreferencesDataSource,
 ) : FlowReduxStateMachineFactory<LoginState, LoginAction>(), Lifecycle.Callbacks {
     private var interrupt = false
-
+    private val logger = logger<LoginStateMachine>()
     init {
         initializeWith { LoginState.GeneratingQrCode }
         spec {
             inState<LoginState.GeneratingQrCode> {
                 onEnter {
                     try {
-                        Logger.d("LoginStateMachine") { "LoginStateMachine Create" }
                         val (key, url) = loginApi.getQrcode()
                         override { LoginState.QrCodeReady(url, key) }
                     } catch (e: Exception) {

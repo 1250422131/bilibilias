@@ -1,0 +1,2 @@
+-dontwarn kotlinx.datetime.Clock$System
+-dontwarn kotlinx.datetime.Instant

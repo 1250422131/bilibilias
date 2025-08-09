@@ -1,12 +1,13 @@
 package com.imcys.bilibilias.core.datastore.model
 
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.io.resolve
+import com.imcys.bilibilias.core.logging.logger
 import kotlinx.io.IOException
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -48,6 +49,8 @@ data class MediaCacheMetadata internal constructor(
     val createdAt: Instant = Clock.System.now(),
     val extra: Map<MetadataKey, String> = emptyMap(),
 ) {
+    @Transient
+    private val logger = logger<MediaCacheMetadata>()
     fun delete(): Boolean {
         var allDeleted = true
         metadata.forEach { partMetadata ->
@@ -56,10 +59,10 @@ data class MediaCacheMetadata internal constructor(
                 if (SystemFileSystem.exists(path)) {
                     SystemFileSystem.delete(path)
                 } else {
-                    Logger.w { "Warning: File not found, skipping delete: $path" }
+                    logger.warn { "Warning: File not found, skipping delete: $path" }
                 }
             } catch (e: IOException) {
-                Logger.e(e) { "Delete failed for file: $path" }
+                logger.error(e) { "Delete failed for file: $path" }
                 allDeleted = false
             }
         }

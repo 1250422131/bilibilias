@@ -1,16 +1,15 @@
 package com.imcys.bilibilias
 
 import android.app.Application
-import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.work.Sync
+import io.github.smyrgeorge.log4k.Logger
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -21,16 +20,16 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
 
         val defaultUEH = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            Logger.e("AsApplication", e, "!!! FATAL !!!")
+            Logger.of("AsApplication").error(e) { "!!! FATAL !!!" }
             defaultUEH?.uncaughtException(t, e)
         }
-        StartupSet.create(AsDispatchers.applicationScope)
 
         initKoin {
             androidContext(this@AsApplication)
             androidLogger()
             modules(commonModules())
             workManagerFactory()
+            StartupSet.create(koin.get())
         }
         Sync.initialize(this)
     }

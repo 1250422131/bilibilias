@@ -79,6 +79,10 @@ android {
         ndk {
             abiFilters += "arm64-v8a"
         }
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro"
+        )
     }
     signingConfigs {
         val file = File(rootProject.file("gradle.properties").path)

@@ -1,10 +1,10 @@
 package com.imcys.bilibilias.core.http.downloader
 
 import androidx.datastore.core.DataStore
-import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
+import io.github.smyrgeorge.log4k.Logger
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineStart
@@ -84,11 +84,11 @@ class KtorPersistentHttpDownloader(
                 )
             }
             _downloadStatesFlow.value = currentMap
-            logger.i { "Restored ${currentMap.size} downloads from DataStore" }
+            logger.info { "Restored ${currentMap.size} downloads from DataStore" }
         }
     }
 
     private companion object {
-        private val logger = Logger.withTag("KtorPersistentHttpDownloader")
+        private val logger = Logger.of("KtorPersistentHttpDownloader")
     }
 }

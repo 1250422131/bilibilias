@@ -1,8 +1,7 @@
 package com.imcys.bilibilias.core.logging
 
-import co.touchlab.kermit.Logger
+import io.github.smyrgeorge.log4k.Logger
 
 inline fun <reified T : Any> logger(): Logger {
-    val tag = T::class.simpleName ?: "Anonymous"
-    return Logger.withTag(tag)
+    return Logger.of(T::class)
 }
