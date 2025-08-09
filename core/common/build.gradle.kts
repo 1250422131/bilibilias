@@ -16,8 +16,8 @@ kotlin {
             api(compose.runtime)
 
             api(libs.androidx.datastore)
-            
-            api(libs.kermit)
+
+            api("io.github.smyrgeorge:log4k:0.50.0")
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
             api(libs.kotlinx.coroutines.core)
