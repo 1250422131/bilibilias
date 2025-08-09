@@ -1,5 +1,6 @@
 #!/usr/bin/env kotlin
 
+@file:CompilerOptions("-Xmulti-dollar-interpolation", "-Xdont-warn-on-error-suppression")
 @file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
 @file:Repository("https://bindings.krzeminski.it")
@@ -30,6 +31,7 @@ import io.github.typesafegithub.workflows.dsl.expressions.contexts.SecretsContex
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
+import org.intellij.lang.annotations.Language
 
 workflow(
     name = "Build",
@@ -191,3 +193,5 @@ fun JobBuilder<*>.upload() {
         )
     )
 }
+
+fun shell(@Language("shell") command: String) = command

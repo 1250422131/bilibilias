@@ -58,9 +58,28 @@ jobs:
           index_of_str: 'v'
           default_return_value: '${{ steps.step-6.outputs.tag }}'
       - id: 'step-8'
+        name: 'Generate Release Notes'
+        run: |-
+          # Specify the file path
+          FILE_PATH="ci-helper/release-template.md"
+          
+          # Read the file content
+          file_content=$(cat "$FILE_PATH")
+          
+          modified_content="$file_content"
+          # Replace 'string_to_find' with 'string_to_replace_with' in the content
+          modified_content="${modified_content//\$GIT_TAG/${{ steps.step-6.outputs.tag }}}"
+          modified_content="${modified_content//\$TAG_VERSION/${{ steps.step-7.outputs.substring }}}"
+          
+          # Output the result as a step output
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          echo "$modified_content" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - id: 'step-9'
         name: 'Create Release'
         uses: 'softprops/action-gh-release@v2'
         with:
+          body: '${{ steps.step-8.outputs.result }}'
           name: '${{ steps.step-7.outputs.substring }}'
           tag_name: '${{ steps.step-6.outputs.tag }}'
           draft: 'true'
