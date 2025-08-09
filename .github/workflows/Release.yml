@@ -49,14 +49,22 @@ jobs:
         name: 'Build release variant'
         run: './gradlew :app:assembleRelease'
       - id: 'step-6'
+        name: 'Get Tag'
+        uses: 'dawidd6/action-get-tag@v1'
+      - id: 'step-7'
+        uses: 'bhowell2/github-substring-action@v1.0.0'
+        with:
+          value: '${{ steps.step-6.outputs.tag }}'
+          index_of_str: 'v'
+          default_return_value: '${{ steps.step-6.outputs.tag }}'
+      - id: 'step-8'
         name: 'Create Release'
         uses: 'softprops/action-gh-release@v2'
         with:
-          name: 'test-name'
-          tag_name: 'test-tag'
+          name: '${{ steps.step-7.outputs.substring }}'
+          tag_name: '${{ steps.step-6.outputs.tag }}'
           draft: 'true'
-          files: |-
-            app/build/outputs/apk/release/app-release.apk
-            build/outputs/apk/release/app-release.apk
+          prerelease: '${{ contains(steps.step-6.outputs.tag, ''-'') }}'
+          files: 'app/build/outputs/apk/release/app-release.apk'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
