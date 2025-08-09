@@ -99,7 +99,8 @@ workflow(
                 draft = true,
                 prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
                 files = listOf(
-                    "**/build/outputs/apk/github/release/*.apk",
+                    "app/build/outputs/apk/release/app-release.apk",
+                    "build/outputs/apk/release/app-release.apk",
                 )
             ),
             env = mapOf("GITHUB_TOKEN" to expr { secrets.GITHUB_TOKEN }),
@@ -178,5 +179,16 @@ fun JobBuilder<*>.getGitTag(): GitTag {
     return GitTag(
         tagExpr = tag.outputs.tag,
         tagVersionExpr = tagVersion.outputs["substring"],
+    )
+}
+
+fun JobBuilder<*>.upload() {
+    uses(
+        name = "Upload Android Release APK",
+        action = UploadArtifact(
+            name = "android-release",
+            path_Untyped = "app/android/build/outputs/apk/release/app-release.apk",
+            overwrite = true,
+        )
     )
 }

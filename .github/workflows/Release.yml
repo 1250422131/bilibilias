@@ -65,6 +65,8 @@ jobs:
           tag_name: '${{ steps.step-6.outputs.tag }}'
           draft: 'true'
           prerelease: '${{ contains(steps.step-6.outputs.tag, ''-'') }}'
-          files: '/build/outputs/apk/github/release/*.apk'
+          files: |-
+            app/build/outputs/apk/release/app-release.apk
+            build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
