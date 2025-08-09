@@ -9,10 +9,13 @@
 @file:DependsOn("gradle:actions__setup-gradle:v4")
 @file:DependsOn("dawidd6:action-get-tag:v1")
 @file:DependsOn("softprops:action-gh-release:v2")
+@file:DependsOn("bhowell2:github-substring-action:v1.0.0")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.SetupJava
 import io.github.typesafegithub.workflows.actions.actions.UploadArtifact
+import io.github.typesafegithub.workflows.actions.bhowell2.GithubSubstringAction_Untyped
+import io.github.typesafegithub.workflows.actions.dawidd6.ActionGetTag_Untyped
 import io.github.typesafegithub.workflows.actions.gradle.ActionsSetupGradle
 import io.github.typesafegithub.workflows.actions.softprops.ActionGhRelease
 import io.github.typesafegithub.workflows.domain.Concurrency
@@ -62,17 +65,7 @@ workflow(
             )
         )
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
-        run(
-            name = "Apk Sign",
-            command = """
-                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
-                echo -e '\n'                                              >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_storeFileFromRoot=./bilibilias.jks' >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
-            """.trimIndent()
-        )
+        prepareSigningKey()
         run(
             name = "Build all build type and flavor permutations",
             command = "./gradlew :app:assemble"
@@ -112,38 +105,22 @@ workflow(
             action = ActionsSetupGradle(),
         )
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
-        run(
-            name = "Apk Sign",
-            command = """
-                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
-                echo -e '\n'                                              >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_storeFileFromRoot=./bilibilias.jks' >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
-                echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
-            """.trimIndent()
-        )
+        prepareSigningKey()
         run(
             name = "Build all build type and flavor permutations",
             command = "./gradlew :app:assembleRelease"
         )
-
-        uses(
+        val gitTag = getGitTag()
+        val createRelease = uses(
             name = "Create Release",
             action = ActionGhRelease(
-                tagName = expr { github.ref },
-                name = expr { github.ref },
+                tagName = expr { gitTag.tagExpr },
+                name = expr { gitTag.tagVersionExpr },
                 draft = true,
-                prerelease = false,
-                files = listOf(),
-            ),
-            env = mapOf("GITHUB_TOKEN" to expr { secrets.GITHUB_TOKEN }),
-        )
-        uses(
-            name = "Upload app",
-            action = UploadArtifact(
-                name = "APKs",
-                path = listOf("**/build/outputs/apk/**/*.apk"),
+                prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
+                files = listOf(
+                    "app/build/outputs/apk/github/release/app-release.apk",
+                )
             ),
             env = mapOf("GITHUB_TOKEN" to expr { secrets.GITHUB_TOKEN }),
         )
@@ -156,5 +133,50 @@ fun JobBuilder<*>.setupJava() {
             distribution = SetupJava.Distribution.Zulu,
             javaVersion = "21"
         )
+    )
+}
+
+fun JobBuilder<*>.prepareSigningKey() {
+    run(
+        name = "Apk Sign",
+        command = """
+                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
+                echo -e '\n'                                              >> $GITHUB_WORKSPACE/gradle.properties
+                echo 'signing_release_storeFileFromRoot=./bilibilias.jks' >> $GITHUB_WORKSPACE/gradle.properties
+                echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
+                echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
+                echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
+            """.trimIndent()
+    )
+}
+
+data class GitTag(
+    /**
+     * The full git tag, e.g. `v1.0.0`
+     */
+    val tagExpr: String,
+    /**
+     * The tag version, e.g. `1.0.0`
+     */
+    val tagVersionExpr: String,
+)
+
+fun JobBuilder<*>.getGitTag(): GitTag {
+    val tag = uses(
+        name = "Get Tag",
+        action = ActionGetTag_Untyped(),
+    )
+
+    val tagVersion = uses(
+        action = GithubSubstringAction_Untyped(
+            value_Untyped = expr { tag.outputs.tag },
+            indexOfStr_Untyped = "v",
+            defaultReturnValue_Untyped = expr { tag.outputs.tag },
+        ),
+    )
+
+    return GitTag(
+        tagExpr = tag.outputs.tag,
+        tagVersionExpr = tagVersion.outputs["substring"],
     )
 }
