@@ -14,9 +14,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.AudioFile
+import androidx.compose.material.icons.outlined.Copyright
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
-import androidx.compose.material.icons.outlined.EnergySavingsLeaf
+import androidx.compose.material.icons.outlined.EmojiObjects
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,8 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.BaseSettingsItem
@@ -72,26 +74,26 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                     text = "缓存配置"
                 )
             }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.EnergySavingsLeaf,
-                    text = "省电模式",
-                    description = "开启后将不使用FFmpeg进行视频处理，改用原生API处理。",
-                    checked = false,
-                ) {
-
-                }
-            }
-
-            item {
-                SwitchSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.AudioFile),
-                    text = "音频转码",
-                    description = "启用选择仅音频缓存可以得到mp3的音频文件",
-                    checked = false,
-                ) {
-                }
-            }
+//            item {
+//                SwitchSettingsItem(
+//                    imageVector = Icons.Outlined.EnergySavingsLeaf,
+//                    text = "省电模式",
+//                    description = "开启后将不使用FFmpeg进行视频处理，改用原生API处理。",
+//                    checked = false,
+//                ) {
+//
+//                }
+//            }
+//
+//            item {
+//                SwitchSettingsItem(
+//                    painter = rememberVectorPainter(Icons.Outlined.AudioFile),
+//                    text = "音频转码",
+//                    description = "启用选择仅音频缓存可以得到mp3的音频文件",
+//                    checked = false,
+//                ) {
+//                }
+//            }
 
             item {
                 BaseSettingsItem(
@@ -138,6 +140,40 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                 )
             }
 
+            item {
+                CategorySettingsItem(
+                    text = "关于程序"
+                )
+            }
+
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.EmojiObjects),
+                    text = "我们的立场",
+                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展",
+                    onClick = onToRoam
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter =  painterResource(R.drawable.ic_licens_24px),
+                    text = "第三方开源许可",
+                    description = {},
+                    onClick = onToRoam
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = painterResource(R.drawable.ic_github_24px),
+                    text = "Github仓库",
+                    description = {},
+                    onClick = onToRoam
+                )
+            }
+
         }
     }
 }
@@ -165,7 +201,7 @@ fun DownloadPostNotifications() {
         SwitchSettingsItem(
             imageVector = Icons.Outlined.Notifications,
             text = "前台通知",
-            description = "开启后可以使得在后台的下载任务不会被系统回收。",
+            description = "开启后可以使得在后台的下载任务不会被系统回收",
             checked = hasForegroundServicePermission,
         ) {
             if (ContextCompat.checkSelfPermission(
