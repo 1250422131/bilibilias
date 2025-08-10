@@ -45,6 +45,7 @@ buildkonfig {
     }
     // flavor is passed as a first argument of defaultConfigs
     defaultConfigs("release") {
+        buildConfigField(STRING, "packageName", packageName)
         buildConfigField(STRING, "name", "devValue")
         buildConfigField(BOOLEAN, "debugBuild", "false")
     }
