@@ -11,6 +11,7 @@ expect object KmpContext {
     val logsDir: Path
 
     val platform: Platform
+    val packageName: String
 }
 
 enum class Platform {

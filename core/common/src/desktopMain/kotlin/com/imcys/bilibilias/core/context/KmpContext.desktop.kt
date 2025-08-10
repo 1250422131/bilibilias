@@ -13,4 +13,6 @@ actual object KmpContext {
         get() = TODO("Not yet implemented")
     actual val platform: com.imcys.bilibilias.core.context.Platform
         get() = TODO("Not yet implemented")
+    actual val packageName: String
+        get() = TODO("Not yet implemented")
 }

@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.context
 
 import android.content.Context
+import com.imcys.bilibilias.mp.BuildKonfig
 import kotlinx.io.files.Path
 import java.lang.ref.WeakReference
 
@@ -16,7 +17,7 @@ actual object KmpContext {
             ?: throw IllegalStateException("Context is not initialized")
     }
 
-    actual val isDebug: Boolean = true
+    actual val isDebug: Boolean = BuildKonfig.debugBuild
     actual val cacheDir: Path
         get() = Path(get().cacheDir.absolutePath)
     actual val dataDir: Path
@@ -27,5 +28,6 @@ actual object KmpContext {
         get() = Path(get().filesDir.absolutePath, "logs")
 
     actual val platform: Platform = Platform.ANDROID
+    actual val packageName: String = BuildKonfig.packageName
 }
 
