@@ -114,7 +114,10 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
                 )
 
                 is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)
-                is RootComponent.Child.SettingsChild -> SettingsScreen(child.component)
+                is RootComponent.Child.SettingsChild -> SettingsScreen(
+                    child.component,
+                    onBack = component::onBackClicked
+                )
             }
         }
     }
