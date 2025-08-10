@@ -11,6 +11,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.startup)
+            implementation(libs.androidx.core)
         }
         commonMain.dependencies {
             api(compose.runtime)
@@ -34,22 +35,17 @@ android {
 }
 
 buildkonfig {
-    packageName = "com.imcys.bilibilias"
+    packageName = "com.imcys.bilibilias.mp"
 
     // default config is required
-    defaultConfigs {
+    defaultConfigs {}
+    defaultConfigs("debug") {
         buildConfigField(STRING, "packageName", packageName)
-        buildConfigField(BOOLEAN, "debugBuild", "false")
-    }
-    // flavor is passed as a first argument of defaultConfigs
-    defaultConfigs("dev") {
-        buildConfigField(STRING, "name", "devValue")
         buildConfigField(BOOLEAN, "debugBuild", "true")
     }
-
-    targetConfigs {
-        create("android") {
-            buildConfigField(STRING, "name2", "value2")
-        }
+    // flavor is passed as a first argument of defaultConfigs
+    defaultConfigs("release") {
+        buildConfigField(STRING, "name", "devValue")
+        buildConfigField(BOOLEAN, "debugBuild", "false")
     }
 }
