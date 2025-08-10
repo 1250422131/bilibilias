@@ -19,12 +19,17 @@ namespace bilias {
     }
 
     template<typename ...Args>
+    auto log_d(std::format_string<Args...> format_str, Args &&...args) -> void {
+        log(ANDROID_LOG_DEBUG, format_str, std::forward<Args>(args)...);
+    }
+
+    template<typename ...Args>
     auto log_i(std::format_string<Args...> format_str, Args &&...args) -> void {
         log(ANDROID_LOG_INFO, format_str, std::forward<Args>(args)...);
     }
 
     template<typename ...Args>
-    auto log_2(std::format_string<Args...>  format_str, Args &&...args) -> void {
+    auto log_w(std::format_string<Args...>  format_str, Args &&...args) -> void {
         log(ANDROID_LOG_WARN, format_str, std::forward<Args>(args)...);
     }
 

@@ -112,6 +112,12 @@ namespace bilias::gl {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        GLenum error = glGetError();
+        if (error != GL_NO_ERROR) {
+            log_e("OpenGL error in setup_texture_params: {}", error);
+        }
+
     }
 
     auto render_frame(uint8_t *rgb_data, int width, int height) -> void {

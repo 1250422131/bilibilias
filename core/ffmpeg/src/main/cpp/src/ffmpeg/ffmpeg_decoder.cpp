@@ -12,61 +12,91 @@ extern "C" {
 namespace bilias::ffmpeg {
 
     auto decode_frames(
-            AVFormatContext *format_ctx,
-            AVCodecContext *codec_ctx,
-            int video_stream_index
+        AVFormatContext *format_ctx,
+        AVCodecContext *codec_ctx,
+        int video_stream_index
     ) -> Generator<AVFrame *> {
 
-        constexpr auto buffer_size = 2 << 8;
-        // co_await set_generator_buffer_size(buffer_size);
-        auto buffer = RingFrameBuffer<buffer_size>();
-        buffer.init();
 
-        std::atomic<bool> running = true;
+        try {
+            constexpr auto buffer_size = 2 << 8;
+            // co_await set_generator_buffer_size(buffer_size);
+            auto buffer = RingFrameBuffer<buffer_size>();
+            buffer.init();
 
-        std::thread decoder_thread([&] {
-            AVPacket packet{};
-            auto use_new_api = (codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY) != 0;
-            while (running && av_read_frame(format_ctx, &packet) >= 0) {
-                if (packet.stream_index != video_stream_index) {
-                    av_packet_unref(&packet);
-                    continue;
+            std::atomic<bool> running = true;
+
+            std::thread decoder_thread([&] {
+              AVPacket packet{};
+              AVFrame *frame = buffer.pop_empty_frame();
+              while (running && av_read_frame(format_ctx, &packet) >= 0) {
+                  if (packet.stream_index != video_stream_index) {
+                      av_packet_unref(&packet);
+                      continue;
+                  }
+
+            //                if (!running || !frame) {
+            //                    av_packet_unref(&packet);
+            //                    break;
+            //                }
+
+                  int ret = avcodec_send_packet(codec_ctx, &packet);
+                  av_packet_unref(&packet);
+
+                  if (ret < 0) {
+                      throw std::runtime_error(std::format("error avcodec_send_packet: {}", ret));
+                  }
+
+                  while (running) {
+                      if (!frame) {
+                          frame = buffer.pop_empty_frame();
+                      }
+                      ret = avcodec_receive_frame(codec_ctx, frame);
+                      if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+                          break;
+                      } else if (ret < 0) {
+                          throw std::runtime_error(std::format("error avcodec_receive_frame: {}", ret));
+                      }
+                      if (frame->format != AV_PIX_FMT_YUV420P) {
+                          throw std::runtime_error(std::format("unsupported frame format: {}", frame->format));
+                      }
+                      buffer.mark_frame_ready_one();
+                      frame = nullptr;
+                  }
+              }
+
+              running = false;
+              buffer.stop();
+            });
+
+            AVFrame *prev_frame{nullptr};
+
+            while (true) {
+                auto *frame = buffer.pop_ready_frame();
+                if (!frame) {
+                  log_i("decoder generator receive null");
+                  break;
                 }
 
-                AVFrame *frame = buffer.pop_empty_frame();
-                if (!running || !frame) {
-                    av_packet_unref(&packet);
-                    break;
+                if (prev_frame) {
+                  buffer.release_one();
                 }
-
-                int send_ret = avcodec_send_packet(codec_ctx, &packet);
-                av_packet_unref(&packet);
-
-                if (send_ret < 0) {
-                    continue;
-                }
-
-                int recv_ret = avcodec_receive_frame(codec_ctx, frame);
-                if (recv_ret == 0) {
-                    buffer.mark_frame_ready(frame);
-                }
+                co_yield static_cast<AVFrame *&&>(frame);
+                prev_frame = frame;
             }
 
-            running = false;
-            buffer.stop();
-        });
+            if (prev_frame) {
+              buffer.release_one();
+            }
 
-        while (running) {
-            auto *frame = buffer.pop_ready_frame();
-            if (!frame) break;
-            co_yield static_cast<AVFrame *&&>(frame);
-            buffer.return_frame(frame);
+            decoder_thread.join();
+            co_return;
+        } catch (const std::exception &e) {
+            log_e("error in decode_frames: {}", e.what());
+        } catch (...) {
+            log_e("unknown error in decode_frames");
         }
-
-        decoder_thread.join();
-        co_return;
     }
-
 
     auto FFmpegDecoder::init() -> void {
         {
@@ -110,6 +140,8 @@ namespace bilias::ffmpeg {
         if (avcodec_parameters_to_context(codec_ctx.get(), codecpar) < 0) {
             throw std::runtime_error("avcodec_parameters_to_context failed");
         }
+
+        codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
         if (codec->id == AV_CODEC_ID_AV1) {
             codec_ctx->skip_frame = AVDISCARD_DEFAULT;

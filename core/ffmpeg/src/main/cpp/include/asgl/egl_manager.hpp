@@ -24,7 +24,9 @@ namespace bilias::gl {
         [[nodiscard]]
         auto initialize(ANativeWindow *window) -> bool;
 
-        auto make_current() -> void;
+        auto make_current() -> bool;
+
+        auto detach_current() -> void;
 
         auto swap_buffers() -> void;
 
@@ -35,6 +37,22 @@ namespace bilias::gl {
         auto get_surface() const noexcept -> EGLSurface { return surface; }
         auto get_config() const noexcept -> EGLConfig { return config; }
         auto is_initialized() const noexcept -> bool { return initialized; }
+
+        auto make_current_scope() {
+            struct EGLScope final : NonCopy {
+                EGLManager *manager;
+                explicit EGLScope(EGLManager *manager) : manager(manager) {
+                    manager->make_current();
+                }
+                EGLScope(EGLScope &&other) noexcept : manager(std::exchange(other.manager, nullptr)) {}
+                ~EGLScope() {
+                    if (manager) {
+                        manager->detach_current();
+                    }
+                }
+            };
+            return EGLScope(this);
+        }
 
     private:
         auto init_egl() -> bool;

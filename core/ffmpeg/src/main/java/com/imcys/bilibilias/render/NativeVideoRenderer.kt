@@ -31,7 +31,12 @@ class NativeVideoRenderer {
         if (inner == 0L) {
             return false;
         }
-        return RenderUtilJNI.initRenderer(inner, surface, videoFileFd)
+        try {
+            return RenderUtilJNI.initRenderer(inner, surface, videoFileFd)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
     }
 
     fun setViewport(width: Int, height: Int) {

@@ -2,6 +2,7 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <video_renderer.hpp>
+#include <jni_util.hpp>
 
 
 extern "C"
@@ -22,9 +23,11 @@ extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_imcys_bilibilias_render_RenderUtilJNI_initRenderer(JNIEnv *env, jclass clazz,
                                                             jlong renderer, jobject surface, jint fd) {
-    auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
-    auto *s = ANativeWindow_fromSurface(env, surface);
-    return r->initialize(s, fd);
+    return bilias::jni_safe_call_r(env, [&] {
+        auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
+        auto *s = ANativeWindow_fromSurface(env, surface);
+        return r->initialize(s, fd);
+    });
 }
 
 extern "C"
@@ -32,20 +35,26 @@ JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_render_RenderUtilJNI_setRendererViewports(JNIEnv *env, jclass clazz,
                                                                     jlong renderer, jint width,
                                                                     jint height) {
-    auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
-    r->set_viewport(width, height);
+    bilias::jni_safe_call(env, [&] {
+        auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
+        r->set_viewport(width, height);
+    });
 }
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_render_RenderUtilJNI_releaseRenderer(JNIEnv *env, jclass clazz,
                                                                jlong renderer) {
-    auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
-    delete r;
+    bilias::jni_safe_call(env, [&] {
+        auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
+        delete r;
+    });
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_render_RenderUtilJNI_testPlay(JNIEnv *env, jclass clazz, jlong renderer) {
-    auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
-    r->test_play();
+   bilias::jni_safe_call(env, [&] {
+       auto *r = reinterpret_cast<bilias::VideoRenderer *>(renderer);
+       r->test_play();
+   });
 }

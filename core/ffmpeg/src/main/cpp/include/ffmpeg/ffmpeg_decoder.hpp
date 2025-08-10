@@ -8,114 +8,99 @@
 namespace bilias::ffmpeg {
 
     template<size_t N>
-    class RingFrameBuffer {
+    requires ((N % 2) == 0)
+    class RingFrameBuffer final : NonCopy {
         std::array<AVFrame *, N> buffer{};
-        std::array<bool, N> is_ready{};
-        size_t write_idx{0};
-        size_t read_idx ={0};
-        size_t ready_count{0};
+        size_t free_tail{0};
+        size_t prep_tail{0};
+        size_t ready_head{0};
+        size_t cons_head{0};
+
+        std::atomic<size_t> free_count{N};
+        std::atomic<size_t> ready_count{0};
+
         std::mutex mutex{};
-        std::condition_variable cv_empty{};
-        std::condition_variable cv_ready{};
-        bool stopped{false};
+        std::condition_variable free_cv{};
+        std::condition_variable ready_cv{};
+        std::atomic<bool> stop_flag{false};
+
     public:
         RingFrameBuffer() = default;
 
-        ~RingFrameBuffer() {
-            release(N);
-        }
-
         auto init() -> void {
-            for (int i = 0; i < N; ++i) {
-                auto *frame = av_frame_alloc();
-                if (!frame) [[unlikely]] {
-                    release(i);
-                    throw std::runtime_error("RingFrameBuffer::init");
-                }
-                buffer[i] = frame;
-                is_ready[i] = false;
-            }
-            write_idx = 0;
-            read_idx = 0;
-            ready_count = 0;
-        }
-
-        // for decoder, get empty frame
-        auto pop_empty_frame() -> AVFrame  * {
-            std::unique_lock lock(mutex);
-            cv_empty.wait(lock, [this]{
-                return ready_count < N || stopped;
-            });
-            if (stopped) return nullptr;
-
-            size_t idx = write_idx;
-            while (is_ready[idx]) {
-                idx = (idx + 1) % N;
-            }
-
-            write_idx = (idx + 1) % N;
-            return buffer[idx];
-        }
-
-        // for decoder
-        auto mark_frame_ready(AVFrame *frame) -> void {
-            std::unique_lock lock(mutex);
-
             for (size_t i = 0; i < N; ++i) {
-                if (buffer[i] == frame) {
-                    is_ready[i] = true;
-                    ready_count++;
-                    cv_ready.notify_one();
-                    return;
+                auto *f = av_frame_alloc();
+                if (!f) {
+                    throw std::runtime_error("av_frame_alloc failed");
+                }
+                buffer[i] = f;
+            }
+        }
+
+        ~RingFrameBuffer() {
+            free_queue(N);
+        }
+
+        // 获取空闲帧 (解码线程调用)
+        AVFrame *pop_empty_frame() {
+            std::unique_lock lock(mutex);
+            free_cv.wait(lock, [this] {
+                return free_count.load() > 0 || stop_flag.load();;
+            });
+            if (stop_flag.load()) {
+                return nullptr;
+            }
+            auto *f = buffer[free_tail];
+            free_tail = (free_tail + 1) % N;
+            free_count--;
+            return f;
+        }
+
+
+        void mark_frame_ready_one() {
+            std::lock_guard lock(mutex);
+            ready_count++;
+            ready_cv.notify_one();
+        }
+
+        AVFrame *pop_ready_frame() {
+            std::unique_lock lock(mutex);
+            ready_cv.wait(lock, [this] {
+                return ready_count.load() > 0 || stop_flag.load();
+            });
+            if (stop_flag.load()) {
+                if (ready_count.load() == 0) {
+                    return nullptr;
                 }
             }
-        }
-
-        // for consumer
-        auto pop_ready_frame() -> AVFrame * {
-            std::unique_lock lock(mutex);
-            cv_ready.wait(lock, [this]{
-                return ready_count > 0 || stopped;
-            });
-
-            if (stopped && ready_count == 0) return nullptr;
-
-            while (!is_ready[read_idx]) {
-                read_idx = (read_idx + 1) % N;
-            }
-
-            auto *frame = buffer[read_idx];
-            is_ready[read_idx] = false;
+            auto *f = buffer[ready_head];
+            ready_head = (ready_head + 1) % N;
             ready_count--;
-            read_idx = (read_idx + 1) % N;
-
-            cv_empty.notify_one();
-            return frame;
+            return f;
         }
 
-        // for consumer
-        auto return_frame(AVFrame *frame) -> void {
-            av_frame_unref(frame);
-        }
-
-
-
-
-        auto stop() -> void {
+        void release_one() {
             std::lock_guard lock(mutex);
-            stopped = true;
-            cv_empty.notify_all();
-            cv_ready.notify_all();
+            free_count++;
+            cons_head = (cons_head + 1) % N;
+            free_cv.notify_one();
         }
 
+        void stop() {
+            stop_flag.store(true);
+            free_cv.notify_all();
+            ready_cv.notify_all();
+        }
 
     private:
-        auto release(size_t n) {
-            for (int i = 0; i < n; ++i) {
-                auto *ptr = std::exchange(buffer[i], nullptr);
+
+        auto free_queue(size_t size) -> void {
+            for (size_t i = 0; i < size; ++i) {
+                auto ptr = buffer[i];
                 if (ptr) {
                     av_frame_free(&ptr);
                 }
+               buffer[i] = nullptr;
             }
         }
     };

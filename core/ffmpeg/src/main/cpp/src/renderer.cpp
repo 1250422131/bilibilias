@@ -19,7 +19,7 @@ namespace bilias {
     }
 
     auto VideoRenderer::initialize(ANativeWindow *native_window, int fd) -> bool {
-        LOGE("VideoRenderer::initialize window: %ld, fd: %d", (long)native_window, fd);
+        log_i("VideoRenderer::initialize window: %ld, fd: %d", (long)native_window, fd);
         ffmpeg::debug_av1_support();
 
         if (fcntl(fd, F_GETFL) < 0) {
@@ -37,31 +37,25 @@ namespace bilias {
 
         if (initialized.load()) return true;
 
-        try {
-            egl_manager = std::make_unique<gl::EGLManager>();
-            if (!egl_manager->initialize(native_window)) {
-                LOGE("egl manager initialize failed");
-                return false;
-            }
-
-            egl_manager->make_current();
-
-            renderer = gl::GLRenderer::create();
-            renderer->initialize();
-
-            decoder = std::make_unique<ffmpeg::FFmpegDecoder>(fd);
-            decoder->init();
-
-            initialized.store(true);
-            LOGI("VideoRenderer initialized successfully");
-            return true;
-
-        } catch (const std::exception& e) {
-            LOGE("VideoRenderer initialization failed: %s", e.what());
-            egl_manager.reset();
-            renderer.reset();
+        egl_manager = std::make_unique<gl::EGLManager>();
+        if (!egl_manager->initialize(native_window)) {
+            log_e("egl manager initialize failed");
             return false;
         }
+
+        egl_manager->make_current();
+
+        renderer = gl::GLRenderer::create();
+        renderer->initialize();
+
+        decoder = std::make_unique<ffmpeg::FFmpegDecoder>(fd);
+        decoder->init();
+
+        initialized.store(true);
+
+        egl_manager->detach_current();
+        log_i("VideoRenderer initialized successfully");
+        return true;
 
     }
 
@@ -80,7 +74,7 @@ namespace bilias {
             return success;
 
         } catch (const std::exception& e) {
-            LOGE("render_frame failed: %s", e.what());
+            log_e("render_frame failed: {}", e.what());
             return false;
         }
 
@@ -110,10 +104,10 @@ namespace bilias {
             }
 
             initialized.store(false);
-            LOGI("VideoRenderer destroyed");
+            log_i("VideoRenderer destroyed");
 
         } catch (const std::exception& e) {
-            LOGE("VideoRenderer destroy failed: %s", e.what());
+            log_i("VideoRenderer destroy failed: {}", e.what());
             initialized.store(false);
         }
 
@@ -122,26 +116,31 @@ namespace bilias {
     auto VideoRenderer::test_play() -> void {
         std::thread a([this] {
             try {
-                LOGI("VideoRenderer::test_play() thread");
+                log_i("VideoRenderer::test_play() thread");
                 auto g = decoder->new_generator();
-                g.start();
+                auto success = egl_manager->make_current();
+                if (!success) {
+                    log_i("VideoRenderer::test_play make_current failed");
+                    return;
+                }
+                auto defer = Defer([&] {
+                   egl_manager->detach_current();
+                });
                 while (g.next()) {
-                    LOGI("VideoRenderer::test_play loop enter");
                     auto *f = g.value();
-                    egl_manager->make_current();
-                    auto success = renderer->render_frame(f);
-                    LOGI("VideoRenderer::test_play render_frame result %d", success);
+                    success = renderer->render_frame(f);
                     if (success) {
                         egl_manager->swap_buffers();
                     }
-                    sleep(1);
+                    // sleep(1);
+                    usleep(33333 );
                 }
             } catch (std::exception &e) {
-                LOGE("VideoRenderer::test_play() ex: %s", e.what());
+                log_i("VideoRenderer::test_play() ex: {}", e.what());
             } catch (...) {
-                LOGE("VideoRenderer::test_play() unkown error");
+                log_i("VideoRenderer::test_play() unkown error");
             }
-            LOGI("VideoRenderer::test_play thread finished");
+            log_i("VideoRenderer::test_play thread finished");
         });
         a.detach();
     }

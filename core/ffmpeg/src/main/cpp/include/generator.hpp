@@ -41,6 +41,15 @@ namespace bilias {
                 return {};
             }
 
+            auto take_value() -> T {
+                if (!current_value.has_value()) {
+                    throw std::runtime_error("Generator has no value");
+                }
+                auto &&value = std::move(current_value).value();
+                current_value.reset();
+                return std::move(value);
+            }
+
             constexpr auto return_void() const noexcept -> void {}
 
         };
@@ -60,25 +69,24 @@ namespace bilias {
         explicit Generator(std::coroutine_handle<promise_type> handle) : handle(handle) {}
 
         ~Generator() {
-            if (handle) {}
-            handle.destroy();
+            auto h = std::exchange(handle, nullptr);
+            if (h) {
+                h.destroy();
+            }
         }
 
         auto next() -> bool {
             if (!handle.done()) {
-                handle();
+                handle.resume();
                 return !handle.done();
             }
             return false;
         }
 
         auto value() -> T {
-            return std::move(handle.promise().current_value).value();
+            return handle.promise().take_value();
         }
 
-        auto start() -> void {
-            handle();
-        }
     };
 
     namespace detail {

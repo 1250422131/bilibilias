@@ -36,7 +36,7 @@ namespace {
 namespace bilias::ffmpeg {
 
     auto bilias_fd_bilias_avio_alloc_context(int fd) -> std::pair<AVIOContextPtr, AVMallocPtr> {
-        auto buffer = bilias_av_malloc(4096);
+        auto buffer = bilias_av_malloc(1 << 14); // 16k
         auto ctx = bilias_avio_alloc_context(
             buffer.get(),
             4096,

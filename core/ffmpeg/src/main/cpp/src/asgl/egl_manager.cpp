@@ -37,11 +37,16 @@ namespace bilias::gl {
         return true;
     }
 
-    auto EGLManager::make_current() -> void {
+    auto EGLManager::make_current() -> bool {
         if (initialized) {
-            eglMakeCurrent(display, surface, surface, context);
+            auto ret = eglMakeCurrent(display, surface, surface, context);
+            if (!ret) {
+                auto error = eglGetError();
+                log_e("eglMakeCurrent failed: {}", error);
+            }
+            return ret;
         }
-
+        return false;
     }
 
     auto EGLManager::swap_buffers() -> void {
@@ -132,6 +137,12 @@ namespace bilias::gl {
 
             eglTerminate(display);
             display = EGL_NO_DISPLAY;
+        }
+    }
+
+    auto EGLManager::detach_current() -> void {
+        if (initialized) {
+            eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         }
     }
 
