@@ -9,12 +9,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.domain.model.MediaStream
+import com.imcys.bilibilias.ui.component.AnimatedBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,14 +24,12 @@ fun MediaResolutionSelector(
     onDismiss: () -> Unit,
     onResolutionSelected: (MediaStream) -> Unit = {},
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
     val uniqueMediaStream = remember(mediaStreams) { mediaStreams.distinctBy { it.id } }
 
-    AsModalBottomSheet(
+    AnimatedBottomSheet(
         isVisible,
-        sheetState = sheetState,
-        onDismiss = onDismiss,
+        onDismissRequest = onDismiss,
     ) {
         LazyColumn(
             state = listState,

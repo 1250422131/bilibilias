@@ -67,7 +67,6 @@ fun EpisodeListGroup(
                 audioResolution = Int.MAX_VALUE
             )
         )
-        onDismiss()
     }
     AnimatedBottomSheet(
         isVisible = visible,
