@@ -124,7 +124,6 @@ android {
         variant.outputs
             .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
-                println(output.outputFile.name)
                 val newName = output.outputFile.name
                     .replace("app", "bilibilias")
                     .replace("release", "${variant.versionName}")
