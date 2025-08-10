@@ -43,6 +43,7 @@ import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
 import com.imcys.bilibilias.core.domain.model.MediaStream
+import com.imcys.bilibilias.ui.component.AnimatedBottomSheet
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,9 +69,9 @@ fun EpisodeListGroup(
         )
         onDismiss()
     }
-    AsModalBottomSheet(
-        visible,
-        onDismiss = onDismiss,
+    AnimatedBottomSheet(
+        isVisible = visible,
+        onDismissRequest = onDismiss,
     ) {
         Column(
             modifier = Modifier
@@ -92,6 +93,7 @@ fun EpisodeListGroup(
             }
         }
     }
+
     MediaResolutionSelector(
         isVisible = showMediaResolutionSelector,
         mediaStreams = mediaStreams,
