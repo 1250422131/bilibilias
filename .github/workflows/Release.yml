@@ -47,9 +47,7 @@ jobs:
           echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
       - id: 'step-5'
         name: 'Build release variant'
-        run: |-
-          ./gradlew :app:assembleRelease
-          -Pbuildkonfig.flavor=release
+        run: './gradlew :app:assembleRelease -Pbuildkonfig.flavor=release'
       - id: 'step-6'
         name: 'Get Tag'
         uses: 'dawidd6/action-get-tag@v1'

@@ -90,10 +90,7 @@ workflow(
         prepareSigningKey()
         run(
             name = "Build release variant",
-            command = """
-                ./gradlew :app:assembleRelease
-                -Pbuildkonfig.flavor=release
-            """.trimIndent()
+            command = "./gradlew :app:assembleRelease -Pbuildkonfig.flavor=release"
         )
         val gitTag = getGitTag()
         val createRelease = uses(
@@ -104,7 +101,7 @@ workflow(
                 draft = true,
                 prerelease_Untyped = expr { contains(gitTag.tagExpr, "'-'") },
                 files = listOf(
-                    "app/build/outputs/apk/release/app-release.apk",
+                    "app/build/outputs/apk/release/bilibilias-${expr { gitTag.tagVersionExpr }}.apk",
                 )
             ),
             env = mapOf("GITHUB_TOKEN" to expr { secrets.GITHUB_TOKEN }),
