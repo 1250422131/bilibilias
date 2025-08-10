@@ -14,8 +14,8 @@ import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.logic.LogicModule
-import io.github.smyrgeorge.log4k.Logger
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
@@ -76,8 +76,11 @@ private fun KoinApplication.otherModules() = module {
                 Logging {
                     level = LogLevel.HEADERS
                     logger = object : io.ktor.client.plugins.logging.Logger {
+                        private val logger =
+                            com.imcys.bilibilias.core.logging.logger<HttpDownloader>()
+
                         override fun log(message: String) {
-                            Logger.of("HttpDownloader").info { message }
+                            logger.info { message }
                         }
                     }
                 }
@@ -89,7 +92,7 @@ private fun KoinApplication.otherModules() = module {
     single<CoroutineScope> {
         CoroutineScope(
             CoroutineExceptionHandler { coroutineContext, throwable ->
-                Logger.of("ApplicationScope").warn(throwable) {
+                logger("ApplicationScope").warn(throwable) {
                     "Uncaught exception in coroutine $coroutineContext"
                 }
             } + SupervisorJob() + Dispatchers.IO,
@@ -103,6 +106,10 @@ fun KoinApplication.startCommonKoinModule(
 ): KoinApplication {
     coroutineScope.launch {
         koin.get<HttpDownloader>().init()
+    }
+    coroutineScope.launch {
+
+
     }
     return this
 }

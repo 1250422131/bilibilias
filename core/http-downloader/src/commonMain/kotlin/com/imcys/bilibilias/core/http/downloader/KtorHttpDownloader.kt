@@ -15,7 +15,7 @@ import com.imcys.bilibilias.core.http.downloader.model.SegmentInfo
 import com.imcys.bilibilias.core.io.absolutePath
 import com.imcys.bilibilias.core.io.inSystem
 import com.imcys.bilibilias.core.io.resolve
-import io.github.smyrgeorge.log4k.Logger
+import com.imcys.bilibilias.core.logging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.HttpStatement
@@ -839,6 +839,6 @@ open class KtorHttpDownloader(
     }
 
     private companion object {
-        val logger = Logger.of("KtorHttpDownloader")
+        val logger = logger<KtorHttpDownloader>()
     }
 }

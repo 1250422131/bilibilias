@@ -8,10 +8,9 @@ import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.work.Sync
-import io.github.smyrgeorge.log4k.Logger
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 
 class AsApplication : Application(), SingletonImageLoader.Factory {
@@ -20,13 +19,12 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
 
         val defaultUEH = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            Logger.of("AsApplication").error(e) { "!!! FATAL !!!" }
+            logger<AsApplication>().error(e) { "!!! FATAL !!!" }
             defaultUEH?.uncaughtException(t, e)
         }
 
         initKoin {
             androidContext(this@AsApplication)
-            androidLogger()
             modules(commonModules())
             workManagerFactory()
             StartupSet.create(koin.get())

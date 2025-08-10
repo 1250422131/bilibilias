@@ -14,6 +14,7 @@ import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
 import com.imcys.bilibilias.core.di.applicationScope
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.core.logging.logger
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.CookiesStorage
@@ -47,9 +48,9 @@ val DataSourceModule = module {
                 Logging {
                     level = LogLevel.BODY
                     logger = object : Logger {
+                        private val logger = logger<BilibiliLoginApi>()
                         override fun log(message: String) {
-                            io.github.smyrgeorge.log4k.Logger.of("BilibiliLoginApi")
-                                .info { message }
+                            logger.info { message }
                         }
                     }
                 }
