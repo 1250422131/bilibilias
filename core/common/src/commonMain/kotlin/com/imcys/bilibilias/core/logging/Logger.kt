@@ -81,7 +81,11 @@ fun loggerConfigurationInit(): LoggerConfig {
         SystemFileSystem.createDirectories(KmpContext.logsDir)
         loggerConfigInit(
             FileLogWriter(
-                FileLogWriterConfig("app", KmpContext.logsDir),
+                FileLogWriterConfig(
+                    "app",
+                    KmpContext.logsDir,
+                    maxLogFiles = 1
+                ),
             )
         )
     }
