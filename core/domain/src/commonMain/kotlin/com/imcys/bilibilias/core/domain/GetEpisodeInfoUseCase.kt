@@ -21,11 +21,11 @@ class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheDataSource
 ) {
     private val logger = logger<GetEpisodeInfoUseCase>()
-    operator fun invoke(query: String): Flow<EpisodeCacheListState> {
+    operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
         return when (val result = TextExtraction.textExtract(query)) {
             is TextExtraction.MatchResult.BV -> bv(result.id)
 
-            TextExtraction.MatchResult.Emptry -> flowOf(EpisodeCacheListState.Placeholder)
+            TextExtraction.MatchResult.Emptry -> flowOf(null)
         }
     }
 

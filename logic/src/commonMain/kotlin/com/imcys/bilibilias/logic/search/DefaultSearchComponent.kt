@@ -22,6 +22,7 @@ import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -54,6 +55,7 @@ class DefaultSearchComponent(
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
                 getEpisodeInfoUseCase(query)
+                    .filterNotNull()
                     .asResult()
                     .map { result ->
                         when (result) {
