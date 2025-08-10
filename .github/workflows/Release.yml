@@ -65,6 +65,6 @@ jobs:
           tag_name: '${{ steps.step-6.outputs.tag }}'
           draft: 'true'
           prerelease: '${{ contains(steps.step-6.outputs.tag, ''-'') }}'
-          files: 'app/build/outputs/apk/release/app-release.apk'
+          files: 'app/build/outputs/apk/release/bilibilias-${{ steps.step-7.outputs.substring }}.apk'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
