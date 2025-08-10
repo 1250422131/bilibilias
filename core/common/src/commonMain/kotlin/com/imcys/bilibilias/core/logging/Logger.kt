@@ -73,20 +73,16 @@ class LoggerImpl(private val log: KermitLogger) : Logger {
 }
 
 fun loggerConfigurationInit(): LoggerConfig {
-    return if (KmpContext.isDebug) {
-        loggerConfigInit(
-            platformLogWriter(NoTagFormatter),
+    SystemFileSystem.createDirectories(KmpContext.logsDir)
+
+    return loggerConfigInit(
+        platformLogWriter(NoTagFormatter),
+        FileLogWriter(
+            FileLogWriterConfig(
+                "app",
+                KmpContext.logsDir,
+                maxLogFiles = 1
+            ),
         )
-    } else {
-        SystemFileSystem.createDirectories(KmpContext.logsDir)
-        loggerConfigInit(
-            FileLogWriter(
-                FileLogWriterConfig(
-                    "app",
-                    KmpContext.logsDir,
-                    maxLogFiles = 1
-                ),
-            )
-        )
-    }
+    )
 }
