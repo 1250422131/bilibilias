@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path
+        name="cache_files"
+        path="updates/download/" /> <!-- /cache/updates/download/ -->
+
+    <files-path
+        name="logs"
+        path="logs/" /> <!-- /files/logs/ -->
+</paths>
