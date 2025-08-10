@@ -119,6 +119,19 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+    applicationVariants.all {
+        val variant = this
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                println(output.outputFile.name)
+                val newName = output.outputFile.name
+                    .replace("app", "bilibilias")
+                    .replace("release", "${variant.versionName}")
+                    .replace("debug", "${variant.versionName}")
+                output.outputFileName = newName
+            }
+    }
 }
 
 compose.desktop {
