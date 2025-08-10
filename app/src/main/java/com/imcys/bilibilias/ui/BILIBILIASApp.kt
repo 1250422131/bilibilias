@@ -246,7 +246,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.Start,
                 ) {
                     item {
                         Text(
