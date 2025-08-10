@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
-import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.io.resolve
 import com.imcys.bilibilias.core.io.toFile
@@ -17,7 +16,7 @@ import kotlinx.io.files.Path
 @Composable
 internal actual fun ShareLogFile() {
     val context = LocalContext.current
-    SettingsMenuLink(
+    Section(
         title = { Text("分享日志文件") },
         icon = { Icon(Icons.Outlined.Feedback, null) }
     ) {

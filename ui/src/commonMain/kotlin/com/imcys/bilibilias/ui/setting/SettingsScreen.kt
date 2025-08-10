@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.alorma.compose.settings.ui.SettingsGroup
 import com.imcys.bilibilias.logic.setting.SettingsComponent
 import com.imcys.bilibilias.ui.BackButton
 
@@ -35,7 +36,9 @@ fun SettingsContent(onBack: () -> Unit) {
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             item {
-                ShareLogFile()
+                SettingsGroup(title = { Text("其他") }) {
+                    ShareLogFile()
+                }
             }
         }
     }
