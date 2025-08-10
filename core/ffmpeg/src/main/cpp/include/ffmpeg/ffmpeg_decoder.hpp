@@ -105,12 +105,6 @@ namespace bilias::ffmpeg {
         }
     };
 
-    auto decode_frames(
-        AVFormatContext *format_ctx,
-        AVCodecContext *codec_ctx,
-        int video_stream_index
-    ) -> Generator<AVFrame *> ;
-
     class FFmpegDecoder final : NonCopy {
         int fd;
         AVIOContextPtr avio_ctx{nullptr};
@@ -125,8 +119,6 @@ namespace bilias::ffmpeg {
 
         auto init() -> void;
 
-        auto new_generator() -> Generator<AVFrame *> {
-            return decode_frames(format_ctx.get(), codec_ctx.get(), video_stream_index);
-        }
+        auto new_video_generator() -> Generator<AVFrame *>;
     };
 }

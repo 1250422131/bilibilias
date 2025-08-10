@@ -11,13 +11,11 @@ extern "C" {
 
 namespace bilias::ffmpeg {
 
-    auto decode_frames(
+    auto decode_video_frames(
         AVFormatContext *format_ctx,
         AVCodecContext *codec_ctx,
         int video_stream_index
     ) -> Generator<AVFrame *> {
-
-
         try {
             constexpr auto buffer_size = 2 << 8;
             // co_await set_generator_buffer_size(buffer_size);
@@ -92,10 +90,81 @@ namespace bilias::ffmpeg {
             decoder_thread.join();
             co_return;
         } catch (const std::exception &e) {
-            log_e("error in decode_frames: {}", e.what());
+            log_e("error in decode_video_frames: {}", e.what());
         } catch (...) {
-            log_e("unknown error in decode_frames");
+            log_e("unknown error in decode_video_frames");
         }
+    }
+
+    auto decode_audio_frames(
+        AVFormatContext *format_ctx,
+        AVCodecContext *codec_ctx,
+        int audio_stream_index
+    ) -> Generator<AVFrame *> {
+        try {
+            constexpr auto buffer_size = 2 << 8;
+            auto buffer = RingFrameBuffer<buffer_size>();
+            buffer.init();
+            std::atomic<bool> running = true;
+            std::thread decoder_thread([&] {
+                AVPacket packet{};
+                AVFrame *frame = buffer.pop_empty_frame();
+                while (running && av_read_frame(format_ctx, &packet) >= 0) {
+                    if (packet.stream_index != audio_stream_index) {
+                        av_packet_unref(&packet);
+                        continue;
+                    }
+
+                    int ret = avcodec_send_packet(codec_ctx, &packet);
+                    av_packet_unref(&packet);
+
+                    if (ret < 0) {
+                        throw std::runtime_error(std::format("error avcodec_send_packet: {}", ret));
+                    }
+
+                    while (running) {
+                        if (!frame) {
+                            frame = buffer.pop_empty_frame();
+                        }
+                        ret = avcodec_receive_frame(codec_ctx, frame);
+                        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+                            break;
+                        } else if (ret < 0) {
+                            throw std::runtime_error(std::format("error avcodec_receive_frame: {}", ret));
+                        }
+
+                        // todo check audio format
+                        buffer.mark_frame_ready_one();
+                        frame = nullptr;
+                    }
+                }
+                running = false;
+                buffer.stop();
+            });
+
+            AVFrame *prev_frame{nullptr};
+            while (true) {
+                auto *frame = buffer.pop_ready_frame();
+                if (!frame) {
+                    break;
+                }
+                if (prev_frame) {
+                    buffer.release_one();
+                }
+                co_yield static_cast<AVFrame *&&>(frame);
+                prev_frame = frame;
+            }
+            if (prev_frame) {
+                buffer.release_one();
+            }
+            decoder_thread.join();
+            co_return;
+        } catch (const std::exception &e) {
+            log_e("error in decode_audio_frames: {}", e.what());
+        } catch (...) {
+            log_e("unknown error in decode_audio_frames");
+        }
+        co_return;
     }
 
     auto FFmpegDecoder::init() -> void {
@@ -153,5 +222,9 @@ namespace bilias::ffmpeg {
             throw std::runtime_error("avcodec_open2 failed");
         }
 
+    }
+
+    auto FFmpegDecoder::new_video_generator() -> Generator<AVFrame *> {
+        return decode_video_frames(format_ctx.get(), codec_ctx.get(), video_stream_index);
     }
 }

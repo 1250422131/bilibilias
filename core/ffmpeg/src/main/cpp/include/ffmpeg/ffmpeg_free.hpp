@@ -8,6 +8,7 @@ extern "C" {
 #include "libavcodec/avcodec.h"
 #include "libswscale/swscale.h"
 #include "libavutil/imgutils.h"
+#include "libswresample/swresample.h"
 }
 
 
@@ -61,6 +62,12 @@ namespace bilias::ffmpeg {
                 av_free(av_buf);
             }
         }
+
+        auto operator()(SwrContext *ctx) const noexcept -> void {
+            if (ctx) {
+                swr_free(&ctx);
+            }
+        }
     };
 
     using AVIOContextPtr = std::unique_ptr<AVIOContext, FFMPEGFree>;
@@ -72,6 +79,7 @@ namespace bilias::ffmpeg {
     using AVCodecPtr = std::unique_ptr<AVCodec, FFMPEGFree>;
     using AVFramePtr = std::unique_ptr<AVFrame , FFMPEGFree>;
     using AVMallocPtr = std::unique_ptr<uint8_t, FFMPEGFree>;
+    using SwrContextPtr = std::unique_ptr<SwrContext, FFMPEGFree>;
 
     inline auto bilias_av_malloc(size_t size) noexcept -> AVMallocPtr {
         return AVMallocPtr(reinterpret_cast<uint8_t *>(av_malloc(size)));
@@ -109,6 +117,10 @@ namespace bilias::ffmpeg {
             int64_t (*seek)(void *opaque, int64_t offset, int whence)
     ) -> AVIOContextPtr {
         return AVIOContextPtr(avio_alloc_context(buffer, buffer_size, write_flag, opaque, read_packet, write_packet, seek));
+    }
+
+    inline auto bilias_swr_alloc() -> SwrContextPtr {
+        return SwrContextPtr(swr_alloc());
     }
 
 

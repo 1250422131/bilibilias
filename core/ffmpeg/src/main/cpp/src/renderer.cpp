@@ -117,7 +117,7 @@ namespace bilias {
         std::thread a([this] {
             try {
                 log_i("VideoRenderer::test_play() thread");
-                auto g = decoder->new_generator();
+                auto g = decoder->new_video_generator();
                 auto success = egl_manager->make_current();
                 if (!success) {
                     log_i("VideoRenderer::test_play make_current failed");
