@@ -89,12 +89,11 @@ workflow(
         setupGradle()
         prepareSigningKey()
         run(
-            name = "Build flavor property",
-            command = "./gradlew build -Pbuildkonfig.flavor=release"
-        )
-        run(
             name = "Build release variant",
-            command = "./gradlew :app:assembleRelease"
+            command = """
+                ./gradlew :app:assembleRelease
+                -Pbuildkonfig.flavor=release
+            """.trimIndent()
         )
         val gitTag = getGitTag()
         val createRelease = uses(
