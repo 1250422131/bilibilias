@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.weight
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +52,10 @@ fun AsCardTextField(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Card(
         modifier = modifier,
         elevation = elevation,
@@ -75,6 +82,7 @@ fun AsCardTextField(
             ) {
                 BasicTextField(
                     modifier = Modifier
+                        .weight(1f)
                         .padding(horizontal = 16.dp)
                         .focusRequester(focusRequester)
                         .onFocusChanged({
@@ -101,9 +109,12 @@ fun AsCardTextField(
                         Spacer(Modifier.height(12.dp))
                         if (value.isEmpty() && !hasFocus) {
                             Text(
-                                "BV / AV / EP 号...", color = MaterialTheme.colorScheme.onPrimary.copy(
+                                "BV / AV / EP 号...",
+                                color = MaterialTheme.colorScheme.onPrimary.copy(
                                     alpha = 0.5f
-                                ), fontSize = 16.sp, modifier = Modifier.fillMaxWidth()
+                                ),
+                                fontSize = 16.sp,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         } else {
                             innerTextField()
@@ -112,6 +123,20 @@ fun AsCardTextField(
                     }
                 }
             }
+
+            if (value.isNotEmpty()){
+                Icon(
+                    Icons.Outlined.Close,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        focusManager.clearFocus()
+                        onValueChange.invoke("")
+                    }
+                )
+            }
+
+            Spacer(Modifier.width(16.dp))
 
         }
     }

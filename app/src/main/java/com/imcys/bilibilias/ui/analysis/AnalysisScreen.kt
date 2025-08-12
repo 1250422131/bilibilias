@@ -114,6 +114,11 @@ fun AnalysisScreen(
 
     val uiState by vm.uiState.collectAsState()
 
+    LaunchedEffect(analysisRoute.asInputText) {
+        // 解析分享内容
+        vm.updateInputAsText(analysisRoute.asInputText)
+    }
+
 
     AnalysisScaffold(
         uiState.asLinkResultType,

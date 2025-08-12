@@ -178,7 +178,10 @@ internal fun HomeScreen(
 
                 item {
                     Text(
-                        "请在Download/BILIBILIAS目录下查看下载内容",
+                        """
+                            请在Download/BILIBILIAS目录下查看下载内容
+                            内部测试版本，请勿外传
+                        """.trimIndent(),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(330),
                         modifier = Modifier
