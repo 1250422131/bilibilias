@@ -66,9 +66,9 @@ data class BILIDonghuaSeasonInfo(
     @SerialName("season_title")
     val seasonTitle: String,
     @SerialName("seasons")
-    val seasons: List<Season>,
+    val seasons: List<Season> = emptyList(),
     @SerialName("section")
-    val section: List<Section>,
+    val section: List<Section> = emptyList(),
     @SerialName("series")
     val series: Series,
     @SerialName("share_copy")

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
+import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.createDownloadNotificationChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings
@@ -38,6 +41,31 @@ class MainActivity : ComponentActivity() {
         initAppSetting()
         // 初始化通知渠道
         initNotificationChannel()
+
+        handleShareInfo(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShareInfo(intent)
+    }
+
+    private fun handleShareInfo(incoming: Intent?) {
+        if (incoming == null) return
+        val action = incoming.action
+        val type = incoming.type
+        when (action) {
+            Intent.ACTION_SEND -> {
+                if (type?.startsWith("text/") == true) {
+                    val sharedText = incoming.getStringExtra(Intent.EXTRA_TEXT).orEmpty()
+                    sendAnalysisEvent(AnalysisEvent(analysisText = sharedText))
+                }
+            }
+            Intent.ACTION_MAIN -> {
+                // 正常启动
+            }
+        }
     }
 
     /**
@@ -63,9 +91,7 @@ class MainActivity : ComponentActivity() {
         // 创建文件下载进度渠道
         createDownloadNotificationChannel()
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable

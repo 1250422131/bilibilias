@@ -12,17 +12,20 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
+import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.download.DownloadScreen
@@ -43,12 +46,20 @@ import com.imcys.bilibilias.ui.user.navigation.UserRoute
 /**
  * BILIBILAIS导航显示组件
  * 计划迁移到Compose Navigation 3.0
- * 暂未使用
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BILIBILAISNavDisplay() {
-    val backStack = remember { mutableStateListOf<Any>(HomeRoute()) }
+
+    val backStack = remember { mutableStateListOf<NavKey>(HomeRoute()) }
+
+    // 监听解析事件
+    LaunchedEffect(Unit) {
+        analysisHandleChannel.collect {
+            backStack.addWithReuse(AnalysisRoute(it.analysisText))
+        }
+    }
+
 
     val popTransitionSpec = remember {
         ContentTransform(
@@ -190,15 +201,25 @@ fun BILIBILAISNavDisplay() {
 
 /**
  * 栈内复用扩展函数
- * 如果栈中已存在相同类型的路由，则将其之后的所有元素移除（目标及之前的保留）
+ * 如果栈中已存在相同类型的路由，则比较参数：
+ * - 参数相同：将其之后的所有元素移除（目标及之前的保留）
+ * - 参数不同：替换该路由实例并移除其之后的所有元素
  * 否则添加新的路由实例
  */
-inline fun <reified T : Any> SnapshotStateList<Any>.addWithReuse(route: T) {
+inline fun <reified T : NavKey> SnapshotStateList<NavKey>.addWithReuse(route: T) {
     val existingIndex = indexOfFirst { it::class == T::class }
 
     if (existingIndex != -1) {
-        // 移除目标之后的所有元素
-        repeat(size - existingIndex - 1) { removeAt(existingIndex + 1) }
+        val existingRoute = get(existingIndex) as T
+        // 比较路由对象的完整内容，而不只是类型
+        if (existingRoute == route) {
+            // 参数相同，只需移除目标之后的所有元素
+            repeat(size - existingIndex - 1) { removeAt(existingIndex + 1) }
+        } else {
+            // 参数不同，替换该路由并移除其之后的所有元素
+            set(existingIndex, route)
+            repeat(size - existingIndex - 1) { removeAt(existingIndex + 1) }
+        }
     } else {
         add(route)
     }

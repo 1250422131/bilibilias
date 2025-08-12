@@ -21,3 +21,15 @@ val appErrorHandleChannel = _appErrorHandleChannel.receiveAsFlow()
 fun sendAppErrorEvent(appException: AppException) {
     _appErrorHandleChannel.trySend(appException)
 }
+
+
+data class AnalysisEvent(
+    val analysisText: String,
+)
+
+private val _analysisHandleChannel = Channel<AnalysisEvent>(Channel.UNLIMITED)
+val analysisHandleChannel = _analysisHandleChannel.receiveAsFlow()
+
+fun sendAnalysisEvent(analysisEvent: AnalysisEvent) {
+    _analysisHandleChannel.trySend(analysisEvent)
+}
