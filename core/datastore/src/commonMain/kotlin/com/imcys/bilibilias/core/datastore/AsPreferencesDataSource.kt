@@ -10,7 +10,7 @@ class AsPreferencesDataSource(
 ) {
     val userData = userPreferences.data
     @OptIn(ExperimentalUuidApi::class)
-    suspend fun setSelfInfo(info: SelfInfo) {
+    suspend fun setSelfInfo(info: SelfInfo?) {
         userPreferences.updateData {
             it.copy(selfInfo = info)
         }
