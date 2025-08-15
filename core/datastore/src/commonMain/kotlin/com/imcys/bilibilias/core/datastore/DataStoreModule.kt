@@ -8,6 +8,8 @@ import com.imcys.bilibilias.core.di.applicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import org.koin.dsl.module
 
 val DataStoreModule = module {
@@ -28,6 +30,17 @@ val DataStoreModule = module {
                     .asDataStoreSerializer { UserPreferences.INIT },
                 corruptionHandler = ReplaceFileCorruptionHandler { UserPreferences.INIT },
                 produceFile = { resolveDataStoreFile("user_preferences") },
+                scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
+            ),
+        )
+    }
+    single {
+        CookieJarDataSource(
+            DataStoreFactory.new(
+                serializer = MapSerializer(String.serializer(), String.serializer())
+                    .asDataStoreSerializer { emptyMap() },
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyMap() },
+                produceFile = { resolveDataStoreFile("cookie_jar") },
                 scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
             ),
         )
