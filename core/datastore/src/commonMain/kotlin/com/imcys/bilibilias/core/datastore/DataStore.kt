@@ -6,23 +6,23 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.io.SystemPath
-import com.imcys.bilibilias.core.json.DataStoreJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-expect interface DataStoreSerializer<T>
 
-expect fun <T> KSerializer<T>.asDataStoreSerializer(
+internal expect interface DataStoreSerializer<T>
+
+internal expect fun <T> KSerializer<T>.asDataStoreSerializer(
     format: Json = DataStoreJson,
     defaultValue: () -> T,
 ): DataStoreSerializer<T>
 
 // Datastore 忘了给 expect 加 default constructor
-expect fun <T> ReplaceFileCorruptionHandler(produceNewData: (CorruptionException) -> T): ReplaceFileCorruptionHandler<T>
+internal expect fun <T> ReplaceFileCorruptionHandler(produceNewData: (CorruptionException) -> T): ReplaceFileCorruptionHandler<T>
 
-fun <T> DataStoreFactory.create(
+internal fun <T> DataStoreFactory.create(
     serializer: KSerializer<T>,
     defaultValue: () -> T,
     corruptionHandler: ReplaceFileCorruptionHandler<T>?,
@@ -38,14 +38,8 @@ fun <T> DataStoreFactory.create(
         produceFile = produceFile,
     )
 }
-expect fun <T> DataStoreFactory.new(
-    serializer: DataStoreSerializer<T>,
-    corruptionHandler: ReplaceFileCorruptionHandler<T>?,
-    migrations: List<DataMigration<T>> = listOf(),
-    scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-    produceFile: () -> SystemPath
-): DataStore<T>
-expect fun <T> DataStoreFactory.create(
+
+internal expect fun <T> DataStoreFactory.new(
     serializer: DataStoreSerializer<T>,
     corruptionHandler: ReplaceFileCorruptionHandler<T>?,
     migrations: List<DataMigration<T>> = listOf(),
@@ -53,4 +47,18 @@ expect fun <T> DataStoreFactory.create(
     produceFile: () -> SystemPath
 ): DataStore<T>
 
-expect fun resolveDataStoreFile(name: String): SystemPath
+internal expect fun <T> DataStoreFactory.create(
+    serializer: DataStoreSerializer<T>,
+    corruptionHandler: ReplaceFileCorruptionHandler<T>?,
+    migrations: List<DataMigration<T>> = listOf(),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+    produceFile: () -> SystemPath
+): DataStore<T>
+
+internal expect fun resolveDataStoreFile(name: String): SystemPath
+
+internal val DataStoreJson = Json {
+    ignoreUnknownKeys = true
+    prettyPrint = false
+    allowSpecialFloatingPointValues = true
+}

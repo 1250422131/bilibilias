@@ -6,7 +6,7 @@ import io.ktor.http.Cookie
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.first
 
-internal class CookiePersistent(
+internal class CookiesStorageImpl(
     private val cookieStore: DataStore<List<Cookie>>
 ) : CookiesStorage {
     val cookieFlow = cookieStore.data

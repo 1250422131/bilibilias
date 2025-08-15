@@ -45,7 +45,6 @@ class DefaultRootComponent(
                     get(),
                     get(),
                     get(),
-                    get()
                 )
             )
 

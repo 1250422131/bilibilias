@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-// See also `mutablePreferencesOf` from commonTest.
 class MemoryDataStore<T>(initial: T) : DataStore<T> {
     override val data: MutableStateFlow<T> = MutableStateFlow(initial)
     private val lock = Mutex()

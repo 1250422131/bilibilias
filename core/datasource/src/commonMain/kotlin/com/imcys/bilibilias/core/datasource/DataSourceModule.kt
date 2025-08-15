@@ -2,7 +2,7 @@ package com.imcys.bilibilias.core.datasource
 
 import androidx.datastore.core.DataStoreFactory
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
-import com.imcys.bilibilias.core.datasource.persistent.CookiePersistent
+import com.imcys.bilibilias.core.datasource.persistent.CookiesStorageImpl
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datastore.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
@@ -55,7 +55,7 @@ val DataSourceModule = module {
         )
     }
     single<CookiesStorage> {
-        CookiePersistent(
+        CookiesStorageImpl(
             DataStoreFactory.new(
                 serializer = ListSerializer(Cookie.serializer()).asDataStoreSerializer { emptyList() },
                 produceFile = { resolveDataStoreFile("cookies") },
