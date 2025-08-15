@@ -7,7 +7,6 @@ import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo
 import com.imcys.bilibilias.core.domain.model.MediaStreamMetadata
-import com.imcys.bilibilias.core.domain.model.Owner
 import com.imcys.bilibilias.core.domain.model.Resolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,26 +25,19 @@ class MediaSourceSelectedUseCase {
 
             val detail = detailDeferred.await()
             val playUrl = playUrlDeferred.await()
-
+            val audioUrl = playUrl.dash.audio.applyMediaStreamTransformation { streamMap ->
+                streamMap.values.flatten().maxBy { it.id }
+            }
+            val videoUrl = playUrl.dash.video.applyMediaStreamTransformation { streamMap ->
+                val preferredResolutionMetadata = streamMap[request.videoResolution]
+                preferredResolutionMetadata?.maxBy { it.codecId }
+                    ?: streamMap.values.flatten().maxWith(compareBy { it.id })
+            }
             EpisodeInfo(
                 bvid = detail.bvid,
                 cid = detail.cid,
-                desc = detail.desc,
-                cover = detail.pic,
                 title = detail.title,
-                owner = Owner(
-                    detail.owner.mid,
-                    detail.owner.face,
-                    detail.owner.name
-                ),
-                video = playUrl.dash.video.applyMediaStreamTransformation { streamMap ->
-                    val preferredResolutionMetadata = streamMap[request.videoResolution]
-                    preferredResolutionMetadata?.maxBy { it.codecId }
-                        ?: streamMap.values.flatten().maxWith(compareBy { it.id })
-                },
-                audio = playUrl.dash.audio.applyMediaStreamTransformation { streamMap ->
-                    streamMap.values.flatten().maxBy { it.id }
-                }
+                urls = listOf(audioUrl, videoUrl)
             )
         }
     }

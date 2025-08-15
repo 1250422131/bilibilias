@@ -20,6 +20,8 @@ import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -101,17 +103,14 @@ class DefaultSearchComponent(
         applicationScope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
             val metadata = episodeInfo.asEpisodeMetadata()
-            launch {
-                mediaCacheStorage.cacheEpisodeMetadata(metadata)
-            }
-            launch {
-                val videoDownloadState = download(episodeInfo.video.backupUrl.random().url)
-                cachePartMetadata(metadata, videoDownloadState)
-            }
-            launch {
-                val audioDownloadState = download(episodeInfo.audio.backupUrl.random().url)
-                cachePartMetadata(metadata, audioDownloadState)
-            }
+
+            mediaCacheStorage.cacheEpisodeMetadata(metadata)
+            episodeInfo.urls.map {
+                async {
+                    val downloadId = httpDownloader.download(it.backupUrl.random().url)
+                    cachePartMetadata(metadata, downloadId)
+                }
+            }.awaitAll()
         }
     }
 

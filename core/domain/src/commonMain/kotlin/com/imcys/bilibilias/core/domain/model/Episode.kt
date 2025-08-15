@@ -5,12 +5,8 @@ import com.imcys.bilibilias.core.datasource.CdnResource
 data class EpisodeInfo(
     val bvid: String,
     val cid: Long,
-    val desc: String,
-    val cover: String,
     val title: String,
-    val owner: Owner,
-    val video: MediaStreamMetadata,
-    val audio: MediaStreamMetadata,
+    val urls: List<MediaStreamMetadata>,
 )
 
 /**
@@ -21,10 +17,4 @@ data class MediaStreamMetadata(
     val backupUrl: List<CdnResource>,
     val codecId: Int = 0,
     val description: String = ""
-)
-
-data class Owner(
-    val id: Long,
-    val avatarUrl: String,
-    val name: String
 )
