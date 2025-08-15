@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.datasource.api
 
 import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.model.QrCode
+import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.FormDataContent
@@ -15,6 +16,7 @@ import io.ktor.http.parametersOf
 
 class BilibiliLoginApi(
     private val client: HttpClient,
+    private val cookieJar: CookieJarDataSource,
 ) : AutoCloseable {
 
     suspend fun getQrcode(): QrCode {
@@ -28,12 +30,12 @@ class BilibiliLoginApi(
     }
 
     suspend fun exit() {
+        val csrf = cookieJar.getCookie("bili_jct") ?: return
         client.post("/login/exit/v2") {
             contentType(ContentType.Application.FormUrlEncoded)
-            TODO()
             setBody(
                 FormDataContent(
-                    parametersOf("biliCSRF", "")
+                    parametersOf("biliCSRF", csrf)
                 )
             )
         }

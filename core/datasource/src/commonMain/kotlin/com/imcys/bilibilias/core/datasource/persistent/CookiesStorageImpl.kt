@@ -1,29 +1,26 @@
 package com.imcys.bilibilias.core.datasource.persistent
 
-import androidx.datastore.core.DataStore
+import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url
+import io.ktor.http.parseServerSetCookieHeader
+import io.ktor.http.renderSetCookieHeader
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 internal class CookiesStorageImpl(
-    private val cookieStore: DataStore<List<Cookie>>
+    private val cookieJar: CookieJarDataSource,
 ) : CookiesStorage {
-    val cookieFlow = cookieStore.data
     override suspend fun get(requestUrl: Url): List<Cookie> {
-        return cookieFlow.first()
+        return cookieJar.cookies.map {
+            it.map { parseServerSetCookieHeader(it) }
+        }.first()
     }
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
-        setCookie(cookie)
+        cookieJar.add(cookie.name, renderSetCookieHeader(cookie))
     }
 
-    suspend fun setCookie(cookie: Cookie) {
-        cookieStore.updateData { store ->
-            store.filterNot { it.name == cookie.name }
-                .plus(cookie)
-        }
-    }
-
-    override fun close() {}
+    override fun close() = Unit
 }
