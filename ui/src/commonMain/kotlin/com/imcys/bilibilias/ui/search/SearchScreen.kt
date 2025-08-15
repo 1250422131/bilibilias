@@ -72,6 +72,7 @@ fun SearchScreen(
         searchResultUiState = searchResultUiState,
         selfInfoUiState = selfInfoUiState,
         onSearchQueryChanged = component::onSearchQueryChanged,
+        onLogout = component::onLogout,
         onCacheRequest = component::requestCache,
         navigationToLogin = navigationToLogin,
         navigationToPlayer = navigationToPlayer,
@@ -86,6 +87,7 @@ fun SearchContent(
     searchResultUiState: SearchResultUiState,
     selfInfoUiState: SelfInfoUiState,
     onSearchQueryChanged: (String) -> Unit,
+    onLogout: () -> Unit,
     onCacheRequest: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
@@ -103,7 +105,7 @@ fun SearchContent(
                         selfInfoUiState,
                         modifier = Modifier,
                         onLoginClick = navigationToLogin,
-                        onAvatarClick = {}
+                        onLogoutConfirmed = onLogout
                     )
                 }
             )

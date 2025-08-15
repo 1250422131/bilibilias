@@ -12,4 +12,5 @@ interface SearchComponent : BackHandlerOwner {
     fun onSearchTriggered(query: String)
     fun onSearchQueryChanged(query: String)
     fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest)
+    fun onLogout()
 }

@@ -2,7 +2,7 @@ package com.imcys.bilibilias.logic.search
 
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
-import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
@@ -37,8 +37,8 @@ class DefaultSearchComponent(
     private val mediaCacheStorage: MediaCacheDataSource,
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
     private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
-    private val tokenPersistent: TokenPersistent,
     private val preferences: AsPreferencesDataSource,
+    private val loginApi: BilibiliLoginApi,
 ) : SearchComponent, AppComponentContext by componentContext {
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
@@ -83,6 +83,13 @@ class DefaultSearchComponent(
     override fun onSearchQueryChanged(query: String) {
         persistentState = State(query)
         searchQuery.value = query
+    }
+
+    override fun onLogout() {
+        applicationScope.launch {
+            loginApi.exit()
+            preferences.setSelfInfo(null)
+        }
     }
 
     override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
