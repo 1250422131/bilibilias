@@ -3,9 +3,6 @@ package com.imcys.bilibilias.core.datasource
 import androidx.datastore.core.DataStoreFactory
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datasource.persistent.CookiePersistent
-import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
-import com.imcys.bilibilias.core.datasource.persistent.TokenSave
-import com.imcys.bilibilias.core.datasource.persistent.TokenSave.Companion.INIT
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datastore.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
@@ -63,16 +60,6 @@ val DataSourceModule = module {
                 serializer = ListSerializer(Cookie.serializer()).asDataStoreSerializer { emptyList() },
                 produceFile = { resolveDataStoreFile("cookies") },
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
-                scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO)
-            )
-        )
-    }
-    single<TokenPersistent> {
-        TokenPersistent(
-            DataStoreFactory.new(
-                serializer = TokenSave.serializer().asDataStoreSerializer { INIT },
-                corruptionHandler = ReplaceFileCorruptionHandler { INIT },
-                produceFile = { resolveDataStoreFile("token") },
                 scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO)
             )
         )

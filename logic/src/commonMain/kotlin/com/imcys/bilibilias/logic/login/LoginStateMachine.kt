@@ -10,8 +10,8 @@ import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.Success
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.WaitingConfirmation
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.WaitingScanned
 import com.imcys.bilibilias.core.datasource.model.PollResponse
-import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
+import com.imcys.bilibilias.core.datastore.TokenRepository
 import com.imcys.bilibilias.core.datastore.model.SelfInfo
 import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.delay
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class LoginStateMachine(
     private val loginApi: BilibiliLoginApi,
-    private val tokenPersistent: TokenPersistent,
+    private val tokenRepository: TokenRepository,
     private val preferences: AsPreferencesDataSource,
 ) : FlowReduxStateMachineFactory<LoginState, LoginAction>(), Lifecycle.Callbacks {
     private var interrupt = false
@@ -57,7 +57,7 @@ class LoginStateMachine(
                         WaitingConfirmation -> noChange()
 
                         Success -> {
-                            tokenPersistent.setRefreshToken(it.refreshToken)
+                            tokenRepository.setRefreshToken(it.refreshToken)
                             override { LoginState.LoginSuccessful }
                         }
 

@@ -1,11 +1,11 @@
-package com.imcys.bilibilias.core.datasource.persistent
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.imcys.bilibilias.core.datastore.model.TokenSave
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.Serializable
 
-class TokenPersistent(
+class TokenRepository(
     private val dataStore: DataStore<TokenSave>
 ) {
     val refreshToken: Flow<String?> = dataStore.data.map { it.refreshToken }
@@ -13,15 +13,5 @@ class TokenPersistent(
         dataStore.updateData {
             it.copy(refreshToken = value)
         }
-    }
-}
-
-@ConsistentCopyVisibility
-@Serializable
-data class TokenSave internal constructor(
-    val refreshToken: String? = null,
-) {
-    companion object {
-        val INIT = TokenSave()
     }
 }

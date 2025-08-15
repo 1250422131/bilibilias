@@ -3,6 +3,8 @@ package com.imcys.bilibilias.core.datastore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.datastore.model.MediaCacheSave
+import com.imcys.bilibilias.core.datastore.model.TokenSave
+import com.imcys.bilibilias.core.datastore.model.TokenSave.Companion.INIT
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.core.di.applicationScope
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +45,16 @@ val DataStoreModule = module {
                 produceFile = { resolveDataStoreFile("cookie_jar") },
                 scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
             ),
+        )
+    }
+    single<TokenRepository> {
+        TokenRepository(
+            DataStoreFactory.new(
+                serializer = TokenSave.serializer().asDataStoreSerializer { INIT },
+                corruptionHandler = ReplaceFileCorruptionHandler { INIT },
+                produceFile = { resolveDataStoreFile("token") },
+                scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO)
+            )
         )
     }
 }
