@@ -23,4 +23,7 @@ class CookieJarDataSource(
             currentCookies - name
         }
     }
+    suspend fun clearCookies() {
+        cookieDataStore.updateData { emptyMap() }
+    }
 }
