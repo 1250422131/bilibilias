@@ -4,6 +4,7 @@ import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
+import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
 import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
@@ -14,7 +15,6 @@ import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
-import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
@@ -22,14 +22,13 @@ import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.core.component.inject
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
@@ -38,7 +37,6 @@ class DefaultSearchComponent(
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
     private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
     private val preferences: AsPreferencesDataSource,
-    private val loginApi: BilibiliLoginApi,
 ) : SearchComponent, AppComponentContext by componentContext {
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
@@ -55,17 +53,20 @@ class DefaultSearchComponent(
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
                 getEpisodeInfoUseCase(query)
-                    .filterNotNull()
                     .asResult()
                     .map { result ->
                         when (result) {
                             is Success -> {
                                 val data = result.data
-                                SearchResultUiState.Success(
-                                    episodeCacheListState = data,
-                                    episodeInfo = data.episodeInfo,
-                                    episodes = data.episodes,
-                                )
+                                if (data == null) {
+                                    SearchResultUiState.Error("解析失败")
+                                } else {
+                                    SearchResultUiState.Success(
+                                        episodeCacheListState = data,
+                                        episodeInfo = data.episodeInfo,
+                                        episodes = data.episodes,
+                                    )
+                                }
                             }
 
                             is Error -> SearchResultUiState.Error(
@@ -86,9 +87,13 @@ class DefaultSearchComponent(
     }
 
     override fun onLogout() {
+        val api: BilibiliLoginApi by inject()
+        val cookieJar: CookieJarDataSource by inject()
+
         applicationScope.launch {
-            loginApi.exit()
+            api.exit()
             preferences.setSelfInfo(null)
+            cookieJar.clearCookies()
         }
     }
 
@@ -101,15 +106,11 @@ class DefaultSearchComponent(
             }
             launch {
                 val videoDownloadState = download(episodeInfo.video.backupUrl.random().url)
-                if (videoDownloadState != null) {
-                    cachePartMetadata(metadata, videoDownloadState.downloadId)
-                }
+                cachePartMetadata(metadata, videoDownloadState)
             }
             launch {
                 val audioDownloadState = download(episodeInfo.audio.backupUrl.random().url)
-                if (audioDownloadState != null) {
-                    cachePartMetadata(metadata, audioDownloadState.downloadId)
-                }
+                cachePartMetadata(metadata, audioDownloadState)
             }
         }
     }
@@ -122,10 +123,8 @@ class DefaultSearchComponent(
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    private suspend fun download(downloadUrl: String): DownloadState? {
-        val downloadId = DownloadId(Uuid.random().toString())
-        val downloadState = httpDownloader.downloadWithId(downloadId, downloadUrl)
-        return downloadState
+    private suspend fun download(downloadUrl: String): DownloadId {
+        return httpDownloader.download(downloadUrl)
     }
 
     fun EpisodeInfo.asEpisodeMetadata(): EpisodeMetadata {
