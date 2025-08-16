@@ -23,7 +23,17 @@ class CookieJarDataSource(
             currentCookies - name
         }
     }
+
     suspend fun clearCookies() {
         cookieDataStore.updateData { emptyMap() }
+    }
+
+    suspend fun add(text: String) {
+        cookieDataStore.updateData { currentCookies ->
+            text.split(";").associate {
+                val cookie = it.split("=")
+                cookie[0] to cookie[1]
+            }
+        }
     }
 }
