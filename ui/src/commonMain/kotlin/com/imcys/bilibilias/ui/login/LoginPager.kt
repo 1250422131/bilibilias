@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -137,8 +138,14 @@ internal fun PagerScope.LoginByQr(
 @Composable
 internal fun PagerScope.CookieContent(
     cookieLoginState: CookieLoginState,
-    dispatch: (CookieAction) -> Unit
+    dispatch: (CookieAction) -> Unit,
+    onBack: () -> Unit,
 ) {
+    SideEffect {
+        if (cookieLoginState.success) {
+            onBack()
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
