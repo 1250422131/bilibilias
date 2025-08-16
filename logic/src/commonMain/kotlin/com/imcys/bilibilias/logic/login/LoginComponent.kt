@@ -5,10 +5,10 @@ import com.imcys.bilibilias.logic.root.AppComponentContext
 import com.imcys.bilibilias.logic.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface LoginComponent {
+    val cookieStateMachine: CookieStateMachine
     val uiState: StateFlow<LoginResultUiState>
     val qrCodeUrl: StateFlow<String>
     fun dispatch(action: LoginAction)
@@ -17,6 +17,7 @@ interface LoginComponent {
 class DefaultLoginComponent(
     componentContext: AppComponentContext,
     stateMachine: LoginStateMachine,
+    override val cookieStateMachine: CookieStateMachine,
 ) : LoginComponent, AppComponentContext by componentContext {
     private val machine = stateMachine.launchIn(viewModelScope)
     override val uiState = MutableStateFlow<LoginResultUiState>(LoginResultUiState.Loading)
@@ -24,25 +25,6 @@ class DefaultLoginComponent(
 
     init {
         lifecycle.subscribe(stateMachine)
-        viewModelScope.launch {
-            machine.state.collect { state ->
-                when (state) {
-                    is LoginState.LoginFailed -> {
-                        uiState.update { LoginResultUiState.Error(state.message) }
-                    }
-
-                    is LoginState.GeneratingQrCode -> {}
-                    is LoginState.LoginSuccessful -> {
-                        uiState.update { LoginResultUiState.Success }
-                    }
-
-                    is LoginState.AwaitingConfirmation -> {}
-                    is LoginState.QrCodeReady -> {
-                        qrCodeUrl.update { state.qrCodeUrl }
-                    }
-                }
-            }
-        }
     }
 
     override fun dispatch(action: LoginAction) {
