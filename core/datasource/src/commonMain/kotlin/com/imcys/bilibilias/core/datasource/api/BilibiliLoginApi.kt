@@ -2,7 +2,6 @@ package com.imcys.bilibilias.core.datasource.api
 
 import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.model.QrCode
-import com.imcys.bilibilias.core.datasource.model.UserProfile
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -28,9 +27,6 @@ class BilibiliLoginApi(
         return client.get("/x/passport-login/web/qrcode/poll") {
             parameter("qrcode_key", key)
         }.body<PollResponse>()
-    }
-    suspend fun getUserProfile(): UserProfile {
-        return client.get("member/web/account").body<UserProfile>()
     }
     suspend fun exit() {
         val csrf = cookieJar.getCookie("bili_jct") ?: return
