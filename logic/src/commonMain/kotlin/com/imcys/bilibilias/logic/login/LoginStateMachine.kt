@@ -109,13 +109,7 @@ class LoginStateMachine(
 }
 
 // --- States ---
-sealed interface LoginState {
-    data object GeneratingQrCode : LoginState
-    data class QrCodeReady(val qrCodeUrl: String, val qrKey: String) : LoginState
-    data class AwaitingConfirmation(val key: String) : LoginState
-    data object LoginSuccessful : LoginState
-    data class LoginFailed(val message: String) : LoginState
-}
+
 
 sealed interface LoginAction {
     data object RequestNewQrCode : LoginAction

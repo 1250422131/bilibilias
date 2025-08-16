@@ -2,36 +2,32 @@ package com.imcys.bilibilias.logic.login
 
 import com.freeletics.flowredux2.FlowReduxStateMachineFactory
 import com.freeletics.flowredux2.initializeWith
-import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
+import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.logging.logger
-import kotlinx.io.IOException
 
 class CookieStateMachine(
-    private val api: BilibiliLoginApi,
-) : FlowReduxStateMachineFactory<LoginState, CookieAction>() {
+
+) : FlowReduxStateMachineFactory<CookieLoginState, CookieAction>() {
     private val logger = logger<CookieStateMachine>()
 
     init {
-        initializeWith { InputtingCookie("") }
+        initializeWith { CookieLoginState("") }
         spec {
-            inState<InputtingCookie> {
+            inState<CookieLoginState> {
                 on<CookieAction.Changed> {
-                    mutate { InputtingCookie(it.text) }
+                    mutate { CookieLoginState(it.text) }
                 }
                 on<CookieAction.TryLogin> {
                     try {
-                        val profile = api.getUserProfile()
+                        val profile = BilibiliApi.getUserProfile(snapshot.text)
                         if (profile.mid != 0L) {
-                            override { LoginState.Success }
+                            override { copy(success = true) }
                         } else {
-                            override { LoginState.Error("无法获取用户信息，请检查Cookie") }
+                            override { copy(message = "无法获取用户信息，请检查Cookie") }
                         }
-                    } catch (e: IOException) {
-                        logger.warn(e) { "Network issue during login" }
-                        override { LoginState.Error("网络连接失败，请检查网络后重试") }
                     } catch (e: Exception) {
                         logger.error(e) { "Login failed with unexpected error" }
-                        override { LoginState.Error(e.message ?: "登录时发生未知错误") }
+                        override { copy(message = e.message ?: "登录时发生未知错误") }
                     }
                 }
             }
@@ -39,8 +35,13 @@ class CookieStateMachine(
     }
 }
 
-data class InputtingCookie(val text: String) : LoginState
+data class CookieLoginState(
+    val text: String,
+    val success: Boolean = false,
+    val message: String? = null
+)
+
 sealed interface CookieAction {
     data class Changed(val text: String) : CookieAction
-    data class TryLogin(val text: String) : CookieAction
+    data object TryLogin : CookieAction
 }
