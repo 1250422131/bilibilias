@@ -13,7 +13,7 @@ kotlin {
 
             implementation(libs.decompose)
 
-            implementation(libs.flowredux)
+            api(libs.flowredux)
             implementation(libs.lifecycle.coroutines)
         }
     }
