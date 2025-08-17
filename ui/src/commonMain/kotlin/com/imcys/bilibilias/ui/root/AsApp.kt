@@ -51,6 +51,12 @@ fun AsApp(
                             onClick = component::onSearchClicked,
                             icon = {
                                 Icon(
+                                    imageVector = TopLevelDestination.SEARCH.unselectedIcon,
+                                    contentDescription = null,
+                                )
+                            },
+                            selectedIcon = {
+                                Icon(
                                     imageVector = TopLevelDestination.SEARCH.selectedIcon,
                                     contentDescription = null,
                                 )
@@ -63,6 +69,12 @@ fun AsApp(
                             selected = activeComponent is RootComponent.Child.CacheChild,
                             onClick = component::onCacheClicked,
                             icon = {
+                                Icon(
+                                    imageVector = TopLevelDestination.CACHE.unselectedIcon,
+                                    contentDescription = null,
+                                )
+                            },
+                            selectedIcon = {
                                 Icon(
                                     imageVector = TopLevelDestination.CACHE.selectedIcon,
                                     contentDescription = null,
