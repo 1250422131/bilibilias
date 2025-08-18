@@ -6,6 +6,7 @@ import com.imcys.bilibilias.core.datasource.model.UserProfile
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
+import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.core.logging.logger
@@ -30,6 +31,7 @@ import io.ktor.http.renderSetCookieHeader
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
 
 object BilibiliApi : KoinComponent {
     private val logger = logger<BilibiliApi>()
@@ -56,7 +58,7 @@ object BilibiliApi : KoinComponent {
             }
         }
     }
-
+    private val cookieJarDataSource by inject<CookieJarDataSource>()
     suspend fun getVideoInfoDetail(bvid: String): BiliVideoData {
         return client.get("/x/web-interface/view") {
             parameter("bvid", bvid)
@@ -97,6 +99,19 @@ object BilibiliApi : KoinComponent {
                     }
             }
         }.body<UserProfile>()
+    }
+    suspend fun setCookieFromSetCookieHeader(cookieText: String) {
+        if (cookieText.isBlank()) {
+            logger.debug { "setCookie called with blank cookieText. Nothing to parse." }
+            return
+        }
+        parseClientCookiesHeader(cookieText)
+            .forEach { (name, encodedValue) ->
+                cookieJarDataSource.add(
+                    name,
+                    decodeCookieValue(encodedValue, CookieEncoding.URI_ENCODING),
+                )
+            }
     }
 
     suspend fun getVideoDetailAndPlayInfo(bvid: String): Pair<BiliVideoData, VideoPlaybackInfo> {

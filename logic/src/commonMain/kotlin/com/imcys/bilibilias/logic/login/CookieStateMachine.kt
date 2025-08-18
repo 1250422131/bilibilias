@@ -4,7 +4,6 @@ import com.freeletics.flowredux2.FlowReduxStateMachineFactory
 import com.freeletics.flowredux2.initializeWith
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
-import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import com.imcys.bilibilias.core.datastore.model.SelfInfo
 import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +11,6 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 class CookieStateMachine(
-    private val cookieJarDataSource: CookieJarDataSource,
     private val preferences: AsPreferencesDataSource,
     private val applicationScope: CoroutineScope,
 ) : FlowReduxStateMachineFactory<CookieLoginState, CookieAction>() {
@@ -29,7 +27,7 @@ class CookieStateMachine(
                     try {
                         val profile = BilibiliApi.getUserProfile(snapshot.text)
                         if (profile.mid != 0L) {
-                            cookieJarDataSource.add(snapshot.text)
+                            BilibiliApi.setCookieFromSetCookieHeader(snapshot.text)
                             override { copy(success = true) }
                         } else {
                             override {
