@@ -2,12 +2,11 @@ package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 
 class CookieJarDataSource(
     private val cookieDataStore: DataStore<Map<String, String>>,
 ) {
-    val cookies = cookieDataStore.data.map { it.values.toList() }
+    val cookies = cookieDataStore.data
     suspend fun add(name: String, value: String) {
         cookieDataStore.updateData { currentCookies ->
             currentCookies + (name to value)
@@ -26,14 +25,5 @@ class CookieJarDataSource(
 
     suspend fun clearCookies() {
         cookieDataStore.updateData { emptyMap() }
-    }
-
-    suspend fun add(text: String) {
-        cookieDataStore.updateData { currentCookies ->
-            text.split(";").associate {
-                val cookie = it.split("=")
-                cookie[0] to cookie[1]
-            }
-        }
     }
 }
