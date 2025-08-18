@@ -21,8 +21,12 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.http.CookieEncoding
 import io.ktor.http.HttpHeaders
+import io.ktor.http.decodeCookieValue
+import io.ktor.http.parseClientCookiesHeader
 import io.ktor.http.parseQueryString
+import io.ktor.http.renderSetCookieHeader
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -44,7 +48,7 @@ object BilibiliApi : KoinComponent {
         }
         BrowserUserAgent()
         Logging {
-            level = LogLevel.HEADERS
+            level = LogLevel.ALL
             logger = object : Logger {
                 override fun log(message: String) {
                     this@BilibiliApi.logger.info { message }
@@ -52,6 +56,7 @@ object BilibiliApi : KoinComponent {
             }
         }
     }
+
     suspend fun getVideoInfoDetail(bvid: String): BiliVideoData {
         return client.get("/x/web-interface/view") {
             parameter("bvid", bvid)
@@ -80,7 +85,17 @@ object BilibiliApi : KoinComponent {
 
     suspend fun getUserProfile(cookieText: String? = null): UserProfile {
         return client.get("x/member/web/account") {
-            header(HttpHeaders.Cookie, cookieText)
+            cookieText?.let {
+                parseClientCookiesHeader(it)
+                    .forEach {
+                        headers[HttpHeaders.Cookie] =
+                            headers[HttpHeaders.Cookie] + "; " + renderSetCookieHeader(
+                                it.key,
+                                decodeCookieValue(it.value, CookieEncoding.URI_ENCODING),
+                                CookieEncoding.RAW
+                            )
+                    }
+            }
         }.body<UserProfile>()
     }
 
