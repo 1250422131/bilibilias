@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -238,62 +239,66 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = CardDefaults.shape
+            Column(
+                Modifier.weight(1f)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.Start,
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = CardDefaults.shape
                 ) {
-                    item {
-                        Text(
-                            """
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        item {
+                            Text(
+                                """
                 您正在使用的软件并非哔哩哔哩/bilibili，而是辅助其的第三方工具软件，与哔哩哔哩没有任何关联。
             """.trimIndent(),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                                 此软件未得到哔哩哔哩许可，哔哩哔哩对此使用软件而造成的一切后果概不负责。
                                 """.trimIndent(),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                                     BILIBILIAS是一款第三方的B站（哔哩哔哩）视频缓存工具，旨在帮助需要离线播放或者剪辑原创视频的自媒体博主。
                                 """.trimIndent(),
-                        )
-                    }
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                             在BILIBILIAS缓存的任何内容都不得进行二次传播，仅允许在您自己的终端设备播放或者制作剪辑视频（未经作者允许不得直接搬运）。
                         """.trimIndent(),
 
-                            )
-                    }
-                    item {
-                        Text(
-                            """
+                                )
+                        }
+                        item {
+                            Text(
+                                """
                             如果您违反了规定或者用作了非法用途，那么一切后果将由您自行承担，同时BILIBILIAS可能将禁止您继续使用。
                         """.trimIndent(),
-                        )
+                            )
+                        }
                     }
                 }
             }
-            Spacer(Modifier.weight(1f))
             Button(
                 onClick = {
                     content.startActivity(

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.common.utils.toVideoCode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
@@ -248,7 +249,7 @@ fun VideoSupportFormatsSelectScreen(
                     textStyle = LocalTextStyle.current.copy(
                         fontSize = 12.sp
                     ),
-                    value = selectVideoCodeValue,
+                    value = selectVideoCodeValue.toVideoCode(),
                     onValueChange = {
 
                     },
@@ -274,7 +275,7 @@ fun VideoSupportFormatsSelectScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    it,
+                                    it.toVideoCode(),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             },

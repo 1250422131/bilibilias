@@ -72,13 +72,7 @@ fun BILIBILAISNavDisplay() {
                 )
             ),
             // 返回导航：当前页面退出 - 淡出+放大
-            scaleOut(
-                targetScale = 1.1F,
-                animationSpec = tween(
-                    durationMillis = 400,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(
+            fadeOut(
                 animationSpec = tween(
                     durationMillis = 400,
                     easing = FastOutSlowInEasing

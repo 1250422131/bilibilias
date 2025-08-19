@@ -114,13 +114,13 @@ class DownloadTaskRepository(
         }
 
         val roots = if (isUgcSeason) {
-            buildUgcSeasonTree(task.taskId, data, selectedCid, downloadMode)
+            buildUgcSeasonTree(task.taskId, task, data, selectedCid, downloadMode)
         } else {
             val pages = data.pages?.filter { selectedCid.contains(it.cid) }.orEmpty()
             if (pages.isEmpty()) {
                 emptyList()
             } else {
-                listOf(buildVideoPageTree(task.taskId,task, data, pages, downloadMode))
+                listOf(buildVideoPageTree(task.taskId, task, data, pages, downloadMode))
             }
         }
 
@@ -191,7 +191,7 @@ class DownloadTaskRepository(
 
         // 3. 构建特殊的正片
         val epList = data.episodes.filter { selectedEpId.contains(it.epId) }
-        if (epList.isNotEmpty()){
+        if (epList.isNotEmpty()) {
             roots += buildNoeEpisodeNode(taskId, data, epList, downloadMode)
         }
         return roots
@@ -202,14 +202,30 @@ class DownloadTaskRepository(
      */
     private suspend fun buildUgcSeasonTree(
         taskId: Long,
+        task: DownloadTask,
         data: BILIVideoViewInfo,
         selectedCid: List<Long>,
         downloadMode: DownloadMode
     ): List<DownloadTreeNode> {
+
+
         return data.ugcSeason?.sections?.mapNotNull { section ->
-            val filteredEpisodes = section.episodes.filter { selectedCid.contains(it.cid) }
+            // 视频章节
+            val filteredEpisodes = section.episodes
+                .filter {
+                    if (it.pages.isNotEmpty()) it.pages.any { page -> page.cid in selectedCid } else selectedCid.contains(
+                        it.cid
+                    )
+                }
             if (filteredEpisodes.isNotEmpty()) {
-                buildUgcSectionNode(taskId, section, filteredEpisodes, downloadMode)
+                buildUgcSectionNode(
+                    taskId,
+                    task,
+                    section,
+                    filteredEpisodes,
+                    downloadMode,
+                    selectedCid
+                )
             } else null
         } ?: emptyList()
     }
@@ -223,13 +239,16 @@ class DownloadTaskRepository(
         data: BILIVideoViewInfo,
         pages: List<BILIVideoViewInfo.Page>,
         downloadMode: DownloadMode,
+        parentNodeId: Long? = null,
+        childTaskId: Long? = null
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
             platformId = data.bvid,
             title = data.title,
             nodeType = DownloadTaskNodeType.BILI_VIDEO_PAGE,
-            pic = data.pic
+            pic = data.pic,
+            parentNodeId = parentNodeId
         )
         val segments = pages.map { page ->
             createSegment(
@@ -241,7 +260,7 @@ class DownloadTaskRepository(
                 platformInfo = json.encodeToString(page),
                 duration = page.duration,
                 downloadMode = downloadMode,
-                childTaskId = null  // 普通视频不需要子任务
+                childTaskId = childTaskId  // 普通视频不需要子任务
             )
         }
 
@@ -326,7 +345,7 @@ class DownloadTaskRepository(
         data: BILIDonghuaSeasonInfo,
         episodes: List<BILIDonghuaSeasonInfo.Episode>,
         downloadMode: DownloadMode
-    ) : DownloadTreeNode {
+    ): DownloadTreeNode {
 
         val node = getOrCreateNode(
             taskId = taskId,
@@ -358,9 +377,11 @@ class DownloadTaskRepository(
      */
     private suspend fun buildUgcSectionNode(
         taskId: Long,
+        task: DownloadTask,
         section: BILIVideoViewInfo.UgcSeason.Section,
         episodes: List<BILIVideoViewInfo.UgcSeason.Section.Episode>,
-        downloadMode: DownloadMode
+        downloadMode: DownloadMode,
+        selectedCid: List<Long>
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -369,7 +390,37 @@ class DownloadTaskRepository(
             nodeType = DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES
         )
 
-        val segments = episodes.map { episode ->
+        val pageEpList = episodes.mapNotNull { episode ->
+
+            if (episode.pages.size > 1) {
+                val videoInfo = videoInfoRepository.getVideoView(episode.bvid).last().data
+                if (videoInfo == null) throw IllegalStateException("合集分P视频信息获取失败: bv：${episode.bvid} cid：${episode.cid}")
+                // 普通视频
+                val newTask = getOrCreateTask(
+                    platformId = videoInfo.bvid,
+                    title = videoInfo.title,
+                    description = videoInfo.desc,
+                    cover = videoInfo.pic,
+                    type = DownloadTaskType.BILI_VIDEO
+                )
+
+                buildVideoPageTree(
+                    task.taskId,
+                    task,
+                    videoInfo,
+                    episode.pages.filter { page -> page.cid in selectedCid },
+                    downloadMode,
+                    parentNodeId = node.nodeId,
+                    childTaskId = newTask.taskId  // 关联子任务ID
+                ).segments
+
+            } else null
+        }
+
+        val segments = episodes.filter {
+            it.pages.size <= 1
+        }.map { episode ->
+
             // 为每个子视频创建独立的下载任务
             val childTask = getOrCreateTask(
                 platformId = episode.bvid,
@@ -393,7 +444,7 @@ class DownloadTaskRepository(
             )
         }
 
-        return DownloadTreeNode(node, segments, emptyList())
+        return DownloadTreeNode(node, segments + pageEpList.flatten(), emptyList())
     }
 
     /**
@@ -404,13 +455,15 @@ class DownloadTaskRepository(
         platformId: String,
         title: String,
         nodeType: DownloadTaskNodeType,
-        pic: String? = null
+        pic: String? = null,
+        parentNodeId: Long? = null
     ): DownloadTaskNode {
         return downloadTaskDao.getTaskNodeByTaskIdAndPlatformId(taskId, platformId)?.copy(
             updateTime = Date()
         )?.also {
             downloadTaskDao.updateNode(it)
         } ?: DownloadTaskNode(
+            parentNodeId = parentNodeId,
             taskId = taskId,
             platformId = platformId,
             title = title,
