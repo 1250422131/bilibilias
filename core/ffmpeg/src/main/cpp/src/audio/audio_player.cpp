@@ -2,6 +2,24 @@
 #include <ffmpeg/ffmpeg_util.hpp>
 #include <jni_log.hpp>
 
+namespace {
+
+    auto get_av_sample_fmt(int format) -> int {
+        switch (format) {
+            case AV_SAMPLE_FMT_S16:
+                [[fallthrough]];
+            case AV_SAMPLE_FMT_S16P:
+                return AAUDIO_FORMAT_PCM_I16;
+            case AV_SAMPLE_FMT_FLT:
+                [[fallthrough]];
+            case AV_SAMPLE_FMT_FLTP:
+                return AAUDIO_FORMAT_PCM_FLOAT;
+            default:
+                return AAUDIO_FORMAT_PCM_I16;
+        }
+    }
+}
+
 namespace bilias::audio {
 
 
@@ -95,13 +113,39 @@ namespace bilias::audio {
     }
 
     AAudioPlayer::~AAudioPlayer() {
-
+        auto s = std::exchange(stream, nullptr);
+        if (s) {
+            AAudioStream_close(s);
+        }
     }
 
-    auto AAudioPlayer::init(int sample_rate, int channel_count) -> void {
+    auto AAudioPlayer::init(AVFormatContext *ctx) -> void {
         if (initialized.load()) return;
-        this->sample_rate = sample_rate;
-        this->channel_count = channel_count;
+
+        if (!ctx) {
+            throw std::runtime_error("AVFormatContext is null");
+        }
+
+        int audio_stream_index = -1;
+
+        for (int i = 0; i < ctx->nb_streams; i++) {
+            if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+                audio_stream_index = i;
+                break;
+            }
+        }
+
+        if (audio_stream_index == -1) {
+            throw std::runtime_error("No audio stream found");
+        }
+
+        auto *audio_stream = ctx->streams[audio_stream_index];
+        auto *codecpar = audio_stream->codecpar;
+
+        this->sample_rate = codecpar->sample_rate;
+        this->channel_count = codecpar->ch_layout.nb_channels;
+        this->format = get_av_sample_fmt(codecpar->format);
+        // this->bits_per_sample = codecpar->bits_per_raw_sample;
 
         AAudioStreamBuilder *builder{nullptr};
         auto builder_defer = Defer{[&] {
@@ -118,7 +162,7 @@ namespace bilias::audio {
         AAudioStreamBuilder_setSampleRate(builder, sample_rate);
         AAudioStreamBuilder_setChannelCount(builder, channel_count);
         AAudioStreamBuilder_setFormat(builder, format);
-        AAudioStreamBuilder_setPerformanceMode(builder, AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
+        AAudioStreamBuilder_setPerformanceMode(builder, AAUDIO_PERFORMANCE_MODE_NONE);
 
         // TODO callback
         AAudioStreamBuilder_setDataCallback(builder, nullptr, this);
@@ -136,10 +180,16 @@ namespace bilias::audio {
     }
 
     auto AAudioPlayer::play_frame(AVFrame *frame) -> void {
-
+        if (!swr_ctx || !frame) {
+            return;
+        }
     }
 
     auto AAudioPlayer::start() -> bool {
+        if (initialized.load()) {
+            auto result = AAudioStream_requestStart(stream);
+            return result == AAUDIO_OK;
+        }
         return false;
     }
 

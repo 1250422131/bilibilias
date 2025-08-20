@@ -64,7 +64,7 @@ namespace bilias::audio {
         AAudioPlayer();
         ~AAudioPlayer();
 
-        auto init(int sample_rate, int channel_count) -> void;
+        auto init(AVFormatContext *ctx) -> void;
         auto play_frame(AVFrame *frame) -> void;
         auto start() -> bool;
         auto stop() -> void;
