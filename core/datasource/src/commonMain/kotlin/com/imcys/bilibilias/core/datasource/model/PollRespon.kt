@@ -7,19 +7,12 @@ import kotlinx.serialization.Transient
 @Serializable
 data class PollResponse(
     @SerialName("code")
-    val code: Int = 0,
+    private val code: Int,
     @SerialName("message")
-    val message: String = "",
+    val message: String,
     @SerialName("refresh_token")
-    val refreshToken: String = "",
-    @SerialName("timestamp")
-    val timestamp: Long = 0,
-    @SerialName("url")
-    val url: String = ""
+    val refreshToken: String,
 ) {
-    @Deprecated("use OauthCode")
-    val isSuccess: Boolean = code == 0
-
     @Transient
     val status = OauthCode.parse(code)
 }
