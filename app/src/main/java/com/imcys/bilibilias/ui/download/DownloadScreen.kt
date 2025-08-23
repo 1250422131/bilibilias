@@ -83,7 +83,7 @@ fun DownloadScreen(onToBack: () -> Unit) {
             ) {
                 when (selectIndex) {
                     0 -> {
-                        items(downloadListState, key = { it.downloadSegment.segmentId }) {
+                        items(downloadListState, key = { it.downloadSegment.platformId }) {
                             DownloadTaskCard(
                                 it, onPause = {
                                     vm.pauseDownloadTask(it.downloadSegment.segmentId)

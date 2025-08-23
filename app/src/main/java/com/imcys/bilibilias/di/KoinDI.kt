@@ -5,8 +5,10 @@ import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel
+import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorViewModel
 import com.imcys.bilibilias.ui.home.HomeViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
+import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -22,6 +24,8 @@ val appModule = module {
     viewModel { UserViewModel(get()) }
     viewModel { AnalysisViewModel(get(), get(), get(), get()) }
     viewModel { DownloadViewModel(get(), get(), get()) }
+    viewModel { PlayVoucherErrorViewModel(get()) }
+    viewModel { RoamViewModel(get(), get(), get(), get()) }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

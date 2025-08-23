@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -138,6 +139,58 @@ class AnalysisViewModel(
         )
     }
 
+    // 清空cid列表
+    fun clearSelectedCidList() {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.clearCidList()
+        )
+    }
+
+    // 清空epId列表
+    fun clearSelectedEpIdList() {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.clearEpIdList()
+        )
+    }
+
+    fun updateSelectedPlayerInfo(
+        cid: Long,
+    ) {
+        when (val result = uiState.value.asLinkResultType) {
+            is ASLinkResultType.BILI.Donghua -> {
+                result.donghuaViewInfo.data?.let { info ->
+                    // 这里cid是ep号
+                    asDonghuaPlayerInfo(null, cid)
+                }
+            }
+            is ASLinkResultType.BILI.Video -> {
+                // 如果当前解析结果的cid与传入的cid相同，则不进行更新
+                if (result.viewInfo.data?.cid == cid) { return }
+
+                result.viewInfo.data?.let { info ->
+                    // 分P
+                    info.pages?.firstOrNull{ it.cid == cid}?.let {
+                        asVideoPlayerInfo(cid, info.bvid)
+                        return@let
+                    }
+                    // 合集
+                    info.ugcSeason?.sections?.forEach { section ->
+                        section.episodes.forEach { episode ->
+                            episode.pages.firstOrNull { it.cid == cid }?.let {
+                                asVideoPlayerInfo(cid, episode.bvid)
+                                return@let
+                            }
+                        }
+                    }
+                }
+            }
+            is ASLinkResultType.BILI.User,
+            null -> {
+
+            }
+        }
+    }
+
     fun updateSelectedCidList(cid: Long?) {
         cid?.let {
             // 只有当前解析类型是视频时才允许更新CID
@@ -183,8 +236,13 @@ class AnalysisViewModel(
                 handleUserSpace(asType.text)
             }
 
+            is TextType.BILI.SS -> {
+                updateSelectSeason(asType.text)
+            }
+
             null -> {
             }
+
         }
     }
 

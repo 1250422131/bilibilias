@@ -67,7 +67,8 @@ fun VideoDownloadScreen(
     onUpdateSelectedCid: (Long?) -> Unit,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
-    onAudioQualityChange: (Long?) -> Unit = {}
+    onAudioQualityChange: (Long?) -> Unit = {},
+    onSelectSingleModel:(Boolean) -> Unit = { _ -> }
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -129,7 +130,11 @@ fun VideoDownloadScreen(
                     )
                 }
             }
-            Text("缓存倾向")
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Text("缓存倾向")
+                Spacer(Modifier.weight(1f))
+                SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
+            }
             AsAutoError(videoPlayerInfo, onSuccessContent = {
                 Column {
                     VideoSupportFormatsSelectScreen(
@@ -146,8 +151,9 @@ fun VideoDownloadScreen(
 
                     Spacer(Modifier.height(6.dp))
                     AudioQualitySelectScreen(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().shimmer(videoPlayerInfo.status != ApiStatus.SUCCESS),
                         downloadInfo,
+                        videoPlayerInfo.status,
                         videoPlayerInfo.data?.dash?.audio,
                         onAudioQualityChange = onAudioQualityChange
                     )
@@ -195,7 +201,11 @@ fun VideoDownloadScreen(
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
                         Text("选择缓存子集")
-                        VideoPageScreen(viewInfo, downloadInfo,onUpdateSelectedCid = onUpdateSelectedCid)
+                        VideoPageScreen(
+                            viewInfo,
+                            downloadInfo,
+                            onUpdateSelectedCid = onUpdateSelectedCid
+                        )
                     }
                 })
             }

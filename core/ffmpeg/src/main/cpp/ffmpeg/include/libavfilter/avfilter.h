@@ -43,7 +43,6 @@
 #include "libavutil/dict.h"
 #include "libavutil/frame.h"
 #include "libavutil/log.h"
-#include "libavutil/samplefmt.h"
 #include "libavutil/pixfmt.h"
 #include "libavutil/rational.h"
 
@@ -70,7 +69,6 @@ const char *avfilter_configuration(void);
  */
 const char *avfilter_license(void);
 
-typedef struct AVFilterContext AVFilterContext;
 typedef struct AVFilterLink    AVFilterLink;
 typedef struct AVFilterPad     AVFilterPad;
 typedef struct AVFilterFormats AVFilterFormats;
@@ -97,6 +95,18 @@ const char *avfilter_pad_get_name(const AVFilterPad *pads, int pad_idx);
  * @return type of the pad_idx'th pad in pads
  */
 enum AVMediaType avfilter_pad_get_type(const AVFilterPad *pads, int pad_idx);
+
+/**
+ * Get the hardware frames context of a filter link.
+ *
+ * @param link an AVFilterLink
+ *
+ * @return a ref-counted copy of the link's hw_frames_ctx field if there is
+ *         a hardware frames context associated with the link or NULL otherwise.
+ *         The returned AVBufferRef needs to be released with av_buffer_unref()
+ *         when it is no longer used.
+ */
+AVBufferRef* avfilter_link_get_hw_frames_ctx(AVFilterLink *link);
 
 /**
  * Lists of formats / etc. supported by an end of a link.
@@ -243,204 +253,6 @@ typedef struct AVFilter {
      * A combination of AVFILTER_FLAG_*
      */
     int flags;
-
-    /*****************************************************************
-     * All fields below this line are not part of the public API. They
-     * may not be used outside of libavfilter and can be changed and
-     * removed at will.
-     * New public fields should be added right above.
-     *****************************************************************
-     */
-
-    /**
-     * The number of entries in the list of inputs.
-     */
-    uint8_t nb_inputs;
-
-    /**
-     * The number of entries in the list of outputs.
-     */
-    uint8_t nb_outputs;
-
-    /**
-     * This field determines the state of the formats union.
-     * It is an enum FilterFormatsState value.
-     */
-    uint8_t formats_state;
-
-    /**
-     * Filter pre-initialization function
-     *
-     * This callback will be called immediately after the filter context is
-     * allocated, to allow allocating and initing sub-objects.
-     *
-     * If this callback is not NULL, the uninit callback will be called on
-     * allocation failure.
-     *
-     * @return 0 on success,
-     *         AVERROR code on failure (but the code will be
-     *           dropped and treated as ENOMEM by the calling code)
-     */
-    int (*preinit)(AVFilterContext *ctx);
-
-    /**
-     * Filter initialization function.
-     *
-     * This callback will be called only once during the filter lifetime, after
-     * all the options have been set, but before links between filters are
-     * established and format negotiation is done.
-     *
-     * Basic filter initialization should be done here. Filters with dynamic
-     * inputs and/or outputs should create those inputs/outputs here based on
-     * provided options. No more changes to this filter's inputs/outputs can be
-     * done after this callback.
-     *
-     * This callback must not assume that the filter links exist or frame
-     * parameters are known.
-     *
-     * @ref AVFilter.uninit "uninit" is guaranteed to be called even if
-     * initialization fails, so this callback does not have to clean up on
-     * failure.
-     *
-     * @return 0 on success, a negative AVERROR on failure
-     */
-    int (*init)(AVFilterContext *ctx);
-
-    /**
-     * Filter uninitialization function.
-     *
-     * Called only once right before the filter is freed. Should deallocate any
-     * memory held by the filter, release any buffer references, etc. It does
-     * not need to deallocate the AVFilterContext.priv memory itself.
-     *
-     * This callback may be called even if @ref AVFilter.init "init" was not
-     * called or failed, so it must be prepared to handle such a situation.
-     */
-    void (*uninit)(AVFilterContext *ctx);
-
-    /**
-     * The state of the following union is determined by formats_state.
-     * See the documentation of enum FilterFormatsState in internal.h.
-     */
-    union {
-        /**
-         * Query formats supported by the filter on its inputs and outputs.
-         *
-         * This callback is called after the filter is initialized (so the inputs
-         * and outputs are fixed), shortly before the format negotiation. This
-         * callback may be called more than once.
-         *
-         * This callback must set ::AVFilterLink's
-         * @ref AVFilterFormatsConfig.formats "outcfg.formats"
-         * on every input link and
-         * @ref AVFilterFormatsConfig.formats "incfg.formats"
-         * on every output link to a list of pixel/sample formats that the filter
-         * supports on that link.
-         * For video links, this filter may also set
-         * @ref AVFilterFormatsConfig.color_spaces "incfg.color_spaces"
-         *  /
-         * @ref AVFilterFormatsConfig.color_spaces "outcfg.color_spaces"
-         * and @ref AVFilterFormatsConfig.color_ranges "incfg.color_ranges"
-         *  /
-         * @ref AVFilterFormatsConfig.color_ranges "outcfg.color_ranges"
-         * analogously.
-         * For audio links, this filter must also set
-         * @ref AVFilterFormatsConfig.samplerates "incfg.samplerates"
-         *  /
-         * @ref AVFilterFormatsConfig.samplerates "outcfg.samplerates"
-         * and @ref AVFilterFormatsConfig.channel_layouts "incfg.channel_layouts"
-         *  /
-         * @ref AVFilterFormatsConfig.channel_layouts "outcfg.channel_layouts"
-         * analogously.
-         *
-         * This callback must never be NULL if the union is in this state.
-         *
-         * @return zero on success, a negative value corresponding to an
-         * AVERROR code otherwise
-         */
-        int (*query_func)(AVFilterContext *);
-
-        /**
-         * Same as query_func(), except this function writes the results into
-         * provided arrays.
-         *
-         * @param cfg_in  array of input format configurations with as many
-         *                members as the filters has inputs (NULL when there are
-         *                no inputs);
-         * @param cfg_out array of output format configurations with as many
-         *                members as the filters has outputs (NULL when there
-         *                are no outputs);
-         */
-        int (*query_func2)(const AVFilterContext *,
-                           struct AVFilterFormatsConfig **cfg_in,
-                           struct AVFilterFormatsConfig **cfg_out);
-        /**
-         * A pointer to an array of admissible pixel formats delimited
-         * by AV_PIX_FMT_NONE. The generic code will use this list
-         * to indicate that this filter supports each of these pixel formats,
-         * provided that all inputs and outputs use the same pixel format.
-         *
-         * In addition to that the generic code will mark all inputs
-         * and all outputs as supporting all color spaces and ranges, as
-         * long as all inputs and outputs use the same color space/range.
-         *
-         * This list must never be NULL if the union is in this state.
-         * The type of all inputs and outputs of filters using this must
-         * be AVMEDIA_TYPE_VIDEO.
-         */
-        const enum AVPixelFormat *pixels_list;
-        /**
-         * Analogous to pixels, but delimited by AV_SAMPLE_FMT_NONE
-         * and restricted to filters that only have AVMEDIA_TYPE_AUDIO
-         * inputs and outputs.
-         *
-         * In addition to that the generic code will mark all inputs
-         * and all outputs as supporting all sample rates and every
-         * channel count and channel layout, as long as all inputs
-         * and outputs use the same sample rate and channel count/layout.
-         */
-        const enum AVSampleFormat *samples_list;
-        /**
-         * Equivalent to { pix_fmt, AV_PIX_FMT_NONE } as pixels_list.
-         */
-        enum AVPixelFormat  pix_fmt;
-        /**
-         * Equivalent to { sample_fmt, AV_SAMPLE_FMT_NONE } as samples_list.
-         */
-        enum AVSampleFormat sample_fmt;
-    } formats;
-
-    int priv_size;      ///< size of private data to allocate for the filter
-
-    int flags_internal; ///< Additional flags for avfilter internal use only.
-
-    /**
-     * Make the filter instance process a command.
-     *
-     * @param cmd    the command to process, for handling simplicity all commands must be alphanumeric only
-     * @param arg    the argument for the command
-     * @param res    a buffer with size res_size where the filter(s) can return a response. This must not change when the command is not supported.
-     * @param flags  if AVFILTER_CMD_FLAG_FAST is set and the command would be
-     *               time consuming then a filter should treat it like an unsupported command
-     *
-     * @returns >=0 on success otherwise an error code.
-     *          AVERROR(ENOSYS) on unsupported commands
-     */
-    int (*process_command)(AVFilterContext *, const char *cmd, const char *arg, char *res, int res_len, int flags);
-
-    /**
-     * Filter activation function.
-     *
-     * Called when any processing is needed from the filter, instead of any
-     * filter_frame and request_frame on pads.
-     *
-     * The function must examine inlinks and outlinks and perform a single
-     * step of processing. If there is nothing to do, the function must do
-     * nothing and not return an error. If more steps are or may be
-     * possible, it must use ff_filter_set_ready() to schedule another
-     * activation.
-     */
-    int (*activate)(AVFilterContext *ctx);
 } AVFilter;
 
 /**
@@ -454,7 +266,7 @@ unsigned avfilter_filter_pad_count(const AVFilter *filter, int is_output);
 #define AVFILTER_THREAD_SLICE (1 << 0)
 
 /** An instance of a filter */
-struct AVFilterContext {
+typedef struct AVFilterContext {
     const AVClass *av_class;        ///< needed for av_log() and filters common options
 
     const AVFilter *filter;         ///< the AVFilter of which this is an instance
@@ -498,12 +310,32 @@ struct AVFilterContext {
      */
     int nb_threads;
 
+#if FF_API_CONTEXT_PUBLIC
+    /**
+     * @deprecated unused
+     */
+    attribute_deprecated
     struct AVFilterCommand *command_queue;
+#endif
 
     char *enable_str;               ///< enable expression string
-    void *enable;                   ///< parsed expression (AVExpr*)
-    double *var_values;             ///< variable values for the enable expression
-    int is_disabled;                ///< the enabled state from the last expression evaluation
+#if FF_API_CONTEXT_PUBLIC
+    /**
+     * @deprecated unused
+     */
+    attribute_deprecated
+    void *enable;
+    /**
+     * @deprecated unused
+     */
+    double *var_values;
+#endif
+    /**
+     * MUST NOT be accessed from outside avfilter.
+     *
+     * the enabled state from the last expression evaluation
+     */
+    int is_disabled;
 
     /**
      * For filters which will create hardware frames, sets the device the
@@ -518,12 +350,13 @@ struct AVFilterContext {
      */
     AVBufferRef *hw_device_ctx;
 
+#if FF_API_CONTEXT_PUBLIC
     /**
-     * Ready status of the filter.
-     * A non-0 value means that the filter needs activating;
-     * a higher value suggests a more urgent activation.
+     * @deprecated this field should never have been accessed by callers
      */
+    attribute_deprecated
     unsigned ready;
+#endif
 
     /**
      * Sets the number of extra hardware frames which the filter will
@@ -540,7 +373,7 @@ struct AVFilterContext {
      * configured.
      */
     int extra_hw_frames;
-};
+} AVFilterContext;
 
 /**
  * A link between two filters. This contains pointers to the source and
@@ -592,6 +425,9 @@ struct AVFilterLink {
      */
     AVRational time_base;
 
+    AVFrameSideData **side_data;
+    int nb_side_data;
+
     /*****************************************************************
      * All fields below this line are not part of the public API. They
      * may not be used outside of libavfilter and can be changed and
@@ -622,20 +458,6 @@ struct AVFilterLink {
  */
 int avfilter_link(AVFilterContext *src, unsigned srcpad,
                   AVFilterContext *dst, unsigned dstpad);
-
-#if FF_API_LINK_PUBLIC
-/**
- * @deprecated this function should never be called by users
- */
-attribute_deprecated
-void avfilter_link_free(AVFilterLink **link);
-
-/**
- * @deprecated this function should never be called by users
- */
-attribute_deprecated
-int avfilter_config_links(AVFilterContext *filter);
-#endif
 
 #define AVFILTER_CMD_FLAG_ONE   1 ///< Stop once a filter understood the command (for target=all for example), fast filters are favored automatically
 #define AVFILTER_CMD_FLAG_FAST  2 ///< Only execute command when its fast (like a video out that supports contrast adjustment in hw)
@@ -807,6 +629,14 @@ typedef struct AVFilterGraph {
     avfilter_execute_func *execute;
 
     char *aresample_swr_opts; ///< swr options to use for the auto-inserted aresample filters, Access ONLY through AVOptions
+
+    /**
+     * Sets the maximum number of buffered frames in the filtergraph combined.
+     *
+     * Zero means no limit. This field must be set before calling
+     * avfilter_graph_config().
+     */
+    unsigned max_buffered_frames;
 } AVFilterGraph;
 
 /**
@@ -845,9 +675,9 @@ AVFilterContext *avfilter_graph_alloc_filter(AVFilterGraph *graph,
 AVFilterContext *avfilter_graph_get_filter(AVFilterGraph *graph, const char *name);
 
 /**
- * Create and add a filter instance into an existing graph.
- * The filter instance is created from the filter filt and inited
- * with the parameter args. opaque is currently ignored.
+ * A convenience wrapper that allocates and initializes a filter in a single
+ * step. The filter instance is created from the filter filt and inited with the
+ * parameter args. opaque is currently ignored.
  *
  * In case of success put in *filt_ctx the pointer to the created
  * filter instance, otherwise set *filt_ctx to NULL.
@@ -856,6 +686,12 @@ AVFilterContext *avfilter_graph_get_filter(AVFilterGraph *graph, const char *nam
  * @param graph_ctx the filter graph
  * @return a negative AVERROR error code in case of failure, a non
  * negative value otherwise
+ *
+ * @warning Since the filter is initialized after this function successfully
+ *          returns, you MUST NOT set any further options on it. If you need to
+ *          do that, call ::avfilter_graph_alloc_filter(), followed by setting
+ *          the options, followed by ::avfilter_init_dict() instead of this
+ *          function.
  */
 int avfilter_graph_create_filter(AVFilterContext **filt_ctx, const AVFilter *filt,
                                  const char *name, const char *args, void *opaque,
@@ -1062,7 +898,7 @@ typedef struct AVFilterParams {
     char                *instance_name;
 
     /**
-     * Options to be apllied to the filter.
+     * Options to be applied to the filter.
      *
      * Filled by avfilter_graph_segment_parse(). Afterwards may be freely
      * modified by the caller.
@@ -1245,7 +1081,7 @@ int avfilter_graph_segment_init(AVFilterGraphSegment *seg, int flags);
  * Unlabeled outputs are
  * - linked to the first unlinked unlabeled input in the next non-disabled
  *   filter in the chain, if one exists
- * - exported in the ouputs linked list otherwise, with NULL label
+ * - exported in the outputs linked list otherwise, with NULL label
  *
  * Similarly, unlinked input pads are exported in the inputs linked list.
  *

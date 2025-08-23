@@ -4,11 +4,12 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.copy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 
 class AppSettingsRepository(
-   private val dataStore: DataStore<AppSettings>,
+    private val dataStore: DataStore<AppSettings>,
 ) {
     private val TAG: String = "AppSettingsRepository"
 
@@ -39,6 +40,14 @@ class AppSettingsRepository(
             currentSettings.toBuilder()
                 .setKnowAboutApp(knowAboutApp)
                 .build()
+        }
+    }
+
+    suspend fun updateRoamEnabledState(enabled: Boolean) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                enabledRoam = enabled
+            }
         }
     }
 

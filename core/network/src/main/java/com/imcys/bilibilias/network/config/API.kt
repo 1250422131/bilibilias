@@ -46,6 +46,9 @@ object API {
         // 视频详情，通用接口，Webi鉴权
         val WEB_WEBI_VIDEO_VIEW = WEB_API_BASE_URL + "x/web-interface/wbi/view"
 
+        // 视频详情，通用接口，Webi鉴权
+        val WEB_WEBI_VIDEO_VIEW_NO_WEBI = WEB_API_BASE_URL + "x/web-interface/view"
+
         // 番剧详情，通用接口
         val WEB_WEBI_PGC_SEASON_VIEW = WEB_API_BASE_URL + "pgc/view/web/season"
 

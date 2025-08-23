@@ -23,6 +23,11 @@ interface BILIUsersDao {
         loginPlatform: LoginPlatform
     ): BILIUsersEntity?
 
+    @Query("select * from bili_users where login_platform = :loginPlatform")
+    suspend fun getBILIUserByPlatform(
+        loginPlatform: LoginPlatform
+    ): BILIUsersEntity?
+
     @Query("select * from bili_users where mid in (select mid from bili_users where id = :uid )")
     suspend fun getBILIUserListByUid(
         uid: Long

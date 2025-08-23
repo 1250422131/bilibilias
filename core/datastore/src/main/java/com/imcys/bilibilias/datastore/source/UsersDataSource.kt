@@ -17,6 +17,15 @@ class UsersDataSource(
         dataStore.updateData {
             it.copy {
                 currentUserId = id
+                notUseBuvid3 = false
+            }
+        }
+    }
+
+    suspend fun setNotUseBuvid3(notUse: Boolean) {
+        dataStore.updateData {
+            it.copy {
+                notUseBuvid3 = notUse
             }
         }
     }

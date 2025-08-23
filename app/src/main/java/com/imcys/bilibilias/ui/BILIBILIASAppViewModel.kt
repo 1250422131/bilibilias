@@ -54,8 +54,8 @@ class BILIBILIASAppViewModel(
 
     fun appError(appError: AppException?) {
         _uiState.value = UIState.AppError(appError)
-
     }
+
 
     fun accountLoginStateError() {
 
@@ -76,6 +76,7 @@ class BILIBILIASAppViewModel(
                 return@launch
             }
 
+            var isResult = false
             userList.forEach loginCheck@{
                 usersDataSource.setUserId(it.id)
                 asCookiesStorage.syncDataBaseCookies()
@@ -83,13 +84,17 @@ class BILIBILIASAppViewModel(
                     qrCodeLoginRepository.getLoginUserInfo(it.loginPlatform).lastOrNull()
                 loginInfo?.let { info ->
                     if (info.status == ApiStatus.SUCCESS) {
-                        _uiState.emit(UIState.Default)
-                        return@launch
+                        if (!isResult){
+                            _uiState.emit(UIState.Default)
+                        }
+                        isResult = true
                     } else {
                         usersDataSource.setUserId(0)
                     }
                 }
             }
+
+            if (isResult) return@launch
 
             // 到达此处
             usersDataSource.setUserId(0)
@@ -113,6 +118,13 @@ class BILIBILIASAppViewModel(
             appSettingsRepository.updateKnowAboutApp(AppSettings.KnowAboutApp.Know)
             _uiState.value = UIState.Default
 
+        }
+    }
+
+    fun ontUseTVVoucherInfo() {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersDataSource.setNotUseBuvid3(true)
+            _uiState.value = UIState.Default
         }
     }
 }

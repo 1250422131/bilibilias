@@ -179,7 +179,7 @@ class QRCodeLoginViewModel(
                 qrCodeLoginRepository.insertBILIUserCookie(cookie)
             }
 
-            if (uiState.selectedLoginPlatform != LoginPlatform.MOBILE) {
+            if (uiState.selectedLoginPlatform == LoginPlatform.WEB) {
                 usersDataSource.setUserId(userId)
                 asCookiesStorage.syncDataBaseCookies()
             }

@@ -26,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.common.utils.toMenuVideoCode
 import com.imcys.bilibilias.common.utils.toVideoCode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import kotlin.collections.forEach
 
 /**
@@ -43,6 +44,7 @@ import kotlin.collections.forEach
 fun AudioQualitySelectScreen(
     modifier: Modifier,
     downloadInfo: DownloadViewInfo?,
+    apiStatus: ApiStatus,
     audioList: List<BILIVideoDash.Audio>?,
     onAudioQualityChange: (Long?) -> Unit = {}
 ) {
@@ -53,7 +55,8 @@ fun AudioQualitySelectScreen(
         selectValue = downloadInfo?.selectAudioQualityId ?: 0
     }
 
-    if (!audioList.isNullOrEmpty()) {
+    if (apiStatus == ApiStatus.ERROR) { return }
+    if (!audioList.isNullOrEmpty() || apiStatus != ApiStatus.SUCCESS) {
         ExposedDropdownMenuBox(
             expanded = modelExpanded,
             onExpandedChange = {
@@ -87,7 +90,7 @@ fun AudioQualitySelectScreen(
                 expanded = modelExpanded,
                 onDismissRequest = { modelExpanded = false },
             ) {
-                audioList.forEach {
+                audioList?.forEach {
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -275,7 +278,7 @@ fun VideoSupportFormatsSelectScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    it.toVideoCode(),
+                                    it.toMenuVideoCode(),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             },

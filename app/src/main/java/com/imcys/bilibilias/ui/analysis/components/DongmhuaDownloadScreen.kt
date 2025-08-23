@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -59,7 +59,8 @@ fun DongmhuaDownloadScreen(
     onUpdateSelectedEpId: (Long?) -> Unit,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
-    onAudioQualityChange: (Long?) -> Unit = {}
+    onAudioQualityChange: (Long?) -> Unit = {},
+    onSelectSingleModel:(Boolean) -> Unit = { _ -> }
 ) {
 
     var selectSeasonsId by remember {
@@ -99,7 +100,11 @@ fun DongmhuaDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("缓存倾向")
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Text("缓存倾向")
+                Spacer(Modifier.weight(1f))
+                SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
+            }
             AsAutoError(donghuaPlayerInfo, onSuccessContent = {
                 Column {
                     VideoSupportFormatsSelectScreen(
@@ -116,8 +121,9 @@ fun DongmhuaDownloadScreen(
                     Spacer(Modifier.height(6.dp))
                     // 当音频质量列表不为空时才显示音频质量选择
                     AudioQualitySelectScreen(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().shimmer(donghuaPlayerInfo.status != ApiStatus.SUCCESS),
                         downloadInfo,
+                        donghuaPlayerInfo.status,
                         donghuaPlayerInfo.data?.dash?.audio,
                         onAudioQualityChange = onAudioQualityChange
                     )
