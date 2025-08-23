@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.user
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -62,6 +63,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.NumberUtils
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
@@ -100,7 +103,7 @@ internal fun UserScreen(
 
 
 
-    UserScaffold(onToBack,onToSettings) {
+    UserScaffold(onToBack, onToSettings) {
         LazyVerticalGrid(
             GridCells.Fixed(2),
             Modifier
@@ -137,11 +140,14 @@ internal fun UserScreen(
 }
 
 @Composable
-private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
+private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {}) {
     Row(
         Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .clickable {
+                onClick.invoke()
+            }
     ) {
         Surface(
             Modifier
@@ -226,7 +232,9 @@ private fun VideoHeader(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         spaceArchiveInfoState.data?.list?.forEach {
-                            VideoCard(it)
+                            VideoCard(it, onClick = {
+                                sendAnalysisEvent(AnalysisEvent(it.bvid))
+                            })
                         }
                     }
                 },

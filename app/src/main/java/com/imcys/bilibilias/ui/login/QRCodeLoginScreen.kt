@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Replay
-import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material.icons.outlined.WebAsset
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -33,7 +32,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,20 +42,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.QRCodeInfo
+import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -70,7 +72,7 @@ internal fun QRCodeLoginRoute(
     onToBack: () -> Unit,
     onBackHomePage: () -> Unit,
 ) {
-    QRCodeLoginScreen(onToBack, onBackHomePage)
+    QRCodeLoginScreen(QRCodeLoginRoute(), onToBack, onBackHomePage)
 }
 
 
@@ -78,7 +80,7 @@ internal fun QRCodeLoginRoute(
 @Composable
 fun QRCodeLoginScreenPreview() {
     ProvideKoinApplication {
-        QRCodeLoginScreen({}, {})
+        QRCodeLoginScreen(QRCodeLoginRoute(), {}) {}
     }
 }
 
@@ -86,6 +88,7 @@ fun QRCodeLoginScreenPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QRCodeLoginScreen(
+    route: QRCodeLoginRoute,
     onToBack: () -> Unit,
     onBackHomePage: () -> Unit,
 ) {
@@ -96,6 +99,10 @@ fun QRCodeLoginScreen(
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
     val context = LocalContext.current
 
+
+    LaunchedEffect(route.defaultLoginPlatform) {
+        vm.updateLoginPlatform(route.defaultLoginPlatform)
+    }
 
     // 监听扫码结果
     LaunchedEffect(qrCodeScanInfoState) {
@@ -127,7 +134,13 @@ fun QRCodeLoginScreen(
         when (loginUserInfoState) {
             is NetWorkResult.Success<*> -> {
                 vm.saveLoginInfo(loginUserInfoState.data) {
-                    onBackHomePage()
+                    if (route.isFromRoam){
+                        // 如果是从漫游页面进入的，登录成功后直接返回
+                        onToBack()
+                    } else {
+                        // 否则返回首页
+                        onBackHomePage()
+                    }
                 }
             }
 
@@ -147,6 +160,7 @@ fun QRCodeLoginScreen(
 
                 // QR内容区域
                 QRCodeContent(
+                    route,
                     uiState.selectedLoginPlatform,
                     qrCodeInfoState,
                     updateLoginPlatform = vm::updateLoginPlatform,
@@ -255,6 +269,7 @@ private fun ActionButton(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ColumnScope.QRCodeContent(
+    route: QRCodeLoginRoute,
     selectedLoginPlatform: LoginPlatform,
     qrCodeInfoState: NetWorkResult<QRCodeInfo?>,
     updateLoginPlatform: (LoginPlatform) -> Unit,
@@ -343,7 +358,7 @@ private fun ColumnScope.QRCodeContent(
                 }
             ) {
                 ToggleButton(
-                    enabled = false,
+                    enabled = route.isFromRoam,
                     checked = selectedLoginPlatform == LoginPlatform.TV,
                     onCheckedChange = {
                         updateLoginPlatform(LoginPlatform.TV)

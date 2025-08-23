@@ -34,9 +34,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 
 @Composable
 fun AsCardTextField(
@@ -46,14 +49,38 @@ fun AsCardTextField(
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    autoFocus: Boolean = true,
+    requestFocusDelayMillis: Long = 300L,
+    clearFocusWhenValueEmptied: Boolean = false
 ) {
-
     var hasFocus by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    var tfv by remember { mutableStateOf(TextFieldValue(text = value)) }
+
+    LaunchedEffect(value) {
+        if (value != tfv.text) {
+            tfv = tfv.copy(
+                text = value,
+                selection = if (hasFocus) TextRange(value.length) else TextRange.Zero
+            )
+        }
+    }
+
+    // 自动获取焦点
+    LaunchedEffect(autoFocus) {
+        if (autoFocus) {
+            if (requestFocusDelayMillis > 0) delay(requestFocusDelayMillis)
+            runCatching { focusRequester.requestFocus() }
+        }
+    }
+
+    // 刚获得焦点时，把光标移到末尾（仅当有内容）
+    LaunchedEffect(hasFocus) {
+        if (hasFocus && tfv.text.isNotEmpty()) {
+            tfv = tfv.copy(selection = TextRange(tfv.text.length))
+        }
     }
 
     Card(
@@ -62,8 +89,7 @@ fun AsCardTextField(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     ) {
         Row(
-            Modifier
-                .fillMaxWidth(),
+            Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(Modifier.width(16.dp))
@@ -85,16 +111,17 @@ fun AsCardTextField(
                         .weight(1f)
                         .padding(horizontal = 16.dp)
                         .focusRequester(focusRequester)
-                        .onFocusChanged({
+                        .onFocusChanged { state ->
                             if (!enabled || readOnly) return@onFocusChanged
-                            hasFocus = it.isFocused
-                        }),
-                    value = value,
-                    onValueChange = {
-                        if (it.isEmpty()) {
-                            focusManager.clearFocus()
+                            hasFocus = state.isFocused
+                        },
+                    value = tfv,
+                    onValueChange = { newValue ->
+                        tfv = newValue
+                        if (clearFocusWhenValueEmptied && newValue.text.isEmpty()) {
+                            focusManager.clearFocus(force = true)
                         }
-                        onValueChange.invoke(it)
+                        onValueChange(newValue.text)
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -107,12 +134,10 @@ fun AsCardTextField(
                 ) { innerTextField ->
                     Column {
                         Spacer(Modifier.height(12.dp))
-                        if (value.isEmpty() && !hasFocus) {
+                        if (tfv.text.isEmpty() && !hasFocus) {
                             Text(
                                 "BV / AV / EP 号...",
-                                color = MaterialTheme.colorScheme.onPrimary.copy(
-                                    alpha = 0.5f
-                                ),
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                                 fontSize = 16.sp,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -124,20 +149,20 @@ fun AsCardTextField(
                 }
             }
 
-            if (value.isNotEmpty()){
+            if (tfv.text.isNotEmpty()) {
                 Icon(
                     Icons.Outlined.Close,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
                     modifier = Modifier.clickable {
+                        tfv = tfv.copy(text = "", selection = TextRange.Zero)
+                        onValueChange("")
                         focusManager.clearFocus()
-                        onValueChange.invoke("")
                     }
                 )
             }
 
             Spacer(Modifier.width(16.dp))
-
         }
     }
 }

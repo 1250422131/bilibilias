@@ -26,10 +26,14 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import com.imcys.bilibilias.common.event.analysisHandleChannel
+import com.imcys.bilibilias.common.event.playVoucherErrorChannel
+import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.download.DownloadScreen
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
+import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorPage
+import com.imcys.bilibilias.ui.event.playvoucher.navigation.PlayVoucherErrorRoute
 import com.imcys.bilibilias.ui.home.HomeScreen
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.login.LoginScreen
@@ -60,6 +64,13 @@ fun BILIBILAISNavDisplay() {
         }
     }
 
+    LaunchedEffect(Unit) {
+        playVoucherErrorChannel.collect {
+            backStack.removeLastOrNull()
+            backStack.addWithReuse(PlayVoucherErrorRoute)
+        }
+    }
+
 
     val popTransitionSpec = remember {
         ContentTransform(
@@ -77,7 +88,8 @@ fun BILIBILAISNavDisplay() {
                     durationMillis = 400,
                     easing = FastOutSlowInEasing
                 )
-            ))
+            )
+        )
     }
 
     SharedTransitionLayout {
@@ -139,12 +151,13 @@ fun BILIBILAISNavDisplay() {
                     LoginScreen(
                         onToBack = { backStack.removeLastOrNull() },
                         goToQRCodeLogin = {
-                            backStack.addWithReuse(QRCodeLoginRoute)
+                            backStack.addWithReuse(QRCodeLoginRoute())
                         }
                     )
                 }
                 entry<QRCodeLoginRoute> {
                     QRCodeLoginScreen(
+                        it,
                         onToBack = { backStack.removeLastOrNull() },
                         onBackHomePage = {
                             backStack.clear()
@@ -184,7 +197,23 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<RoamRoute> {
-                    RoamScreen (onToBack = { backStack.removeLastOrNull() })
+                    RoamScreen(
+                        onToBack = { backStack.removeLastOrNull() },
+                        onGoToQRCodeLogin = {
+                            // 前往TV登录
+                            backStack.addWithReuse(
+                                QRCodeLoginRoute(
+                                    defaultLoginPlatform = LoginPlatform.TV,
+                                    isFromRoam = true
+                                )
+                            )
+                        }
+                    )
+                }
+                entry<PlayVoucherErrorRoute> {
+                    PlayVoucherErrorPage(
+                        onBlack = { backStack.removeLastOrNull() }
+                    )
                 }
             }
         )

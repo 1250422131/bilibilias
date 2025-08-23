@@ -5,4 +5,5 @@ option java_multiple_files = true;
 
 message User{
   int64 current_user_id = 1;
+  bool not_use_buvid3 = 2;
 }

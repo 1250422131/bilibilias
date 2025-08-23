@@ -171,8 +171,6 @@ fun AnalysisScreen(
 @Composable
 fun CreateDownloadTaskLoadingDialog(show: Boolean) {
     if (show) {
-
-        // 创建一个中间显示加载进度的，不可关闭的对话框
         AlertDialog(
             onDismissRequest = { },
             title = { Text(text = "创建下载任务") },
@@ -184,7 +182,6 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // 显示一个加载动画
                     ContainedLoadingIndicator()
                     Text(text = "正在创建下载任务，请不要退出...")
                 }
@@ -206,6 +203,9 @@ fun ColumnScope.AnalysisVideoCardList(
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
     val currentUserInfo by viewModel.currentUserInfo.collectAsState()
+
+
+    var isSelectSingleModel by remember { mutableStateOf(true) } // 是否选择单集缓存模式
 
     val context = LocalContext.current
 
@@ -234,7 +234,13 @@ fun ColumnScope.AnalysisVideoCardList(
                             viewModel.updateSelectSeason(it)
                         },
                         onUpdateSelectedEpId = {
-                            viewModel.updateSelectedEpIdList(it)
+                            if (isSelectSingleModel) {
+                                viewModel.clearSelectedEpIdList()
+                                viewModel.updateSelectedPlayerInfo(it ?: 0L)
+                                viewModel.updateSelectedEpIdList(it)
+                            } else {
+                                viewModel.updateSelectedEpIdList(it)
+                            }
                         },
                         onVideoQualityChange = {
                             viewModel.updateVideoQualityId(it)
@@ -244,6 +250,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onAudioQualityChange = {
                             viewModel.updateAudioQualityId(it)
+                        },
+                        onSelectSingleModel = {
+                            isSelectSingleModel = it
                         }
                     )
                 }
@@ -255,7 +264,13 @@ fun ColumnScope.AnalysisVideoCardList(
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
                         onUpdateSelectedCid = {
-                            viewModel.updateSelectedCidList(it)
+                            if (isSelectSingleModel) {
+                                viewModel.clearSelectedCidList()
+                                viewModel.updateSelectedPlayerInfo(it ?: 0L)
+                                viewModel.updateSelectedCidList(it)
+                            } else {
+                                viewModel.updateSelectedCidList(it)
+                            }
                         },
                         onVideoQualityChange = {
                             viewModel.updateVideoQualityId(it)
@@ -265,6 +280,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onAudioQualityChange = {
                             viewModel.updateAudioQualityId(it)
+                        },
+                        onSelectSingleModel = {
+                            isSelectSingleModel = it
                         }
                     )
                 }
@@ -338,98 +356,97 @@ fun AdvancedSetting(
 
     // 选择是否合并下载
     AsAutoError(playerInfo, onSuccessContent = {
-        if (dash != null) {
-            SurfaceColorCard {
-                Column(
-                    Modifier
-                        .shimmer(playerInfo.status != ApiStatus.SUCCESS)
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .animateContentSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text("缓存配置")
-                    Column {
-                        ExposedDropdownMenuBox(
-                            expanded = downloadModeExpanded,
-                            onExpandedChange = {
-                                downloadModeExpanded = it
+        if(dash == null && playerInfo.status != ApiStatus.LOADING) return@AsAutoError
+        SurfaceColorCard {
+            Column(
+                Modifier
+                    .shimmer(playerInfo.status != ApiStatus.SUCCESS)
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .animateContentSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text("缓存配置")
+                Column {
+                    ExposedDropdownMenuBox(
+                        expanded = downloadModeExpanded,
+                        onExpandedChange = {
+                            downloadModeExpanded = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                .fillMaxWidth(),
+                            textStyle = LocalTextStyle.current.copy(
+                                fontSize = 12.sp
+                            ),
+                            value = selectDownloadMode.title,
+                            onValueChange = {
+
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            singleLine = false,
+                            label = { Text("选择缓存模式", fontSize = 12.sp) },
+                            trailingIcon = { TrailingIcon(expanded = false) },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                focusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
+                            shape = CardDefaults.shape
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = downloadModeExpanded,
+                            onDismissRequest = { downloadModeExpanded = false },
                         ) {
-                            TextField(
-                                modifier = Modifier
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                                    .fillMaxWidth(),
-                                textStyle = LocalTextStyle.current.copy(
-                                    fontSize = 12.sp
-                                ),
-                                value = selectDownloadMode.title,
-                                onValueChange = {
-
-                                },
-                                readOnly = true,
-                                singleLine = false,
-                                label = { Text("选择缓存模式", fontSize = 12.sp) },
-                                trailingIcon = { TrailingIcon(expanded = false) },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                ),
-                                shape = CardDefaults.shape
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = downloadModeExpanded,
-                                onDismissRequest = { downloadModeExpanded = false },
-                            ) {
-                                DownloadMode.entries.filter {
-                                    // 如果没有音频资源，则不显示音视频分离选项
-                                    if (dash.audio.isEmpty() && (it == DownloadMode.AUDIO_VIDEO || it == DownloadMode.AUDIO_ONLY)) {
-                                        false
-                                    } else true
-                                }.forEach {
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                it.title,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        },
-                                        onClick = {
-                                            downloadModeExpanded = false
-                                            selectDownloadMode = it
-                                            onSelectDownloadMode(it)
-                                        },
-                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                    )
-                                }
-                            }
-
-                        }
-                        Spacer(Modifier.height(4.dp))
-                        AsWarringTip {
-                            Row(
-                                Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    "注意：如果选中的子集没有音视频分离资源，将无法单独进行下载。",
-                                    fontSize = 14.sp,
+                            DownloadMode.entries.filter {
+                                // 如果没有音频资源，则不显示音视频分离选项
+                                if (dash?.audio.isNullOrEmpty() && (it == DownloadMode.AUDIO_VIDEO || it == DownloadMode.AUDIO_ONLY)) {
+                                    false
+                                } else true
+                            }.forEach {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            it.title,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    onClick = {
+                                        downloadModeExpanded = false
+                                        selectDownloadMode = it
+                                        onSelectDownloadMode(it)
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                 )
                             }
                         }
-                    }
 
-                    Column {
-                        Text("缓存加配")
-                        ExtraCache(downloadInfo, onCheckCoverDownload = onCheckCoverDownload)
                     }
-
+                    Spacer(Modifier.height(4.dp))
+                    AsWarringTip {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "注意：如果选中的子集没有音视频分离资源，将无法单独进行下载。",
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
                 }
+
+                Column {
+                    Text("缓存加配")
+                    ExtraCache(downloadInfo, onCheckCoverDownload = onCheckCoverDownload)
+                }
+
             }
         }
     })

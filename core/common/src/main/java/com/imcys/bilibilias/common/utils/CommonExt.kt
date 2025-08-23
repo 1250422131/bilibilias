@@ -20,3 +20,10 @@ fun String.toVideoCode() = when (this) {
     "av01" -> "AV1"
     else -> this
 }
+
+fun String.toMenuVideoCode() = when (this) {
+    "avc1" -> "AVC/h.264"
+    "hev1", "hvc1", "dvh1" -> "HEVC/h.265"
+    "av01" -> "AV1"
+    else -> this
+} + "(${this})"

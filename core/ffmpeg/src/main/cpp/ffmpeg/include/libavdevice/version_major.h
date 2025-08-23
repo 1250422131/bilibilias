@@ -25,7 +25,7 @@
  * Libavdevice version macros
  */
 
-#define LIBAVDEVICE_VERSION_MAJOR  61
+#define LIBAVDEVICE_VERSION_MAJOR  62
 
 /**
  * FF_API_* defines may be placed below to indicate public API that will be
@@ -33,11 +33,6 @@
  * the public API and may change, break or disappear at any time.
  */
 
-// reminder to remove the bktr device on next major bump
-#define FF_API_BKTR_DEVICE (LIBAVDEVICE_VERSION_MAJOR < 62)
-// reminder to remove the opengl device on next major bump
-#define FF_API_OPENGL_DEVICE (LIBAVDEVICE_VERSION_MAJOR < 62)
-// reminder to remove the sdl2 device on next major bump
-#define FF_API_SDL2_DEVICE (LIBAVDEVICE_VERSION_MAJOR < 62)
+#define FF_API_ALSA_CHANNELS (LIBAVDEVICE_VERSION_MAJOR < 63)
 
 #endif /* AVDEVICE_VERSION_MAJOR_H */

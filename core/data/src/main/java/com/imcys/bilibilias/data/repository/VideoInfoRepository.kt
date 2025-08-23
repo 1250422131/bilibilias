@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.data.repository
 
+import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
@@ -8,6 +9,7 @@ import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlin.collections.get
 
@@ -16,6 +18,7 @@ class VideoInfoRepository(
     private val tvAPIService: BILIBILITVAPIService,
     private val usersDataSource: UsersDataSource,
     private val biliUsersDao: BILIUsersDao,
+    private val biliUserCookiesDao: BILIUserCookiesDao
     ) {
 
     suspend fun getVideoView(

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.network.service
 
+import android.se.omapi.Session
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.config.ACCESS_ID
 import com.imcys.bilibilias.network.config.AID
@@ -17,6 +18,7 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_ACC_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
 import com.imcys.bilibilias.network.config.BROWSER_FINGERPRINT
+import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
 import com.imcys.bilibilias.network.config.BVID
 import com.imcys.bilibilias.network.config.CID
 import com.imcys.bilibilias.network.config.EP_ID
@@ -50,6 +52,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
+import io.ktor.http.HttpHeaders
 import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

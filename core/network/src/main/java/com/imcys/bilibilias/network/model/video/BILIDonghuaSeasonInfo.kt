@@ -56,7 +56,7 @@ data class BILIDonghuaSeasonInfo(
     @SerialName("publish")
     val publish: Publish,
     @SerialName("rating")
-    val rating: Rating,
+    val rating: Rating?,
     @SerialName("record")
     val record: String,
     @SerialName("rights")
@@ -315,7 +315,7 @@ data class BILIDonghuaSeasonInfo(
     @Serializable
     data class PlayStrategy(
         @SerialName("strategies")
-        val strategies: List<String>
+        val strategies: List<String> = emptyList()
     )
 
     @Serializable
@@ -345,9 +345,9 @@ data class BILIDonghuaSeasonInfo(
     @Serializable
     data class Rating(
         @SerialName("count")
-        val count: Long,
+        val count: Long = 0,
         @SerialName("score")
-        val score: Double
+        val score: Double = 0.0
     )
 
     @Serializable

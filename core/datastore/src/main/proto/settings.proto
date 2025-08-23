@@ -8,6 +8,8 @@ message AppSettings {
 
   KnowAboutApp know_about_app = 2;
 
+  bool enabled_roam = 3;
+
   enum KnowAboutApp{
     NotKnow = 0;
     Know = 1;

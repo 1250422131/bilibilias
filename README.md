@@ -33,13 +33,13 @@ BILIBILIAS 近两年来，积攒的功能是非常多的，但由于早期架构
             <td rowspan="2">全局</td>
             <td>分享解析</td>
             <td>支持从 B 站分享到 App 时自动跳转并解析内容</td>
-            <td>进行中</td>
+            <td>已完成</td>
             <td><a href="https://github.com/1250422131/">1250422131</a></td>
         </tr>
         <tr>
             <td>跳转解析</td>
             <td>视频/番剧列表项点击后自动跳转解析页面并解析内容</td>
-            <td>进行中</td>
+            <td>已完成</td>
             <td><a href="https://github.com/1250422131/">1250422131</a></td>
         </tr>
         <!-- 首页模块 -->

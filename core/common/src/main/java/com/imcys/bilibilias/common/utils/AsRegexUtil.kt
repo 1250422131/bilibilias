@@ -12,9 +12,15 @@ object AsRegexUtil {
     private val regex4 = Regex("""(?<=BV|Bv|bv|bV)[A-Za-z0-9]{10}""")
     private val regex5 = Regex("""(?<=(av|aV|AV|Av))([0-9]+)""")
     private val regex6 = Regex("""https://bili2233.cn/(([A-z]+|\d+){6,})""")
+
+    private val regex7 = Regex("""ss([0-9]+)""")
+
     private fun isBV(text: String) = regex4.containsMatchIn(text)
     private fun isAV(text: String) = regex5.containsMatchIn(text)
     private fun isEP(text: String) = regex1.containsMatchIn(text)
+
+    private fun isSS(text: String) = regex7.containsMatchIn(text)
+
     private fun isShortLink(text: String) = text.contains("""https://b23.tv""")
     private fun is2233ShortLink(text: String) = text.contains("""https://bili2233.cn""")
     private fun isUserSpace(text: String) = text.startsWith("""https://space.bilibili.com""")
@@ -26,6 +32,9 @@ object AsRegexUtil {
 
             isEP(text) -> regex1.find(text)?.groupValues?.get(1)
                 ?.let { TextType.BILI.EP(it.toLong()) }
+
+            isSS(text) -> regex7.find(text)?.groupValues?.get(1)
+                    ?.let { TextType.BILI.SS(it.toLong()) }
 
             isShortLink(text) -> regex2.find(text)?.groupValues?.get(1)
                 ?.let { TextType.BILI.ShortLink("https://b23.tv/$it") }
@@ -46,6 +55,8 @@ sealed interface TextType {
         data class BV(val text: String) : BILI
         data class AV(val text: Long) : BILI
         data class EP(val text: Long) : BILI
+        data class SS(val text: Long) : BILI
+
         data class ShortLink(val text: String) : BILI
         data class UserSpace(val text: String) : BILI
     }

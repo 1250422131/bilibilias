@@ -13,6 +13,16 @@ data class DownloadViewInfo(
     val selectedEpId: List<Long> = listOf(),
     val downloadCover: Boolean = false,
 ) {
+
+    // 清空cid列表
+    fun clearCidList(): DownloadViewInfo = copy(
+        selectedCid = emptyList()
+    )
+    // 清空epId列表
+    fun clearEpIdList(): DownloadViewInfo = copy(
+        selectedEpId = emptyList()
+    )
+
     fun toggleCid(cid: Long): DownloadViewInfo = copy(
         selectedCid = if (selectedCid.contains(cid)) {
             selectedCid - cid
