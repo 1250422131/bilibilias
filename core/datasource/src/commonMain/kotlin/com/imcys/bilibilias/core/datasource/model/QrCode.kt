@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class QrCode(
     @SerialName("qrcode_key")
-    val qrcodeKey: String = "",
+    val qrcodeKey: String,
     @SerialName("url")
-    val url: String = ""
+    val url: String
 )
