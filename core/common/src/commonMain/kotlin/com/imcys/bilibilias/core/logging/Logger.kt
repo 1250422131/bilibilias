@@ -18,16 +18,16 @@ inline fun <reified T : Any> logger(): Logger {
 }
 
 interface Logger {
-    public fun error(message: () -> String)
-    public fun error(cause: Throwable, message: () -> String)
-    public fun warn(message: () -> String)
-    public fun warn(cause: Throwable, message: () -> String)
-    public fun info(message: () -> String)
-    public fun info(cause: Throwable, message: () -> String)
-    public fun debug(message: () -> String)
-    public fun debug(cause: Throwable, message: () -> String)
-    public fun trace(message: () -> String)
-    public fun trace(cause: Throwable, message: () -> String)
+    fun error(message: () -> String)
+    fun error(cause: Throwable, message: () -> String)
+    fun warn(message: () -> String)
+    fun warn(cause: Throwable, message: () -> String)
+    fun info(message: () -> String)
+    fun info(cause: Throwable, message: () -> String)
+    fun debug(message: () -> String)
+    fun debug(cause: Throwable, message: () -> String)
+    fun trace(message: () -> String)
+    fun trace(cause: Throwable, message: () -> String)
 }
 
 class LoggerImpl(private val log: KermitLogger) : Logger {
@@ -64,11 +64,11 @@ class LoggerImpl(private val log: KermitLogger) : Logger {
     }
 
     override fun trace(message: () -> String) {
-        log.a(message())
+        log.i(message())
     }
 
     override fun trace(cause: Throwable, message: () -> String) {
-        log.a(message(), cause)
+        log.i(message(), cause)
     }
 }
 
