@@ -29,8 +29,8 @@ val DataStoreModule = module {
         AsPreferencesDataSource(
             DataStoreFactory.new(
                 serializer = UserPreferences.serializer()
-                    .asDataStoreSerializer { UserPreferences.INIT },
-                corruptionHandler = ReplaceFileCorruptionHandler { UserPreferences.INIT },
+                    .asDataStoreSerializer { UserPreferences.DEFAULT },
+                corruptionHandler = ReplaceFileCorruptionHandler { UserPreferences.DEFAULT },
                 produceFile = { resolveDataStoreFile("user_preferences") },
                 scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
             ),
