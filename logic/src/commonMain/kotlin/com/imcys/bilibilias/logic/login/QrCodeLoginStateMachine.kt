@@ -10,6 +10,8 @@ import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.WaitingSca
 import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datastore.TokenRepository
 import com.imcys.bilibilias.core.logging.logger
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.saveImageToGallery
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -65,12 +67,15 @@ class QrCodeLoginStateMachine(
                 collectWhileInState(tickerFlow(180)) {
                     mutate { copy(lifeTime = it.toInt()) }
                 }
-                on<QrCodeLoginAction.GenerateQRCode> {
+                on<QrCodeLoginAction.Generate> {
                     override { QrCodeLoginState.GeneratingQRCode }
+                }
+                onActionEffect<QrCodeLoginAction.SaveToAlbum> {
+                    FileKit.saveImageToGallery(it.bytes, "BilibiliAs.png")
                 }
             }
             inState<QrCodeLoginState.Error> {
-                on<QrCodeLoginAction.GenerateQRCode> {
+                on<QrCodeLoginAction.Generate> {
                     override { QrCodeLoginState.GeneratingQRCode }
                 }
             }
@@ -117,6 +122,26 @@ sealed interface QrCodeLoginState {
 }
 
 sealed interface QrCodeLoginAction {
-    // 生成二维码
-    data object GenerateQRCode : QrCodeLoginAction
+    /**
+     * 生成二维码
+     */
+    data object Generate : QrCodeLoginAction
+
+    /**
+     * 保存到相册
+     */
+    data class SaveToAlbum(val bytes: ByteArray) : QrCodeLoginAction {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as SaveToAlbum
+
+            return bytes.contentEquals(other.bytes)
+        }
+
+        override fun hashCode(): Int {
+            return bytes.contentHashCode()
+        }
+    }
 }

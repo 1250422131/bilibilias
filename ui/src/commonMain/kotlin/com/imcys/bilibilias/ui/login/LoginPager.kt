@@ -31,15 +31,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImagePainter.State.Empty.painter
 import com.imcys.bilibilias.logic.login.CookieAction
 import com.imcys.bilibilias.logic.login.CookieLoginState
 import com.imcys.bilibilias.logic.login.QrCodeLoginAction
 import com.imcys.bilibilias.logic.login.QrCodeLoginState
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.toByteArray
 
 @Composable
 internal fun PagerScope.QrContent(
@@ -67,6 +78,7 @@ internal fun PagerScope.QrContent(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val painter = rememberQrCodePainter(data = state.url)
                 Text(
                     text = "使用 bilibili 官方 App 扫码登录",
                     fontSize = 16.sp,
@@ -84,7 +96,7 @@ internal fun PagerScope.QrContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        modifier = Modifier.clickable { dispatch(QrCodeLoginAction.GenerateQRCode) },
+                        modifier = Modifier.clickable { dispatch(QrCodeLoginAction.Generate) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -96,11 +108,23 @@ internal fun PagerScope.QrContent(
                     }
 
                     Spacer(modifier = Modifier.width(32.dp))
-
                     Row(
-                        modifier = Modifier.clickable { },
+                        modifier = Modifier.clickable {
+                            dispatch(
+                                QrCodeLoginAction.SaveToAlbum(
+                                    painter
+                                        .toImageBitmapWithBorder(
+                                            1024,
+                                            1024,
+                                            200f
+                                        )
+                                        .toByteArray()
+                                )
+                            )
+                        },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // TODO: 弹消息提示
                         Icon(
                             imageVector = Icons.Default.SaveAlt,
                             contentDescription = "Save to Album",
@@ -112,13 +136,12 @@ internal fun PagerScope.QrContent(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                val painter = rememberQrCodePainter(data = state.url)
                 Spacer(modifier = Modifier.height(30.dp))
                 Image(
                     painter = painter,
                     contentDescription = null,
                     modifier = Modifier.size(150.dp).clickable(null, null) {
-                        dispatch(QrCodeLoginAction.GenerateQRCode)
+                        dispatch(QrCodeLoginAction.Generate)
                     }
                 )
 
@@ -222,4 +245,50 @@ internal fun PagerScope.CookieContent(
             }
         }
     }
+}
+
+/**
+ * Converts a Painter to an ImageBitmap, adding a white border around the image.
+ *
+ * @param painter The Painter to convert.
+ * @param outputWidth The desired width of the output ImageBitmap (including the border).
+ * @param outputHeight The desired height of the output ImageBitmap (including the border).
+ * @param borderWidth The width of the white border in pixels.
+ * @param density The current screen density.
+ * @param layoutDirection The current layout direction.
+ * @return An ImageBitmap with the original painter content and a white border.
+ */
+fun Painter.toImageBitmapWithBorder(
+    outputWidth: Int,
+    outputHeight: Int,
+    borderWidth: Float,
+): ImageBitmap {
+    // Create an ImageBitmap with the specified output dimensions
+    val imageBitmap = ImageBitmap(outputWidth, outputHeight)
+    val canvas = Canvas(imageBitmap)
+
+    // Calculate the dimensions of the inner image (without the border)
+    val imageContentWidth = outputWidth - (borderWidth * 2)
+    val imageContentHeight = outputHeight - (borderWidth * 2)
+
+    CanvasDrawScope().draw(
+        density = Density(1f, 1f),
+        layoutDirection = LayoutDirection.Ltr,
+        canvas = canvas,
+        size = Size(outputWidth.toFloat(), outputHeight.toFloat())
+    ) {
+        // Draw the white background (border)
+        drawRect(
+            color = Color.White,
+            size = Size(outputWidth.toFloat(), outputHeight.toFloat())
+        )
+
+        // Draw the original painter content inside the border
+        translate(left = borderWidth, top = borderWidth) {
+            with(painter) {
+                draw(size = Size(imageContentWidth, imageContentHeight))
+            }
+        }
+    }
+    return imageBitmap
 }
