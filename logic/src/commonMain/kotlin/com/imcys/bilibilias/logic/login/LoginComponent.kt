@@ -36,9 +36,9 @@ class DefaultLoginComponent(
                 preferences.setSelfInfo(
                     SelfInfo(
                         Uuid.random(),
-                        data.mid,
-                        data.uname,
-                        data.face
+                        data.mid!!,
+                        data.uname!!,
+                        data.face!!
                     )
                 )
             }

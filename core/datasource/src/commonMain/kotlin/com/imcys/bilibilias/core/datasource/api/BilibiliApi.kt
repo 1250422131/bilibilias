@@ -20,6 +20,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.LoggingFormat
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -52,7 +53,8 @@ object BilibiliApi : KoinComponent {
         }
         BrowserUserAgent()
         Logging {
-            level = LogLevel.ALL
+            format = LoggingFormat.OkHttp
+            level = LogLevel.INFO
             logger = object : Logger {
                 override fun log(message: String) {
                     this@BilibiliApi.logger.info { message }
