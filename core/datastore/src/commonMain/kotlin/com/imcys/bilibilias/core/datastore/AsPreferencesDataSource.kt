@@ -15,4 +15,9 @@ class AsPreferencesDataSource(
             it.copy(selfInfo = info)
         }
     }
+    suspend fun setTryLookEnabled(enable: Boolean) {
+        userPreferences.updateData {
+            it.copy(enableTryLook = enable)
+        }
+    }
 }

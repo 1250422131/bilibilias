@@ -5,17 +5,17 @@ import kotlinx.serialization.Serializable
 /**
  * User preferences.
  *
- * @property enableGuestHighQualityVideo Boolean
+ * @property enableTryLook 免登录查看1080P视频
  */
 @Serializable
 data class UserPreferences(
     val selfInfo: SelfInfo?,
-    val enableGuestHighQualityVideo: Boolean
+    val enableTryLook: Boolean
 ) {
     companion object {
         val DEFAULT = UserPreferences(
             selfInfo = null,
-            enableGuestHighQualityVideo = false
+            enableTryLook = false
         )
     }
 }
