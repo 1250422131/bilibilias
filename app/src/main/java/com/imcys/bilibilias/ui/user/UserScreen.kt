@@ -57,8 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -88,7 +86,9 @@ import org.koin.androidx.compose.koinViewModel
 internal fun UserScreen(
     userRoute: UserRoute,
     onToBack: () -> Unit,
-    onToSettings: () -> Unit
+    onToSettings: () -> Unit,
+    onToWorkList: (mid: Long) -> Unit,
+    onToBangumiFollow : (mid: Long) -> Unit,
 ) {
 
     val vm = koinViewModel<UserViewModel>()
@@ -123,14 +123,18 @@ internal fun UserScreen(
                     PlatformList(uiState.biliUsersEntity)
                 }
                 fullWidthItem {
-                    ActionRow()
+                    ActionRow(onToBangumiFollow = {
+                        onToBangumiFollow.invoke(userRoute.mid)
+                    })
                 }
             }
 
             fullWidthItem {
-                VideoHeader(spaceArchiveInfoState) {
+                VideoHeader(spaceArchiveInfoState, onRetry = {
                     vm.getUserPageIno(userRoute.mid)
-                }
+                }, onToWorkList = {
+                    onToWorkList.invoke(userRoute.mid)
+                })
             }
 
         }
@@ -196,6 +200,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {
 private fun VideoHeader(
     spaceArchiveInfoState: NetWorkResult<BILISpaceArchiveModel?>,
     onRetry: () -> Unit = {},
+    onToWorkList: () -> Unit = {}
 ) {
     SurfaceColorCard {
         Column(
@@ -215,7 +220,7 @@ private fun VideoHeader(
                 Text("投稿视频", color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = {onToWorkList.invoke()}) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
                         contentDescription = "更多投稿",
@@ -268,7 +273,7 @@ private fun LazyGridScope.fullWidthItem(
 }
 
 @Composable
-fun ActionRow() {
+fun ActionRow(onToBangumiFollow: () -> Unit = {}) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -329,7 +334,8 @@ fun ActionRow() {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToBangumiFollow
         ) {
             Column(
                 modifier = Modifier

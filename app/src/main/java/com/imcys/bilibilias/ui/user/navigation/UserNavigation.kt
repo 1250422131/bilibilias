@@ -27,6 +27,6 @@ fun NavGraphBuilder.userScreen(
 ) {
     composable<UserRoute> { navBackStackEntry ->
         val userRoute = navBackStackEntry.toRoute<UserRoute>()
-        UserScreen(userRoute, onToBack, onToSettings)
+        UserScreen(userRoute, onToBack, onToSettings, onToWorkList = {}, onToBangumiFollow = {})
     }
 }

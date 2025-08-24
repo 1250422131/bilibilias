@@ -56,6 +56,7 @@ import kotlin.math.ceil
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DownloadTaskCard(
+    modifier: Modifier = Modifier,
     task: AppDownloadTask,
     onPause: () -> Unit = {},
     onResume: () -> Unit = {},
@@ -63,7 +64,7 @@ fun DownloadTaskCard(
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = CardDefaults.shape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -209,14 +210,16 @@ fun DownloadTaskCard(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadFinishTaskCard(downloadSegment: DownloadSegment, onDeleteTaskAndFile: () -> Unit) {
+fun DownloadFinishTaskCard(
+    modifier: Modifier = Modifier,
+    downloadSegment: DownloadSegment, onDeleteTaskAndFile: () -> Unit) {
 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = CardDefaults.shape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier

@@ -63,7 +63,6 @@ fun RoamScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val vm = koinViewModel<RoamViewModel>()
     val uiState by vm.uiState.collectAsState()
-    var isEnabledRoam by remember { mutableStateOf(false) }
 
     val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
 
@@ -93,7 +92,7 @@ fun RoamScreen(
                         Text("启用漫游", fontSize = 18.sp)
                         Spacer(Modifier.weight(1f))
                         Switch(
-                            enabled = uiState.isLoginTV,
+                            enabled = uiState.isLoginTV || appSettings.enabledRoam,
                             checked = appSettings.enabledRoam,
                             onCheckedChange = {
                                 vm.updateRoamEnabledState(it)

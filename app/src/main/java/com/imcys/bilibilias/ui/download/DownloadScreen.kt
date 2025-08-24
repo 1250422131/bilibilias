@@ -85,7 +85,8 @@ fun DownloadScreen(onToBack: () -> Unit) {
                     0 -> {
                         items(downloadListState, key = { it.downloadSegment.platformId }) {
                             DownloadTaskCard(
-                                it, onPause = {
+                                modifier = Modifier.animateItem(),
+                                task = it, onPause = {
                                     vm.pauseDownloadTask(it.downloadSegment.segmentId)
                                 },
                                 onResume = {
@@ -98,9 +99,12 @@ fun DownloadScreen(onToBack: () -> Unit) {
                         items(allDownloadSegment.filter {
                             it.downloadState == DownloadState.COMPLETED
                         }, key = { it.segmentId }) {
-                            DownloadFinishTaskCard(it, onDeleteTaskAndFile = {
-                                vm.deleteDownloadSegment(context, it)
-                            })
+                            DownloadFinishTaskCard(
+                                modifier = Modifier.animateItem(),
+                                downloadSegment = it,
+                                onDeleteTaskAndFile = {
+                                    vm.deleteDownloadSegment(context, it)
+                                })
                         }
                     }
                 }

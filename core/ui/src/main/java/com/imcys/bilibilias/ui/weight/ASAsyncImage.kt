@@ -35,13 +35,58 @@ fun ASAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DefaultFilterQuality,
     clipToBounds: Boolean = true,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
     ) {
     if (!LocalInspectionMode.current) {
         Surface(
             shape = shape,
             color = MaterialTheme.colorScheme.primaryContainer,
             onClick = onClick
+        ) {
+            AsyncImage(
+                model = model,
+                contentDescription = contentDescription,
+                imageLoader = SingletonImageLoader.get(LocalPlatformContext.current),
+                modifier = modifier,
+                transform = transform,
+                onState = onState,
+                alignment = alignment,
+                contentScale = contentScale,
+                alpha = alpha,
+                colorFilter = colorFilter,
+                filterQuality = filterQuality,
+                clipToBounds = clipToBounds,
+            )
+        }
+    } else {
+        Surface(
+            modifier,
+            color = MaterialTheme.colorScheme.primary,
+            shape = CardDefaults.shape
+        ) {
+        }
+    }
+}
+
+@Composable
+fun ASAsyncImage(
+    model: Any?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    transform: (State) -> State = DefaultTransform,
+    onState: ((State) -> Unit)? = null,
+    alignment: Alignment = Alignment.Center,
+    contentScale: ContentScale = ContentScale.Crop,
+    alpha: Float = DefaultAlpha,
+    colorFilter: ColorFilter? = null,
+    filterQuality: FilterQuality = DefaultFilterQuality,
+    clipToBounds: Boolean = true,
+) {
+    if (!LocalInspectionMode.current) {
+        Surface(
+            shape = shape,
+            color = MaterialTheme.colorScheme.primaryContainer,
         ) {
             AsyncImage(
                 model = model,

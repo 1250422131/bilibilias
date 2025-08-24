@@ -20,6 +20,7 @@ data class BILISpaceArchiveModel(
         val title: String,
         val length: String,
         val play: Long,
+        val danmu: Long,
         val description: String,
         val pic: String,
     )

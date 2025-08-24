@@ -271,7 +271,7 @@ fun DownloadListCard(
             ) {
                 if (downloadListState.isNotEmpty()) {
                     downloadListState.subList(0, min(3, downloadListState.size)).forEach { task ->
-                        DownloadTaskCard(task, {
+                        DownloadTaskCard(task = task, onPause = {
                             onPauseTask(task)
                         }, onResume = {
                             onResumeTask(task)

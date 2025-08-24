@@ -1,7 +1,10 @@
 package com.imcys.bilibilias.network.plugin
 
+import androidx.datastore.core.DataStore
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
@@ -11,6 +14,7 @@ import com.imcys.bilibilias.network.utils.BiliAppSigner
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
+import kotlinx.coroutines.flow.first
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.inject
 import kotlin.getValue
@@ -27,6 +31,8 @@ class RoamPluginConfig {
     var forceScheme: String? = "https"
 
     var biliUsersDao: BILIUsersDao? = null
+
+    var appSetting: DataStore<AppSettings>? = null
 }
 
 /**
@@ -44,15 +50,14 @@ val RoamPlugin = createClientPlugin("RoamPlugin", ::RoamPluginConfig) {
     val mapping = pluginConfig.domainReplacement
     val forceScheme = pluginConfig.forceScheme
     val biliUsersDao = pluginConfig.biliUsersDao
+    val appSettings = pluginConfig.appSetting
 
     onRequest { request, _ ->
+        if (appSettings?.data?.first()?.enabledRoam == false) return@onRequest
         request.headers.append("Roam-Enabled", "true")
         val originalFull = request.url.toString()
         if (whitelist.none { originalFull.contains(it) }) return@onRequest
-//
-//        if (request.url.encodedPath.contains(WEB_WEBI_VIDEO_VIEW)) {
-//            request.url.encodedPath = request.url.encodedPath.replace(WEB_WEBI_VIDEO_VIEW, WEB_WEBI_VIDEO_VIEW_NO_WEBI)
-//        }
+
 
         val tvUser = biliUsersDao?.getBILIUserByPlatform(LoginPlatform.TV)
         val oldHost = request.url.host
@@ -65,7 +70,7 @@ val RoamPlugin = createClientPlugin("RoamPlugin", ::RoamPluginConfig) {
         }
 
         // 补充get参数
-        tvUser?.let { user->
+        tvUser?.let { user ->
             if (request.url.parameters["access_key"].isNullOrBlank()) {
                 request.url.parameters.append("access_key", "${user.accessToken}")
             }
