@@ -7,37 +7,37 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BilibiliNavigationData(
     @SerialName("isLogin")
-    val isLogin: Boolean = false,
+    val isLogin: Boolean,
     @SerialName("face")
-    val face: String = "",
+    val face: String,
     @SerialName("mid")
-    val mid: Long = 0,
+    val mid: Long,
     @SerialName("uname")
-    val uname: String = "",
+    val uname: String,
     @SerialName("pendant")
-    val pendant: Pendant = Pendant(),
+    val pendant: Pendant,
     @SerialName("wbi_img")
-    val wbiImg: WbiImg = WbiImg()
+    val wbiImg: WbiImg,
 ) {
     @Serializable
     data class Pendant(
         @SerialName("pid")
-        val pid: Int = 0,
+        val pid: Int,
         @SerialName("name")
-        val name: String = "",
+        val name: String,
         @SerialName("image")
-        val image: String = "",
+        val image: String,
         @SerialName("image_enhance")
-        val imageEnhance: String = "",
+        val imageEnhance: String,
         @SerialName("image_enhance_frame")
-        val imageEnhanceFrame: String = "",
+        val imageEnhanceFrame: String,
     )
 
     @Serializable
     data class WbiImg(
         @SerialName("img_url")
-        val imgUrl: String = "",
+        val imgUrl: String,
         @SerialName("sub_url")
-        val subUrl: String = ""
+        val subUrl: String,
     )
 }
