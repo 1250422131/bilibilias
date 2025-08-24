@@ -47,20 +47,22 @@ class UserInfoRepository(
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getBILIUserByUid(userId: Long? = null) = biliUsersDao.getBILIUserByUid(userId ?: usersDataSource.getUserId())
+    suspend fun getBILIUserByUid(userId: Long? = null) =
+        biliUsersDao.getBILIUserByUid(userId ?: usersDataSource.getUserId())
 
     suspend fun deleteBILIUserByUid(userId: Long) = biliUsersDao.deleteBILIUserByUid(userId)
 
-    suspend fun getBILIUserListByMid(mid: Long)  = biliUsersDao.getBILIUserListByMid(mid)
+    suspend fun getBILIUserListByMid(mid: Long) = biliUsersDao.getBILIUserListByMid(mid)
     suspend fun getSpaceArchiveInfo(
         mid: Long,
         pn: Int = 1,
-        ps: Int = 2
+        ps: Int = 2,
+        keyword: String? = null,
     ): FlowNetWorkResult<BILISpaceArchiveModel> {
         val userInfo = getBILIUserByUid()
         return when (userInfo?.loginPlatform ?: LoginPlatform.WEB) {
             LoginPlatform.WEB -> {
-                webApiService.getSpaceArchiveInfo(mid, pn, ps).map { networkResult ->
+                webApiService.getSpaceArchiveInfo(mid, pn, ps, keyword).map { networkResult ->
                     networkResult.mapData { archiveInfo, apiResponse ->
                         val allCount = archiveInfo?.page?.count ?: 0
                         BILISpaceArchiveModel(
@@ -76,7 +78,8 @@ class UserInfoRepository(
                                     pic = it.pic,
                                     attribute = it.attribute,
                                     length = it.length,
-                                    comment = it.comment
+                                    comment = it.comment,
+                                    danmu = it.videoReview
                                 )
                             } ?: emptyList(),
                             page = BILISpaceArchiveModel.Page(
@@ -91,7 +94,7 @@ class UserInfoRepository(
 
             LoginPlatform.MOBILE,
             LoginPlatform.TV -> {
-                webApiService.getSpaceArchiveInfo(mid, pn, ps).map { networkResult ->
+                webApiService.getSpaceArchiveInfo(mid, pn, ps, keyword).map { networkResult ->
                     networkResult.mapData { archiveInfo, apiResponse ->
                         val allCount = archiveInfo?.page?.count ?: 0
                         BILISpaceArchiveModel(
@@ -107,7 +110,8 @@ class UserInfoRepository(
                                     pic = it.pic,
                                     attribute = it.attribute,
                                     length = it.length,
-                                    comment = it.comment
+                                    comment = it.comment,
+                                    danmu = it.videoReview
                                 )
                             } ?: emptyList(),
                             page = BILISpaceArchiveModel.Page(
@@ -121,5 +125,13 @@ class UserInfoRepository(
             }
         }
     }
+
+
+    suspend fun getBangumiFollowInfo(
+        vmid: Long,
+        type: Int = 1,
+        pn: Int = 1,
+        ps: Int = 20
+    ) = webApiService.getBangumiFollowInfo(vmid, type, pn, ps)
 
 }

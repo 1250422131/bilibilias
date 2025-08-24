@@ -1,9 +1,9 @@
 package com.imcys.bilibilias.network.di
 
 import android.util.Log
+import com.imcys.bilibilias.datastore.userAppSettingsStore
 import com.imcys.bilibilias.network.AsCookiesStorage
 import com.imcys.bilibilias.network.config.BILIBILI_URL
-import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
 import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.plugin.RiskControlPlugin
 import com.imcys.bilibilias.network.plugin.RoamPlugin
@@ -13,20 +13,18 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
-import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpHeaders.ContentEncoding
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 
@@ -77,6 +75,7 @@ val netWorkModule = module {
                     "api.bilibili.com" to "bili-api.misakamoe.com",
                 )
                 biliUsersDao = get()
+                appSetting = androidContext().userAppSettingsStore
             }
             install(RiskControlPlugin)
             install(ContentNegotiation) {

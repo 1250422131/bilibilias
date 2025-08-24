@@ -45,7 +45,11 @@ import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import com.imcys.bilibilias.ui.user.UserScreen
+import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
+import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
+import com.imcys.bilibilias.ui.user.work.WorkListRoute
+import com.imcys.bilibilias.ui.user.work.WorkListScreen
 
 /**
  * BILIBILAIS导航显示组件
@@ -171,6 +175,12 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNull() },
                         onToSettings = {
                             backStack.addWithReuse(SettingRoute)
+                        },
+                        onToWorkList = { mid ->
+                            backStack.add(WorkListRoute(mid = mid))
+                        },
+                        onToBangumiFollow = { mid ->
+                            backStack.add(BangumiFollowRoute(mid = mid))
                         }
                     )
                 }
@@ -213,6 +223,18 @@ fun BILIBILAISNavDisplay() {
                 entry<PlayVoucherErrorRoute> {
                     PlayVoucherErrorPage(
                         onBlack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<WorkListRoute>{
+                    WorkListScreen(
+                        workListRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<BangumiFollowRoute>{
+                    BangumiFollowScreen(
+                        bangumiFollowRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
                     )
                 }
             }

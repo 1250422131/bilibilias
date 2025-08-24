@@ -66,6 +66,9 @@ dependencies {
     // 启动屏
     // implementation(libs.androidx.core.splashscreen)
 
+    // 分页
+    implementation(libs.paging.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

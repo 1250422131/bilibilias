@@ -10,6 +10,8 @@ import com.imcys.bilibilias.ui.home.HomeViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
+import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowViewModel
+import com.imcys.bilibilias.ui.user.work.WorkListViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -26,6 +28,8 @@ val appModule = module {
     viewModel { DownloadViewModel(get(), get(), get()) }
     viewModel { PlayVoucherErrorViewModel(get()) }
     viewModel { RoamViewModel(get(), get(), get(), get()) }
+    viewModel { WorkListViewModel(get()) }
+    viewModel { BangumiFollowViewModel(get()) }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

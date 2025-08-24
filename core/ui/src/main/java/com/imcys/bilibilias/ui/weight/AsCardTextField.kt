@@ -46,6 +46,7 @@ fun AsCardTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
+    hint: String = "BV / AV / EP / SS 号...",
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     enabled: Boolean = true,
     readOnly: Boolean = false,
@@ -136,7 +137,7 @@ fun AsCardTextField(
                         Spacer(Modifier.height(12.dp))
                         if (tfv.text.isEmpty() && !hasFocus) {
                             Text(
-                                "BV / AV / EP 号...",
+                                hint,
                                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                                 fontSize = 16.sp,
                                 modifier = Modifier.fillMaxWidth()

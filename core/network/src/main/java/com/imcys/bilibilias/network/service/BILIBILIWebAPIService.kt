@@ -5,6 +5,7 @@ import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.config.ACCESS_ID
 import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.SPACE_BASE_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_BANGUMI_FOLLOW_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
@@ -37,6 +38,7 @@ import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.network.model.QRCodePollInfo
 import com.imcys.bilibilias.network.model.WebSpiInfo
 import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
+import com.imcys.bilibilias.network.model.user.BILIUserBangumiFollowInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
@@ -146,17 +148,20 @@ class BILIBILIWebAPIService(
     suspend fun getSpaceArchiveInfo(
         mid: Long,
         pn: Int = 1,
-        ps: Int = 2
+        ps: Int = 2,
+        keyword: String? = null,
     ): FlowNetWorkResult<BILISpaceArchiveInfo> =
         httpClient.httpRequest {
-            val newMap = mapOf(
+            val newMap = mutableMapOf(
                 MID to mid.toString(),
                 "pn" to pn.toString(),
                 "ps" to ps.toString(),
                 "platform" to "web",
-                "index" to "1",
+                "index" to "0",
                 "order" to "pubdate"
-            ) + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
+            ).apply {
+                keyword?.let { put("keyword", it) }
+            } + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
             get(WEB_SPACE_ARC_SEARCH) {
                 encWbi(newMap).forEach { (k, v) ->
                     parameter(k, v)
@@ -238,6 +243,26 @@ class BILIBILIWebAPIService(
         } + BROWSER_FINGERPRINT
 
         get(WEB_VIDEO_PLAYER_URL) {
+            encWbi(newMap).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+    suspend fun getBangumiFollowInfo(
+        vmid: Long,
+        type: Int = 1,
+        pn: Int = 1,
+        ps: Int = 20
+    ): FlowNetWorkResult<BILIUserBangumiFollowInfo> = httpClient.httpRequest {
+        val newMap = mutableMapOf<String, String>().apply {
+            put("vmid", vmid.toString())
+            put("type", type.toString())
+            put("pn", pn.toString())
+            put("ps", ps.toString())
+            put("platform", "web")
+        }
+        get(WEB_BANGUMI_FOLLOW_URL) {
             encWbi(newMap).forEach { (k, v) ->
                 parameter(k, v)
             }

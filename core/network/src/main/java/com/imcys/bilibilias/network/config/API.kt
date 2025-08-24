@@ -60,5 +60,7 @@ object API {
 
         // 视频播放信息接口，通用接口
         val WEB_VIDEO_PLAYER_NO_WEBI_URL = WEB_API_BASE_URL + "x/player/playurl"
+
+        val WEB_BANGUMI_FOLLOW_URL = WEB_API_BASE_URL + "x/space/bangumi/follow/list"
     }
 }

@@ -46,6 +46,7 @@ import com.imcys.bilibilias.ui.weight.BaseSettingsItem
 import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
+import androidx.core.net.toUri
 
 
 @Preview
@@ -60,6 +61,7 @@ fun SettingScreenPreview() {
 @Composable
 fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
     SettingScaffold(scrollBehavior, onToBack) {
 
         LazyColumn(
@@ -152,7 +154,9 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                     painter = rememberVectorPainter(Icons.Outlined.EmojiObjects),
                     text = "我们的立场",
                     descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展",
-                    onClick = onToRoam
+                    onClick = {
+
+                    }
                 )
             }
 
@@ -161,7 +165,9 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                     painter =  painterResource(R.drawable.ic_licens_24px),
                     text = "第三方开源许可",
                     description = {},
-                    onClick = onToRoam
+                    onClick = {
+
+                    }
                 )
             }
 
@@ -170,7 +176,13 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                     painter = painterResource(R.drawable.ic_github_24px),
                     text = "Github仓库",
                     description = {},
-                    onClick = onToRoam
+                    onClick = {
+                        val intent = Intent().apply {
+                            action = "android.intent.action.VIEW"
+                            data = "https://github.com/1250422131/bilibilias".toUri()
+                        }
+                        context.startActivity(intent)
+                    }
                 )
             }
 
