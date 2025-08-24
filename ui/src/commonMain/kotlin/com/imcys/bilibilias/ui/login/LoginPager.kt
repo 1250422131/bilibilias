@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,102 +37,112 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.logic.login.CookieAction
 import com.imcys.bilibilias.logic.login.CookieLoginState
-import com.imcys.bilibilias.logic.login.LoginAction
+import com.imcys.bilibilias.logic.login.QrCodeLoginAction
+import com.imcys.bilibilias.logic.login.QrCodeLoginState
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 
 @Composable
-internal fun PagerScope.LoginByQr(
-    url: String,
-    timeLeftInSeconds: Int,
-    qrStatusMessage: String,
-    authCodeUrl: String, // The descriptive URL below the QR
-    onRefreshQr: () -> Unit,
-    onSaveQr: () -> Unit,
-    onQrCodeScanned: () -> Unit, // Example action
-    dispatch: (LoginAction) -> Unit
+internal fun PagerScope.QrContent(
+    state: QrCodeLoginState,
+    dispatch: (QrCodeLoginAction) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "使用 bilibili 官方 App 扫码登录",
-            fontSize = 16.sp,
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = "剩余有效时间: 170 秒",
-            fontSize = 14.sp,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh QR Code",
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "刷新二维码", fontSize = 14.sp)
-            }
-            Spacer(modifier = Modifier.width(32.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.SaveAlt,
-                    contentDescription = "Save to Album",
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "保存至相册", fontSize = 14.sp)
+    when (state) {
+        is QrCodeLoginState.Error -> {
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                Text(state.errorMessage)
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        val painter = rememberQrCodePainter(data = url)
-        Spacer(modifier = Modifier.height(30.dp))
-        Image(
-            painter = painter,
-            contentDescription = null,
-            modifier = Modifier.size(150.dp).clickable(null, null) {
-//                dispatch(LoginAction.RequestNewQrCode)
+        QrCodeLoginState.LoginSuccess -> {}
+        is QrCodeLoginState.QRCodeReady -> {
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                Text("正在生成二维码。。。")
             }
-        )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        is QrCodeLoginState.Content ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "使用 bilibili 官方 App 扫码登录",
+                    fontSize = 16.sp,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "剩余有效时间: ${state.lifeTime} 秒",
+                    fontSize = 14.sp,
+                )
 
-        Text(
-            text = "二维码尚未确认",
-            fontSize = 16.sp,
-        )
+                Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.clickable { dispatch(QrCodeLoginAction.GenerateQRCode) },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh QR Code",
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "刷新二维码", fontSize = 14.sp)
+                    }
 
-        Text(
-            text = "https://passport.bilibili.com/x/passport-tv-login/h5/qrcode/auth?auth_code=6b9d9624b2fb37a7373289b934145a31&mobi_app=android_hd",
-            fontSize = 10.sp,
-            textAlign = TextAlign.Center,
-            lineHeight = 14.sp,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
+                    Spacer(modifier = Modifier.width(32.dp))
 
-        // Spacer to push the final text to the bottom
-        Spacer(modifier = Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier.clickable { },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SaveAlt,
+                            contentDescription = "Save to Album",
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "保存至相册", fontSize = 14.sp)
+                    }
+                }
 
-        // 4. Bottom Warning Message
-        Text(
-            text = "请务必在 BilibiliAs 开源仓库等可信渠道下载安装。",
-            fontSize = 12.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            textAlign = TextAlign.Center
-        )
+                Spacer(modifier = Modifier.height(24.dp))
+
+                val painter = rememberQrCodePainter(data = state.url)
+                Spacer(modifier = Modifier.height(30.dp))
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.size(150.dp).clickable(null, null) {
+                        dispatch(QrCodeLoginAction.GenerateQRCode)
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(text = state.message, fontSize = 16.sp)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Spacer to push the final text to the bottom
+                Spacer(modifier = Modifier.weight(1f))
+
+                // 4. Bottom Warning Message
+                Text(
+                    text = "请务必在 BilibiliAs 开源仓库等可信渠道下载安装。",
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+        else -> {}
     }
 }
 
@@ -143,7 +154,7 @@ internal fun PagerScope.CookieContent(
 ) {
     SideEffect {
         if (cookieLoginState.success) {
-            onBack()
+//            onBack()
         }
     }
     Column(
