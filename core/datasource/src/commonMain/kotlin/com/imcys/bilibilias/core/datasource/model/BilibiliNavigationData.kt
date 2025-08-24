@@ -9,13 +9,13 @@ data class BilibiliNavigationData(
     @SerialName("isLogin")
     val isLogin: Boolean,
     @SerialName("face")
-    val face: String,
+    val face: String? = null,
     @SerialName("mid")
-    val mid: Long,
+    val mid: Long? = null,
     @SerialName("uname")
-    val uname: String,
+    val uname: String? = null,
     @SerialName("pendant")
-    val pendant: Pendant,
+    val pendant: Pendant? = null,
     @SerialName("wbi_img")
     val wbiImg: WbiImg,
 ) {

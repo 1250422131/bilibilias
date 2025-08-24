@@ -6,6 +6,7 @@ import com.imcys.bilibilias.core.datasource.model.UserProfile
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
@@ -29,6 +30,7 @@ import io.ktor.http.parseClientCookiesHeader
 import io.ktor.http.parseQueryString
 import io.ktor.http.renderSetCookieHeader
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -59,6 +61,7 @@ object BilibiliApi : KoinComponent {
         }
     }
     private val cookieJarDataSource by inject<CookieJarDataSource>()
+    private val preferencesDataSource by inject<AsPreferencesDataSource>()
     suspend fun getVideoInfoDetail(bvid: String): BiliVideoData {
         return client.get("/x/web-interface/view") {
             parameter("bvid", bvid)
@@ -70,13 +73,22 @@ object BilibiliApi : KoinComponent {
     }
 
     suspend fun getPlayUrl(bvid: String, cid: Long): VideoPlaybackInfo {
-        val queryParams = mapOf(
+        val preferences = preferencesDataSource.userData.first()
+        val queryParams = mutableMapOf(
             "fnver" to 0,
             "fnval" to 4048,
             "fourk" to 1,
             "bvid" to bvid,
             "cid" to cid,
-        )
+            "voice_balance" to 1,
+            "gaia_source" to "pre-load",
+            "isGaiaAvoided" to true,
+            "web_location" to 1315873,
+        ).apply {
+            if (preferences.enableTryLook) {
+                put("try_look", 1)
+            }
+        }
         val signedQuery = WbiSign.enc(queryParams)
         return client.get("/x/player/wbi/playurl") {
             url {
@@ -100,6 +112,7 @@ object BilibiliApi : KoinComponent {
             }
         }.body<UserProfile>()
     }
+
     suspend fun setCookieFromSetCookieHeader(cookieText: String) {
         if (cookieText.isBlank()) {
             logger.debug { "setCookie called with blank cookieText. Nothing to parse." }
