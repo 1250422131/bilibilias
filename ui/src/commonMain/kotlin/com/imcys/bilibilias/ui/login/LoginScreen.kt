@@ -33,6 +33,8 @@ import com.freeletics.flowredux2.produceStateMachine
 import com.imcys.bilibilias.logic.login.CookieAction
 import com.imcys.bilibilias.logic.login.CookieLoginState
 import com.imcys.bilibilias.logic.login.LoginComponent
+import com.imcys.bilibilias.logic.login.QrCodeLoginAction
+import com.imcys.bilibilias.logic.login.QrCodeLoginState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,9 +43,11 @@ fun LoginScreen(
     onBack: () -> Unit
 ) {
     val cookieLoginStateMachine = component.cookieStateMachine.produceStateMachine()
+    val qrCodeStateMachine = component.qrCodeStateMachine.produceStateMachine()
     LoginContent(
         onBack = onBack,
-        cookieLoginStateMachine = cookieLoginStateMachine
+        cookieLoginStateMachine = cookieLoginStateMachine,
+        qrCodeStateMachine,
     )
 }
 
@@ -52,6 +56,7 @@ fun LoginScreen(
 fun LoginContent(
     onBack: () -> Unit,
     cookieLoginStateMachine: FlowReduxStateMachine<State<CookieLoginState>, CookieAction>,
+    qrCodeStateMachine: FlowReduxStateMachine<State<QrCodeLoginState>, QrCodeLoginAction>,
 ) {
     Scaffold(
         topBar = {
@@ -100,7 +105,7 @@ fun LoginContent(
             ) {
                 when (it) {
                     0 -> {
-                        val state by cookieLoginStateMachine.state
+                        val state by remember { cookieLoginStateMachine.state }
                         CookieContent(
                             cookieLoginState = state,
                             dispatch = cookieLoginStateMachine.dispatchAction,
@@ -108,59 +113,15 @@ fun LoginContent(
                         )
                     }
 
-                    1 -> LoginByQr(
-                        url = "",
-                        timeLeftInSeconds = 0,
-                        qrStatusMessage = "",
-                        authCodeUrl = "",
-                        onRefreshQr = {},
-                        onSaveQr = {},
-                        onQrCodeScanned = {},
-                        dispatch = {}
-                    )
+                    1 -> {
+                        val state by remember { qrCodeStateMachine.state }
+                        QrContent(
+                            state = state,
+                            dispatch = qrCodeStateMachine.dispatchAction,
+                        )
+                    }
                 }
             }
         }
     }
 }
-
-// Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("扫码登录") },
-//                navigationIcon = { BackButton(onBack = onBack) }
-//            )
-//        }
-//    ) { innerPadding ->
-//        Column(
-//            Modifier.padding(innerPadding).fillMaxSize(),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            val painter = rememberQrCodePainter(data = url)
-//            Spacer(modifier = Modifier.height(30.dp))
-//            Image(
-//                painter = painter,
-//                contentDescription = null,
-//                modifier = Modifier.size(150.dp).clickable(null, null) {
-//                    dispatch(LoginAction.RequestNewQrCode)
-//                }
-//            )
-//            val kmpContext = LocalKmpContext.current
-//            if (kmpContext.platform == Platform.ANDROID) {
-//                val scope = rememberCoroutineScope()
-//                Button(
-//                    onClick = {
-//                        scope.launch {
-//                            savePainterToGallery(
-//                                kmpContext,
-//                                painter,
-//                                Clock.System.now().toEpochMilliseconds().toString()
-//                            )
-//                        }
-//                    }
-//                ) {
-//                    Text("保存二维码")
-//                }
-//            }
-//        }
-//    }
