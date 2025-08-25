@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.logic.setting
 
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
+import com.imcys.bilibilias.core.datastore.model.Codecs
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.StateFlow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.launch
 interface SettingsComponent {
     val preferences: StateFlow<UserPreferences>
     fun setTryLook(enable: Boolean)
+    fun setDecoderCodecPriorityList(newCodecs: List<Codecs>)
 }
 
 class DefaultSettingsComponent(
@@ -21,6 +23,12 @@ class DefaultSettingsComponent(
     override fun setTryLook(enable: Boolean) {
         applicationScope.launch {
             asPreferencesDataSource.setTryLookEnabled(enable)
+        }
+    }
+
+    override fun setDecoderCodecPriorityList(newCodecs: List<Codecs>) {
+        applicationScope.launch {
+            asPreferencesDataSource.setDecoderCodecPriorityList(newCodecs)
         }
     }
 }

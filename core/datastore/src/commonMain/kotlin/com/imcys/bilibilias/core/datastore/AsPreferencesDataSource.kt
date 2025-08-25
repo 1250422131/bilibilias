@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.imcys.bilibilias.core.datastore.model.Codecs
 import com.imcys.bilibilias.core.datastore.model.SelfInfo
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import kotlin.uuid.ExperimentalUuidApi
@@ -18,6 +19,11 @@ class AsPreferencesDataSource(
     suspend fun setTryLookEnabled(enable: Boolean) {
         userPreferences.updateData {
             it.copy(enableTryLook = enable)
+        }
+    }
+    suspend fun setDecoderCodecPriorityList(newCodecs: List<Codecs>) {
+        userPreferences.updateData {
+            it.copy(codecPriorityList = newCodecs)
         }
     }
 }

@@ -16,6 +16,7 @@ kotlin {
             implementation(projects.core.datastore)
             implementation(projects.core.uiPreview)
 
+            implementation(compose.components.resources)
             implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.runtime)
@@ -35,6 +36,8 @@ kotlin {
             implementation(mediampLibs.mediamp.api)
             implementation(libs.settings.ui)
             implementation(libs.lifecycle.coroutines)
+
+            implementation("sh.calvin.reorderable:reorderable:3.0.0")
         }
     }
 }

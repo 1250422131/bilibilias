@@ -6,6 +6,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Hd
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -15,7 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import com.alorma.compose.settings.ui.SettingsSwitch
+import com.imcys.bilibilias.core.datastore.model.Codecs
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.logic.setting.SettingsComponent
 import com.imcys.bilibilias.ui.BackButton
@@ -26,7 +31,8 @@ fun SettingsScreen(component: SettingsComponent, onBack: () -> Unit) {
     SettingsContent(
         state = state,
         onBack = onBack,
-        component::setTryLook
+        updateTryLook = component::setTryLook,
+        updateDecoderCodec = component::setDecoderCodecPriorityList
     )
 }
 
@@ -35,7 +41,8 @@ fun SettingsScreen(component: SettingsComponent, onBack: () -> Unit) {
 fun SettingsContent(
     state: UserPreferences,
     onBack: () -> Unit,
-    function: (Boolean) -> Unit
+    updateTryLook: (Boolean) -> Unit,
+    updateDecoderCodec: (List<Codecs>) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -53,9 +60,29 @@ fun SettingsContent(
             modifier = Modifier.padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
+            SortableItem(
+                values = { state.codecPriorityList },
+                onSort = {
+                    updateDecoderCodec(it)
+                },
+                exposed = { list -> Text(text = list.joinToString()) },
+                item = { item ->
+                    Text(text = item.toString(), modifier = Modifier.padding(vertical = 16.dp))
+                },
+                key = { it },
+                title = { Text("解码格式") },
+                description = { Text("请根据设备支持情况与需求调整") },
+                dialogDescription = { Text("长按排序，优先选择顺序较高的项目。") },
+                icon = { Icon(Icons.Outlined.Hd, null) },
+            )
             SettingsSwitch(
                 state = state.enableTryLook,
-                icon = { Icon(Icons.Outlined.Hd, null) },
+                icon = {
+                    if (state.enableTryLook)
+                        Icon(Icons.Outlined.Visibility, null)
+                    else
+                        Icon(Icons.Outlined.VisibilityOff, null)
+                },
                 title = {
                     Text("免登录1080P")
                 },
@@ -63,10 +90,19 @@ fun SettingsContent(
                     Text("免登录查看1080P视频")
                 }
             ) {
-                function(it)
+                updateTryLook(it)
             }
             ShareLogFile()
         }
+    }
+}
+
+private data class SS(val icon: ImageVector, val desc: Codecs) {
+    companion object {
+//        val DVH1 = SS(Icons.Outlined.Hd, Codecs.DVH1)
+//        val AV1 = SS(Icons.Outlined.Av1,Codecs.AV1)
+//        val HEVC = SS(Icons.Outlined.Hevc,Codecs.HEVC)
+//        val AVC = SS(Icons.Outlined.Avc,Codecs.AVC)
     }
 }
 
