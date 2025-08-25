@@ -50,7 +50,7 @@ fun <T> SortableItem(
     title: @Composable () -> Unit,
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    val valuesState by remember { derivedStateOf { values() } }
+    val valuesState by remember(values) { derivedStateOf { values() } }
     SettingsMenuLink(
         title = { exposed(valuesState) },
         icon = icon,
