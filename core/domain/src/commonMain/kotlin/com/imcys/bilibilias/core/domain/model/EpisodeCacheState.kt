@@ -7,16 +7,7 @@ data class EpisodeCacheListState(
     val episodes: List<EpisodeCacheState>,
     val videoStreams: List<MediaStream>,
     val audioStreams: List<MediaStream>,
-) {
-    companion object {
-        val Placeholder = EpisodeCacheListState(
-            episodeInfo = EpisodeInfo2("", "", ""),
-            episodes = emptyList(),
-            videoStreams = emptyList(),
-            audioStreams = emptyList()
-        )
-    }
-}
+)
 
 data class EpisodeInfo2(
     val title: String,
