@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,7 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -137,33 +136,38 @@ fun SearchContent(
                 }
 
                 is SearchResultUiState.Success -> {
-                    var showEpisodeListGroup by rememberSaveable { mutableStateOf(false) }
                     val keyboardController = LocalSoftwareKeyboardController.current
                     LaunchedEffect(searchResultUiState) {
                         keyboardController?.hide()
                     }
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        EpisodeInfoCard(
-                            searchResultUiState.episodeCacheListState.episodeInfo,
-                            navigationToPlayer
-                        )
-                        Button(
-                            { showEpisodeListGroup = true },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text("下载")
+
+                    Column {
+                        val resolutionOptions =
+                            searchResultUiState.episodeCacheListState.videoStreams.distinctBy { it.id }
+                        var selectedResolution by remember { mutableStateOf(searchResultUiState.episodeCacheListState.videoStreams[0]) }
+
+                        val encodingOptions = searchResultUiState.episodeCacheListState.audioStreams
+                        var selectedEncoding by remember { mutableStateOf(encodingOptions[0]) }
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AppDropdownMenu(
+                                label = "画质",
+                                options = resolutionOptions,
+                                selectedOption = selectedResolution.description,
+                                onOptionSelected = { selectedResolution = it },
+                                option = {
+                                    Text(it.description)
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                            AppDropdownMenu(
+                                label = "音质",
+                                options = encodingOptions,
+                                selectedOption = selectedEncoding.description,
+                                onOptionSelected = { selectedEncoding = it },
+                                option = { Text(it.description) },
+                                modifier = Modifier.weight(1f)
+                            )
                         }
-                        EpisodeListGroup(
-                            showEpisodeListGroup,
-                            searchResultUiState.episodes,
-                            searchResultUiState.episodeCacheListState.videoStreams,
-                            onDismiss = { showEpisodeListGroup = false },
-                            onRequestCache = { episode, request ->
-                                onCacheRequest(episode, request)
-                            }
-                        )
                     }
                 }
             }
@@ -171,6 +175,29 @@ fun SearchContent(
     }
 }
 
+//     Column(
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                    ) {
+//                        EpisodeInfoCard(
+//                            searchResultUiState.episodeCacheListState.episodeInfo,
+//                            navigationToPlayer
+//                        )
+//                        Button(
+//                            { showEpisodeListGroup = true },
+//                            modifier = Modifier.align(Alignment.CenterHorizontally)
+//                        ) {
+//                            Text("下载")
+//                        }
+//                        EpisodeListGroup(
+//                            showEpisodeListGroup,
+//                            searchResultUiState.episodes,
+//                            searchResultUiState.episodeCacheListState.videoStreams,
+//                            onDismiss = { showEpisodeListGroup = false },
+//                            onRequestCache = { episode, request ->
+//                                onCacheRequest(episode, request)
+//                            }
+//                        )
+//                    }
 @Composable
 private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2, navigationToPlayer: () -> Unit) {
     OutlinedCard(modifier = Modifier.padding(8.dp)) {

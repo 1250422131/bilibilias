@@ -22,6 +22,7 @@ import org.koin.core.component.get
 
 class DefaultRootComponent(
     componentContext: AppComponentContext,
+    private val searchText: String?,
 ) : RootComponent, AppComponentContext by componentContext {
     private val nav = StackNavigation<Config>()
 
@@ -29,22 +30,23 @@ class DefaultRootComponent(
         source = nav,
         serializer = Config.serializer(),
         childFactory = ::child,
-        initialConfiguration = Config.Search,
+        initialConfiguration = Config.Search(searchText),
     )
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
 
     private fun child(config: Config, context: AppComponentContext): RootComponent.Child =
         when (config) {
-            Config.Search -> SearchChild(
+            is Config.Search -> SearchChild(
                 DefaultSearchComponent(
                     context,
+                    config.text,
                     get(),
                     get(),
                     get(),
                     get(),
                     get(),
-                )
+                    )
             )
 
             Config.Cache -> CacheChild(DefaultCacheComponent(context))
@@ -66,7 +68,7 @@ class DefaultRootComponent(
     }
 
     override fun onSearchClicked() {
-        nav.bringToFront(Config.Search)
+        nav.bringToFront(Config.Search(searchText))
     }
 
     override fun onCacheClicked() {
@@ -80,7 +82,7 @@ class DefaultRootComponent(
     @Serializable
     private sealed interface Config {
         @Serializable
-        data object Search : Config
+        data class Search(val text: String?) : Config
 
         @Serializable
         data object Cache : Config

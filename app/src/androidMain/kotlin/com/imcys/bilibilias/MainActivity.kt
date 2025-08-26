@@ -1,5 +1,6 @@
 package com.imcys.bilibilias
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,8 +22,10 @@ class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        val searchText = intent.getStringExtra(Intent.EXTRA_TEXT)
+
         val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
-        val component = DefaultRootComponent(context)
+        val component = DefaultRootComponent(context, searchText)
         val lifecycleOwner = object : LifecycleOwner {
             override val lifecycle get() = essentyLifecycle()
         }

@@ -34,6 +34,7 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
+    searchText: String?,
     private val httpDownloader: HttpDownloader,
     private val mediaCacheStorage: MediaCacheDataSource,
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
@@ -47,7 +48,7 @@ class DefaultSearchComponent(
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
         .stateInBackground(SelfInfoUiState.Loading)
-    override val searchQuery = MutableStateFlow(persistentState.searchQuery)
+    override val searchQuery = MutableStateFlow(searchText ?: persistentState.searchQuery)
 
     override val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
