@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Image
@@ -52,7 +51,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -71,7 +69,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -90,11 +90,13 @@ import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardTextField
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
+import com.imcys.bilibilias.ui.weight.ASCardTextField
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
-import com.imcys.bilibilias.ui.weight.tip.AsWarringTip
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
@@ -135,7 +137,7 @@ fun AnalysisScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 15.dp)
                 ) {
-                    AsCardTextField(
+                    ASCardTextField(
                         modifier = Modifier.sharedElement(
                             sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
                             animatedVisibilityScope = animatedContentScope
@@ -155,7 +157,9 @@ fun AnalysisScreen(
                     uiState.downloadInfo,
                     type,
                     uiState.isBILILogin,
-                    vm, goToUser
+                    uiState.analysisBaseInfo,
+                    vm,
+                    goToUser,
                 )
             }
 
@@ -197,6 +201,7 @@ fun ColumnScope.AnalysisVideoCardList(
     downloadInfo: DownloadViewInfo?,
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
+    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit
 ) {
@@ -217,7 +222,7 @@ fun ColumnScope.AnalysisVideoCardList(
         contentPadding = PaddingValues(horizontal = 15.dp)
     ) {
         item {
-            AnalysisVideoCard(asLinkResultType, isBILILogin, savePic = {
+            AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
                 viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
             }, goToUser)
         }
@@ -233,13 +238,13 @@ fun ColumnScope.AnalysisVideoCardList(
                         onSelectSeason = {
                             viewModel.updateSelectSeason(it)
                         },
-                        onUpdateSelectedEpId = {
+                        onUpdateSelectedEpId = { epId, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedEpIdList()
-                                viewModel.updateSelectedPlayerInfo(it ?: 0L)
-                                viewModel.updateSelectedEpIdList(it)
+                                viewModel.updateSelectedPlayerInfo(epId ?: 0L, title, cover)
+                                viewModel.updateSelectedEpIdList(epId)
                             } else {
-                                viewModel.updateSelectedEpIdList(it)
+                                viewModel.updateSelectedEpIdList(epId)
                             }
                         },
                         onVideoQualityChange = {
@@ -253,6 +258,12 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onSelectSingleModel = {
                             isSelectSingleModel = it
+                            if (it) {
+                                // 切换到单选模式，清空已选择列表
+                                val lastEpId = downloadInfo?.selectedEpId?.lastOrNull()
+                                viewModel.clearSelectedEpIdList()
+                                viewModel.updateSelectedEpIdList(lastEpId)
+                            }
                         }
                     )
                 }
@@ -263,10 +274,10 @@ fun ColumnScope.AnalysisVideoCardList(
                         videoPlayerInfo,
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
-                        onUpdateSelectedCid = {
+                        onUpdateSelectedCid = { it, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedCidList()
-                                viewModel.updateSelectedPlayerInfo(it ?: 0L)
+                                viewModel.updateSelectedPlayerInfo(it ?: 0L, title, cover)
                                 viewModel.updateSelectedCidList(it)
                             } else {
                                 viewModel.updateSelectedCidList(it)
@@ -283,6 +294,12 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onSelectSingleModel = {
                             isSelectSingleModel = it
+                            if (it) {
+                                // 切换到单选模式，清空已选择列表
+                                val lastCid = downloadInfo?.selectedCid?.lastOrNull()
+                                viewModel.clearSelectedCidList()
+                                viewModel.updateSelectedCidList(lastCid)
+                            }
                         }
                     )
                 }
@@ -356,7 +373,7 @@ fun AdvancedSetting(
 
     // 选择是否合并下载
     AsAutoError(playerInfo, onSuccessContent = {
-        if(dash == null && playerInfo.status != ApiStatus.LOADING) return@AsAutoError
+        if (dash == null && playerInfo.status != ApiStatus.LOADING) return@AsAutoError
         SurfaceColorCard {
             Column(
                 Modifier
@@ -429,7 +446,7 @@ fun AdvancedSetting(
 
                     }
                     Spacer(Modifier.height(4.dp))
-                    AsWarringTip {
+                    ASWarringTip {
                         Row(
                             Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -483,6 +500,7 @@ fun ExtraCache(downloadInfo: DownloadViewInfo?, onCheckCoverDownload: (Boolean) 
 fun AnalysisVideoCard(
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
+    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit
 ) {
@@ -491,6 +509,7 @@ fun AnalysisVideoCard(
             BILIVideoCard(
                 asLinkResultType,
                 asLinkResultType.viewInfo,
+                analysisBaseInfo,
                 isBILILogin,
                 savePic = savePic
             )
@@ -504,6 +523,7 @@ fun AnalysisVideoCard(
             BILIDonghuaCard(
                 asLinkResultType.donghuaViewInfo,
                 asLinkResultType.currentEpId,
+                analysisBaseInfo,
                 isBILILogin,
                 savePic = savePic
             )
@@ -516,6 +536,7 @@ fun AnalysisVideoCard(
 fun BILIDonghuaCard(
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     currentEpId: Long,
+    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit
 ) {
@@ -554,7 +575,8 @@ fun BILIDonghuaCard(
                                 .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS),
                         ) {
                             ASAsyncImage(
-                                "${episodeInfo?.cover?.toHttps()}",
+                                if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.cover else
+                                    "${episodeInfo?.cover?.toHttps()}",
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 contentDescription = "视频封面",
@@ -582,7 +604,13 @@ fun BILIDonghuaCard(
                                     if (picSaving) return@click
                                     picSaving = true
                                     coroutineScope.launch {
-                                        savePic.invoke(episodeInfo?.cover?.toHttps())
+                                        savePic.invoke(
+                                            if (analysisBaseInfo.enabledSelectInfo) {
+                                                analysisBaseInfo.cover
+                                            } else {
+                                                episodeInfo?.cover?.toHttps()
+                                            }
+                                        )
                                         picSaving = false
                                     }
                                 },
@@ -601,7 +629,8 @@ fun BILIDonghuaCard(
                         }
                         Spacer(Modifier.height(16.dp))
                         Text(
-                            episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: "视频标题",
+                            if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
+                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: "视频标题",
                             fontSize = 22.sp,
                             modifier = Modifier
                                 .animateContentSize()
@@ -612,7 +641,7 @@ fun BILIDonghuaCard(
 
                 Spacer(Modifier.height(16.dp))
                 if (!isBILILogin) {
-                    AsWarringTip(
+                    ASWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enabledPadding = false
                     ) {
@@ -625,7 +654,7 @@ fun BILIDonghuaCard(
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
-                            IconButton(onClick = {}) {
+                            ASIconButton(onClick = {}) {
                                 Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
@@ -660,6 +689,7 @@ fun BILIUserSpaceCard(userInfo: NetWorkResult<BILIUserSpaceAccInfo?>, goToUser: 
 fun BILIVideoCard(
     asLinkResultType: ASLinkResultType.BILI.Video,
     videoInfo: NetWorkResult<BILIVideoViewInfo?>,
+    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit
 ) {
@@ -683,9 +713,10 @@ fun BILIVideoCard(
                                 .aspectRatio(16f / 9f)
                         ) {
                             ASAsyncImage(
-                                "${
-                                    videoInfo.data?.pic?.toHttps()
-                                }",
+                                if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.cover else
+                                    "${
+                                        videoInfo.data?.pic?.toHttps()
+                                    }",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .shimmer(videoInfo.status == ApiStatus.LOADING),
@@ -714,7 +745,13 @@ fun BILIVideoCard(
                                     if (picSaving) return@click
                                     picSaving = true
                                     coroutineScope.launch {
-                                        savePic.invoke(videoInfo.data?.pic?.toHttps())
+                                        savePic.invoke(
+                                            if (analysisBaseInfo.enabledSelectInfo) {
+                                                analysisBaseInfo.cover
+                                            } else {
+                                                videoInfo.data?.pic?.toHttps()
+                                            }
+                                        )
                                         picSaving = false
                                     }
                                 },
@@ -733,7 +770,8 @@ fun BILIVideoCard(
                         }
                         Spacer(Modifier.height(16.dp))
                         Text(
-                            videoInfo.data?.title ?: "视频标题",
+                            if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
+                                videoInfo.data?.title ?: "视频标题",
                             fontSize = 22.sp,
                             modifier = Modifier.animateContentSize()
                         )
@@ -744,7 +782,7 @@ fun BILIVideoCard(
                 // 如果是充电视频，提示用户充电
                 if (!asLinkResultType.isCanPlay()) {
                     Spacer(Modifier.height(16.dp))
-                    AsWarringTip(
+                    ASWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enabledPadding = false
                     ) {
@@ -757,7 +795,7 @@ fun BILIVideoCard(
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
-                            IconButton(onClick = {}) {
+                            ASIconButton(onClick = {}) {
                                 Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
@@ -768,7 +806,7 @@ fun BILIVideoCard(
                 // 如果未登录B站账号，提示用户登录
                 if (!isBILILogin) {
                     Spacer(Modifier.height(11.dp))
-                    AsWarringTip(
+                    ASWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enabledPadding = false
                     ) {
@@ -781,7 +819,7 @@ fun BILIVideoCard(
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
-                            IconButton(onClick = {}) {
+                            ASIconButton(onClick = {}) {
                                 Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
@@ -801,6 +839,7 @@ fun AnalysisScaffold(
     onDownload: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
 
     var showDownloadTip by remember { mutableStateOf(false) }
 
@@ -834,17 +873,12 @@ fun AnalysisScaffold(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
+                        AsBackIconButton(onClick = {
                             onToBack.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
+                        })
                     },
                     actions = {
-                        IconButton(onClick = {
+                        ASIconButton(onClick = {
                             showDownloadTip = true
                         }) {
                             Icon(
@@ -866,6 +900,7 @@ fun AnalysisScaffold(
                 FloatingActionButton(
                     modifier = Modifier.imePadding(),
                     onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                             when {
                                 !hasSavePermissions -> {
@@ -955,7 +990,6 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
                 """
                     可以选择的分辨率取决于你当前B站账号的大会员状态和当前解析视频的实际可选分辨率。
                     因此建议选择合集/分P内分辨率最高的视频进行解析，同时开通大会员可享受更高的分辨率缓存。
-                    充电视频、互动视频、课堂、直播等类型的视支持缓存。
                 """.trimIndent()
             )
         },

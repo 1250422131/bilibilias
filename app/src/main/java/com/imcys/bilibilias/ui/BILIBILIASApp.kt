@@ -31,7 +31,6 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -59,7 +58,6 @@ import com.google.firebase.app
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.appErrorHandleChannel
 import com.imcys.bilibilias.common.event.loginErrorChannel
-import com.imcys.bilibilias.common.event.playVoucherErrorChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
@@ -68,6 +66,7 @@ import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.*
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.Konfetti
 import com.imcys.bilibilias.weight.rememberKonfettiState
@@ -215,7 +214,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
                             contentDescription = "返回"

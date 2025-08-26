@@ -29,7 +29,6 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -50,6 +49,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +65,8 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardTextField
+import com.imcys.bilibilias.ui.weight.ASCardTextField
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
@@ -200,7 +202,7 @@ internal fun HomeScreen(
                         .padding(horizontal = 15.dp)
                 ) {
                     Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
-                        AsCardTextField(
+                        ASCardTextField(
                             modifier = Modifier.sharedElement(
                                 sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
                                 animatedVisibilityScope = animatedContentScope
@@ -251,7 +253,7 @@ fun DownloadListCard(
                     modifier = Modifier.alpha(0.72f),
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
+                ASIconButton(onClick = {
                     goToDownloadPage.invoke()
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
@@ -301,6 +303,8 @@ private fun HomeScaffold(
     goToAnalysis: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         snackbarHost = {
@@ -342,14 +346,18 @@ private fun HomeScaffold(
                                         .size(40.dp),
                                     shape = CircleShape,
                                     contentDescription = "头像",
-                                    onClick = { goToUserPage() }
+                                    onClick = {
+                                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                        goToUserPage()
+                                    }
                                 )
                             },
                             onLoadingContent = {
                                 ContainedLoadingIndicator()
                             },
                             onDefaultContent = {
-                                IconButton(onClick = {
+                                ASIconButton(onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                     goToLogin()
                                 }) {
                                     Icon(
@@ -359,7 +367,8 @@ private fun HomeScaffold(
                                 }
                             },
                             onErrorContent = { errorMsg, response ->
-                                IconButton(onClick = {
+                                ASIconButton(onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                     goToLogin()
                                 }) {
                                     Icon(
@@ -409,7 +418,7 @@ private fun CommonInfoCard(
                         modifier = Modifier.alpha(0.72f),
                     )
                     Spacer(Modifier.weight(1f))
-                    IconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
+                    ASIconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
                         Icon(
                             Icons.Outlined.Close,
                             contentDescription = "关闭"

@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Link
@@ -39,7 +38,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -74,7 +72,9 @@ import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardGroups
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
+import com.imcys.bilibilias.ui.weight.ASCardGroups
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
@@ -220,7 +220,7 @@ private fun VideoHeader(
                 Text("投稿视频", color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
-                IconButton(onClick = {onToWorkList.invoke()}) {
+                ASIconButton(onClick = {onToWorkList.invoke()}) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
                         contentDescription = "更多投稿",
@@ -448,7 +448,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
 
 @Composable
 fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
-    AsCardGroups(
+    ASCardGroups(
         Modifier
             .fillMaxWidth(),
     ) {
@@ -630,17 +630,12 @@ private fun UserScaffold(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
+                        AsBackIconButton(onClick = {
                             onToBack.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
+                        })
                     },
                     actions = {
-                        IconButton(onClick = {
+                        ASIconButton(onClick = {
                             onToSettings.invoke()
                         }) {
                             Icon(
