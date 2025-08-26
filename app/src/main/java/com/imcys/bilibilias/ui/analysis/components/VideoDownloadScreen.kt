@@ -43,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,9 +53,10 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
-import com.imcys.bilibilias.ui.weight.tip.AsErrorTip
+import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
 
@@ -64,11 +67,11 @@ fun VideoDownloadScreen(
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
-    onUpdateSelectedCid: (Long?) -> Unit,
+    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
-    onSelectSingleModel:(Boolean) -> Unit = { _ -> }
+    onSelectSingleModel: (Boolean) -> Unit = { _ -> }
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -114,7 +117,7 @@ fun VideoDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            AsErrorTip {
+            ASErrorTip {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -130,7 +133,7 @@ fun VideoDownloadScreen(
                     )
                 }
             }
-            Row (verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
@@ -151,7 +154,9 @@ fun VideoDownloadScreen(
 
                     Spacer(Modifier.height(6.dp))
                     AudioQualitySelectScreen(
-                        Modifier.fillMaxWidth().shimmer(videoPlayerInfo.status != ApiStatus.SUCCESS),
+                        Modifier
+                            .fillMaxWidth()
+                            .shimmer(videoPlayerInfo.status != ApiStatus.SUCCESS),
                         downloadInfo,
                         videoPlayerInfo.status,
                         videoPlayerInfo.data?.dash?.audio,
@@ -217,7 +222,7 @@ fun VideoDownloadScreen(
 fun VideoPageScreen(
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
-    onUpdateSelectedCid: (Long) -> Unit
+    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
 ) {
 
     var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
@@ -259,7 +264,13 @@ fun VideoPageScreen(
         ) {
             FilterChip(
                 selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
-                onClick = { onUpdateSelectedCid.invoke(it.cid) },
+                onClick = {
+                    onUpdateSelectedCid.invoke(
+                        it.cid,
+                        viewInfo.data?.title ?: "",
+                        viewInfo.data?.pic ?: ""
+                    )
+                },
                 label = {
                     Column(
                         Modifier
@@ -294,7 +305,7 @@ fun UgcSeasonPageScreen(
     selectSectionId: Long?,
     selectEpisodeId: Long?,
     onSelectEpisodeId: (Long?) -> Unit,
-    onUpdateSelectedCid: (Long) -> Unit
+    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
 ) {
 
     var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
@@ -416,7 +427,11 @@ fun UgcSeasonPageScreen(
                 FilterChip(
                     selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
                     onClick = {
-                        onUpdateSelectedCid.invoke(it.cid)
+                        onUpdateSelectedCid.invoke(
+                            it.cid,
+                            viewInfo.data?.title ?: "",
+                            viewInfo.data?.pic ?: ""
+                        )
                     },
                     label = {
                         Column(
@@ -451,10 +466,11 @@ fun UgcSeasonScreen(
     downloadInfo: DownloadViewInfo?,
     selectSectionId: Long?,
     onSelectSectionId: (Long) -> Unit,
-    onUpdateSelectedCid: (Long) -> Unit
+    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
 ) {
 
     var currentSectionPageListIndex by remember { mutableIntStateOf(0) }
+    val haptics = LocalHapticFeedback.current
 
     Column {
         LazyRow(
@@ -468,6 +484,7 @@ fun UgcSeasonScreen(
                     checked = info.id == selectSectionId,
                     onCheckedChange = {
                         if (it) {
+                            haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                             currentSectionPageListIndex = 0
                             onSelectSectionId.invoke(info.id)
                         }
@@ -522,7 +539,7 @@ fun UgcSeasonScreen(
                 FilterChip(
                     selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
                     onClick = {
-                        onUpdateSelectedCid.invoke(it.cid)
+                        onUpdateSelectedCid.invoke(it.cid, it.page?.part ?: "", it.arc.pic)
                     },
                     label = {
                         Column(

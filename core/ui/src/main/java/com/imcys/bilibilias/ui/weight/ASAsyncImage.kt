@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.weight
 
-import androidx.compose.foundation.background
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -36,7 +35,7 @@ fun ASAsyncImage(
     filterQuality: FilterQuality = DefaultFilterQuality,
     clipToBounds: Boolean = true,
     onClick: () -> Unit,
-    ) {
+) {
     if (!LocalInspectionMode.current) {
         Surface(
             shape = shape,

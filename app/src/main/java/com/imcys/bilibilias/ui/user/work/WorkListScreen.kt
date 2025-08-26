@@ -10,14 +10,10 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardTextField
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
+import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.WorkCard
@@ -134,7 +131,7 @@ private fun WorkList(
         item(
             span = { GridItemSpan(2) }
         ) {
-            AsCardTextField(
+            ASCardTextField(
                 hint = "搜索投稿",
                 autoFocus = false, value = uiState.query, onValueChange = onUpdateKeyword,
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), modifier = Modifier.animateItem())
@@ -204,14 +201,9 @@ private fun WorkListScaffold(
                     Text(text = "投稿列表")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
+                    AsBackIconButton(onClick = {
                         onToBack.invoke()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "返回",
-                        )
-                    }
+                    })
                 }
             )
         },

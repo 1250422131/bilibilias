@@ -32,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +44,7 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
@@ -56,11 +59,11 @@ fun DongmhuaDownloadScreen(
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
-    onUpdateSelectedEpId: (Long?) -> Unit,
+    onUpdateSelectedEpId: (epId: Long?, title: String, cover: String) -> Unit,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
-    onSelectSingleModel:(Boolean) -> Unit = { _ -> }
+    onSelectSingleModel: (Boolean) -> Unit = { _ -> }
 ) {
 
     var selectSeasonsId by remember {
@@ -72,6 +75,7 @@ fun DongmhuaDownloadScreen(
     var currentEpListIndex by remember { mutableIntStateOf(0) }
 
     val isVip = currentUserInfo?.isVip() == true
+    val haptics = LocalHapticFeedback.current
 
     LaunchedEffect(donghuaViewInfo.data?.seasonId, donghuaViewInfo.data?.seasons) {
         selectSeasonsId = donghuaViewInfo.data?.seasons
@@ -100,7 +104,7 @@ fun DongmhuaDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row (verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
@@ -121,7 +125,9 @@ fun DongmhuaDownloadScreen(
                     Spacer(Modifier.height(6.dp))
                     // 当音频质量列表不为空时才显示音频质量选择
                     AudioQualitySelectScreen(
-                        Modifier.fillMaxWidth().shimmer(donghuaPlayerInfo.status != ApiStatus.SUCCESS),
+                        Modifier
+                            .fillMaxWidth()
+                            .shimmer(donghuaPlayerInfo.status != ApiStatus.SUCCESS),
                         downloadInfo,
                         donghuaPlayerInfo.status,
                         donghuaPlayerInfo.data?.dash?.audio,
@@ -156,11 +162,11 @@ fun DongmhuaDownloadScreen(
                                             checked = info.seasonId == selectSeasonsId,
                                             onCheckedChange = {
                                                 if (it) {
+                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                     currentEpListIndex = 0
                                                     selectSeasonsId = info.seasonId
                                                     onSelectSeason(info.seasonId)
                                                 }
-
                                             },
                                         ) {
                                             Text(info.seasonTitle)
@@ -207,7 +213,11 @@ fun DongmhuaDownloadScreen(
                                             enabled = !(!isVip && it.badge == "会员"),
                                             selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
                                             onClick = {
-                                                onUpdateSelectedEpId.invoke(it.epId)
+                                                onUpdateSelectedEpId.invoke(
+                                                    it.epId,
+                                                    it.longTitle.ifBlank { it.title },
+                                                    it.cover
+                                                )
                                             },
                                             label = {
                                                 Column(
@@ -265,7 +275,10 @@ fun DongmhuaDownloadScreen(
                                         ToggleButton(
                                             checked = selectSectionId == info.id,
                                             onCheckedChange = {
-                                                selectSectionId = info.id
+                                                if (it) {
+                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                    selectSectionId = info.id
+                                                }
                                             },
                                         ) {
                                             Text(info.title)
@@ -287,7 +300,7 @@ fun DongmhuaDownloadScreen(
                                     FilterChip(
                                         selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
                                         onClick = {
-                                            onUpdateSelectedEpId.invoke(it.epId)
+                                            onUpdateSelectedEpId.invoke(it.epId, it.longTitle.ifBlank { it.title }, it.cover)
                                         },
                                         label = {
                                             Column(

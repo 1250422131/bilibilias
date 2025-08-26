@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +26,7 @@ import androidx.compose.ui.zIndex
 @Preview
 @Composable
 fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
-
+    val haptics = LocalHapticFeedback.current
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     SecondaryTabRow(
         selectedTabIndex = selectedTabIndex,
@@ -46,6 +48,9 @@ fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
             selectedContentColor = MaterialTheme.colorScheme.onPrimary,
             unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selected = selectedTabIndex == 0, onClick = {
+                if (selectedTabIndex != 0) {
+                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                }
                 selectedTabIndex = 0
                 onSelectSingle.invoke(true)
             }, modifier = Modifier.zIndex(2f)
@@ -63,6 +68,9 @@ fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
             unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selected = selectedTabIndex == 1,
             onClick = {
+                if (selectedTabIndex != 1) {
+                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                }
                 selectedTabIndex = 1
                 onSelectSingle.invoke(false)
             }, modifier = Modifier.zIndex(2f)

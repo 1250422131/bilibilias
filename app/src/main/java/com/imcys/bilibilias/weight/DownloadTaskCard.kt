@@ -25,7 +25,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +49,9 @@ import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import kotlin.math.ceil
+import kotlin.text.ifEmpty
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -212,14 +213,18 @@ fun DownloadTaskCard(
 @Composable
 fun DownloadFinishTaskCard(
     modifier: Modifier = Modifier,
-    downloadSegment: DownloadSegment, onDeleteTaskAndFile: () -> Unit) {
+    downloadSegment: DownloadSegment,
+    onOpenFile: () -> Unit = {},
+    onDeleteTaskAndFile: () -> Unit
+) {
 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = CardDefaults.shape,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        onClick = onOpenFile
     ) {
         Row(
             modifier = Modifier
@@ -228,23 +233,20 @@ fun DownloadFinishTaskCard(
                 .height(IntrinsicSize.Min)
         ) {
             // 左侧图片
-            Box(
+            Column(
                 modifier = Modifier
-                    .weight(0.4f)
-                    .aspectRatio(16f / 9f),
+                    .weight(0.3f)
+                    .fillMaxHeight(),
             ) {
-
                 ASAsyncImage(
-                    "${
-                        downloadSegment.cover?.toHttps()
-                    }@672w_378h_1c.avif",
+                    "${downloadSegment.cover?.toHttps()}",
                     modifier = Modifier
                         .fillMaxSize(),
                     shape = CardDefaults.shape,
                     contentDescription = "封面图片"
                 )
-
             }
+
 
             Spacer(Modifier.width(10.dp))
 
@@ -259,6 +261,7 @@ fun DownloadFinishTaskCard(
                 Text(
                     text = downloadSegment.title,
                     maxLines = 2,
+                    minLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400
@@ -291,7 +294,7 @@ fun DownloadFinishTaskCard(
                     .align(Alignment.CenterVertically), // 垂直居中
                 verticalArrangement = Arrangement.Center
             ) {
-                IconButton(onClick = {
+                ASIconButton(onClick = {
                     showDeleteDialog = true
                 }) {
                     Icon(Icons.Outlined.Delete, contentDescription = "删除下载任务")

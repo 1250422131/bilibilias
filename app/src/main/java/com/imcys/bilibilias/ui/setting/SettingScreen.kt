@@ -47,6 +47,7 @@ import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import androidx.core.net.toUri
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 
 
 @Preview
@@ -318,14 +319,9 @@ fun SettingScaffold(
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = { Text(text = "设置") },
                 navigationIcon = {
-                    IconButton(onClick = {
+                    AsBackIconButton(onClick = {
                         onToBack.invoke()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "返回",
-                        )
-                    }
+                    })
                 }
             )
         },

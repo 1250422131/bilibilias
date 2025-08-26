@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -51,7 +52,11 @@ import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.network.model.user.BILIUserBangumiFollowInfo
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
+import com.imcys.bilibilias.weight.CommonError
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -122,7 +127,22 @@ fun BangumiFollowContent(
 
             }
 
-            // 加载更多占位
+            when (val state = itemList.loadState.refresh) {
+                is LoadState.Error -> {
+                    item {
+                        CommonError(errorMsg = "加载失败 \n ${state.error}", onRetry = {
+                            itemList.refresh()
+                        })
+                    }
+                }
+
+                is LoadState.Loading -> {
+                    bangumiCardListLoading()
+                }
+
+                else -> {}
+            }
+
             when (val append = itemList.loadState.append) {
                 LoadState.Loading -> item(span = { GridItemSpan(1) }) {
                     Column(
@@ -136,26 +156,28 @@ fun BangumiFollowContent(
                 }
 
                 is LoadState.Error -> item(span = { GridItemSpan(1) }) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            "加载失败 \n ${append.error}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        TextButton(onClick = { itemList.retry() }) {
-                            Text("重试")
-                        }
-                    }
+                    CommonError("加载失败 \n ${append.error}", onRetry = {
+                        itemList.retry()
+                    })
                 }
 
                 else -> Unit
             }
 
         }
+    }
+}
+
+fun LazyGridScope.bangumiCardListLoading() {
+    items(10) {
+        BangumiCard(
+            modifier = Modifier.shimmer(true),
+            title = "标题",
+            intro = "",
+            updateInfo = "更新至X话",
+            seenInfo = "看到",
+            pic = "",
+        )
     }
 }
 
@@ -238,14 +260,9 @@ private fun BangumiFollowScaffold(
                     Text(text = "投稿列表")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
+                    AsBackIconButton(onClick = {
                         onToBack.invoke()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "返回",
-                        )
-                    }
+                    })
                 }
             )
         },

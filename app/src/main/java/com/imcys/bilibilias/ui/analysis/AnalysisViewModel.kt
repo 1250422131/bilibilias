@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.utils.AsRegexUtil
 import com.imcys.bilibilias.common.utils.TextType
+import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.UserInfoRepository
@@ -29,7 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -42,6 +43,11 @@ class AnalysisViewModel(
     private val downloadManager: DownloadManager
 ) : ViewModel() {
 
+    data class AnalysisBaseInfo(
+        val title: String = "",
+        val cover: String = "",
+        val enabledSelectInfo: Boolean = false,
+    )
 
     data class UIState(
         val inputAsText: String = "",
@@ -50,6 +56,7 @@ class AnalysisViewModel(
         val isBILILogin: Boolean = false,
         val downloadInfo: DownloadViewInfo? = null,
         val isCreateDownloadLoading: Boolean = false,
+        val analysisBaseInfo: AnalysisBaseInfo = AnalysisBaseInfo()
     )
 
     private val _uiState = MutableStateFlow(UIState())
@@ -126,7 +133,8 @@ class AnalysisViewModel(
      */
     fun updateInputAsText(inputAsText: String) {
         _uiState.value = _uiState.value.copy(
-            inputAsText = inputAsText
+            inputAsText = inputAsText,
+            analysisBaseInfo = AnalysisBaseInfo(),
         )
         if (inputAsText.isEmpty()) return
         debounceJob.value = inputAsText
@@ -155,7 +163,20 @@ class AnalysisViewModel(
 
     fun updateSelectedPlayerInfo(
         cid: Long,
+        title: String,
+        cover: String,
     ) {
+
+        _uiState.update {
+            _uiState.value.copy(
+                analysisBaseInfo =  AnalysisBaseInfo(
+                    enabledSelectInfo = true,
+                    title = title,
+                    cover = cover.toHttps(),
+                ),
+            )
+        }
+
         when (val result = uiState.value.asLinkResultType) {
             is ASLinkResultType.BILI.Donghua -> {
                 result.donghuaViewInfo.data?.let { info ->
@@ -163,13 +184,16 @@ class AnalysisViewModel(
                     asDonghuaPlayerInfo(null, cid)
                 }
             }
+
             is ASLinkResultType.BILI.Video -> {
                 // 如果当前解析结果的cid与传入的cid相同，则不进行更新
-                if (result.viewInfo.data?.cid == cid) { return }
+                if (result.viewInfo.data?.cid == cid) {
+                    return
+                }
 
                 result.viewInfo.data?.let { info ->
                     // 分P
-                    info.pages?.firstOrNull{ it.cid == cid}?.let {
+                    info.pages?.firstOrNull { it.cid == cid }?.let {
                         asVideoPlayerInfo(cid, info.bvid)
                         return@let
                     }
@@ -184,6 +208,7 @@ class AnalysisViewModel(
                     }
                 }
             }
+
             is ASLinkResultType.BILI.User,
             null -> {
 
