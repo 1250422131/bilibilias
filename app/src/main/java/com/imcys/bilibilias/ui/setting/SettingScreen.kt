@@ -17,7 +17,9 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Copyright
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.EmojiObjects
+import androidx.compose.material.icons.outlined.MoodBad
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
@@ -47,7 +51,10 @@ import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import androidx.core.net.toUri
+import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
+import org.koin.androidx.compose.koinViewModel
 
 
 @Preview
@@ -55,14 +62,19 @@ import com.imcys.bilibilias.ui.weight.AsBackIconButton
 fun SettingScreenPreview() {
     SettingScreen(
         onToRoam = {},
-        onToBack = {})
+        onToBack = {},
+        onToComplaint = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
+fun SettingScreen(onToRoam: () -> Unit, onToComplaint: () -> Unit, onToBack: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
+    val vm = koinViewModel<SettingViewModel>()
+    val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
+    val haptics = LocalHapticFeedback.current
+
     SettingScaffold(scrollBehavior, onToBack) {
 
         LazyColumn(
@@ -120,6 +132,22 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
 
             item {
                 CategorySettingsItem(
+                    text = "主题设置"
+                )
+            }
+            item {
+                SwitchSettingsItem(
+                    imageVector = Icons.Outlined.Palette,
+                    text = "动态主题",
+                    description = "使用桌面壁纸颜色作为主题",
+                    checked = appSettings.enabledDynamicColor,
+                ) { check ->
+                    haptics.switchHapticFeedback(check)
+                    vm.updateEnabledDynamicColor(check)
+                }
+            }
+            item {
+                CategorySettingsItem(
                     text = "权限设置"
                 )
             }
@@ -163,7 +191,7 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
 
             item {
                 BaseSettingsItem(
-                    painter =  painterResource(R.drawable.ic_licens_24px),
+                    painter = painterResource(R.drawable.ic_licens_24px),
                     text = "第三方开源许可",
                     description = {},
                     onClick = {
@@ -187,12 +215,28 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                 )
             }
 
+            item {
+                CategorySettingsItem(
+                    text = "投诉与反馈"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.MoodBad),
+                    text = "投诉",
+                    descriptionText = "向BILIBILIAS投诉违规行为",
+                    onClick = onToComplaint
+                )
+            }
+
         }
     }
 }
 
 @Composable
 fun DownloadPostNotifications() {
+    val haptics = LocalHapticFeedback.current
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val context = LocalContext.current
@@ -217,17 +261,17 @@ fun DownloadPostNotifications() {
             description = "开启后可以使得在后台的下载任务不会被系统回收",
             checked = hasForegroundServicePermission,
         ) {
+            haptics.switchHapticFeedback(it)
             if (ContextCompat.checkSelfPermission(
                     context,
                     permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
-            } else {
                 showRequestForegroundServiceTip = true
             }
         }
 
-        if (showRequestForegroundServiceTip){
+        if (showRequestForegroundServiceTip) {
             DownloadServicePermissionRequestTipDialog(
                 onDismiss = {
                     showRequestForegroundServiceTip = false

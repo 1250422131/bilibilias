@@ -2,6 +2,7 @@ package com.imcys.bilibilias.ui.analysis.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -54,6 +56,7 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
@@ -71,7 +74,8 @@ fun VideoDownloadScreen(
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
-    onSelectSingleModel: (Boolean) -> Unit = { _ -> }
+    onSelectSingleModel: (Boolean) -> Unit = { _ -> },
+    onToVideoCodingInfo:()-> Unit
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -135,6 +139,10 @@ fun VideoDownloadScreen(
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
+                Spacer(Modifier.width(4.dp))
+                Icon(Icons.Outlined.Info, contentDescription = "说明", modifier = Modifier.size(18.dp).clickable{
+                    onToVideoCodingInfo.invoke()
+                })
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
             }

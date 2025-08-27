@@ -6,6 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
@@ -19,9 +24,9 @@ import com.imcys.bilibilias.ui.BILIBILIASAppScreen
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
     private val appSettingsRepository: AppSettingsRepository by inject()
@@ -32,7 +37,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BILIBILIASTheme {
+            var enabledDynamicColor by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) {
+                appSettingsFlow.collect {
+                    enabledDynamicColor = it.enabledDynamicColor
+                }
+            }
+
+            BILIBILIASTheme(dynamicColor = enabledDynamicColor) {
                 BILIBILIASAppScreen()
             }
         }
@@ -83,6 +96,10 @@ class MainActivity : ComponentActivity() {
      * 初始化Firebase
      */
     private fun initFirebase(state: AppSettings.AgreePrivacyPolicyState) {
+        if (BuildConfig.DEBUG){
+            Firebase.app.isDataCollectionDefaultEnabled = false
+            return
+        }
         Firebase.app.isDataCollectionDefaultEnabled = state == AppSettings.AgreePrivacyPolicyState.Agreed
     }
 

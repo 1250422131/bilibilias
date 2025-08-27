@@ -51,6 +51,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.error.AppCrashActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
         <service
             android:name=".dwonload.service.DownloadService"
             android:exported="false"

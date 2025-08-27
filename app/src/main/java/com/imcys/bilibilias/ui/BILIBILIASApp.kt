@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.Intent
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
@@ -13,13 +14,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Info
@@ -41,10 +46,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +80,8 @@ import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.Konfetti
 import com.imcys.bilibilias.weight.rememberKonfettiState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -164,38 +176,17 @@ private fun MainScaffold() {
                     })
                 }
 
-                is AppError -> {
-                    AppErrorPage(targetUiState)
-                }
+                is AppError -> {}
             }
         }
 
         Konfetti(konfettiState)
+
     }
 
 
 }
 
-@Composable
-fun AppErrorPage(appError: AppError) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "发生错误：${appError.appException?.message}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
-        )
-        Spacer(Modifier.height(10.dp))
-        Button(onClick = {
-            exitProcess(0)
-        }) {
-            Text("退出软件")
-        }
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
