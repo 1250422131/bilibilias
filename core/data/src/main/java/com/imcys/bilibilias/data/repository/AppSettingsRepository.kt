@@ -51,4 +51,12 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateEnabledDynamicColor(enabled: Boolean){
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                enabledDynamicColor = enabled
+            }
+        }
+    }
+
 }

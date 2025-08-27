@@ -111,6 +111,7 @@ fun AnalysisScreen(
     animatedContentScope: AnimatedContentScope,
     onToBack: () -> Unit,
     goToUser: (mid: Long) -> Unit,
+    onToVideoCodingInfo:()-> Unit,
 ) {
     val vm = koinViewModel<AnalysisViewModel>()
 
@@ -160,6 +161,7 @@ fun AnalysisScreen(
                     uiState.analysisBaseInfo,
                     vm,
                     goToUser,
+                    onToVideoCodingInfo = onToVideoCodingInfo
                 )
             }
 
@@ -203,7 +205,8 @@ fun ColumnScope.AnalysisVideoCardList(
     isBILILogin: Boolean,
     analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     viewModel: AnalysisViewModel,
-    goToUser: (Long) -> Unit
+    goToUser: (Long) -> Unit,
+    onToVideoCodingInfo:()-> Unit
 ) {
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
@@ -264,7 +267,8 @@ fun ColumnScope.AnalysisVideoCardList(
                                 viewModel.clearSelectedEpIdList()
                                 viewModel.updateSelectedEpIdList(lastEpId)
                             }
-                        }
+                        },
+                        onToVideoCodingInfo = onToVideoCodingInfo
                     )
                 }
 
@@ -300,7 +304,8 @@ fun ColumnScope.AnalysisVideoCardList(
                                 viewModel.clearSelectedCidList()
                                 viewModel.updateSelectedCidList(lastCid)
                             }
-                        }
+                        },
+                        onToVideoCodingInfo = onToVideoCodingInfo
                     )
                 }
 

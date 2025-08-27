@@ -31,6 +31,6 @@ fun NavGraphBuilder.analysisScreen(
     composable<AnalysisRoute> { navBackStackEntry ->
         // 从 navBackStackEntry 获取参数
         val route = navBackStackEntry.toRoute<AnalysisRoute>()
-        AnalysisScreen(route, sharedTransitionScope, this@composable, onToBack, goToUser)
+        AnalysisScreen(route, sharedTransitionScope, this@composable, onToBack, goToUser,{})
     }
 }

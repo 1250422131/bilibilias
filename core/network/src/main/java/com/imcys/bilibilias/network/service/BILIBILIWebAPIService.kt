@@ -6,6 +6,10 @@ import com.imcys.bilibilias.network.config.ACCESS_ID
 import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.SPACE_BASE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_BANGUMI_FOLLOW_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_COIN_LIST_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_FAV_LIST_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_LIST_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LIKE_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
@@ -25,11 +29,16 @@ import com.imcys.bilibilias.network.config.CID
 import com.imcys.bilibilias.network.config.EP_ID
 import com.imcys.bilibilias.network.config.FNVAL
 import com.imcys.bilibilias.network.config.FOURK
+import com.imcys.bilibilias.network.config.MEDIA_ID
 import com.imcys.bilibilias.network.config.MID
+import com.imcys.bilibilias.network.config.PLATFORM
+import com.imcys.bilibilias.network.config.PN
+import com.imcys.bilibilias.network.config.PS
 import com.imcys.bilibilias.network.config.QN
 import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.config.SEASON_ID
 import com.imcys.bilibilias.network.config.TRY_LOOK
+import com.imcys.bilibilias.network.config.VMID
 import com.imcys.bilibilias.network.config.W_WEBID
 import com.imcys.bilibilias.network.httpRequest
 import com.imcys.bilibilias.network.model.BILILoginUserInfo
@@ -39,9 +48,13 @@ import com.imcys.bilibilias.network.model.QRCodePollInfo
 import com.imcys.bilibilias.network.model.WebSpiInfo
 import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
 import com.imcys.bilibilias.network.model.user.BILIUserBangumiFollowInfo
+import com.imcys.bilibilias.network.model.user.BILIUserFolderDetailInfo
+import com.imcys.bilibilias.network.model.user.BILIUserFolderListInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
+import com.imcys.bilibilias.network.model.user.BILIUserVideoLikeInfo
+import com.imcys.bilibilias.network.model.user.LikeAndCoinItemData
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
@@ -256,11 +269,11 @@ class BILIBILIWebAPIService(
         ps: Int = 20
     ): FlowNetWorkResult<BILIUserBangumiFollowInfo> = httpClient.httpRequest {
         val newMap = mutableMapOf<String, String>().apply {
-            put("vmid", vmid.toString())
+            put(VMID, vmid.toString())
             put("type", type.toString())
-            put("pn", pn.toString())
-            put("ps", ps.toString())
-            put("platform", "web")
+            put(PN, pn.toString())
+            put(PS, ps.toString())
+            put(PLATFORM, "web")
         }
         get(WEB_BANGUMI_FOLLOW_URL) {
             encWbi(newMap).forEach { (k, v) ->
@@ -268,6 +281,62 @@ class BILIBILIWebAPIService(
             }
         }
     }
+
+    /**
+     * 收藏夹
+     */
+    suspend fun getFolderList(mid: Long): FlowNetWorkResult<BILIUserFolderListInfo> =
+        httpClient.httpRequest {
+            val newMap = mutableMapOf<String, String>().apply {
+                put("up_mid", mid.toString())
+            }
+            get(WEB_FOLDER_LIST_URL) {
+                newMap.forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }
+        }
+
+    suspend fun getFolderFavList(
+        mediaId: Long,
+        pn: Int = 1,
+        ps: Int = 40
+    ): FlowNetWorkResult<BILIUserFolderDetailInfo> =
+        httpClient.httpRequest {
+            val newMap = mutableMapOf<String, String>().apply {
+                put(MEDIA_ID, mediaId.toString())
+                put(PN, pn.toString())
+                put(PS, ps.toString())
+                put(PLATFORM, "web")
+            }
+            get(WEB_FOLDER_FAV_LIST_URL) {
+                newMap.forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }
+        }
+
+    suspend fun getLikeVideoList(
+        mid: Long,
+    ): FlowNetWorkResult<BILIUserVideoLikeInfo> =
+        httpClient.httpRequest {
+            get(WEB_LIKE_LIST_URL) {
+                hashMapOf(VMID to mid).forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }
+        }
+
+    suspend fun getCoinVideoList(
+        mid: Long,
+    ): FlowNetWorkResult<List<LikeAndCoinItemData>> =
+        httpClient.httpRequest {
+            get(WEB_COIN_LIST_URL) {
+                hashMapOf(VMID to mid).forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }
+        }
 
     /**
      * 用来解析正确的地址

@@ -71,10 +71,10 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
-import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.ASCardGroups
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
@@ -88,9 +88,11 @@ internal fun UserScreen(
     onToBack: () -> Unit,
     onToSettings: () -> Unit,
     onToWorkList: (mid: Long) -> Unit,
-    onToBangumiFollow : (mid: Long) -> Unit,
+    onToBangumiFollow: (mid: Long) -> Unit,
+    onToUserFolder: (mid: Long) -> Unit,
+    onToLikeVideo: (mid: Long) -> Unit,
+    onToCoinVide: (mid: Long) -> Unit,
 ) {
-
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()
     val userStatInfoState by vm.userStatInfoState.collectAsState()
@@ -123,9 +125,16 @@ internal fun UserScreen(
                     PlatformList(uiState.biliUsersEntity)
                 }
                 fullWidthItem {
-                    ActionRow(onToBangumiFollow = {
-                        onToBangumiFollow.invoke(userRoute.mid)
-                    })
+                    ActionRow(
+                        onToBangumiFollow = {
+                            onToBangumiFollow.invoke(userRoute.mid)
+                        }, onToUserFolder = {
+                            onToUserFolder.invoke(userRoute.mid)
+                        }, onToLikeVideo = {
+                            onToLikeVideo.invoke(userRoute.mid)
+                        }, onToCoinVide = {
+                            onToCoinVide.invoke(userRoute.mid)
+                        })
                 }
             }
 
@@ -220,7 +229,7 @@ private fun VideoHeader(
                 Text("投稿视频", color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
-                ASIconButton(onClick = {onToWorkList.invoke()}) {
+                ASIconButton(onClick = { onToWorkList.invoke() }) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
                         contentDescription = "更多投稿",
@@ -273,14 +282,20 @@ private fun LazyGridScope.fullWidthItem(
 }
 
 @Composable
-fun ActionRow(onToBangumiFollow: () -> Unit = {}) {
+fun ActionRow(
+    onToBangumiFollow: () -> Unit = {},
+    onToUserFolder: () -> Unit = {},
+    onToLikeVideo: () -> Unit,
+    onToCoinVide: () -> Unit,
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToLikeVideo
         ) {
             Column(
                 modifier = Modifier
@@ -298,7 +313,8 @@ fun ActionRow(onToBangumiFollow: () -> Unit = {}) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToCoinVide
         ) {
             Column(
                 modifier = Modifier
@@ -316,7 +332,8 @@ fun ActionRow(onToBangumiFollow: () -> Unit = {}) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToUserFolder
         ) {
             Column(
                 modifier = Modifier

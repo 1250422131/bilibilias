@@ -12,7 +12,8 @@ import org.koin.core.context.startKoin
 class BILIBILIASApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
+        // 全局异常捕获
+        // AppCrashHandler.instance.init(this)
         // Koin依赖注入
         startKoin {
             androidContext(this@BILIBILIASApplication)

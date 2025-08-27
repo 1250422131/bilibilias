@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 data class UserRoute(
     val mid: Long = 0,
     val isAnalysisUser: Boolean = false
-): NavKey
+) : NavKey
 
 fun NavController.navigateToUser(
     userRoute: UserRoute = UserRoute(),
@@ -27,6 +27,14 @@ fun NavGraphBuilder.userScreen(
 ) {
     composable<UserRoute> { navBackStackEntry ->
         val userRoute = navBackStackEntry.toRoute<UserRoute>()
-        UserScreen(userRoute, onToBack, onToSettings, onToWorkList = {}, onToBangumiFollow = {})
+        UserScreen(
+            userRoute,
+            onToBack,
+            onToSettings,
+            onToWorkList = {},
+            onToBangumiFollow = {},
+            onToUserFolder = {},
+            onToLikeVideo = {},
+            onToCoinVide = {})
     }
 }

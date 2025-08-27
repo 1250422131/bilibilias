@@ -30,6 +30,8 @@ import com.imcys.bilibilias.common.event.playVoucherErrorChannel
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
+import com.imcys.bilibilias.ui.analysis.videocodeing.VideoCodingInfoRoute
+import com.imcys.bilibilias.ui.analysis.videocodeing.VideoCodingInfoScreen
 import com.imcys.bilibilias.ui.download.DownloadScreen
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
 import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorPage
@@ -41,12 +43,19 @@ import com.imcys.bilibilias.ui.login.QRCodeLoginScreen
 import com.imcys.bilibilias.ui.login.navigation.LoginRoute
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
 import com.imcys.bilibilias.ui.setting.SettingScreen
+import com.imcys.bilibilias.ui.setting.complaint.ComplaintRoute
+import com.imcys.bilibilias.ui.setting.complaint.ComplaintScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import com.imcys.bilibilias.ui.user.UserScreen
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
+import com.imcys.bilibilias.ui.user.folder.UserFolderRoute
+import com.imcys.bilibilias.ui.user.folder.UserFolderScreen
+import com.imcys.bilibilias.ui.user.like.LikePageType
+import com.imcys.bilibilias.ui.user.like.LikeVideoRoute
+import com.imcys.bilibilias.ui.user.like.LikeVideoScreen
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.user.work.WorkListRoute
 import com.imcys.bilibilias.ui.user.work.WorkListScreen
@@ -181,6 +190,15 @@ fun BILIBILAISNavDisplay() {
                         },
                         onToBangumiFollow = { mid ->
                             backStack.add(BangumiFollowRoute(mid = mid))
+                        },
+                        onToUserFolder = { mid ->
+                            backStack.add(UserFolderRoute(mid = mid))
+                        },
+                        onToLikeVideo = { mid ->
+                            backStack.add(LikeVideoRoute(mid = mid, type = LikePageType.LIKE))
+                        },
+                        onToCoinVide = { mid ->
+                            backStack.add(LikeVideoRoute(mid = mid, type = LikePageType.COIN))
                         }
                     )
                 }
@@ -192,6 +210,9 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNull() },
                         goToUser = { mid ->
                             backStack.addWithReuse(UserRoute(mid = mid, isAnalysisUser = true))
+                        },
+                        onToVideoCodingInfo = {
+                            backStack.addWithReuse(VideoCodingInfoRoute)
                         }
                     )
                 }
@@ -203,7 +224,8 @@ fun BILIBILAISNavDisplay() {
                         onToRoam = {
                             backStack.addWithReuse(RoamRoute)
                         },
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNull() },
+                        onToComplaint = { backStack.addWithReuse(ComplaintRoute) }
                     )
                 }
                 entry<RoamRoute> {
@@ -225,15 +247,37 @@ fun BILIBILAISNavDisplay() {
                         onBlack = { backStack.removeLastOrNull() }
                     )
                 }
-                entry<WorkListRoute>{
+                entry<WorkListRoute> {
                     WorkListScreen(
                         workListRoute = it,
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }
-                entry<BangumiFollowRoute>{
+                entry<BangumiFollowRoute> {
                     BangumiFollowScreen(
                         bangumiFollowRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<UserFolderRoute> {
+                    UserFolderScreen(
+                        userFolderRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<LikeVideoRoute> {
+                    LikeVideoScreen(
+                        likeVideoRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<ComplaintRoute>{
+                    ComplaintScreen(
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<VideoCodingInfoRoute>{
+                    VideoCodingInfoScreen(
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }

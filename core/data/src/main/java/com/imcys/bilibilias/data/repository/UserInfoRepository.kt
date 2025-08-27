@@ -2,15 +2,13 @@ package com.imcys.bilibilias.data.repository
 
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
 import com.imcys.bilibilias.data.model.BILIUserStatModel
-import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.LoginPlatform
-import com.imcys.bilibilias.datastore.User
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.mapData
-import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
+import com.imcys.bilibilias.network.model.user.BILIUserVideoLikeInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import kotlinx.coroutines.Dispatchers
@@ -133,5 +131,28 @@ class UserInfoRepository(
         pn: Int = 1,
         ps: Int = 20
     ) = webApiService.getBangumiFollowInfo(vmid, type, pn, ps)
+
+    suspend fun getFolderList(mid: Long) = webApiService.getFolderList(mid)
+
+    suspend fun getFolderFavList(
+        mediaId: Long,
+        pn: Int = 1,
+        ps: Int = 40
+    ) = webApiService.getFolderFavList(mediaId, pn, ps)
+
+    suspend fun getLikeVideoList(
+        mid: Long,
+    ) = webApiService.getLikeVideoList(mid)
+
+    suspend fun getCoinVideoList(
+        mid: Long,
+    ) = webApiService.getCoinVideoList(mid).map { networkResult ->
+        networkResult.mapData { coinInfo, apiResponse ->
+            BILIUserVideoLikeInfo(
+                list = coinInfo ?: emptyList()
+            )
+        }
+    }
+
 
 }

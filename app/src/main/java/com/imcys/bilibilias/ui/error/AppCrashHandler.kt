@@ -1,8 +1,9 @@
-package com.imcys.bilibilias.common.base.crash
+package com.imcys.bilibilias.ui.error
 
 import android.content.Context
-import com.imcys.bilibilias.common.event.sendAppErrorEvent
-import com.imcys.bilibilias.common.event.sendLoginErrorEvent
+import android.content.Intent
+import android.os.Process.*
+import kotlin.system.exitProcess
 
 class AppCrashHandler private constructor() : Thread.UncaughtExceptionHandler {
 
@@ -17,12 +18,14 @@ class AppCrashHandler private constructor() : Thread.UncaughtExceptionHandler {
 
 
     override fun uncaughtException(t: Thread, error: Throwable) {
-        if (error is AppException) {
-            sendAppErrorEvent(error)
-        } else {
-            // 处理其他异常
-            defaultSystemExpHandler?.uncaughtException(t,error)
-        }
+        context.startActivity(
+            Intent(context, AppCrashActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                putExtra("appErrorMsg", error.toString())
+            }
+        )
+        killProcess(myPid())
+        exitProcess(1)
     }
 
 

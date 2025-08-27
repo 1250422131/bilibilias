@@ -10,6 +10,8 @@ message AppSettings {
 
   bool enabled_roam = 3;
 
+  bool enabled_dynamic_color = 4;
+
   enum KnowAboutApp{
     NotKnow = 0;
     Know = 1;

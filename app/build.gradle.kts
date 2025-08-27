@@ -15,7 +15,7 @@ android {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias.gp"
         versionCode = 300
-        versionName = "3.0.0-PlumBlossom-Alpha-4"
+        versionName = "3.0.0-PlumBlossom-Alpha-5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -31,6 +31,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 

@@ -34,6 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.ASIconButton
@@ -94,11 +95,7 @@ fun RoamScreen(
                             enabled = uiState.isLoginTV || appSettings.enabledRoam,
                             checked = appSettings.enabledRoam,
                             onCheckedChange = {
-                                if (it) {
-                                    haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                } else {
-                                    haptics.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                                }
+                                haptics.switchHapticFeedback(it)
                                 vm.updateRoamEnabledState(it)
                             }
                         )

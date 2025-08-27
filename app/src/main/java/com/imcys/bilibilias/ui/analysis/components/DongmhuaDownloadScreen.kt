@@ -2,6 +2,7 @@ package com.imcys.bilibilias.ui.analysis.components
 
 import androidx.compose.ui.unit.sp
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,15 +11,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,7 +69,8 @@ fun DongmhuaDownloadScreen(
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
-    onSelectSingleModel: (Boolean) -> Unit = { _ -> }
+    onSelectSingleModel: (Boolean) -> Unit = { _ -> },
+    onToVideoCodingInfo:()-> Unit
 ) {
 
     var selectSeasonsId by remember {
@@ -106,6 +113,10 @@ fun DongmhuaDownloadScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
+                Spacer(Modifier.width(4.dp))
+                Icon(Icons.Outlined.Info, contentDescription = "说明", modifier = Modifier.size(18.dp).clickable{
+                    onToVideoCodingInfo.invoke()
+                })
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
             }

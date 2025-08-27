@@ -198,7 +198,7 @@ private fun WorkListScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "投稿列表")
+                    Text(text = "投稿")
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
