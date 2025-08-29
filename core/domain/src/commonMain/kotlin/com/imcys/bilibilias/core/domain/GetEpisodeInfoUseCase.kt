@@ -18,7 +18,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.supervisorScope
 
 class GetEpisodeInfoUseCase(
-    private val mediaCacheStorage: MediaCacheDataSource
+    private val mediaCacheStorage: MediaCacheDataSource,
+    private val api: BilibiliApi,
 ) {
     private val logger = logger<GetEpisodeInfoUseCase>()
     operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
@@ -31,7 +32,7 @@ class GetEpisodeInfoUseCase(
 
     private fun bv(id: String): Flow<EpisodeCacheListState> {
         val detailFlow = flowFromSuspend {
-            BilibiliApi.getVideoInfoDetail(id)
+            api.getVideoInfoDetail(id)
         }
 
         return detailFlow.combine(mediaCacheStorage.listFlow) { detail, cachedItemsList ->
@@ -72,13 +73,13 @@ class GetEpisodeInfoUseCase(
         bvid: String,
         cid: Long
     ): Pair<List<MediaStream>, List<MediaStream>> {
-        val playUrl = BilibiliApi.getPlayUrl(bvid, cid)
+        val playUrl = api.getPlayUrl(bvid, cid)
         // 后端发送过来的所有画质选项
         val backendQualityDescriptions =
             playUrl.acceptQuality.zip(playUrl.acceptDescription).toMap()
 
         // 可以播放的画质选项
-        val playerControlQuality = playUrl.dash.video.map { it.id }.toSet()
+        playUrl.dash.video.map { it.id }.toSet()
         val videoStreams = playUrl.dash.video.mapNotNull { video ->
             val qualityDescription = backendQualityDescriptions[video.id]
             if (qualityDescription == null) {

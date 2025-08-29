@@ -4,25 +4,13 @@ import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datasource.model.BilibiliNavigationData
 import com.imcys.bilibilias.core.datasource.model.UserProfile
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
-import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
-import com.imcys.bilibilias.core.json.HttpClientJson
-import com.imcys.bilibilias.core.ktor.client.createHttpClient
-import com.imcys.bilibilias.core.logging.logger
+import com.imcys.bilibilias.core.logging.Logger
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.cookies.CookiesStorage
-import io.ktor.client.plugins.cookies.HttpCookies
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.LoggingFormat
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.CookieEncoding
 import io.ktor.http.HttpHeaders
@@ -30,40 +18,14 @@ import io.ktor.http.decodeCookieValue
 import io.ktor.http.parseClientCookiesHeader
 import io.ktor.http.parseQueryString
 import io.ktor.http.renderSetCookieHeader
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.component.inject
 
-object BilibiliApi : KoinComponent {
-    private val logger = logger<BilibiliApi>()
-    private val client = createHttpClient {
-        defaultRequest {
-            url("https://api.bilibili.com")
-            header(HttpHeaders.Origin, "https://m.bilibili.com")
-            header(HttpHeaders.Referrer, "https://m.bilibili.com")
-        }
-        install(HttpCookies) {
-            storage = get<CookiesStorage>()
-        }
-        install(ApiResponseUnwrapper)
-        install(ContentNegotiation) {
-            json(HttpClientJson)
-        }
-        BrowserUserAgent()
-        Logging {
-            format = LoggingFormat.OkHttp
-            level = LogLevel.INFO
-            logger = object : Logger {
-                override fun log(message: String) {
-                    this@BilibiliApi.logger.info { message }
-                }
-            }
-        }
-    }
-    private val cookieJarDataSource by inject<CookieJarDataSource>()
-    private val preferencesDataSource by inject<AsPreferencesDataSource>()
+class BilibiliApi(
+    private val client: HttpClient,
+    private val cookieJarDataSource: CookieJarDataSource,
+    private val preferencesDataSource: AsPreferencesDataSource,
+    private val logger: Logger
+) {
     suspend fun getVideoInfoDetail(bvid: String): BiliVideoData {
         return client.get("/x/web-interface/view") {
             parameter("bvid", bvid)
@@ -127,11 +89,5 @@ object BilibiliApi : KoinComponent {
                     decodeCookieValue(encodedValue, CookieEncoding.URI_ENCODING),
                 )
             }
-    }
-
-    suspend fun getVideoDetailAndPlayInfo(bvid: String): Pair<BiliVideoData, VideoPlaybackInfo> {
-        val detail = getVideoInfoDetail(bvid)
-        val playInfo = getPlayUrl(detail.bvid, detail.cid)
-        return detail to playInfo
     }
 }

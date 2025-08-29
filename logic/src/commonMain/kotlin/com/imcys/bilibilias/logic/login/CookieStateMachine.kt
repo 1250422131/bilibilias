@@ -5,7 +5,9 @@ import com.freeletics.flowredux2.initializeWith
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.logging.logger
 
-class CookieStateMachine : FlowReduxStateMachineFactory<CookieLoginState, CookieAction>() {
+class CookieStateMachine(
+    private val api: BilibiliApi
+) : FlowReduxStateMachineFactory<CookieLoginState, CookieAction>() {
     private val logger = logger<CookieStateMachine>()
 
     init {
@@ -17,9 +19,9 @@ class CookieStateMachine : FlowReduxStateMachineFactory<CookieLoginState, Cookie
                 }
                 on<CookieAction.TryLogin> {
                     try {
-                        val profile = BilibiliApi.getUserProfile(snapshot.text)
+                        val profile = api.getUserProfile(snapshot.text)
                         if (profile.mid != 0L) {
-                            BilibiliApi.setCookieFromSetCookieHeader(snapshot.text)
+                            api.setCookieFromSetCookieHeader(snapshot.text)
                             mutate { copy(success = true) }
                         } else {
                             mutate {

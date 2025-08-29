@@ -27,12 +27,13 @@ class DefaultLoginComponent(
     override val cookieStateMachine: CookieStateMachine,
     override val qrCodeStateMachine: QrCodeLoginStateMachine,
     private val preferences: AsPreferencesDataSource,
+    private val api: BilibiliApi,
 ) : LoginComponent, AppComponentContext by componentContext {
 
     init {
         lifecycle.doOnDestroy {
             applicationScope.launch {
-                val data = BilibiliApi.getNavigationData()
+                val data = api.getNavigationData()
                 preferences.setSelfInfo(
                     SelfInfo(
                         Uuid.random(),
@@ -65,6 +66,7 @@ class DefaultLoginComponent(
             compressedFile.write(compressedBytes)
         }
     }
+
     companion object {
         private val logger = logger<LoginComponent>()
     }

@@ -1,18 +1,19 @@
 package com.imcys.bilibilias.core.datasource.utils
 
-import com.imcys.bilibilias.core.datasource.api.BilibiliApi.getNavigationData
+import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.logging.logger
-import com.imcys.bilibilias.core.startup.Startup
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
-class WbiInitializer : Startup {
+class WbiInitializer(
+    private val api: BilibiliApi,
+) {
     private val logger = logger<WbiInitializer>()
-    override suspend fun initialize() {
+    suspend fun initialize() {
         var attempt = 0
         while (attempt < 5)
             try {
-                val data = getNavigationData()
+                val data = api.getNavigationData()
                 val wbiImg = data.wbiImg
                 WbiSign.initializeMixinKey(wbiImg.imgUrl, wbiImg.subUrl)
                 logger.info { "WBI initialized successfully." }

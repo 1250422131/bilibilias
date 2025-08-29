@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.datasource.DataSourceModule
+import com.imcys.bilibilias.core.datasource.utils.WbiInitializer
 import com.imcys.bilibilias.core.datastore.DataStoreModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
@@ -44,8 +45,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         } else {
             printLogger()
         }
-        startCommonKoinModule(koin.get())
         modules(platformModule())
+        startCommonKoinModule(koin.get())
     }
 }
 
@@ -77,7 +78,7 @@ private fun KoinApplication.otherModules() = module {
                     level = LogLevel.HEADERS
                     logger = object : io.ktor.client.plugins.logging.Logger {
                         private val logger =
-                            com.imcys.bilibilias.core.logging.logger<HttpDownloader>()
+                            logger<HttpDownloader>()
 
                         override fun log(message: String) {
                             logger.info { message }
@@ -108,8 +109,7 @@ fun KoinApplication.startCommonKoinModule(
         koin.get<HttpDownloader>().init()
     }
     coroutineScope.launch {
-
-
+        koin.get<WbiInitializer>().initialize()
     }
     return this
 }

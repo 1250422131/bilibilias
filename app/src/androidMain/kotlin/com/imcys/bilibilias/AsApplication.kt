@@ -27,7 +27,6 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
             androidContext(this@AsApplication)
             modules(commonModules())
             workManagerFactory()
-            StartupSet.create(koin.get())
         }
         Sync.initialize(this)
     }

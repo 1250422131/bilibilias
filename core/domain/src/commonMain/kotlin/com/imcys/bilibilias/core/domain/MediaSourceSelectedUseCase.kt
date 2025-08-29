@@ -14,14 +14,16 @@ import kotlinx.coroutines.withContext
 
 typealias MediaStreamTransformCondition = (Map<Int, List<MediaStreamMetadata>>) -> MediaStreamMetadata
 
-class MediaSourceSelectedUseCase {
+class MediaSourceSelectedUseCase(
+    private val api: BilibiliApi,
+) {
     suspend operator fun invoke(
         request: EpisodeCacheRequest
     ): EpisodeInfo {
         return withContext(Dispatchers.IO) {
-            val detailDeferred = async { BilibiliApi.getVideoInfoDetail(request.episodeId) }
+            val detailDeferred = async { api.getVideoInfoDetail(request.episodeId) }
             val playUrlDeferred =
-                async { BilibiliApi.getPlayUrl(request.episodeId, request.episodeSubId) }
+                async { api.getPlayUrl(request.episodeId, request.episodeSubId) }
 
             val detail = detailDeferred.await()
             val playUrl = playUrlDeferred.await()
