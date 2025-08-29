@@ -38,17 +38,17 @@ class BilibiliApi(
 
     suspend fun getPlayUrl(bvid: String, cid: Long): VideoPlaybackInfo {
         val preferences = preferencesDataSource.userData.first()
-        val queryParams = mutableMapOf(
-            "fnver" to 0,
-            "fnval" to 4048,
-            "fourk" to 1,
-            "bvid" to bvid,
-            "cid" to cid,
-            "voice_balance" to 1,
-            "gaia_source" to "pre-load",
-            "isGaiaAvoided" to true,
-            "web_location" to 1315873,
-        ).apply {
+        val queryParams = buildMap {
+            put("fnver", 0)
+            put("fnval", 4048)
+            put("fourk", 1)
+            put("bvid", bvid)
+            put("cid", cid)
+            put("voice_balance", 1)
+            put("gaia_source", "pre-load")
+            put("isGaiaAvoided", true)
+            put("web_location", 1315873)
+
             if (preferences.enableTryLook) {
                 put("try_look", 1)
             }
