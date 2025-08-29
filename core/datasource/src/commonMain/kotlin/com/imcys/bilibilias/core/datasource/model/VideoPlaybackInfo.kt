@@ -43,12 +43,14 @@ data class VideoPlaybackInfo(
     data class Dash(
         @SerialName("audio")
         val audio: List<AudioOrVideo> = listOf(),
+        @SerialName("dolby")
+        val dolby: List<AudioOrVideo> = listOf(),
         @SerialName("duration")
         val duration: Int = 0,
-        @SerialName("min_buffer_time")
-        val minBufferTime: Double = 0.0,
+        @SerialName("flac")
+        val flac: List<AudioOrVideo> = listOf(),
         @SerialName("video")
-        val video: List<AudioOrVideo> = listOf()
+        val video: List<AudioOrVideo> = listOf(),
     ) {
         @Serializable
         data class SupportFormat(
