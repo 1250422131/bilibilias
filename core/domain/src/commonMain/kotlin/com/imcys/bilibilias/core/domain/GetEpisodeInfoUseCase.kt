@@ -4,6 +4,7 @@ import com.imcys.bilibilias.core.coroutines.MonoTasker
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
+import com.imcys.bilibilias.core.datastore.model.AudioQuality
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
@@ -92,11 +93,14 @@ class GetEpisodeInfoUseCase(
                 )
             }
         }
-        val audioStreams = playUrl.dash.audio.map { audioQuality ->
-            MediaStream(
-                id = audioQuality.id,
-                description = ""
-            )
+        val audioStreams = playUrl.dash.audio.mapNotNull { audioQuality ->
+            val quality = AudioQuality.fromCode(audioQuality.id)
+            quality?.let {
+                MediaStream(
+                    id = it.code,
+                    description = it.description
+                )
+            }
         }
         return videoStreams to audioStreams
     }
