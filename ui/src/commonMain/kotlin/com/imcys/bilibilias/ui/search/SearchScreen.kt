@@ -149,22 +149,22 @@ fun SearchContent(
                         val encodingOptions = searchResultUiState.episodeCacheListState.audioStreams
                         var selectedEncoding by remember { mutableStateOf(encodingOptions[0]) }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            AppDropdownMenu(
+                            SelectField(
                                 label = "画质",
                                 options = resolutionOptions,
-                                selectedOption = selectedResolution.description,
+                                selectedOption = selectedResolution,
                                 onOptionSelected = { selectedResolution = it },
-                                option = {
+                                menuItemContent = {
                                     Text(it.description)
                                 },
                                 modifier = Modifier.weight(1f)
                             )
-                            AppDropdownMenu(
+                            SelectField(
                                 label = "音质",
                                 options = encodingOptions,
-                                selectedOption = selectedEncoding.description,
+                                selectedOption = selectedEncoding,
                                 onOptionSelected = { selectedEncoding = it },
-                                option = { Text(it.description) },
+                                menuItemContent = { Text(it.description) },
                                 modifier = Modifier.weight(1f)
                             )
                         }

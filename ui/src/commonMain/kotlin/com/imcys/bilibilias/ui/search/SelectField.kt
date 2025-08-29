@@ -5,6 +5,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -18,13 +19,14 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> AppDropdownMenu(
+fun <T> SelectField(
     label: String,
     options: List<T>,
-    selectedOption: String,
+    selectedOption: T,
     onOptionSelected: (T) -> Unit,
-    option: @Composable (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    optionToText: (T) -> String = { it.toString() },
+    menuItemContent: @Composable (T) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -34,23 +36,23 @@ fun <T> AppDropdownMenu(
         modifier = modifier
     ) {
         TextField(
-            value = selectedOption,
+            value = optionToText(selectedOption),
             onValueChange = {},
             readOnly = true,
             label = { Text(label, fontSize = 11.sp) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.menuAnchor()
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            options.forEach { option ->
+            options.forEach { item ->
                 DropdownMenuItem(
-                    text = { option(option) },
+                    text = { menuItemContent(item) },
                     onClick = {
-                        onOptionSelected(option)
+                        onOptionSelected(item)
                         expanded = false
                     }
                 )
