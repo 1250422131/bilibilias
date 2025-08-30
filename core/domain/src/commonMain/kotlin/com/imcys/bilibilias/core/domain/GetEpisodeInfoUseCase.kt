@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.core.domain
 
-import com.imcys.bilibilias.core.coroutines.MonoTasker
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.supervisorScope
 
 class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheDataSource,
@@ -50,16 +48,13 @@ class GetEpisodeInfoUseCase(
                 } else {
                     EpisodeCacheStatus.NotCached
                 }
-                supervisorScope {
                     EpisodeCacheState(
                         episodeId = detail.bvid,
                         episodeSubId = cid,
                         index = page.page,
                         title = page.part,
                         cacheStatus = cacheStatus,
-                        actionTasker = MonoTasker(this)
                     )
-                }
             }
             EpisodeCacheListState(
                 episodeInfo = detail.toEpisodeInfo(),

@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.core.domain.model
 
-import com.imcys.bilibilias.core.coroutines.MonoTasker
-
 data class EpisodeCacheListState(
     val episodeInfo: EpisodeInfo2,
     val episodes: List<EpisodeCacheState>,
@@ -21,7 +19,6 @@ data class EpisodeCacheState(
     val title: String,
     val index: Int,
     val cacheStatus: EpisodeCacheStatus,
-    val actionTasker: MonoTasker
 )
 
 data class MediaStream(
