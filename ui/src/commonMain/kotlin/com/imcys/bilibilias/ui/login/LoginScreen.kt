@@ -122,6 +122,7 @@ fun LoginContent(
                             state = state,
                             dispatch = qrCodeStateMachine.dispatchAction,
                             onShowSnackbar = onShowSnackbar,
+                            onBack = onBack,
                         )
                     }
                 }

@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 internal fun PagerScope.QrContent(
     state: QrCodeLoginState,
     dispatch: (QrCodeLoginAction) -> Unit,
+    onBack: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     when (state) {
@@ -69,7 +70,9 @@ internal fun PagerScope.QrContent(
             }
         }
 
-        QrCodeLoginState.LoginSuccess -> {}
+        QrCodeLoginState.LoginSuccess -> {
+            onBack()
+        }
         is QrCodeLoginState.QRCodeReady -> {
             Box(Modifier.fillMaxSize(), Alignment.Center) {
                 Text("正在生成二维码。。。")
