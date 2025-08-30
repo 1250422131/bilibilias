@@ -29,6 +29,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
     buildFeatures {
         buildConfig = true
@@ -54,10 +62,17 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.inappmessaging.display)
     implementation(libs.firebase.config)
+    implementation(libs.firebase.inappmessaging.display){
+        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+    }
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.messaging)
 //    implementation(libs.firebase.config.ktx)
-    implementation(libs.firebase.perf)
+    implementation(libs.firebase.perf) {
+        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
+        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+    }
 
     // 彩带
     implementation(libs.konfetti.compose)
@@ -69,6 +84,9 @@ dependencies {
 
     // 分页
     implementation(libs.paging.compose)
+
+    // 拖拽排序
+    // implementation(libs.reorderable)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

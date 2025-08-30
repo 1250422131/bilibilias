@@ -142,7 +142,7 @@ private fun WorkList(
                 modifier = Modifier.animateItem(),
                 bvId = it.bvid,
                 title = it.title,
-                pic = "${it.pic.toHttps()}@672w_378h_1c.webp",
+                pic = "${it.pic.toHttps()}@672w_378h_1c",
                 view = it.play,
                 danmu = it.danmu,
             )

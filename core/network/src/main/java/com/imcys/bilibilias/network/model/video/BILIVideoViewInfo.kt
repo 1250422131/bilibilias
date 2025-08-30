@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.network.model.video
 
+import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo.UgcSeason.Section.Episode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -447,4 +448,12 @@ data class BILIVideoViewInfo(
         @SerialName("url_image_ani_cut")
         val urlImageAniCut: String
     )
+}
+
+fun List<Episode>.filterWithMultiplePages(): List<Episode> {
+    return filter { it.pages.size > 1 }
+}
+
+fun List<Episode>.filterWithSinglePage(): List<Episode> {
+    return filter { it.pages.size <= 1 }
 }

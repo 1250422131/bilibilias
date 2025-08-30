@@ -12,6 +12,21 @@ message AppSettings {
 
   bool enabled_dynamic_color = 4;
 
+  message HomeLayoutItem {
+    HomeLayoutType type = 1;
+    bool is_hidden = 2;
+  }
+
+  repeated HomeLayoutItem home_layout_typeset = 5;
+
+  enum HomeLayoutType {
+    Banner = 0 ;
+    Announcement = 1 ;
+    UpdateInfo = 2;
+    Tools = 3 ;
+    DownloadList = 4;
+  }
+
   enum KnowAboutApp{
     NotKnow = 0;
     Know = 1;

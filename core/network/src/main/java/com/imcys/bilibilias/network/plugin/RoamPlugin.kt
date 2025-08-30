@@ -4,20 +4,13 @@ import androidx.datastore.core.DataStore
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
-import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
-import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
-import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW_NO_WEBI
 import com.imcys.bilibilias.network.config.APP_KEY
 import com.imcys.bilibilias.network.utils.BiliAppSigner
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.http.URLProtocol
-import io.ktor.http.encodedPath
 import kotlinx.coroutines.flow.first
-import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
-import kotlin.getValue
 
 /**
  * Roam 插件配置:

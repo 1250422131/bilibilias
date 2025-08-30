@@ -22,7 +22,7 @@ data class BILIDonghuaPlayerInfo(
     @SerialName("code")
     val code: Long,
     @SerialName("dash")
-    val dash: BILIVideoDash?,
+    val dash: BILIVideoDash? = null,
     @SerialName("durl")
     val durl: List<BILIVideoDurl>?,
     @SerialName("durls")

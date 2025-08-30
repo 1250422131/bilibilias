@@ -85,6 +85,7 @@ import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -111,7 +112,7 @@ fun AnalysisScreen(
     animatedContentScope: AnimatedContentScope,
     onToBack: () -> Unit,
     goToUser: (mid: Long) -> Unit,
-    onToVideoCodingInfo:()-> Unit,
+    onToVideoCodingInfo: () -> Unit,
 ) {
     val vm = koinViewModel<AnalysisViewModel>()
 
@@ -206,7 +207,7 @@ fun ColumnScope.AnalysisVideoCardList(
     analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit,
-    onToVideoCodingInfo:()-> Unit
+    onToVideoCodingInfo: () -> Unit
 ) {
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
@@ -241,11 +242,18 @@ fun ColumnScope.AnalysisVideoCardList(
                         onSelectSeason = {
                             viewModel.updateSelectSeason(it)
                         },
-                        onUpdateSelectedEpId = { epId, title, cover ->
+                        onUpdateSelectedEpId = { epId, selectType, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedEpIdList()
-                                viewModel.updateSelectedPlayerInfo(epId ?: 0L, title, cover)
-                                viewModel.updateSelectedEpIdList(epId)
+                                viewModel.updateSelectedPlayerInfo(
+                                    epId ?: 0L,
+                                    selectType,
+                                    title,
+                                    cover
+                                )
+                                if (selectType is SelectEpisodeType.EPID) {
+                                    viewModel.updateSelectedEpIdList(epId)
+                                }
                             } else {
                                 viewModel.updateSelectedEpIdList(epId)
                             }
@@ -278,10 +286,15 @@ fun ColumnScope.AnalysisVideoCardList(
                         videoPlayerInfo,
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
-                        onUpdateSelectedCid = { it, title, cover ->
+                        onUpdateSelectedCid = { it, selectType, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedCidList()
-                                viewModel.updateSelectedPlayerInfo(it ?: 0L, title, cover)
+                                viewModel.updateSelectedPlayerInfo(
+                                    it ?: 0L,
+                                    selectType,
+                                    title,
+                                    cover
+                                )
                                 viewModel.updateSelectedCidList(it)
                             } else {
                                 viewModel.updateSelectedCidList(it)

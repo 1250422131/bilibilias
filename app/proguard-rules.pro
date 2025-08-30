@@ -41,3 +41,9 @@
     public int drawRenderNode(...);
     public boolean isHardwareAccelerated();
 }
+
+
+
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite* {
+   <fields>;
+}
