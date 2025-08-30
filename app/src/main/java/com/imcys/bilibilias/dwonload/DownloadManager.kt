@@ -1023,7 +1023,7 @@ class DownloadManager(
                                 selectedVideo.baseUrl,
                                 DownloadSubTaskType.VIDEO
                             ),
-                            createSubTask(segment, selectedAudio.baseUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(segment, selectedAudio.finalUrl, DownloadSubTaskType.AUDIO)
                         )
                     }
 
@@ -1037,7 +1037,7 @@ class DownloadManager(
                     DownloadMode.AUDIO_ONLY -> {
                         val selectedAudio = selectAudioQuality(videoData, downloadViewInfo)
                         listOf(
-                            createSubTask(segment, selectedAudio.baseUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(segment, selectedAudio.finalUrl, DownloadSubTaskType.AUDIO)
                         )
                     }
                 }

@@ -45,6 +45,8 @@ import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
 import com.imcys.bilibilias.ui.setting.SettingScreen
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintRoute
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintScreen
+import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
+import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
@@ -107,7 +109,6 @@ fun BILIBILAISNavDisplay() {
 
     SharedTransitionLayout {
         NavDisplay(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer),
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
             transitionSpec = {
@@ -225,7 +226,8 @@ fun BILIBILAISNavDisplay() {
                             backStack.addWithReuse(RoamRoute)
                         },
                         onToBack = { backStack.removeLastOrNull() },
-                        onToComplaint = { backStack.addWithReuse(ComplaintRoute) }
+                        onToComplaint = { backStack.addWithReuse(ComplaintRoute) },
+                        onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) }
                     )
                 }
                 entry<RoamRoute> {
@@ -271,13 +273,19 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }
-                entry<ComplaintRoute>{
+                entry<ComplaintRoute> {
                     ComplaintScreen(
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }
-                entry<VideoCodingInfoRoute>{
+                entry<VideoCodingInfoRoute> {
                     VideoCodingInfoScreen(
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<LayoutTypesetRoute> {
+                    LayoutTypesetScreen(
+                        layoutTypesetRoute = it,
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }

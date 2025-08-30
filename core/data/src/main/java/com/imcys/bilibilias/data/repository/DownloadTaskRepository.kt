@@ -15,6 +15,7 @@ import com.imcys.bilibilias.database.entity.download.DownloadTaskType
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.network.model.video.filterWithSinglePage
 import kotlinx.coroutines.flow.last
 import kotlinx.serialization.json.Json
 import java.util.Date
@@ -417,9 +418,7 @@ class DownloadTaskRepository(
             } else null
         }
 
-        val segments = episodes.filter {
-            it.pages.size <= 1
-        }.map { episode ->
+        val segments = episodes.filterWithSinglePage().map { episode ->
 
             // 为每个子视频创建独立的下载任务
             val childTask = getOrCreateTask(

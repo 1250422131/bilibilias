@@ -50,11 +50,17 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
+
+
+typealias UpdateSelectedEpId = (epId: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
+
+
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -65,12 +71,12 @@ fun DongmhuaDownloadScreen(
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
-    onUpdateSelectedEpId: (epId: Long?, title: String, cover: String) -> Unit,
+    onUpdateSelectedEpId: UpdateSelectedEpId,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
     onSelectSingleModel: (Boolean) -> Unit = { _ -> },
-    onToVideoCodingInfo:()-> Unit
+    onToVideoCodingInfo: () -> Unit
 ) {
 
     var selectSeasonsId by remember {
@@ -114,9 +120,14 @@ fun DongmhuaDownloadScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
                 Spacer(Modifier.width(4.dp))
-                Icon(Icons.Outlined.Info, contentDescription = "说明", modifier = Modifier.size(18.dp).clickable{
-                    onToVideoCodingInfo.invoke()
-                })
+                Icon(
+                    Icons.Outlined.Info,
+                    contentDescription = "说明",
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable {
+                            onToVideoCodingInfo.invoke()
+                        })
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
             }
@@ -226,6 +237,11 @@ fun DongmhuaDownloadScreen(
                                             onClick = {
                                                 onUpdateSelectedEpId.invoke(
                                                     it.epId,
+                                                    if (it.epId == 0L) {
+                                                        SelectEpisodeType.AID(it.aid)
+                                                    } else {
+                                                        SelectEpisodeType.EPID(it.epId)
+                                                    },
                                                     it.longTitle.ifBlank { it.title },
                                                     it.cover
                                                 )
@@ -311,7 +327,16 @@ fun DongmhuaDownloadScreen(
                                     FilterChip(
                                         selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
                                         onClick = {
-                                            onUpdateSelectedEpId.invoke(it.epId, it.longTitle.ifBlank { it.title }, it.cover)
+                                            onUpdateSelectedEpId.invoke(
+                                                it.epId,
+                                                if (it.epId == 0L) {
+                                                    SelectEpisodeType.AID(it.aid)
+                                                } else {
+                                                    SelectEpisodeType.EPID(it.epId)
+                                                },
+                                                it.longTitle.ifBlank { it.title },
+                                                it.cover
+                                            )
                                         },
                                         label = {
                                             Column(

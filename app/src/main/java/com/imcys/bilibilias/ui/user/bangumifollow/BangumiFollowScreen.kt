@@ -120,7 +120,7 @@ fun BangumiFollowContent(
                     intro = item.evaluate,
                     updateInfo = item.newEp.indexShow ?: "",
                     seenInfo = item.progress,
-                    pic = "${item.cover.toHttps()}@308w_410h_1c.avif"
+                    pic = "${item.cover.toHttps()}@308w_410h_1c"
                 )
             }
 

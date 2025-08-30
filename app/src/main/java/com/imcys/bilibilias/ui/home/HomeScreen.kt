@@ -7,6 +7,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
@@ -38,6 +41,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,13 +66,16 @@ import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.MainActivity
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.data.model.BILILoginUserModel
+import com.imcys.bilibilias.data.repository.getDescription
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.ASCardTextField
+import com.imcys.bilibilias.ui.weight.ASHorizontalMultiBrowseCarousel
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
@@ -130,7 +138,8 @@ internal fun HomeScreen(
         }
     }
 
-
+    val homeLayoutTypesetList by vm.homeLayoutTypesetList.collectAsState()
+    val carouselState = rememberCarouselState { 5 }
 
     HomeScaffold(
         snackbarHostState = snackbarHostState,
@@ -152,33 +161,83 @@ internal fun HomeScreen(
                     .padding(top = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                item {
-                    CommonInfoCard(
-                        R.drawable.ic_brand_awareness_24px,
-                        "公告",
-                        "这是一段公告内容"
-                    )
+
+                homeLayoutTypesetList.forEach { layout ->
+                    when (layout.type) {
+                        AppSettings.HomeLayoutType.Banner if !layout.isHidden -> {
+                            item {
+                                ASHorizontalMultiBrowseCarousel(
+                                    autoScroll = true,
+                                    items = listOf(
+                                        "https://i1.hdslb.com/bfs/archive/9308c108726e6abd5487d5afae96fca45764de24.jpg",
+                                        "https://i1.hdslb.com/bfs/archive/65c95963d151a395d456f257793b76a4af46cec3.jpg",
+                                        "https://i1.hdslb.com/bfs/archive/3e2e1e0b3c1108b83148bd2f51b3d28fc94c3b63.jpg",
+                                    )
+                                ) { i ->
+                                    Box {
+                                        ASAsyncImage(
+                                            model = i,
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(168.dp)
+                                                .maskClip(CardDefaults.shape),
+                                        )
+
+                                        Text(
+                                            "最新动态",
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.W500,
+                                            color = MaterialTheme.colorScheme.surface,
+                                            maxLines = 2,
+                                            modifier = Modifier
+                                                .padding(10.dp)
+                                                .align(Alignment.BottomStart)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        AppSettings.HomeLayoutType.Announcement if !layout.isHidden -> {
+                            item {
+                                CommonInfoCard(
+                                    R.drawable.ic_brand_awareness_24px,
+                                    "公告",
+                                    "这是一段公告内容"
+                                )
+                            }
+                        }
+
+                        AppSettings.HomeLayoutType.UpdateInfo if !layout.isHidden -> {
+                            item {
+                                CommonInfoCard(
+                                    R.drawable.ic_info_24px,
+                                    "更新内容",
+                                    "这是一段更新内容"
+                                )
+                            }
+                        }
+
+                        AppSettings.HomeLayoutType.DownloadList if !layout.isHidden -> {
+                            item {
+                                DownloadListCard(
+                                    downloadListState,
+                                    goToDownloadPage = goToDownloadPage,
+                                    onPauseTask = {
+                                        vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                                    },
+                                    onResumeTask = {
+                                        vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                                    })
+                            }
+                        }
+
+                        else -> {}
+                    }
+
                 }
 
-                item {
-                    CommonInfoCard(
-                        R.drawable.ic_info_24px,
-                        "更新内容",
-                        "这是一段更新内容"
-                    )
-                }
-
-                item {
-                    DownloadListCard(
-                        downloadListState,
-                        goToDownloadPage = goToDownloadPage,
-                        onPauseTask = {
-                            vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                        },
-                        onResumeTask = {
-                            vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                        })
-                }
 
                 item {
                     Text(

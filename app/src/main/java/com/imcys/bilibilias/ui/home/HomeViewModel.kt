@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.model.BILILoginUserModel
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
@@ -21,12 +23,14 @@ class HomeViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val usersDataSource: UsersDataSource,
     private val riskManagementRepository: RiskManagementRepository,
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
 
     data class UIState(
         val fromLoginEventConsumed: Boolean = false
     )
+    val appSettings = appSettingsRepository.appSettingsFlow
 
     private var _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
@@ -41,9 +45,24 @@ class HomeViewModel(
 
     val downloadListState = downloadManager.getAllDownloadTasks()
 
+
+    private val _homeLayoutTypesetList = MutableStateFlow(emptyList<AppSettings.HomeLayoutItem>())
+
+    var homeLayoutTypesetList = _homeLayoutTypesetList.asStateFlow()
+
     init {
+        initLayoutTypeset()
         showBILIUserInfo()
         initDownloadList()
+    }
+
+    private fun initLayoutTypeset() {
+        viewModelScope.launch {
+            appSettingsRepository.asyncHomeLayoutTypesetList()
+            appSettings.collect {
+                _homeLayoutTypesetList.value = it.homeLayoutTypesetList
+            }
+        }
     }
 
     private fun initDownloadList() {

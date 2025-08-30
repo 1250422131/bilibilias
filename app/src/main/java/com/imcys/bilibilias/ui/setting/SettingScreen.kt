@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Copyright
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.EmojiObjects
 import androidx.compose.material.icons.outlined.MoodBad
@@ -22,8 +21,6 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,17 +40,17 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.BaseSettingsItem
 import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
-import androidx.core.net.toUri
-import com.imcys.bilibilias.datastore.AppSettings
-import com.imcys.bilibilias.ui.utils.switchHapticFeedback
-import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -63,12 +60,18 @@ fun SettingScreenPreview() {
     SettingScreen(
         onToRoam = {},
         onToBack = {},
-        onToComplaint = {})
+        onToComplaint = {},
+        onToLayoutTypeset = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(onToRoam: () -> Unit, onToComplaint: () -> Unit, onToBack: () -> Unit) {
+fun SettingScreen(
+    onToRoam: () -> Unit,
+    onToComplaint: () -> Unit,
+    onToLayoutTypeset : () -> Unit,
+    onToBack: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val vm = koinViewModel<SettingViewModel>()
@@ -146,15 +149,36 @@ fun SettingScreen(onToRoam: () -> Unit, onToComplaint: () -> Unit, onToBack: () 
                     vm.updateEnabledDynamicColor(check)
                 }
             }
-            item {
-                CategorySettingsItem(
-                    text = "权限设置"
-                )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                item {
+                    CategorySettingsItem(
+                        text = "权限设置"
+                    )
+                }
             }
 
             item {
                 DownloadPostNotifications()
             }
+
+
+            item {
+                CategorySettingsItem(
+                    text = "布局配置"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ListAlt),
+                    text = "首页排版",
+                    description = {},
+                    onClick = onToLayoutTypeset
+                )
+            }
+
+
 
             item {
                 CategorySettingsItem(

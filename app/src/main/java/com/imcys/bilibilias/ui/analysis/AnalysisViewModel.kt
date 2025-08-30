@@ -4,6 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.AsRegexUtil
 import com.imcys.bilibilias.common.utils.TextType
 import com.imcys.bilibilias.common.utils.toHttps
@@ -24,12 +26,14 @@ import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
+import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -163,6 +167,7 @@ class AnalysisViewModel(
 
     fun updateSelectedPlayerInfo(
         cid: Long,
+        selectEpisodeType: SelectEpisodeType,
         title: String,
         cover: String,
     ) {
@@ -181,7 +186,15 @@ class AnalysisViewModel(
             is ASLinkResultType.BILI.Donghua -> {
                 result.donghuaViewInfo.data?.let { info ->
                     // 这里cid是ep号
-                    asDonghuaPlayerInfo(null, cid)
+                    when(selectEpisodeType){
+                        is SelectEpisodeType.AID -> {
+                            sendAnalysisEvent(AnalysisEvent("av${selectEpisodeType.aid}"))
+                        }
+                        is SelectEpisodeType.EPID -> {
+                            asDonghuaPlayerInfo(null, cid)
+                        }
+                        else -> {}
+                    }
                 }
             }
 

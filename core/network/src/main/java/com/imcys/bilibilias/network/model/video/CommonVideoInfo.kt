@@ -78,15 +78,15 @@ data class BILIVideoDash(
     @Serializable
     data class Audio(
         @SerialName("backupUrl")
-        val backupUrl: List<String>,
+        val backupUrl: List<String> = emptyList(),
         @SerialName("backup_url")
-        val backup_url: List<String>,
+        val backup_url: List<String> = emptyList(),
         @SerialName("bandwidth")
         val bandwidth: Long,
         @SerialName("base_url")
-        val base_url: String,
+        val base_url: String?,
         @SerialName("baseUrl")
-        val baseUrl: String,
+        val baseUrl: String?,
         @SerialName("codecid")
         val codecid: Long,
         @SerialName("codecs")
@@ -94,7 +94,7 @@ data class BILIVideoDash(
         @SerialName("frame_rate")
         val frame_rate: String,
         @SerialName("frameRate")
-        val frameRate: String,
+        val frameRate: String?,
         @SerialName("height")
         val height: Long,
         @SerialName("id")
@@ -102,7 +102,7 @@ data class BILIVideoDash(
         @SerialName("md5")
         val md5: String?,
         @SerialName("mimeType")
-        val mimeType: String,
+        val mimeType: String?,
         @SerialName("mime_type")
         val mime_type: String,
         @SerialName("sar")
@@ -119,7 +119,10 @@ data class BILIVideoDash(
         val startWithSap: Long = 0,
         @SerialName("width")
         val width: Long
-    )
+    ) {
+        val finalUrl =
+            baseUrl ?: base_url ?: (backupUrl.firstOrNull() ?: backup_url.firstOrNull() ?: "")
+    }
 
 
     @Serializable
@@ -193,6 +196,13 @@ data class BILIVideoDash(
     )
 }
 
+sealed interface SelectEpisodeType {
+    data class BVID(val bvid: String) : SelectEpisodeType
+    data class AID(val aid: Long) : SelectEpisodeType
+    data class EPID(val epid: Long) : SelectEpisodeType
+    data class SSID(val ssid: Long) : SelectEpisodeType
+}
+
 fun convertAudioQualityIdValue(id: Long): String =
     mapOf(
         30216L to "64K",
@@ -205,12 +215,12 @@ fun convertAudioQualityIdValue(id: Long): String =
 
 fun convertVideoQualityIdValue(id: Long): String =
     mapOf(
-        6L   to "240P 极速",
-        16L  to "360P 流畅",
-        32L  to "480P 清晰",
-        64L  to "720P 高清",
-        74L  to "720P60 高帧率",
-        80L  to "1080P 高清",
+        6L to "240P 极速",
+        16L to "360P 流畅",
+        32L to "480P 清晰",
+        64L to "720P 高清",
+        74L to "720P60 高帧率",
+        80L to "1080P 高清",
         100L to "智能修复",
         112L to "1080P+ 高码率",
         116L to "1080P60 高帧率",

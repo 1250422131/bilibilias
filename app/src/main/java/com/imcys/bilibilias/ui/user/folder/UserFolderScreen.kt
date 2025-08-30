@@ -128,7 +128,7 @@ fun UserFolderContent(
                     modifier = Modifier.animateItem(),
                     bvId = item.bvid,
                     title = item.title,
-                    pic = "${item.cover.toHttps()}@672w_378h_1c.webp",
+                    pic = "${item.cover.toHttps()}@672w_378h_1c",
                     upName = item.upper.name,
                     mid = item.upper.mid,
                     view = item.cntInfo.play,

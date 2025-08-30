@@ -55,13 +55,17 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
-import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.network.model.video.SelectEpisodeType
+import com.imcys.bilibilias.network.model.video.filterWithMultiplePages
+import com.imcys.bilibilias.network.model.video.filterWithSinglePage
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
+
+
+typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -70,12 +74,12 @@ fun VideoDownloadScreen(
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
-    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
+    onUpdateSelectedCid: UpdateSelectedCid,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
     onSelectSingleModel: (Boolean) -> Unit = { _ -> },
-    onToVideoCodingInfo:()-> Unit
+    onToVideoCodingInfo: () -> Unit
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -140,9 +144,14 @@ fun VideoDownloadScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("缓存倾向")
                 Spacer(Modifier.width(4.dp))
-                Icon(Icons.Outlined.Info, contentDescription = "说明", modifier = Modifier.size(18.dp).clickable{
-                    onToVideoCodingInfo.invoke()
-                })
+                Icon(
+                    Icons.Outlined.Info,
+                    contentDescription = "说明",
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable {
+                            onToVideoCodingInfo.invoke()
+                        })
                 Spacer(Modifier.weight(1f))
                 SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
             }
@@ -230,7 +239,7 @@ fun VideoDownloadScreen(
 fun VideoPageScreen(
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
-    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
+    onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
     var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
@@ -275,6 +284,7 @@ fun VideoPageScreen(
                 onClick = {
                     onUpdateSelectedCid.invoke(
                         it.cid,
+                        SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
                         viewInfo.data?.title ?: "",
                         viewInfo.data?.pic ?: ""
                     )
@@ -313,7 +323,7 @@ fun UgcSeasonPageScreen(
     selectSectionId: Long?,
     selectEpisodeId: Long?,
     onSelectEpisodeId: (Long?) -> Unit,
-    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
+    onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
     var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
@@ -321,9 +331,7 @@ fun UgcSeasonPageScreen(
 
     val epVideoList = (viewInfo.data?.ugcSeason?.sections?.firstOrNull {
         it.id == selectSectionId
-    }?.episodes ?: emptyList()).filter {
-        it.pages.size > 1
-    }
+    }?.episodes ?: emptyList()).filterWithMultiplePages()
 
     // 合计内章节子集分P视频
     epVideoList.takeIf { it.isNotEmpty() }?.let { episodes ->
@@ -437,6 +445,7 @@ fun UgcSeasonPageScreen(
                     onClick = {
                         onUpdateSelectedCid.invoke(
                             it.cid,
+                            SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
                             viewInfo.data?.title ?: "",
                             viewInfo.data?.pic ?: ""
                         )
@@ -474,7 +483,7 @@ fun UgcSeasonScreen(
     downloadInfo: DownloadViewInfo?,
     selectSectionId: Long?,
     onSelectSectionId: (Long) -> Unit,
-    onUpdateSelectedCid: (cid: Long?, title: String, cover: String) -> Unit,
+    onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
     var currentSectionPageListIndex by remember { mutableIntStateOf(0) }
@@ -506,7 +515,7 @@ fun UgcSeasonScreen(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
             val episodeCount = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
                 it.id == selectSectionId
-            }?.episodes?.size ?: 0
+            }?.episodes?.filterWithSinglePage()?.size ?: 0
             val pageCount = ceil(episodeCount / 12.0).toInt()
             items(
                 pageCount,
@@ -535,9 +544,7 @@ fun UgcSeasonScreen(
         ) {
             val episodeList = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
                 it.id == selectSectionId
-            }?.episodes?.filter {
-                it.pages.size <= 1
-            } ?: emptyList()
+            }?.episodes?.filterWithSinglePage() ?: emptyList()
             val startIndex = currentSectionPageListIndex * 12
             val endIndex =
                 minOf((currentSectionPageListIndex + 1) * 12, episodeList.size)
@@ -547,7 +554,12 @@ fun UgcSeasonScreen(
                 FilterChip(
                     selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
                     onClick = {
-                        onUpdateSelectedCid.invoke(it.cid, it.page?.part ?: "", it.arc.pic)
+                        onUpdateSelectedCid.invoke(
+                            it.cid,
+                            SelectEpisodeType.BVID(it.bvid),
+                            it.page?.part ?: "",
+                            it.arc.pic
+                        )
                     },
                     label = {
                         Column(
