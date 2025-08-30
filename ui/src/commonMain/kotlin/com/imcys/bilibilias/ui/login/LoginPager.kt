@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -38,6 +39,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -51,6 +54,7 @@ import com.imcys.bilibilias.logic.login.QrCodeLoginAction
 import com.imcys.bilibilias.logic.login.QrCodeLoginState
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.qrose.toByteArray
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun PagerScope.QrContent(
@@ -149,12 +153,26 @@ internal fun PagerScope.QrContent(
 
                 Text(text = state.message, fontSize = 16.sp)
 
+                val clipboard = LocalClipboardManager.current
+                val scope = rememberCoroutineScope()
+                // 已复制到剪贴板，可粘贴至已登录的app私信处发送，然后点击已发送的链接打开
+                Text(
+                    text = state.url,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .clickable {
+                            scope.launch {
+                                clipboard.setText(AnnotatedString(state.url))
+                            }
+                        },
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.4f)
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Spacer to push the final text to the bottom
                 Spacer(modifier = Modifier.weight(1f))
 
-                // 4. Bottom Warning Message
                 Text(
                     text = "请务必在 BilibiliAs 开源仓库等可信渠道下载安装。",
                     fontSize = 12.sp,
@@ -285,9 +303,7 @@ fun Painter.toImageBitmapWithBorder(
 
         // Draw the original painter content inside the border
         translate(left = borderWidth, top = borderWidth) {
-            with(painter) {
-                draw(size = Size(imageContentWidth, imageContentHeight))
-            }
+            draw(size = Size(imageContentWidth, imageContentHeight))
         }
     }
     return imageBitmap
