@@ -17,13 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.core.datastore.model.Codecs
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.logic.setting.SettingsComponent
-import com.imcys.bilibilias.ui.BackButton
+import com.imcys.bilibilias.ui.component.BackButton
 
 @Composable
 fun SettingsScreen(component: SettingsComponent, onBack: () -> Unit) {
@@ -94,15 +93,6 @@ fun SettingsContent(
             }
             ShareLogFile()
         }
-    }
-}
-
-private data class SS(val icon: ImageVector, val desc: Codecs) {
-    companion object {
-//        val DVH1 = SS(Icons.Outlined.Hd, Codecs.DVH1)
-//        val AV1 = SS(Icons.Outlined.Av1,Codecs.AV1)
-//        val HEVC = SS(Icons.Outlined.Hevc,Codecs.HEVC)
-//        val AVC = SS(Icons.Outlined.Avc,Codecs.AVC)
     }
 }
 
