@@ -80,8 +80,9 @@ class GetEpisodeInfoUseCase(
             playUrl.acceptQuality.zip(playUrl.acceptDescription).toMap()
 
         // 可以播放的画质选项
-        playUrl.dash.video.map { it.id }.toSet()
-        val videoStreams = playUrl.dash.video.mapNotNull { video ->
+        val dash = playUrl.dash
+        dash.video.map { it.id }.toSet()
+        val videoStreams = dash.video.mapNotNull { video ->
             val qualityDescription = backendQualityDescriptions[video.id]
             if (qualityDescription == null) {
                 logger.warn { "Missing description for video quality ID: ${video.id}" }
@@ -93,7 +94,12 @@ class GetEpisodeInfoUseCase(
                 )
             }
         }
-        val audioStreams = playUrl.dash.audio.mapNotNull { audioQuality ->
+        val audioList = buildList {
+            addAll(dash.audio)
+            dash.dolby.audio?.let { addAll(it) }
+            dash.flac?.audio?.let { add(it) }
+        }
+        val audioStreams = audioList.mapNotNull { audioQuality ->
             val quality = AudioQuality.fromCode(audioQuality.id)
             quality?.let {
                 MediaStream(
