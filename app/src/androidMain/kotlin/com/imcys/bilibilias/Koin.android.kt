@@ -1,13 +1,18 @@
 package com.imcys.bilibilias
 
 import androidx.work.CoroutineWorker
+import com.imcys.bilibilias.notifications.Notifier
+import com.imcys.bilibilias.notifications.SystemTrayNotifier
 import com.imcys.bilibilias.work.CoroutineDownloadWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
 actual fun KoinApplication.platformModule(): Module = module {
     workerOf(::CoroutineDownloadWorker) binds arrayOf(CoroutineWorker::class)
+    singleOf(::SystemTrayNotifier) bind Notifier::class
 }

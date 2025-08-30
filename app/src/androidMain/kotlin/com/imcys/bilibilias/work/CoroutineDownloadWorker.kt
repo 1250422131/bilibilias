@@ -47,10 +47,10 @@ class CoroutineDownloadWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
-                getString(R.string.work_notification_channel_name),
+                getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT,
             ).apply {
-                description = getString(R.string.work_notification_channel_description)
+                description = getString(R.string.notification_channel_description)
             }
             // Register the channel with the system
             val notificationManager: NotificationManager? =
@@ -64,7 +64,7 @@ class CoroutineDownloadWorker(
             NOTIFICATION_CHANNEL_ID,
         )
             .setSmallIcon(R.drawable.bilibilias)
-            .setContentTitle(getString(R.string.work_notification_title))
+            .setContentTitle(getString(R.string.notification_title))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
     }

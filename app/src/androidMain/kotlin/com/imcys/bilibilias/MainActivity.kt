@@ -22,6 +22,10 @@ class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+//        val notifier = get<Notifier>()
+//        notifier.postNotifications()
+
         val searchText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: "BV1qW4y1k7yh"
 
         val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
