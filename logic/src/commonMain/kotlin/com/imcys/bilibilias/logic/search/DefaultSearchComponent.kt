@@ -19,6 +19,7 @@ import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
+import com.imcys.bilibilias.logic.utils.asStateFlowInLifecycle
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +46,7 @@ class DefaultSearchComponent(
         .map { preferences ->
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
-        .stateInBackground(SelfInfoUiState.Loading)
+        .asStateFlowInLifecycle(SelfInfoUiState.Loading)
     override val searchQuery = MutableStateFlow(searchText ?: persistentState.searchQuery)
 
     override val searchResultUiState: StateFlow<SearchResultUiState> =
@@ -78,7 +79,7 @@ class DefaultSearchComponent(
                         }
                     }
             }
-        }.stateInBackground(SearchResultUiState.Loading)
+        }.asStateFlowInLifecycle(SearchResultUiState.Loading)
 
     override fun onSearchTriggered(query: String) {}
 
