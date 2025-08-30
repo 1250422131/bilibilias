@@ -41,13 +41,12 @@ buildkonfig {
     // default config is required
     defaultConfigs {}
     defaultConfigs("debug") {
-        buildConfigField(STRING, "packageName", packageName)
+        buildConfigField(STRING, "packageName", "$packageName.debug")
         buildConfigField(BOOLEAN, "debugBuild", "true")
     }
     // flavor is passed as a first argument of defaultConfigs
     defaultConfigs("release") {
         buildConfigField(STRING, "packageName", packageName)
-        buildConfigField(STRING, "name", "devValue")
         buildConfigField(BOOLEAN, "debugBuild", "false")
     }
 }
