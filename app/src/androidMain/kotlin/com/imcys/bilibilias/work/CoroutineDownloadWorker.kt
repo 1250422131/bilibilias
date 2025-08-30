@@ -11,18 +11,14 @@ import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 
 class CoroutineDownloadWorker(
     context: Context,
     params: WorkerParameters,
     private val httpDownloader: HttpDownloader,
-    private val mediaCacheDataSource: MediaCacheDataSource,
-    private val applicationScope: CoroutineScope,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -69,7 +65,6 @@ class CoroutineDownloadWorker(
             .build()
     }
     companion object {
-        const val SYNC_TOPIC = "sync"
         private const val SYNC_NOTIFICATION_ID = 0
         private const val NOTIFICATION_CHANNEL_ID = "NotificationChannel"
         fun startWork() = OneTimeWorkRequestBuilder<CoroutineDownloadWorker>()
