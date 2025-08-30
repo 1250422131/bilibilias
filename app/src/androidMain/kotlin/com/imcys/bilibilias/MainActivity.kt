@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        val searchText = intent.getStringExtra(Intent.EXTRA_TEXT)
+        val searchText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: "BV1qW4y1k7yh"
 
         val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
         val component = DefaultRootComponent(context, searchText)
