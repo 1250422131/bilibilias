@@ -21,17 +21,30 @@ class MediaSourceSelectedUseCase(
         request: EpisodeCacheRequest
     ): EpisodeInfo {
         return withContext(Dispatchers.IO) {
-            val detailDeferred = async { api.getVideoInfoDetail(request.episodeId) }
+            val episodeCacheState = request.cacheState
+            val detailDeferred = async { api.getVideoInfoDetail(episodeCacheState.episodeId) }
             val playUrlDeferred =
-                async { api.getPlayUrl(request.episodeId, request.episodeSubId) }
+                async {
+                    api.getPlayUrl(
+                        episodeCacheState.episodeId,
+                        episodeCacheState.episodeSubId
+                    )
+                }
 
             val detail = detailDeferred.await()
             val playUrl = playUrlDeferred.await()
-            val audioUrl = playUrl.dash.audio.applyMediaStreamTransformation { streamMap ->
+
+            val dash = playUrl.dash
+            val audioList = buildList {
+                addAll(dash.audio)
+                dash.flac?.audio?.let { add(it) }
+                dash.dolby.audio?.let { addAll(it) }
+            }
+            val audioUrl = audioList.applyMediaStreamTransformation { streamMap ->
                 streamMap.values.flatten().maxBy { it.id }
             }
-            val videoUrl = playUrl.dash.video.applyMediaStreamTransformation { streamMap ->
-                val preferredResolutionMetadata = streamMap[request.videoResolution]
+            val videoUrl = dash.video.applyMediaStreamTransformation { streamMap ->
+                val preferredResolutionMetadata = streamMap[request.videoQuality]
                 preferredResolutionMetadata?.maxBy { it.codecId }
                     ?: streamMap.values.flatten().maxWith(compareBy { it.id })
             }
