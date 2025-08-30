@@ -11,13 +11,6 @@ expect object AsMediaStore {
         relativePath: String,
     ): Uri?
 
-    fun createImage(
-        context: KmpContext,
-        displayName: String,
-        mediaType: String,
-        relativePath: String,
-    ): Uri?
-
     fun createMedia(
         context: KmpContext,
         uri: Uri,

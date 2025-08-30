@@ -30,21 +30,6 @@ actual object AsMediaStore {
         )
     }
 
-    actual fun createImage(
-        context: KmpContext,
-        displayName: String,
-        mediaType: String,
-        relativePath: String,
-    ): Uri? {
-        return createMedia(
-            context,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toKmpUri(),
-            displayName,
-            mediaType,
-            relativePath
-        )
-    }
-
     actual fun createMedia(
         context: KmpContext,
         uri: Uri,

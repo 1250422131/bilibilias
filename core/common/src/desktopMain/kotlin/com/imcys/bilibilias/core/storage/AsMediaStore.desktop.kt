@@ -13,15 +13,6 @@ actual object AsMediaStore {
         TODO("Not yet implemented")
     }
 
-    actual fun createImage(
-        context: KmpContext,
-        displayName: String,
-        mediaType: String,
-        relativePath: String
-    ): Uri? {
-        TODO("Not yet implemented")
-    }
-
     actual fun createMedia(
         context: KmpContext,
         uri: Uri,
