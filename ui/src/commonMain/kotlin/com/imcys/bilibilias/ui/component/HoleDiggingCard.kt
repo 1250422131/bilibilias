@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui
+package com.imcys.bilibilias.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -75,17 +75,8 @@ class BezierShapes(
 
 @Preview(widthDp = 480, heightDp = 200)
 @Composable
-fun CardComposeView(navigateToScreen: (route: String) -> Unit = {}) {
+fun CardComposeView() {
     Box {
-//        Image(
-//            painter = painterResource(R.mipmap.ticket_bar_bg),
-//            contentDescription = "",
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .fillMaxWidth()
-//                .blur(10.dp),
-//            contentScale = ContentScale.Crop
-//        )
         Box(
             Modifier
                 .background(Color.Transparent)
@@ -179,7 +170,6 @@ fun CardComposeView(navigateToScreen: (route: String) -> Unit = {}) {
                             )
                         }
                     }
-
                 }
             }
         }

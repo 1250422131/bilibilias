@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui
+package com.imcys.bilibilias.ui.component
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun BackButton(modifier: Modifier = Modifier, onBack: () -> Unit) {
-    IconButton(onBack, modifier = Modifier) {
+    IconButton(onBack, modifier = modifier) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
     }
 }
