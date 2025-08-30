@@ -1,16 +1,18 @@
 package com.imcys.bilibilias.core.ffmpeg
 
+import android.content.Context
 import android.net.Uri
 import com.antonkarpenko.ffmpegkit.FFmpegKit
 import com.antonkarpenko.ffmpegkit.FFmpegKitConfig
 import com.antonkarpenko.ffmpegkit.ReturnCode
 import com.antonkarpenko.ffmpegkit.SessionState
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
-internal class FfmpegMediaMultiplexer : MediaMultiplexer {
+internal class FfmpegMediaMultiplexer(
+    private val context: Context,
+) : MediaMultiplexer {
     override val isRunning = MutableStateFlow(false)
     override val progress = MutableStateFlow(0)
     private val logger = logger<MediaMultiplexer>()
@@ -19,7 +21,6 @@ internal class FfmpegMediaMultiplexer : MediaMultiplexer {
         outputPath: String
     ) {
         logger.debug { "Input: " + inputPaths.joinToString() + " OutPutPath: $outputPath" }
-        val context = KmpContext.get()
         val inputs = inputPaths.map { path ->
             FFmpegKitConfig.getSafParameterForRead(
                 context,

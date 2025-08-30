@@ -19,6 +19,7 @@ import com.imcys.bilibilias.logic.search.DefaultSearchComponent
 import com.imcys.bilibilias.logic.setting.DefaultSettingsComponent
 import kotlinx.serialization.Serializable
 import org.koin.core.component.get
+import org.koin.core.qualifier.named
 
 class DefaultRootComponent(
     componentContext: AppComponentContext,
@@ -49,7 +50,7 @@ class DefaultRootComponent(
                 )
             )
 
-            Config.Cache -> CacheChild(DefaultCacheComponent(context))
+            Config.Cache -> CacheChild(DefaultCacheComponent(context, get(named("ffmpeg"))))
             Config.Login -> LoginChild(DefaultLoginComponent(context, get(), get(), get(), get()))
             Config.Player -> PlayerChild(DefaultPlayerComponent(context))
             Config.Settings -> SettingsChild(DefaultSettingsComponent(context, get()))

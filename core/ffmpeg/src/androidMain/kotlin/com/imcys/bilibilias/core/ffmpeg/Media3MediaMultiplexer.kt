@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.ffmpeg
 
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -11,7 +12,6 @@ import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.Transformer
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.flow.interval
 import com.imcys.bilibilias.core.logging.logger
 import kotlinx.coroutines.Dispatchers
@@ -23,13 +23,14 @@ import kotlinx.io.IOException
 import java.io.File
 
 @OptIn(UnstableApi::class)
-internal class Media3MediaMultiplexer : MediaMultiplexer {
+internal class Media3MediaMultiplexer(
+    private val context: Context,
+) : MediaMultiplexer {
     private val logger = logger<Media3MediaMultiplexer>()
 
     override val progress = MutableStateFlow(0)
     override val isRunning = MutableStateFlow(false)
     override suspend fun muxMedia(inputPaths: List<String>, outputPath: String) {
-        val context = KmpContext.get()
         val tempFile = File(context.filesDir, "output.mp4")
         val sequences = inputPaths.map {
             val editedMediaItem = EditedMediaItem.Builder(MediaItem.fromUri(it)).build()
@@ -81,7 +82,6 @@ internal class Media3MediaMultiplexer : MediaMultiplexer {
     }
 
     private fun copyFile(sourcePath: File, destinationUri: Uri) {
-        val context = KmpContext.get()
         val outputStream = context.contentResolver.openOutputStream(destinationUri, "rw")
             ?: throw IOException("Failed to open output stream for URI: $destinationUri")
         sourcePath.inputStream().buffered().use { input ->
@@ -90,5 +90,4 @@ internal class Media3MediaMultiplexer : MediaMultiplexer {
             }
         }
     }
-
 }

@@ -39,6 +39,7 @@ kotlin {
             implementation(projects.core.datastore)
             implementation(projects.core.httpDownloader)
             implementation(projects.core.ktorClient)
+            implementation(projects.core.ffmpeg)
             implementation(projects.logic)
             implementation(projects.ui)
 

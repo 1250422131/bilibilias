@@ -7,5 +7,3 @@ interface MediaMultiplexer {
     val progress: StateFlow<Int>
     suspend fun muxMedia(inputPaths: List<String>, outputPath: String)
 }
-
-expect fun createMediaMultiplexer(): MediaMultiplexer
