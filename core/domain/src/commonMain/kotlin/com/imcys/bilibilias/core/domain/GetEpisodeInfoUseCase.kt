@@ -97,7 +97,7 @@ class GetEpisodeInfoUseCase(
                     description = it.description
                 )
             }
-        }
+        }.sortedByDescending { it.id }
         return videoStreams to audioStreams
     }
 
