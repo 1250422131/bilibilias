@@ -17,7 +17,6 @@ kotlin {
             api(compose.runtime)
 
             api(libs.androidx.datastore)
-            implementation("co.touchlab:kermit:2.0.4")
 
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
@@ -26,6 +25,8 @@ kotlin {
             api(libs.kotlinx.serialization.json)
 
             api(libs.uri.kmp)
+
+            implementation(libs.kermit)
         }
     }
 }
