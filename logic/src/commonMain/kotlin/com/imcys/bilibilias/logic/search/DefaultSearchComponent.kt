@@ -11,7 +11,6 @@ import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
 import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
@@ -30,7 +29,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.core.component.inject
-import kotlin.uuid.ExperimentalUuidApi
 
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
@@ -100,7 +98,7 @@ class DefaultSearchComponent(
         }
     }
 
-    override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
+    override fun requestCache(request: EpisodeCacheRequest) {
         applicationScope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
             val metadata = episodeInfo.asEpisodeMetadata()
@@ -120,11 +118,6 @@ class DefaultSearchComponent(
             metadata,
             MediaCachePartMetadata(downloadId.value)
         )
-    }
-
-    @OptIn(ExperimentalUuidApi::class)
-    private suspend fun download(downloadUrl: String): DownloadId {
-        return httpDownloader.download(downloadUrl)
     }
 
     fun EpisodeInfo.asEpisodeMetadata(): EpisodeMetadata {

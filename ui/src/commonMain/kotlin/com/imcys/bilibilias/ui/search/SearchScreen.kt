@@ -3,11 +3,9 @@ package com.imcys.bilibilias.ui.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,10 +18,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -39,16 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
-import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.logic.search.SelfInfoUiState
@@ -87,7 +80,7 @@ fun SearchContent(
     selfInfoUiState: SelfInfoUiState,
     onSearchQueryChanged: (String) -> Unit,
     onLogout: () -> Unit,
-    onCacheRequest: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit,
+    onCacheRequest: (request: EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
     navigationToSettings: () -> Unit,
@@ -141,93 +134,49 @@ fun SearchContent(
                         keyboardController?.hide()
                     }
 
-                    Column {
+                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         val resolutionOptions =
                             searchResultUiState.episodeCacheListState.videoStreams.distinctBy { it.id }
-                        var selectedResolution by remember { mutableStateOf(searchResultUiState.episodeCacheListState.videoStreams[0]) }
+                        var selectedVideoOption by remember { mutableStateOf(searchResultUiState.episodeCacheListState.videoStreams[0]) }
 
-                        val encodingOptions = searchResultUiState.episodeCacheListState.audioStreams
-                        var selectedEncoding by remember { mutableStateOf(encodingOptions[0]) }
+                        val soundQualityOptions =
+                            searchResultUiState.episodeCacheListState.audioStreams
+                        var selectedAudioOption by remember { mutableStateOf(soundQualityOptions[0]) }
+                        val requestCache: (episode: EpisodeCacheState) -> Unit =
+                            { episodeCacheState ->
+                                val request = EpisodeCacheRequest(
+                                    episodeCacheState,
+                                    videoQuality = selectedVideoOption.id,
+                                    audioQuality = selectedAudioOption.id,
+                                )
+                                onCacheRequest(request)
+                            }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             SelectField(
-                                label = "画质",
+                                label = { Text("画质") },
                                 options = resolutionOptions,
-                                selectedOption = selectedResolution,
-                                onOptionSelected = { selectedResolution = it },
+                                selectedOption = selectedVideoOption,
+                                onOptionSelected = { selectedVideoOption = it },
                                 menuItemContent = {
                                     Text(it.description)
                                 },
+                                optionToText = { it.description },
                                 modifier = Modifier.weight(1f)
                             )
                             SelectField(
-                                label = "音质",
-                                options = encodingOptions,
-                                selectedOption = selectedEncoding,
-                                onOptionSelected = { selectedEncoding = it },
+                                label = { Text("音质") },
+                                options = soundQualityOptions,
+                                selectedOption = selectedAudioOption,
+                                onOptionSelected = { selectedAudioOption = it },
                                 menuItemContent = { Text(it.description) },
+                                optionToText = { it.description },
                                 modifier = Modifier.weight(1f)
                             )
                         }
+                        EpisodeList(searchResultUiState.episodes) {
+                            requestCache(it)
+                        }
                     }
-                }
-            }
-        }
-    }
-}
-
-//     Column(
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                    ) {
-//                        EpisodeInfoCard(
-//                            searchResultUiState.episodeCacheListState.episodeInfo,
-//                            navigationToPlayer
-//                        )
-//                        Button(
-//                            { showEpisodeListGroup = true },
-//                            modifier = Modifier.align(Alignment.CenterHorizontally)
-//                        ) {
-//                            Text("下载")
-//                        }
-//                        EpisodeListGroup(
-//                            showEpisodeListGroup,
-//                            searchResultUiState.episodes,
-//                            searchResultUiState.episodeCacheListState.videoStreams,
-//                            onDismiss = { showEpisodeListGroup = false },
-//                            onRequestCache = { episode, request ->
-//                                onCacheRequest(episode, request)
-//                            }
-//                        )
-//                    }
-@Composable
-private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2, navigationToPlayer: () -> Unit) {
-    OutlinedCard(modifier = Modifier.padding(8.dp)) {
-        Row {
-            Box(modifier = Modifier.weight(3f)) {
-                AsyncImage(
-                    episodeInfo.cover,
-                    "VideoCover",
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Inside,
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(1f)
-                    .height(IntrinsicSize.Min),
-                verticalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                TextButton(
-                    { navigationToPlayer() },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("看视频")
-                }
-                TextButton(
-                    { /*searchResultUiState.episode.owner.id*/ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("去主页")
                 }
             }
         }

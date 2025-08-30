@@ -2,7 +2,6 @@ package com.imcys.bilibilias.logic.search
 
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import kotlinx.coroutines.flow.StateFlow
 
 interface SearchComponent : BackHandlerOwner {
@@ -11,6 +10,6 @@ interface SearchComponent : BackHandlerOwner {
     val selfInfoUiState: StateFlow<SelfInfoUiState>
     fun onSearchTriggered(query: String)
     fun onSearchQueryChanged(query: String)
-    fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest)
+    fun requestCache(request: EpisodeCacheRequest)
     fun onLogout()
 }
