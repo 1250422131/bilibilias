@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 internal fun PagerScope.QrContent(
     state: QrCodeLoginState,
     dispatch: (QrCodeLoginAction) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     when (state) {
         is QrCodeLoginState.Error -> {
@@ -128,7 +129,6 @@ internal fun PagerScope.QrContent(
                         },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // TODO: 弹消息提示
                         Icon(
                             imageVector = Icons.Default.SaveAlt,
                             contentDescription = "Save to Album",
@@ -155,7 +155,7 @@ internal fun PagerScope.QrContent(
 
                 val clipboard = LocalClipboardManager.current
                 val scope = rememberCoroutineScope()
-                // 已复制到剪贴板，可粘贴至已登录的app私信处发送，然后点击已发送的链接打开
+                //
                 Text(
                     text = state.url,
                     style = MaterialTheme.typography.labelSmall,
@@ -164,6 +164,10 @@ internal fun PagerScope.QrContent(
                         .clickable {
                             scope.launch {
                                 clipboard.setText(AnnotatedString(state.url))
+                                onShowSnackbar(
+                                    "已复制到剪贴板，可粘贴至已登录的app私信处发送，然后点击已发送的链接打开",
+                                    null
+                                )
                             }
                         },
                     color = MaterialTheme.colorScheme.onSurface.copy(0.4f)

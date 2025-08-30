@@ -166,14 +166,28 @@ fun AsApp(
                 )
             },
         ) { padding ->
-            Children(component, Modifier.padding(padding))
+            Children(
+                component,
+                onShowSnackbar = { message, action ->
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = action,
+                        duration = SnackbarDuration.Short,
+                    ) == SnackbarResult.ActionPerformed
+                },
+                Modifier.padding(padding)
+            )
         }
     }
 }
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
+private fun Children(
+    component: RootComponent,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+    modifier: Modifier = Modifier
+) {
     Children(
         stack = component.stack,
         modifier = modifier,
@@ -197,7 +211,8 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
                 is RootComponent.Child.LoginChild -> LoginScreen(
                     child.component,
-                    onBack = component::onBackClicked
+                    onBack = component::onBackClicked,
+                    onShowSnackbar = onShowSnackbar,
                 )
 
                 is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)

@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     component: LoginComponent,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     onBack: () -> Unit
 ) {
     val cookieLoginStateMachine = component.cookieStateMachine.produceStateMachine()
@@ -47,7 +48,8 @@ fun LoginScreen(
     LoginContent(
         onBack = onBack,
         cookieLoginStateMachine = cookieLoginStateMachine,
-        qrCodeStateMachine,
+        qrCodeStateMachine = qrCodeStateMachine,
+        onShowSnackbar = onShowSnackbar,
     )
 }
 
@@ -55,6 +57,7 @@ fun LoginScreen(
 @Composable
 fun LoginContent(
     onBack: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     cookieLoginStateMachine: FlowReduxStateMachine<State<CookieLoginState>, CookieAction>,
     qrCodeStateMachine: FlowReduxStateMachine<State<QrCodeLoginState>, QrCodeLoginAction>,
 ) {
@@ -118,6 +121,7 @@ fun LoginContent(
                         QrContent(
                             state = state,
                             dispatch = qrCodeStateMachine.dispatchAction,
+                            onShowSnackbar = onShowSnackbar,
                         )
                     }
                 }

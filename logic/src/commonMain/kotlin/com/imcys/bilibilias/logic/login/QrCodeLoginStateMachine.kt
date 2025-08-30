@@ -2,6 +2,7 @@ package com.imcys.bilibilias.logic.login
 
 import com.freeletics.flowredux2.FlowReduxStateMachineFactory
 import com.freeletics.flowredux2.initializeWith
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.Expired
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.Success
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.flow
 class QrCodeLoginStateMachine(
     private val loginApi: BilibiliLoginApi,
     private val tokenRepository: TokenRepository,
+    private val errorMonitor: ErrorMonitor
 ) : FlowReduxStateMachineFactory<QrCodeLoginState, QrCodeLoginAction>() {
     private val logger = logger<QrCodeLoginStateMachine>()
     private var shouldContinuePolling = true
@@ -71,6 +73,7 @@ class QrCodeLoginStateMachine(
                     override { QrCodeLoginState.GeneratingQRCode }
                 }
                 onActionEffect<QrCodeLoginAction.SaveToAlbum> {
+                    errorMonitor.addMessageByString("正在保存至图库")
                     FileKit.saveImageToGallery(it.bytes, "BilibiliAs.png")
                 }
             }
