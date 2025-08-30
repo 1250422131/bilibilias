@@ -48,7 +48,7 @@ class MediaSourceSelectedUseCase(
         action: MediaStreamTransformCondition
     ): MediaStreamMetadata {
         val mediaStreamMetadataMap = this.map { playbackInfo ->
-            val allBackupUrls = playbackInfo.backupUrl1 + playbackInfo.backupUrl2
+            val allBackupUrls = playbackInfo.primaryBackupUrls + playbackInfo.secondaryBackupUrls
             val cdnResources = allBackupUrls.mapNotNull { url -> Cdn.parse(url) }
                 .filterNot { it.type == CdnType.MCDN }
             MediaStreamMetadata(
