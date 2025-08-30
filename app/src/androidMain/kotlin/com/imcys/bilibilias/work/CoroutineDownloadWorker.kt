@@ -66,37 +66,11 @@ class CoroutineDownloadWorker(
 //            .setSmallIcon(
 //                com.google.samples.apps.nowinandroid.core.notifications.R.drawable.core_notifications_ic_nia_notification,
 //            )
+            .setSmallIcon(R.drawable.bilibilias)
             .setContentTitle(getString(R.string.work_notification_title))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
     }
-
-    // 恢复逻辑
-    //        val result = combine(
-//            httpDownloader.downloadStatesFlow,
-//            mediaCacheDataSource.listFlow
-//        ) { downloadStates, mediaCacheSaves ->
-//            val nowMillis = Clock.System.now().toEpochMilliseconds()
-//            val twoHoursMillis = 2.hours.inWholeMilliseconds
-//
-//            val staleDownloadIds = downloadStates
-//                .filter { state ->
-//                    state.status != DownloadStatus.COMPLETED &&
-//                            state.timestamp + twoHoursMillis < nowMillis
-//                }
-//                .map { it.downloadId.value }
-//                .toSet()
-//
-//            if (staleDownloadIds.isEmpty()) {
-//                emptyList()
-//            } else {
-//                mediaCacheSaves.filter { save ->
-//                    save.metadata.metadata.any { metadataItem ->
-//                        metadataItem.downloadId in staleDownloadIds
-//                    }
-//                }
-//            }
-//        }
     companion object {
         const val SYNC_TOPIC = "sync"
         private const val SYNC_NOTIFICATION_ID = 0
