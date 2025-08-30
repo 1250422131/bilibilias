@@ -26,6 +26,8 @@ kotlin {
 
             api(libs.uri.kmp)
 
+            api(libs.filekit.core)
+
             implementation(libs.kermit)
         }
     }

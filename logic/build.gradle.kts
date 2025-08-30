@@ -16,7 +16,6 @@ kotlin {
             api(libs.flowredux)
             implementation(libs.lifecycle.coroutines)
 
-            implementation("io.github.vinceglb:filekit-core:0.10.0")
         }
     }
 }

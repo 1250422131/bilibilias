@@ -19,6 +19,7 @@ composeMultiplatform = "1.8.2"
 coil = "3.3.0"
 decompose = "3.3.0"
 ffmpegKit = "1.1.0"
+filekitCore = "0.10.0"
 flowredux = "2.0.0-alpha4"
 kermit = "2.0.8"
 koin = "4.1.0"
@@ -59,6 +60,7 @@ decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", ver
 
 ffmpeg-kit-full-gpl = { module = "com.antonkarpenko:ffmpeg-kit-full-gpl", version.ref = "ffmpegKit" }
 
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
 flowredux = { module = "com.freeletics.flowredux2:flowredux", version.ref = "flowredux" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-io = { module = "co.touchlab:kermit-io", version.ref = "kermit" }
