@@ -35,12 +35,7 @@ class MediaSourceSelectedUseCase(
             val playUrl = playUrlDeferred.await()
 
             val dash = playUrl.dash
-            val audioList = buildList {
-                addAll(dash.audio)
-                dash.flac?.audio?.let { add(it) }
-                dash.dolby.audio?.let { addAll(it) }
-            }
-            val audioUrl = audioList.applyMediaStreamTransformation { streamMap ->
+            val audioUrl = dash.audioList.applyMediaStreamTransformation { streamMap ->
                 streamMap.values.flatten().maxBy { it.id }
             }
             val videoUrl = dash.video.applyMediaStreamTransformation { streamMap ->

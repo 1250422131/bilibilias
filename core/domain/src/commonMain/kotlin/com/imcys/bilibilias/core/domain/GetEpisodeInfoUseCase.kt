@@ -94,12 +94,7 @@ class GetEpisodeInfoUseCase(
                 )
             }
         }
-        val audioList = buildList {
-            addAll(dash.audio)
-            dash.dolby.audio?.let { addAll(it) }
-            dash.flac?.audio?.let { add(it) }
-        }
-        val audioStreams = audioList.mapNotNull { audioQuality ->
+        val audioStreams = dash.audioList.mapNotNull { audioQuality ->
             val quality = AudioQuality.fromCode(audioQuality.id)
             quality?.let {
                 MediaStream(

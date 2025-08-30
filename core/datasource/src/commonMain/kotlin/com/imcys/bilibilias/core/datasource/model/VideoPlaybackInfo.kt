@@ -3,6 +3,7 @@ package com.imcys.bilibilias.core.datasource.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class VideoPlaybackInfo(
@@ -52,6 +53,12 @@ data class VideoPlaybackInfo(
         @SerialName("video")
         val video: List<AudioOrVideo>,
     ) {
+        @Transient
+        val audioList = buildList {
+            addAll(audio)
+            flac?.audio?.let { add(it) }
+            dolby.audio?.let { addAll(it) }
+        }
         @Serializable
         data class Dolby(
             @SerialName("audio")
