@@ -12,14 +12,19 @@ import com.arkivanov.essenty.lifecycle.essentyLifecycle
 import com.imcys.bilibilias.core.context.BuildConfig
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
+import com.imcys.bilibilias.ui.root.rememberAsAppState
 import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 class MainActivity : ComponentActivity(), KoinComponent {
+
+    private val errorMonitor: ErrorMonitor = get()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -34,11 +39,12 @@ class MainActivity : ComponentActivity(), KoinComponent {
         val lifecycleOwner = createLifecycleOwner()
 
         setContent {
+            val appState = rememberAsAppState(errorMonitor)
             CompositionLocalProvider(
                 LocalKmpContext provides KmpContext,
                 LocalLifecycleOwner provides lifecycleOwner,
             ) {
-                AsApp(component)
+                AsApp(component, appState)
             }
         }
     }
