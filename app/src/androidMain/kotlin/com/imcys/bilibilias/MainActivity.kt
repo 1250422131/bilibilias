@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.essentyLifecycle
+import com.imcys.bilibilias.core.context.BuildConfig
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
@@ -26,13 +27,11 @@ class MainActivity : ComponentActivity(), KoinComponent {
 //        val notifier = get<Notifier>()
 //        notifier.postNotifications()
 
-        val searchText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: "BV1qW4y1k7yh"
+        val searchText = getSearchTextFromIntent()
 
         val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
         val component = DefaultRootComponent(context, searchText)
-        val lifecycleOwner = object : LifecycleOwner {
-            override val lifecycle get() = essentyLifecycle()
-        }
+        val lifecycleOwner = createLifecycleOwner()
 
         setContent {
             CompositionLocalProvider(
@@ -43,4 +42,25 @@ class MainActivity : ComponentActivity(), KoinComponent {
             }
         }
     }
+
+    private fun createLifecycleOwner(): LifecycleOwner {
+        return object : LifecycleOwner {
+            override val lifecycle get() = essentyLifecycle()
+        }
+    }
+
+    private fun getSearchTextFromIntent(): String? {
+        val intentSearchText = intent.getStringExtra(Intent.EXTRA_TEXT)
+        return intentSearchText ?: if (BuildConfig.debugBuild) { // Use BuildConfig.DEBUG
+            generateRandomTestSearchText()
+        } else {
+            null
+        }
+    }
+
+    private fun generateRandomTestSearchText(): String {
+        return getSampleSearchQueries().random()
+    }
+
+    private fun getSampleSearchQueries() = listOf("BV1qW4y1k7yh")
 }
