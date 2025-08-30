@@ -7,105 +7,117 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoPlaybackInfo(
     @SerialName("accept_description")
-    val acceptDescription: List<String> = listOf(),
+    val acceptDescription: List<String>,
     @SerialName("accept_format")
-    val acceptFormat: String = "",
+    val acceptFormat: String,
     @SerialName("accept_quality")
-    val acceptQuality: List<Int> = listOf(),
+    val acceptQuality: List<Int>,
     @SerialName("dash")
-    val dash: Dash = Dash(),
+    val dash: Dash,
     @SerialName("format")
-    val format: String = "",
+    val format: String,
     @SerialName("from")
-    val from: String = "",
+    val from: String,
     @SerialName("last_play_cid")
-    val lastPlayCid: Long = 0,
+    val lastPlayCid: Long,
     @SerialName("last_play_time")
-    val lastPlayTime: Int = 0,
+    val lastPlayTime: Int,
     @SerialName("message")
-    val message: String = "",
+    val message: String,
     @SerialName("quality")
-    val quality: Int = 0,
+    val quality: Int,
     @SerialName("result")
-    val result: String = "",
+    val result: String,
     @SerialName("seek_param")
-    val seekParam: String = "",
+    val seekParam: String,
     @SerialName("seek_type")
-    val seekType: String = "",
+    val seekType: String,
     @SerialName("support_formats")
-    val supportFormats: List<Dash.SupportFormat> = listOf(),
+    val supportFormats: List<Dash.SupportFormat>,
     @SerialName("timelength")
-    val timeLength: Int = 0,
+    val timeLength: Int,
     @SerialName("video_codecid")
-    val videoCodecId: Int = 0,
+    val videoCodecId: Int,
 ) {
     @Serializable
     data class Dash(
         @SerialName("audio")
-        val audio: List<AudioOrVideo> = listOf(),
+        val audio: List<AudioOrVideo>,
         @SerialName("dolby")
-        val dolby: List<AudioOrVideo> = listOf(),
+        val dolby: Dolby,
         @SerialName("duration")
-        val duration: Int = 0,
+        val duration: Int,
         @SerialName("flac")
-        val flac: List<AudioOrVideo> = listOf(),
+        val flac: Flac? = null,
         @SerialName("video")
-        val video: List<AudioOrVideo> = listOf(),
+        val video: List<AudioOrVideo>,
     ) {
+        @Serializable
+        data class Dolby(
+            @SerialName("audio")
+            val audio: List<AudioOrVideo>? = null,
+        )
+
+        @Serializable
+        data class Flac(
+            @SerialName("audio")
+            val audio: AudioOrVideo,
+        )
+
         @Serializable
         data class SupportFormat(
             @SerialName("codecs")
-            val codecs: List<String> = listOf(),
+            val codecs: List<String>,
             @SerialName("display_desc")
-            val displayDesc: String = "",
+            val displayDesc: String,
             @SerialName("format")
-            val format: String = "",
+            val format: String,
             @SerialName("new_description")
-            val newDescription: String = "",
+            val newDescription: String,
             @SerialName("quality")
-            val quality: Int = 0,
+            val quality: Int,
             @SerialName("superscript")
-            val superscript: String = ""
+            val superscript: String,
         )
     }
 
     @Serializable
     data class AudioOrVideo(
         @SerialName("base_url")
-        val baseUrl: String = "",
+        val baseUrl: String,
         @SerialName("backup_url")
-        val backupUrl1: List<String> = listOf(),
+        val primaryBackupUrls: List<String>,
         @SerialName("backupUrl")
-        val backupUrl2: List<String> = listOf(),
+        val secondaryBackupUrls: List<String>,
         @SerialName("bandwidth")
-        val bandwidth: Int = 0,
+        val bandwidth: Int,
         @SerialName("codecid")
-        val codecid: Int = 0,
+        val codecid: Int,
         @SerialName("codecs")
-        val codecs: String = "",
+        val codecs: String,
         @SerialName("frame_rate")
-        val frameRate: String = "",
+        val frameRate: String,
         @SerialName("height")
-        val height: Int = 0,
+        val height: Int,
         @SerialName("id")
-        val id: Int = 0,
+        val id: Int,
         @SerialName("mime_type")
-        val mimeType: String = "",
+        val mimeType: String,
         @SerialName("sar")
-        val sar: String = "",
+        val sar: String,
         @SerialName("segment_base")
-        val segmentBase: SegmentBase = SegmentBase(),
+        val segmentBase: SegmentBase,
         @SerialName("start_with_sap")
-        val startWithSap: Int = 0,
+        val startWithSap: Int,
         @SerialName("width")
-        val width: Int = 0
+        val width: Int,
     ) {
         @Serializable
         data class SegmentBase(
             @SerialName("index_range")
-            val indexRange: String = "",
+            val indexRange: String,
             @SerialName("initialization")
-            val initialization: String = ""
+            val initialization: String,
         )
     }
 }
