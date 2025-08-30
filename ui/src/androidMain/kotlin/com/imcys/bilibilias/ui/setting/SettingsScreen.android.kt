@@ -22,6 +22,7 @@ internal actual fun ShareLogFile() {
     ) {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")
+        // todo use buildconfig
         shareIntent.putExtra(
             Intent.EXTRA_STREAM,
             FileProvider.getUriForFile(
