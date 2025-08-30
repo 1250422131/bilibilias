@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.MediaStream
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.logic.search.SelfInfoUiState
@@ -151,34 +153,67 @@ fun SearchContent(
                                 )
                                 onCacheRequest(request)
                             }
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SelectField(
-                                label = { Text("画质") },
-                                options = resolutionOptions,
-                                selectedOption = selectedVideoOption,
-                                onOptionSelected = { selectedVideoOption = it },
-                                menuItemContent = {
-                                    Text(it.description)
-                                },
-                                optionToText = { it.description },
-                                modifier = Modifier.weight(1f)
-                            )
-                            SelectField(
-                                label = { Text("音质") },
-                                options = soundQualityOptions,
-                                selectedOption = selectedAudioOption,
-                                onOptionSelected = { selectedAudioOption = it },
-                                menuItemContent = { Text(it.description) },
-                                optionToText = { it.description },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        QualitySelection(
+                            videoStreams = resolutionOptions,
+                            selectedVideoOption = selectedVideoOption,
+                            onVideoOptionSelected = { selectedVideoOption = it },
+                            audioStreams = soundQualityOptions,
+                            selectedAudioOption = selectedAudioOption,
+                            onAudioOptionSelected = { selectedAudioOption = it },
+                        )
+                        Text("分集(${searchResultUiState.episodes.size})")
                         EpisodeList(searchResultUiState.episodes) {
                             requestCache(it)
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun QualitySelection(
+    videoStreams: List<MediaStream>,
+    audioStreams: List<MediaStream>,
+    selectedVideoOption: MediaStream,
+    onVideoOptionSelected: (MediaStream) -> Unit,
+    selectedAudioOption: MediaStream,
+    onAudioOptionSelected: (MediaStream) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp), // Apply padding here or on the Row
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        if (videoStreams.isNotEmpty()) {
+            SelectField(
+                label = { Text("画质") }, // Consider R.string.video_quality
+                options = videoStreams,
+                selectedOption = selectedVideoOption,
+                onOptionSelected = onVideoOptionSelected,
+                menuItemContent = { stream -> Text(stream.description) },
+                optionToText = { stream -> stream.description },
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            // Optional: Show a placeholder or empty state if no video options
+            Spacer(modifier = Modifier.weight(1f)) // To maintain layout
+        }
+
+        if (audioStreams.isNotEmpty()) {
+            SelectField(
+                label = { Text("音质") }, // Consider R.string.audio_quality
+                options = audioStreams,
+                selectedOption = selectedAudioOption,
+                onOptionSelected = onAudioOptionSelected,
+                menuItemContent = { stream -> Text(stream.description) },
+                optionToText = { stream -> stream.description },
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            // Optional: Show a placeholder or empty state if no audio options
+            Spacer(modifier = Modifier.weight(1f)) // To maintain layout
         }
     }
 }
