@@ -94,7 +94,7 @@ class GetEpisodeInfoUseCase(
                 )
             }
         }
-        val audioStreams = dash.audioList.mapNotNull { audioQuality ->
+        val audioStreams = dash.combinedAudioSources.mapNotNull { audioQuality ->
             val quality = AudioQuality.fromCode(audioQuality.id)
             quality?.let {
                 MediaStream(

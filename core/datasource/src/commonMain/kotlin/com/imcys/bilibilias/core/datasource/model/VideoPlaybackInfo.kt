@@ -54,7 +54,7 @@ data class VideoPlaybackInfo(
         val video: List<AudioOrVideo>,
     ) {
         @Transient
-        val audioList = buildList {
+        val combinedAudioSources = buildList {
             addAll(audio)
             flac?.audio?.let { add(it) }
             dolby.audio?.let { addAll(it) }
