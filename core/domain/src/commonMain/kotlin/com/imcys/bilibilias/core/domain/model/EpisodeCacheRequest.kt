@@ -1,11 +1,7 @@
 package com.imcys.bilibilias.core.domain.model
 
-@Deprecated("Use EpisodeCacheState")
 data class EpisodeCacheRequest(
-    val episodeId: String,
-    val episodeSubId: Long,
-    @Deprecated("未来在设置中替换")
-    val videoResolution: Int,
-    @Deprecated("未来在设置中替换")
-    val audioResolution: Int,
+    val cacheState: EpisodeCacheState,
+    val videoQuality: Int,
+    val audioQuality: Int,
 )
