@@ -75,8 +75,8 @@ android {
         applicationId = "com.imcys.bilibilias.mp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 30000
-        versionName = "3.0.1"
+        versionCode = 30200
+        versionName = "3.0.2"
         ndk {
             abiFilters += "arm64-v8a"
         }
