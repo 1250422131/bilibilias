@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
         val searchText = getSearchTextFromIntent()
 
-        val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
+        val context = DefaultAppComponentContext(defaultComponentContext(), get())
         val component = DefaultRootComponent(context, searchText)
         val lifecycleOwner = createLifecycleOwner()
 
