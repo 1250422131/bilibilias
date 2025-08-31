@@ -4,7 +4,7 @@
 
 ## 下载地址
 
-- [点击下载最新版 APK](https://github.com/SOCK-MAGIC/bilibilias/releases)
+- [点击下载最新版 APK](https://github.com/SOCK-MAGIC/bilibilias/releases/latest)
 
 ## 项目简介
 
@@ -18,17 +18,6 @@ B 站资源。
 - 支持多平台和多种资源类型
   - **目前仅支持 Android 平台**，Windows 版本正在开发中，敬请期待。
   - 资源类型包括 B 站视频、番剧，未来将持续扩展支持范围。
-
-## 项目结构
-
-```
-.
-├── app                # 应用主模块
-├── build-logic        # 构建逻辑相关
-├── core               # 核心功能实现
-├── logic              # 业务逻辑层
-└── ui                 # 前端界面相关
-```
 
 ## 发展计划
 
