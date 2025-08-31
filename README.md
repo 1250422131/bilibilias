@@ -1,11 +1,59 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop.
+# bilibilias
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+哔哩哔哩解析工具 - 一个辅助缓存下载B站视频和番剧的APP，帮助你快速便捷地缓存B站视频及番剧。
 
+## 下载地址
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+- [点击下载最新版 APK](https://github.com/SOCK-MAGIC/bilibilias/releases)
+
+## 项目简介
+
+**bilibilias** 是一款专为 B 站用户开发的视频缓存工具，支持解析番剧、视频等内容，并提供一键缓存下载功能，让你可以离线观看喜爱的
+B 站资源。
+
+## 主要功能
+
+- 支持哔哩哔哩视频、番剧的解析与缓存下载
+- 简洁易用的界面
+- 支持多平台和多种资源类型
+  - **目前仅支持 Android 平台**，Windows 版本正在开发中，敬请期待。
+  - 资源类型包括 B 站视频、番剧，未来将持续扩展支持范围。
+
+## 项目结构
+
+```
+.
+├── app                # 应用主模块
+├── build-logic        # 构建逻辑相关
+├── core               # 核心功能实现
+├── logic              # 业务逻辑层
+└── ui                 # 前端界面相关
+```
+
+## 发展计划
+
+- [ ] Windows 平台支持
+- [ ] 支持更多 B 站资源类型（如专栏、直播、音频等）
+- [ ] 支持多分辨率、字幕、弹幕的解析与缓存
+- [ ] 多语言界面和更多高级下载功能
+- [ ] 丰富的插件/扩展生态
+
+欢迎提出建议和反馈！
+
+## 贡献指南
+
+欢迎每一位开发者参与贡献！你可以通过以下方式参与项目：
+
+- 提交 Issue 报告 Bug 或提出新功能建议
+- 提交 Pull Request 贡献代码
+- 帮助完善文档
+
+---
+
+## 致谢
+
+感谢所有为本项目做出贡献的开发者与用户！
+
+---
+
+> 本项目为开源项目，欢迎 Issue、PR 和 Star！
