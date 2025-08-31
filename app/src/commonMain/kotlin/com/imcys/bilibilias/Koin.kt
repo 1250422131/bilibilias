@@ -2,7 +2,6 @@ package com.imcys.bilibilias
 
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.data.di.DataModule
 import com.imcys.bilibilias.core.datasource.DataSourceModule
 import com.imcys.bilibilias.core.datasource.utils.WbiInitializer
@@ -10,6 +9,7 @@ import com.imcys.bilibilias.core.datastore.DataStoreModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
+import com.imcys.bilibilias.core.di.CommonModule
 import com.imcys.bilibilias.core.di.applicationScope
 import com.imcys.bilibilias.core.domain.UseCaseModule
 import com.imcys.bilibilias.core.ffmpeg.MediaMultiplexerModule
@@ -54,13 +54,14 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
 fun KoinApplication.commonModules() = module {
     includes(
-        otherModules(),
-        UseCaseModule,
-        DataSourceModule,
-        LogicModule,
-        DataStoreModule,
-        MediaMultiplexerModule,
+        CommonModule,
         DataModule,
+        DataSourceModule,
+        DataStoreModule,
+        LogicModule,
+        MediaMultiplexerModule,
+        UseCaseModule,
+        otherModules()
     )
 }
 
@@ -91,7 +92,7 @@ private fun KoinApplication.otherModules() = module {
                 }
             },
             fileSystem = SystemFileSystem,
-            baseSaveDir = Path(KmpContext.dataDir, "Download"),
+            baseSaveDir = Path(BuildConfig.MEDIA_DOWNLOAD),
         )
     }
     single<CoroutineScope> {
@@ -103,7 +104,6 @@ private fun KoinApplication.otherModules() = module {
             } + SupervisorJob() + Dispatchers.IO,
         )
     }
-    single { KmpContext }
 }
 
 fun KoinApplication.startCommonKoinModule(

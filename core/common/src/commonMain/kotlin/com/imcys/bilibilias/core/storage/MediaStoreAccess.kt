@@ -1,18 +1,15 @@
 package com.imcys.bilibilias.core.storage
 
 import com.eygraber.uri.Uri
-import com.imcys.bilibilias.core.context.KmpContext
 
-expect object AsMediaStore {
+interface MediaStoreAccess {
     fun createVideo(
-        context: KmpContext,
         displayName: String,
-        mediaType: String,
+        mimeType: String,
         relativePath: String,
     ): Uri?
 
-    fun createMedia(
-        context: KmpContext,
+    fun createMediaFile(
         uri: Uri,
         displayName: String,
         mediaType: String,

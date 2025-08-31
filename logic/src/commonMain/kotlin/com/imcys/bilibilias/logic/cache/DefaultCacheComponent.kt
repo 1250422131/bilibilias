@@ -1,12 +1,11 @@
 package com.imcys.bilibilias.logic.cache
 
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.domain.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.ffmpeg.MediaMultiplexer
 import com.imcys.bilibilias.core.logging.logger
-import com.imcys.bilibilias.core.storage.AsMediaStore
+import com.imcys.bilibilias.core.storage.MediaStoreAccess
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,6 +28,7 @@ interface CacheComponent {
 class DefaultCacheComponent(
     componentContext: AppComponentContext,
     private val multiplexer: MediaMultiplexer,
+    private val mediaStoreAccess: MediaStoreAccess,
 ) : CacheComponent, AppComponentContext by componentContext {
     private val getCachedEpisodeStateUseCase by inject<GetCachedEpisodeStateUseCase>()
     private val mediaCacheStorage by inject<MediaCacheDataSource>()
@@ -53,7 +53,7 @@ class DefaultCacheComponent(
             val uris = state.mediaCacheMetadata.metadata.map { it.filePath.toString() }
             val filename = Clock.System.now().toEpochMilliseconds()
             val videoUri =
-                AsMediaStore.createVideo(KmpContext, filename.toString(), "video/mp4", "BilibiliAs")
+                mediaStoreAccess.createVideo(filename.toString(), "video/mp4", "BilibiliAs")
                     ?: run {
                         logger.warn { "Failed to create video file for episode: ${state.episodeMetadata}" }
                         lock.update { false }

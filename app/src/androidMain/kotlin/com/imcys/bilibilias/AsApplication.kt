@@ -6,7 +6,6 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.work.Sync
@@ -35,7 +34,7 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
         return ImageLoader.Builder(this)
             .components { add(KtorNetworkFetcherFactory(createHttpClient())) }
             .apply {
-                if (KmpContext.isDebug) {
+                if (BuildConfig.DEBUG) {
                     logger(DebugLogger())
                 }
             }

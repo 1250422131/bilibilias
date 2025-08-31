@@ -9,9 +9,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.essentyLifecycle
-import com.imcys.bilibilias.core.context.BuildConfig
-import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.context.LocalKmpContext
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
@@ -41,7 +38,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
         setContent {
             val appState = rememberAsAppState(errorMonitor)
             CompositionLocalProvider(
-                LocalKmpContext provides KmpContext,
                 LocalLifecycleOwner provides lifecycleOwner,
             ) {
                 AsApp(component, appState)
@@ -57,7 +53,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
     private fun getSearchTextFromIntent(): String? {
         val intentSearchText = intent.getStringExtra(Intent.EXTRA_TEXT)
-        return intentSearchText ?: if (BuildConfig.debugBuild) { // Use BuildConfig.DEBUG
+        return intentSearchText ?: if (BuildConfig.DEBUG) { // Use BuildConfig.DEBUG
             generateRandomTestSearchText()
         } else {
             null

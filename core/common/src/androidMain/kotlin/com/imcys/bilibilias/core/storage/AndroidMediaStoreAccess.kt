@@ -8,36 +8,33 @@ import com.eygraber.uri.Uri
 import com.eygraber.uri.toAndroidUri
 import com.eygraber.uri.toKmpUri
 import com.eygraber.uri.toKmpUriOrNull
-import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.logging.logger
 import java.io.File
 import android.net.Uri as AndroidUri
 
-actual object AsMediaStore {
-    private val logger = logger<AsMediaStore>()
-    actual fun createVideo(
-        context: KmpContext,
+class AndroidMediaStoreAccess(
+    private val context: Context,
+) : MediaStoreAccess {
+    private val logger = logger<AndroidMediaStoreAccess>()
+    override fun createVideo(
         displayName: String,
-        mediaType: String,
+        mimeType: String,
         relativePath: String,
     ): Uri? {
-        return createMedia(
-            context,
+        return createMediaFile(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toKmpUri(),
             displayName,
-            mediaType,
+            mimeType,
             "${Environment.DIRECTORY_MOVIES}${File.separator}$relativePath"
         )
     }
 
-    actual fun createMedia(
-        context: KmpContext,
+    override fun createMediaFile(
         uri: Uri,
         displayName: String,
         mediaType: String,
         relativePath: String,
     ): Uri? {
-        val context = context.get()
         val contentValues =
             ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)

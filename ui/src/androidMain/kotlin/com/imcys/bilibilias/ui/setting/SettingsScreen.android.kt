@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
-import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.core.io.resolve
 import com.imcys.bilibilias.core.io.toFile
 import kotlinx.io.files.Path
@@ -28,7 +28,7 @@ internal actual fun ShareLogFile() {
             FileProvider.getUriForFile(
                 context,
                 "${context.applicationInfo.packageName}.fileprovider",
-                KmpContext.getCurrentLogFile().toFile(),
+                getCurrentLogFile().toFile(),
             ),
         )
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -36,6 +36,6 @@ internal actual fun ShareLogFile() {
     }
 }
 
-private fun KmpContext.getCurrentLogFile(): Path {
-    return logsDir.resolve("app.log")
+private fun getCurrentLogFile(): Path {
+    return BuildConfig.LOG_DIR.resolve("app.log")
 }

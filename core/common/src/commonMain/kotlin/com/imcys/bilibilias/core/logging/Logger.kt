@@ -4,7 +4,7 @@ import co.touchlab.kermit.LoggerConfig
 import co.touchlab.kermit.NoTagFormatter
 import co.touchlab.kermit.loggerConfigInit
 import co.touchlab.kermit.platformLogWriter
-import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.BuildConfig
 import kotlinx.io.files.SystemFileSystem
 import co.touchlab.kermit.Logger as KermitLogger
 
@@ -73,14 +73,14 @@ class LoggerImpl(private val log: KermitLogger) : Logger {
 }
 
 fun loggerConfigurationInit(): LoggerConfig {
-    SystemFileSystem.createDirectories(KmpContext.logsDir)
+    SystemFileSystem.createDirectories(BuildConfig.LOG_DIR)
 
     return loggerConfigInit(
         platformLogWriter(NoTagFormatter),
         FileLogWriter(
             FileLogWriterConfig(
                 "app",
-                KmpContext.logsDir,
+                BuildConfig.LOG_DIR,
                 maxLogFiles = 1
             ),
         )

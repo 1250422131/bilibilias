@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.core.datastore.model
 
-import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.core.io.resolve
 import com.imcys.bilibilias.core.logging.logger
 import kotlinx.io.IOException
@@ -84,7 +84,7 @@ data class MediaCachePartMetadata(
         get() = baseSaveDir.resolve(downloadId)
 
     companion object {
-        private val baseSaveDir = Path(KmpContext.dataDir, "Download")
+        private val baseSaveDir = Path(BuildConfig.MEDIA_DOWNLOAD)
     }
 }
 
