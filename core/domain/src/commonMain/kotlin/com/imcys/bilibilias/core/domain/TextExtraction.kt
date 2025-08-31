@@ -6,20 +6,27 @@ import com.imcys.bilibilias.core.logging.logger
 internal object TextExtraction {
     private val logger = logger<TextExtraction>()
     private val BVID_REGEX_PATTERN = Regex("BV1[1-9A-HJ-NP-Za-km-z]{9}")
+    private val AVID_REGEX_PATTERN = Regex("av|AV[1-9]")
+    private val SHORT_LINK_REGEX_PATTERN = Regex("https://b23.tv/.*")
 
     internal fun textExtract(query: String): MatchResult {
         logger.debug { "query: $query" }
-        val result = BVID_REGEX_PATTERN.find(query)
-        return if (result != null) {
-            MatchResult.BV(result.value)
-        } else {
-            MatchResult.Emptry
+        AVID_REGEX_PATTERN.find(query)?.let {
+            return MatchResult.Av(it.value)
         }
+        BVID_REGEX_PATTERN.find(query)?.let {
+            return MatchResult.Bv(it.value)
+        }
+        SHORT_LINK_REGEX_PATTERN.find(query)?.let {
+            return MatchResult.Http(it.value)
+        }
+        return MatchResult.Empty
     }
 
     internal sealed interface MatchResult {
-        data class BV(val id: String) : MatchResult
-        data object Emptry : MatchResult
+        data class Bv(val id: String) : MatchResult
+        data class Av(val id: String) : MatchResult
+        data class Http(val text: String) : MatchResult
+        data object Empty : MatchResult
     }
 }
-

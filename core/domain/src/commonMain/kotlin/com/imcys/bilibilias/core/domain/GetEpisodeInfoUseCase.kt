@@ -21,12 +21,18 @@ class GetEpisodeInfoUseCase(
     private val api: BilibiliApi,
 ) {
     private val logger = logger<GetEpisodeInfoUseCase>()
-    operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
+    suspend operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
         return when (val result = TextExtraction.textExtract(query)) {
-            is TextExtraction.MatchResult.BV -> bv(result.id)
-
-            TextExtraction.MatchResult.Emptry -> flowOf(null)
+            is TextExtraction.MatchResult.Bv -> bv(result.id)
+            is TextExtraction.MatchResult.Av -> TODO()
+            is TextExtraction.MatchResult.Http -> fetchEpisodesViaRedirect(result.text)
+            TextExtraction.MatchResult.Empty -> flowOf(null)
         }
+    }
+
+    private suspend fun fetchEpisodesViaRedirect(text: String): Flow<EpisodeCacheListState?> {
+        val redirectUrl = api.getRedirectUrl(text)
+        return this(redirectUrl)
     }
 
     private fun bv(id: String): Flow<EpisodeCacheListState> {
@@ -48,13 +54,13 @@ class GetEpisodeInfoUseCase(
                 } else {
                     EpisodeCacheStatus.NotCached
                 }
-                    EpisodeCacheState(
-                        episodeId = detail.bvid,
-                        episodeSubId = cid,
-                        index = page.page,
-                        title = page.part,
-                        cacheStatus = cacheStatus,
-                    )
+                EpisodeCacheState(
+                    episodeId = detail.bvid,
+                    episodeSubId = cid,
+                    index = page.page,
+                    title = page.part,
+                    cacheStatus = cacheStatus,
+                )
             }
             EpisodeCacheListState(
                 episodeInfo = detail.toEpisodeInfo(),

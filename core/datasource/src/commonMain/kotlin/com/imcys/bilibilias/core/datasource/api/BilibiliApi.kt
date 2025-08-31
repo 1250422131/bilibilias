@@ -12,6 +12,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.request
 import io.ktor.http.CookieEncoding
 import io.ktor.http.HttpHeaders
 import io.ktor.http.decodeCookieValue
@@ -34,6 +35,10 @@ class BilibiliApi(
 
     suspend fun getNavigationData(): BilibiliNavigationData {
         return client.get("/x/web-interface/nav").body<BilibiliNavigationData>()
+    }
+
+    suspend fun getRedirectUrl(url: String): String {
+        return client.get(url).request.url.toString()
     }
 
     suspend fun getPlayUrl(bvid: String, cid: Long): VideoPlaybackInfo {
