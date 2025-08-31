@@ -161,7 +161,10 @@ fun SearchContent(
                             selectedAudioOption = selectedAudioOption,
                             onAudioOptionSelected = { selectedAudioOption = it },
                         )
-                        Text("分集(${searchResultUiState.episodes.size})")
+                        Text(
+                            "分集(${searchResultUiState.episodes.size})",
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
                         EpisodeList(searchResultUiState.episodes) {
                             requestCache(it)
                         }
@@ -183,7 +186,7 @@ fun QualitySelection(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(horizontal = 16.dp), // Apply padding here or on the Row
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (videoStreams.isNotEmpty()) {
