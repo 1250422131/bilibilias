@@ -50,8 +50,23 @@ class DefaultRootComponent(
                 )
             )
 
-            Config.Cache -> CacheChild(DefaultCacheComponent(context, get(), get(named("ffmpeg"))))
-            Config.Login -> LoginChild(DefaultLoginComponent(context, get(), get(), get(), get()))
+            Config.Cache -> CacheChild(
+                DefaultCacheComponent(
+                    context,
+                    multiplexer = get(named("ffmpeg")),
+                    get()
+                )
+            )
+
+            Config.Login -> LoginChild(
+                DefaultLoginComponent(
+                    context,
+                    get(),
+                    get(),
+                    get(), get()
+                )
+            )
+
             Config.Player -> PlayerChild(DefaultPlayerComponent(context))
             Config.Settings -> SettingsChild(DefaultSettingsComponent(context, get()))
         }
