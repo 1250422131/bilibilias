@@ -1,3 +1,5 @@
+import com.imcys.bilibilias.buildlogic.BILIBILIASBuildType
+
 plugins {
     alias(libs.plugins.bilibilias.android.application)
     alias(libs.plugins.bilibilias.android.koin)
@@ -7,43 +9,62 @@ plugins {
     alias(libs.plugins.kotlin.plugin.serialization)
 
 }
+val enablePlayAppMode: String by project
 
 android {
     namespace = "com.imcys.bilibilias"
 
     defaultConfig {
         targetSdk = 36
-        applicationId = "com.imcys.bilibilias.gp"
+        applicationId = "com.imcys.bilibilias"
         versionCode = 300
         versionName = "3.0.0-PlumBlossom-Alpha-5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
+
         release {
+            applicationIdSuffix = BILIBILIASBuildType.RELEASE.applicationIdSuffix
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
         }
+
         debug {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+        }
+
+        // 提交Google Play使用
+        create("beta") {
+            initWith(getByName("release"))
+            applicationIdSuffix = BILIBILIASBuildType.BETA.applicationIdSuffix
+            versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+        }
+
+        // GitHub Action 打包使用
+        create("alpha") {
+            initWith(getByName("release"))
+            applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
+            versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField(
+                "boolean", "ENABLE_PLAY_APP_MODE", "false"
             )
         }
+
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
 
-    kotlin  {
+    kotlin {
         compilerOptions {
             freeCompilerArgs.add("-XXLanguage:+WhenGuards")
         }
@@ -63,7 +84,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
-    implementation(libs.firebase.inappmessaging.display){
+    implementation(libs.firebase.inappmessaging.display) {
         exclude(group = "com.google.firebase", module = "protolite-well-known-types")
     }
     implementation(libs.firebase.config)
@@ -85,8 +106,19 @@ dependencies {
     // 分页
     implementation(libs.paging.compose)
 
-    // 拖拽排序
-    // implementation(libs.reorderable)
+    // Google Play 选配
+    val googlePlayLibs = listOf(
+        libs.palay.app.update.kts,
+        libs.palay.app.review.kts
+    )
+    googlePlayLibs.forEach {
+        if (enablePlayAppMode.toBoolean()) {
+            implementation(it)
+        } else {
+            compileOnly(it)
+        }
+    }
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

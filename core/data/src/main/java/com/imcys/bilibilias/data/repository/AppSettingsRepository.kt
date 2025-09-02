@@ -61,6 +61,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateLastSkipUpdateVersionCode(versionCode: Int) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.toBuilder()
+                .setLastSkipUpdateVersionCode(versionCode)
+                .build()
+        }
+    }
+
     suspend fun asyncHomeLayoutTypesetList(): List<AppSettings.HomeLayoutItem> {
         val defaultList = createDefaultHomeLayoutItems()
         val existingList = dataStore.data.first().homeLayoutTypesetList.toMutableList()

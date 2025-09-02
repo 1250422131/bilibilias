@@ -102,19 +102,18 @@ import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AnalysisScreen(
     analysisRoute: AnalysisRoute,
+    vm: AnalysisViewModel,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onToBack: () -> Unit,
     goToUser: (mid: Long) -> Unit,
     onToVideoCodingInfo: () -> Unit,
 ) {
-    val vm = koinViewModel<AnalysisViewModel>()
 
     val uiState by vm.uiState.collectAsState()
 
@@ -424,7 +423,7 @@ fun AdvancedSetting(
                             readOnly = true,
                             singleLine = false,
                             label = { Text("选择缓存模式", fontSize = 12.sp) },
-                            trailingIcon = { TrailingIcon(expanded = false) },
+                            trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(
                                 focusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,

@@ -19,6 +19,9 @@ message AppSettings {
 
   repeated HomeLayoutItem home_layout_typeset = 5;
 
+  // 最后一次跳过更新的版本code
+  int32 last_skip_update_version_code = 6;
+
   enum HomeLayoutType {
     Banner = 0 ;
     Announcement = 1 ;

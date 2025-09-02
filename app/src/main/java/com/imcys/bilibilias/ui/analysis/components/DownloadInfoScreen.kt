@@ -76,7 +76,7 @@ fun AudioQualitySelectScreen(
                 readOnly = true,
                 singleLine = false,
                 label = { Text("选择优先音频质量", fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = false) },
+                trailingIcon = { TrailingIcon(expanded = modelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -84,7 +84,7 @@ fun AudioQualitySelectScreen(
                     focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                shape = CardDefaults.shape
+                shape = CardDefaults.shape,
             )
             ExposedDropdownMenu(
                 expanded = modelExpanded,
@@ -202,7 +202,7 @@ fun VideoSupportFormatsSelectScreen(
                 readOnly = true,
                 singleLine = false,
                 label = { Text("选择优先分辨率", fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = false) },
+                trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -259,7 +259,7 @@ fun VideoSupportFormatsSelectScreen(
                     readOnly = true,
                     singleLine = false,
                     label = { Text("选择优先编码", fontSize = 12.sp) },
-                    trailingIcon = { TrailingIcon(expanded = false) },
+                    trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,

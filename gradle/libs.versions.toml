@@ -32,7 +32,9 @@ nav3Core = "1.0.0-alpha07"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
 material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 paging = "3.3.6"
-reorderable = "0.9.6"
+palayAppUpdate = "2.1.0"
+playAppReview = "2.0.2"
+kolor = "3.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -88,7 +90,9 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 paging-compose = { group = "androidx.paging", name = "paging-compose-android", version.ref = "paging" }
-reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "reorderable" }
+palay-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref= "palayAppUpdate" }
+palay-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref= "playAppReview" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }

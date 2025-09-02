@@ -9,14 +9,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
@@ -29,6 +26,7 @@ import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
+import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.analysis.videocodeing.VideoCodingInfoRoute
 import com.imcys.bilibilias.ui.analysis.videocodeing.VideoCodingInfoScreen
@@ -61,6 +59,7 @@ import com.imcys.bilibilias.ui.user.like.LikeVideoScreen
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.user.work.WorkListRoute
 import com.imcys.bilibilias.ui.user.work.WorkListScreen
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * BILIBILAIS导航显示组件
@@ -204,8 +203,10 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<AnalysisRoute> {
+                    val vm = koinViewModel<AnalysisViewModel>(key = it.toString())
                     AnalysisScreen(
                         it,
+                        vm,
                         this@SharedTransitionLayout,
                         LocalNavAnimatedContentScope.current,
                         onToBack = { backStack.removeLastOrNull() },
