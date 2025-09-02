@@ -40,8 +40,8 @@ jobs:
         run: ./gradlew clean
       - name: Build APK for ${{ matrix.abi }} (alpha)
         run: ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=${{ matrix.abi }}
-      - name: Upload BaselineProfiles (${{ matrix.abi }})
+      - name: Upload APK (${{ matrix.abi }})
         uses: actions/upload-artifact@v4
         with:
-          name: BaselineProfiles-${{ matrix.abi }}
-          path: app/alpha/release/baselineProfiles/**
+          name: APK-${{ matrix.abi }}
+          path: app/alpha/release/app-alpha-release.apk
