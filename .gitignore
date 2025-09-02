@@ -11,4 +11,8 @@ local.properties
 .kotlin
 /common/build
 app/release
+app/alpha
+app/debug
+app/beta
+app/official
 /build-logic/build/
