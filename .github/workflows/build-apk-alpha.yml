@@ -1,4 +1,4 @@
-name: Build and Release Compose APK (Alpha per ABI)
+name: Build and Upload Compose APK (Alpha)
 
 on:
   push:
@@ -7,66 +7,46 @@ on:
     branches: [compose]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-apk:
-    name: Build APK (alpha, ${{ matrix.abi }})
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        abi: [armeabi-v7a, arm64-v8a, x86_64]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: zulu
           java-version: '21'
 
-      # 让该 Action 统一负责 Gradle 缓存（无需 actions/cache）
+      # 使用该 Action 自带缓存；不要再叠加 actions/cache，避免 400 报错
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Clean project
+      # 在构建前 clean 一次即可；不要在构建后再 clean
+      - name: Clean
         run: ./gradlew clean
 
-      # 可选：如果你确实使用了 ABI splits，建议同时关闭 universalApk 以免多余产物
-      - name: Build APK for ${{ matrix.abi }} (alpha)
-        run: ./gradlew :app:assembleAlphaRelease -Pandroid.injected.build.abi=${{ matrix.abi }} --stacktrace
+      - name: Assemble alphaRelease
+        run: ./gradlew :app:assembleAlphaRelease --stacktrace --info
 
-      # 调试：列出产物目录，便于日志里确认实际文件名
-      - name: List APK outputs
+      - name: List outputs (debug)
         run: |
-          ls -R app/build/outputs/apk/alpha/release || true
+          echo "Outputs under app/build/outputs:"
+          ls -R app/build/outputs || true
 
-      # 只挑选当前 ABI 对应的 APK；如果没拆分，则回退到单一 APK（避免 9 次上传）
-      - name: Resolve APK path for ${{ matrix.abi }}
-        id: apk
-        shell: bash
-        run: |
-          shopt -s nullglob
-          dir="app/build/outputs/apk/alpha/release"
-          files=("$dir"/*-${{ matrix.abi }}-*.apk "$dir"/*-${{ matrix.abi }}*.apk)
-          if [ ${#files[@]} -eq 0 ]; then
-            # 若没有按 ABI 拆分（例如没配置 splits），则只取该目录下的单一 APK
-            files=("$dir"/*.apk)
-          fi
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "No APKs found in $dir"
-            exit 1
-          fi
-          echo "file=${files[0]}" >> "$GITHUB_OUTPUT"
-          echo "Resolved APK: ${files[0]}"
-
-      - name: Upload APK (${{ matrix.abi }})
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: APK-${{ matrix.abi }}
-          path: ${{ steps.apk.outputs.file }}
+          name: APK-alpha
+          path: app/build/outputs/apk/alpha/release/app-alpha-release.apk
           if-no-files-found: error
