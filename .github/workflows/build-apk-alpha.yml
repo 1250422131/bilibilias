@@ -40,14 +40,12 @@ jobs:
       - name: Clean project
         run: ./gradlew clean
 
-      - name: Build APK for armeabi-v7a (alpha)
-        run: ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=armeabi-v7a
-
-      - name: Build APK for arm64-v8a (alpha)
-        run: ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=arm64-v8a
-
-      - name: Build APK for x86_64 (alpha)
-        run: ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=x86_64
+      - name: Build APKs (alpha, all ABIs)
+        run: |
+          ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=armeabi-v7a &
+          ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=arm64-v8a &
+          ./gradlew assembleAlphaRelease -Pandroid.injected.build.abi=x86_64 &
+          wait
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
