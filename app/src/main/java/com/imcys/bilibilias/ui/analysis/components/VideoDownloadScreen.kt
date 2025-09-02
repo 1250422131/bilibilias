@@ -285,7 +285,7 @@ fun VideoPageScreen(
                     onUpdateSelectedCid.invoke(
                         it.cid,
                         SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
-                        viewInfo.data?.title ?: "",
+                        it.part,
                         viewInfo.data?.pic ?: ""
                     )
                 },
@@ -358,7 +358,7 @@ fun UgcSeasonPageScreen(
                 readOnly = true,
                 singleLine = false,
                 label = { Text("选择分P视频", fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = false) },
+                trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -446,7 +446,7 @@ fun UgcSeasonPageScreen(
                         onUpdateSelectedCid.invoke(
                             it.cid,
                             SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
-                            viewInfo.data?.title ?: "",
+                            it.part,
                             viewInfo.data?.pic ?: ""
                         )
                     },
@@ -557,7 +557,7 @@ fun UgcSeasonScreen(
                         onUpdateSelectedCid.invoke(
                             it.cid,
                             SelectEpisodeType.BVID(it.bvid),
-                            it.page?.part ?: "",
+                            it.title,
                             it.arc.pic
                         )
                     },
