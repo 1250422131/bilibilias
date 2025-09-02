@@ -24,11 +24,18 @@ android {
 
     flavorDimensions += listOf("version")
     productFlavors {
+
+        create("official") {
+            dimension = "version"
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+        }
+
         create("alpha") {
             dimension = "version"
             applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", "false")
+            signingConfig = signingConfigs.getByName("debug")
         }
 
         // 提交Google Play使用
