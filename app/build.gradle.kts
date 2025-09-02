@@ -22,10 +22,26 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    flavorDimensions += listOf("version")
+    productFlavors {
+        create("alpha") {
+            dimension = "version"
+            applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
+            versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", "false")
+        }
 
+        // 提交Google Play使用
+        create("beta") {
+            dimension = "version"
+            applicationIdSuffix = BILIBILIASBuildType.BETA.applicationIdSuffix
+            versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
+            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+        }
+    }
+
+    buildTypes {
         release {
-            applicationIdSuffix = BILIBILIASBuildType.RELEASE.applicationIdSuffix
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -37,25 +53,6 @@ android {
 
         debug {
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
-        }
-
-        // 提交Google Play使用
-        create("beta") {
-            initWith(getByName("release"))
-            applicationIdSuffix = BILIBILIASBuildType.BETA.applicationIdSuffix
-            versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
-        }
-
-        // GitHub Action 打包使用
-        create("alpha") {
-            initWith(getByName("release"))
-            applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
-            versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
-            signingConfig = signingConfigs.getByName("debug")
-            buildConfigField(
-                "boolean", "ENABLE_PLAY_APP_MODE", "false"
-            )
         }
 
     }
