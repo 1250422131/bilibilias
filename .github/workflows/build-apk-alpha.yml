@@ -54,4 +54,4 @@ jobs:
         with:
           name: APKs-alpha
           path: |
-            app/build/outputs/apk/alpha/*.apk
+            app/build/outputs/apk/alphaRelease/*.apk
