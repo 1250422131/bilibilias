@@ -1,5 +1,10 @@
 package com.imcys.bilibilias.core.datastore
 
-actual fun resolveDataStoreFile(name: String): com.imcys.bilibilias.core.io.SystemPath {
-    TODO("Not yet implemented")
+import com.imcys.bilibilias.BuildConfig
+import com.imcys.bilibilias.core.io.SystemPath
+import com.imcys.bilibilias.core.io.inSystem
+import com.imcys.bilibilias.core.io.resolve
+
+actual fun resolveDataStoreFile(name: String): SystemPath {
+    return BuildConfig.DATASTORE_DIR.resolve(name).inSystem
 }
