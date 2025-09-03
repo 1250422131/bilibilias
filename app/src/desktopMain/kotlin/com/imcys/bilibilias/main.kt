@@ -1,6 +1,7 @@
 package com.imcys.bilibilias
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -12,6 +13,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.create
 import com.arkivanov.essenty.lifecycle.destroy
@@ -25,6 +27,7 @@ import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
 import com.imcys.bilibilias.ui.root.rememberAsAppState
+import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
 import io.github.vinceglb.filekit.FileKit
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -77,9 +80,19 @@ fun main() {
                 )
                 val errorMonitor = koinInject<ErrorMonitor>()
                 val appState = rememberAsAppState(errorMonitor)
-                AsApp(root, appState)
+                CompositionLocalProvider(
+                    LocalLifecycleOwner provides createLifecycleOwner(lifecycle),
+                ) {
+                    AsApp(root, appState)
+                }
             }
         }
+    }
+}
+
+private fun createLifecycleOwner(lifecycle: Lifecycle): LifecycleOwner {
+    return object : LifecycleOwner {
+        override val lifecycle get() = lifecycle
     }
 }
 
