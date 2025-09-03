@@ -98,7 +98,7 @@ fun AsApp(
 }
 
 @Composable
-fun AsApp(
+internal fun AsApp(
     component: RootComponent,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
