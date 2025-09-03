@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.bilibilias.kmp.library)
     alias(libs.plugins.bilibilias.compose)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -37,7 +38,12 @@ kotlin {
             implementation(libs.settings.ui)
             implementation(libs.lifecycle.coroutines)
 
-            implementation("sh.calvin.reorderable:reorderable:3.0.0")
+            implementation(libs.reorderable)
+
+            implementation(libs.androidx.navigation3.runtime)
+            implementation(libs.androidx.navigation3.ui)
+//            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+//            implementation(libs.androidx.compose.adaptive.navigation3)
         }
     }
 }

@@ -8,7 +8,10 @@ androidx-activity = "1.10.1"
 androidx-annotation = "1.9.1"
 androidx-core = "1.17.0"
 androidx-datastore = "1.1.7"
+androidx-lifecycle = "2.10.0-alpha03"
 androidx-media3 = "1.8.0"
+androidx-navigation = "1.0.0-SNAPSHOT+ivan-matkov-bump-versions"
+androidxAdaptiveNavigation3 = "1.0.0-SNAPSHOT"
 androidx-room = "2.7.2"
 androidx-sqlite = "2.5.2"
 androidx-startup = "1.2.0"
@@ -33,19 +36,26 @@ ktor = "3.2.3"
 androidx-material3-adaptive = "1.1.2"
 lifecycleCoroutines = "2.5.0"
 qr = "1.0.1"
+reorderable = "3.0.0"
 settings-ui = "2.13.0"
 uriKmp = "0.0.20"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+androidx-compose-adaptive-navigation3 = { module = "org.jetbrains.androidx.compose.material3.adaptive:adaptive-navigation3", version.ref = "androidxAdaptiveNavigation3" }
 androidx-compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "androidx-material3-adaptive" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx-core" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
 androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "androidx-media3" }
+
+androidx-navigation3-runtime = { module = "org.jetbrains.androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation" }
+androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation" }
+
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
@@ -87,6 +97,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "lifecycleCoroutines" }
 qr-kit = { module = "io.github.alexzhirkevich:qrose", version.ref = "qr" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
