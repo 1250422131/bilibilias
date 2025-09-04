@@ -6,9 +6,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlinx.serialization.core)
             api("androidx.navigation3:navigation3-runtime:1.0.0-alpha08")
-                implementation(libs.androidx.savedstate.compose)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.androidx.savedstate.compose)
         }
     }
 }
