@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.core.navigation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.core.navigation
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.snapshotFlow
