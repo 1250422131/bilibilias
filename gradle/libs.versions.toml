@@ -11,6 +11,7 @@ androidx-datastore = "1.1.7"
 androidx-lifecycle = "2.10.0-alpha03"
 androidx-media3 = "1.8.0"
 androidx-navigation = "1.0.0-SNAPSHOT+ivan-matkov-bump-versions"
+androidxSavedStateCompose = "1.3.1"
 androidx-viewmodel = "2.9.3"
 androidxAdaptiveNavigation3 = "1.0.0-SNAPSHOT"
 androidx-room = "2.7.2"
@@ -56,7 +57,8 @@ androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmode
 androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "androidx-media3" }
 
 androidx-navigation3-runtime = { module = "org.jetbrains.androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation" }
-androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation" }
+androidx-navigation3-ui =  { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation" }
+androidx-savedstate-compose = { group = "androidx.savedstate", name = "savedstate-compose", version.ref = "androidxSavedStateCompose" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
