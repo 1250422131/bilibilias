@@ -40,10 +40,15 @@ kotlin {
 
             implementation(libs.reorderable)
 
-            implementation(libs.androidx.navigation3.runtime)
-            implementation(libs.androidx.navigation3.ui)
+//            implementation(libs.androidx.navigation3.runtime)
+//            implementation(libs.androidx.navigation3.ui)
 //            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 //            implementation(libs.androidx.compose.adaptive.navigation3)
+
+            implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha08")
+            implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha08")
+
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
     }
 }

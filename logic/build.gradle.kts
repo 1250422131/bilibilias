@@ -16,6 +16,7 @@ kotlin {
             api(libs.flowredux)
             implementation(libs.lifecycle.coroutines)
 
+
         }
     }
 }
