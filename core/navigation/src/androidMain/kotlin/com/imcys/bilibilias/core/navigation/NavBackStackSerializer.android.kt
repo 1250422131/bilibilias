@@ -1,4 +1,5 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.core.navigation
+
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
@@ -18,7 +19,7 @@ actual inline fun <reified T : Any> NavBackStackSerializer(
     configuration: SavedStateConfiguration
 ): KSerializer<SnapshotStateList<T>> {
     val elementSerializer =
-        if (configuration == SavedStateConfiguration.DEFAULT) {
+        if (configuration == SavedStateConfiguration.Companion.DEFAULT) {
             // DEFAULT uses a reflective polymorphic strategy. This is self-contained and
             // does not require registering subtypes or passing a SerializersModule when
             // encoding/decoding. It uses reflection to resolve `.serializer()` for each type.
