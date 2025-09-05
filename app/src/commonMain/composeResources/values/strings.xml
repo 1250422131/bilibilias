@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">bilibilias</string>
+    <string name="not_connected">⚠️ You aren’t connected to the internet</string>
+    <string name="unknown_error">Unknown Error</string>
 </resources>

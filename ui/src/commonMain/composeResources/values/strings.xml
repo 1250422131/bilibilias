@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="not_connected">⚠️ You aren’t connected to the internet</string>
-    <string name="unknown_error">Unknown Error</string>
 </resources>

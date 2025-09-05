@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.root
+package com.imcys.bilibilias.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
@@ -28,29 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.navigation3.runtime.EntryProviderBuilder
-import bilibilias.ui.generated.resources.Res
-import bilibilias.ui.generated.resources.not_connected
-import bilibilias.ui.generated.resources.unknown_error
-import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
-import com.arkivanov.decompose.extensions.compose.stack.animation.slide
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import bilibilias.app.generated.resources.not_connected
+import bilibilias.app.generated.resources.unknown_error
 import com.imcys.bilibilias.core.data.model.MessageData
 import com.imcys.bilibilias.core.data.model.MessageType
 import com.imcys.bilibilias.core.navigation.AsNavKey
-import com.imcys.bilibilias.logic.root.RootComponent
-import com.imcys.bilibilias.ui.cache.CacheScreen
 import com.imcys.bilibilias.ui.component.AsBackground
 import com.imcys.bilibilias.ui.component.AsGradientBackground
 import com.imcys.bilibilias.ui.component.AsNavigationSuiteScaffold
-import com.imcys.bilibilias.ui.login.LoginScreen
 import com.imcys.bilibilias.ui.navigation.AsNavDisplay
-import com.imcys.bilibilias.ui.player.PlayerScreen
-import com.imcys.bilibilias.ui.search.SearchScreen
-import com.imcys.bilibilias.ui.setting.SettingsScreen
-import com.imcys.bilibilias.ui.theme.GradientColors
-import com.imcys.bilibilias.ui.theme.LocalGradientColors
 import org.jetbrains.compose.resources.getString
 
 @Composable
@@ -170,57 +156,57 @@ internal fun AsApp(
     }
 }
 
-@OptIn(ExperimentalDecomposeApi::class)
-@Composable
-private fun Children(
-    component: RootComponent,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    modifier: Modifier = Modifier
-) {
-    Children(
-        stack = component.stack,
-        modifier = modifier,
-        animation = predictiveBackAnimation(
-            backHandler = component.backHandler,
-            fallbackAnimation = stackAnimation(slide()),
-            onBack = component::onBackClicked,
-        ),
-    ) {
-        CompositionLocalProvider(
-            LocalGradientColors provides GradientColors(DarkGreenGray95)
-        ) {
-            when (val child = it.instance) {
-                is RootComponent.Child.SearchChild -> SearchScreen(
-                    component = child.component,
-                    navigationToLogin = component::onLoginClicked,
-                    navigationToPlayer = component::onPlayerClicked,
-                    navigationToSettings = component::onSettingsClicked
-                )
-
-                is RootComponent.Child.CacheChild -> CacheScreen(child.component)
-                is RootComponent.Child.LoginChild -> LoginScreen(
-                    child.component,
-                    onBack = component::onBackClicked,
-                    onShowSnackbar = onShowSnackbar,
-                )
-
-                is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)
-                is RootComponent.Child.SettingsChild -> SettingsScreen(
-                    child.component,
-                    onBack = component::onBackClicked
-                )
-            }
-        }
-    }
-}
+//@OptIn(ExperimentalDecomposeApi::class)
+//@Composable
+//private fun Children(
+//    component: RootComponent,
+//    onShowSnackbar: suspend (String, String?) -> Boolean,
+//    modifier: Modifier = Modifier
+//) {
+//    Children(
+//        stack = component.stack,
+//        modifier = modifier,
+//        animation = predictiveBackAnimation(
+//            backHandler = component.backHandler,
+//            fallbackAnimation = stackAnimation(slide()),
+//            onBack = component::onBackClicked,
+//        ),
+//    ) {
+//        CompositionLocalProvider(
+//            LocalGradientColors provides GradientColors(DarkGreenGray95)
+//        ) {
+//            when (val child = it.instance) {
+//                is RootComponent.Child.SearchChild -> SearchScreen(
+//                    component = child.component,
+//                    navigationToLogin = component::onLoginClicked,
+//                    navigationToPlayer = component::onPlayerClicked,
+//                    navigationToSettings = component::onSettingsClicked
+//                )
+//
+//                is RootComponent.Child.CacheChild -> CacheScreen(child.component)
+//                is RootComponent.Child.LoginChild -> LoginScreen(
+//                    child.component,
+//                    onBack = component::onBackClicked,
+//                    onShowSnackbar = onShowSnackbar,
+//                )
+//
+//                is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)
+//                is RootComponent.Child.SettingsChild -> SettingsScreen(
+//                    child.component,
+//                    onBack = component::onBackClicked
+//                )
+//            }
+//        }
+//    }
+//}
 
 private suspend fun getSnackbarValues(
     message: MessageData
 ): Pair<String, SnackbarDuration> {
     return when (message.type) {
-        MessageType.OFFLINE -> getString(Res.string.not_connected) to SnackbarDuration.Indefinite
+        MessageType.OFFLINE -> getString(bilibilias.app.generated.resources.Res.string.not_connected) to SnackbarDuration.Indefinite
         is MessageType.MESSAGE -> (message.type as MessageType.MESSAGE).value to SnackbarDuration.Long
-        MessageType.UNKNOWN -> getString(Res.string.unknown_error) to SnackbarDuration.Short
+        MessageType.UNKNOWN -> getString(bilibilias.app.generated.resources.Res.string.unknown_error) to SnackbarDuration.Short
     }
 }
 

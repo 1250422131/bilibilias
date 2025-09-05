@@ -1,14 +1,13 @@
-package com.imcys.bilibilias.ui.root
+package com.imcys.bilibilias.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.imcys.bilibilias.core.data.model.MessageData
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.navigation.AsBackStack
-import com.imcys.bilibilias.ui.navigation.TopLevelDestination
-import com.imcys.bilibilias.ui.navigation.TopLevelDestinations
+import com.imcys.bilibilias.navigation.TopLevelDestination
+import com.imcys.bilibilias.navigation.TopLevelDestinations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +33,7 @@ fun rememberAsAppState(
     }
 }
 
-@Stable
+@androidx.compose.runtime.Stable
 class AsAppState(
     coroutineScope: CoroutineScope,
     val errorMonitor: ErrorMonitor,

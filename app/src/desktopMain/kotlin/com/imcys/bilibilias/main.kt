@@ -25,8 +25,8 @@ import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
-import com.imcys.bilibilias.ui.root.AsApp
-import com.imcys.bilibilias.ui.root.rememberAsAppState
+import com.imcys.bilibilias.ui.AsApp
+import com.imcys.bilibilias.ui.rememberAsAppState
 import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
 import io.github.vinceglb.filekit.FileKit
 import kotlinx.coroutines.CoroutineExceptionHandler

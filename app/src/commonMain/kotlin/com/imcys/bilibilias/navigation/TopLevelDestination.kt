@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -7,6 +7,8 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.imcys.bilibilias.core.navigation.AsNavKey
+import com.imcys.bilibilias.ui.navigation.CacheRoute
+import com.imcys.bilibilias.ui.navigation.SearchRoute
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(

@@ -32,8 +32,6 @@ kotlin {
 
             implementation(libs.coil.compose)
 
-            implementation(libs.androidx.compose.material3.adaptive)
-
             implementation(libs.qr.kit)
 
             implementation(mediampLibs.mediamp.api)

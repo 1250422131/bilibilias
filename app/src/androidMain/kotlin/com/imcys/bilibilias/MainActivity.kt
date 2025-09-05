@@ -11,8 +11,8 @@ import androidx.navigation3.runtime.EntryProviderBuilder
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.navigation.AsBackStackViewModel
 import com.imcys.bilibilias.core.navigation.AsNavKey
-import com.imcys.bilibilias.ui.root.AsApp
-import com.imcys.bilibilias.ui.root.rememberAsAppState
+import com.imcys.bilibilias.ui.AsApp
+import com.imcys.bilibilias.ui.rememberAsAppState
 import com.imcys.bilibilias.ui.theme.AsTheme
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
