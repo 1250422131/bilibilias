@@ -1,11 +1,10 @@
 package com.imcys.bilibilias.logic.login
 
-import com.arkivanov.essenty.lifecycle.doOnDestroy
+import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.model.SelfInfo
 import com.imcys.bilibilias.core.logging.logger
-import com.imcys.bilibilias.logic.root.AppComponentContext
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
 import io.github.vinceglb.filekit.PlatformFile
@@ -13,40 +12,19 @@ import io.github.vinceglb.filekit.compressImage
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
-interface LoginComponent {
-    val cookieStateMachine: CookieStateMachine
-    val qrCodeStateMachine: QrCodeLoginStateMachine
-    fun save()
-}
 
-class DefaultLoginComponent(
-    componentContext: AppComponentContext,
-    override val cookieStateMachine: CookieStateMachine,
-    override val qrCodeStateMachine: QrCodeLoginStateMachine,
+class LoginViewModel(
+    val cookieStateMachine: CookieStateMachine,
+    val qrCodeStateMachine: QrCodeLoginStateMachine,
     private val preferences: AsPreferencesDataSource,
     private val api: BilibiliApi,
-) : LoginComponent, AppComponentContext by componentContext {
-
-    init {
-        lifecycle.doOnDestroy {
-            applicationScope.launch {
-                val data = api.getNavigationData()
-                preferences.setSelfInfo(
-                    SelfInfo(
-                        Uuid.random(),
-                        data.mid!!,
-                        data.uname!!,
-                        data.face!!
-                    )
-                )
-            }
-        }
-    }
-
-    override fun save() {
+    private val applicationScope: CoroutineScope,
+) : ViewModel() {
+    fun save() {
         applicationScope.launch {
             // Read an image file
             val originalImageFile = PlatformFile("/path/to/original.jpg")
@@ -67,7 +45,20 @@ class DefaultLoginComponent(
         }
     }
 
+    override fun onCleared() {
+        applicationScope.launch {
+            val data = api.getNavigationData()
+            preferences.setSelfInfo(
+                SelfInfo(
+                    Uuid.random(),
+                    data.mid!!,
+                    data.uname!!,
+                    data.face!!
+                )
+            )
+        }
+    }
     companion object {
-        private val logger = logger<LoginComponent>()
+        private val logger = logger<LoginViewModel>()
     }
 }

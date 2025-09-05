@@ -32,19 +32,20 @@ import com.freeletics.flowredux2.FlowReduxStateMachine
 import com.freeletics.flowredux2.produceStateMachine
 import com.imcys.bilibilias.logic.login.CookieAction
 import com.imcys.bilibilias.logic.login.CookieLoginState
-import com.imcys.bilibilias.logic.login.LoginComponent
+import com.imcys.bilibilias.logic.login.LoginViewModel
 import com.imcys.bilibilias.logic.login.QrCodeLoginAction
 import com.imcys.bilibilias.logic.login.QrCodeLoginState
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    component: LoginComponent,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    loginViewModel: LoginViewModel = koinViewModel()
 ) {
-    val cookieLoginStateMachine = component.cookieStateMachine.produceStateMachine()
-    val qrCodeStateMachine = component.qrCodeStateMachine.produceStateMachine()
+    val cookieLoginStateMachine = loginViewModel.cookieStateMachine.produceStateMachine()
+    val qrCodeStateMachine = loginViewModel.qrCodeStateMachine.produceStateMachine()
     LoginContent(
         onBack = onBack,
         cookieLoginStateMachine = cookieLoginStateMachine,
