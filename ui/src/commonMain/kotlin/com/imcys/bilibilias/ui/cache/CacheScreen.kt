@@ -40,20 +40,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.model.DataUnit
-import com.imcys.bilibilias.logic.cache.CacheComponent
+import com.imcys.bilibilias.logic.cache.CacheViewModel
 import com.imcys.bilibilias.ui.runtime.collectAsStateWithLifecycle
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CacheScreen(component: CacheComponent) {
-    val state by component.stateFlow.collectAsStateWithLifecycle()
+fun CacheScreen(
+    cacheViewModel: CacheViewModel = koinViewModel()
+) {
+    val state by cacheViewModel.stateFlow.collectAsStateWithLifecycle()
 
-    val canMux by component.canProcess.collectAsStateWithLifecycle()
+    val canMux by cacheViewModel.canProcess.collectAsStateWithLifecycle()
 
     CaCheContent(
         state,
-        onDelete = component::deleteEpisodeCache,
+        onDelete = cacheViewModel::deleteEpisodeCache,
         canMux = canMux,
-        onCombine = component::onCombine
+        onCombine = cacheViewModel::onCombine
     )
 }
 

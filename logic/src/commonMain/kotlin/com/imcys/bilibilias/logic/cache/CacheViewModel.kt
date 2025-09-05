@@ -1,48 +1,41 @@
 package com.imcys.bilibilias.logic.cache
 
+import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.domain.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.ffmpeg.MediaMultiplexer
 import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.core.storage.MediaStoreAccess
-import com.imcys.bilibilias.logic.root.AppComponentContext
+import com.imcys.bilibilias.logic.stateInViewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.inject
 import kotlin.time.Clock
 
-interface CacheComponent {
-    val stateFlow: StateFlow<List<CacheEpisodeState>>
-
-    val canProcess: StateFlow<Boolean>
-    fun deleteEpisodeCache(state: CacheEpisodeState)
-    fun onCombine(state: CacheEpisodeState)
-}
-
-class DefaultCacheComponent(
-    componentContext: AppComponentContext,
+class CacheViewModel(
     private val multiplexer: MediaMultiplexer,
     private val mediaStoreAccess: MediaStoreAccess,
-) : CacheComponent, AppComponentContext by componentContext {
-    private val getCachedEpisodeStateUseCase by inject<GetCachedEpisodeStateUseCase>()
-    private val mediaCacheStorage by inject<MediaCacheDataSource>()
+    private val getCachedEpisodeStateUseCase: GetCachedEpisodeStateUseCase,
+    private val mediaCacheStorage: MediaCacheDataSource,
+    private val applicationScope: CoroutineScope,
+) : ViewModel() {
+
     private val lock = MutableStateFlow(false)
 
-    override val canProcess = multiplexer.isRunning.map { !it }.stateInBackground(true)
-    override val stateFlow = getCachedEpisodeStateUseCase()
+    val canProcess = multiplexer.isRunning.map { !it }.stateInViewModelScope(true)
+    val stateFlow = getCachedEpisodeStateUseCase()
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-    private val logger = logger<CacheComponent>()
-    override fun onCombine(state: CacheEpisodeState) {
+    private val logger = logger<CacheViewModel>()
+    fun onCombine(state: CacheEpisodeState) {
         if (lock.value) {
             logger.info { "Muxing task for ${state.episodeMetadata} rejected: Another muxing task is in progress." }
             return
@@ -73,7 +66,7 @@ class DefaultCacheComponent(
         }
     }
 
-    override fun deleteEpisodeCache(state: CacheEpisodeState) {
+    fun deleteEpisodeCache(state: CacheEpisodeState) {
         applicationScope.launch {
             try {
                 // todo 下载记录也要删除
