@@ -1,7 +1,8 @@
 package com.imcys.bilibilias.logic.search
 
-import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
-import com.arkivanov.essenty.statekeeper.saveable
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
@@ -18,37 +19,37 @@ import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
-import com.imcys.bilibilias.logic.root.AppComponentContext
+import com.imcys.bilibilias.logic.stateInViewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import org.koin.core.component.inject
 
-class DefaultSearchComponent(
-    componentContext: AppComponentContext,
+class SearchViewModel(
     searchText: String?,
+    private val savedStateHandle: SavedStateHandle,
+    private val applicationScope: CoroutineScope,
     private val httpDownloader: HttpDownloader,
     private val mediaCacheStorage: MediaCacheDataSource,
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
     private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
     private val preferences: AsPreferencesDataSource,
-) : SearchComponent, AppComponentContext by componentContext {
-    @OptIn(ExperimentalStateKeeperApi::class)
-    private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
-    override val selfInfoUiState = preferences.userData
+    private val api: BilibiliLoginApi,
+    private val cookieJar: CookieJarDataSource,
+) : ViewModel() {
+    val selfInfoUiState = preferences.userData
         .map { preferences ->
+            viewModelScope
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
-        .stateInBackground(SelfInfoUiState.Loading)
-    override val searchQuery = MutableStateFlow(searchText ?: persistentState.searchQuery)
+        .stateInViewModelScope(SelfInfoUiState.Loading)
+    val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, searchText ?: "")
 
-    override val searchResultUiState: StateFlow<SearchResultUiState> =
+    val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
@@ -78,19 +79,15 @@ class DefaultSearchComponent(
                         }
                     }
             }
-        }.stateInBackground(SearchResultUiState.Loading)
+        }.stateInViewModelScope(SearchResultUiState.Loading)
 
-    override fun onSearchTriggered(query: String) {}
+    fun onSearchTriggered(query: String) {}
 
-    override fun onSearchQueryChanged(query: String) {
-        persistentState = State(query)
-        searchQuery.value = query
+    fun onSearchQueryChanged(query: String) {
+        savedStateHandle[SEARCH_QUERY] = query
     }
 
-    override fun onLogout() {
-        val api: BilibiliLoginApi by inject()
-        val cookieJar: CookieJarDataSource by inject()
-
+    fun onLogout() {
         applicationScope.launch {
             api.exit()
             preferences.setSelfInfo(null)
@@ -98,7 +95,7 @@ class DefaultSearchComponent(
         }
     }
 
-    override fun requestCache(request: EpisodeCacheRequest) {
+    fun requestCache(request: EpisodeCacheRequest) {
         applicationScope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
             val metadata = episodeInfo.asEpisodeMetadata()
@@ -127,7 +124,6 @@ class DefaultSearchComponent(
             title = title
         )
     }
-
-    @Serializable
-    private data class State(val searchQuery: String = "")
 }
+
+private const val SEARCH_QUERY = "searchQuery"

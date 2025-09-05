@@ -44,30 +44,31 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.MediaStream
-import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
+import com.imcys.bilibilias.logic.search.SearchViewModel
 import com.imcys.bilibilias.logic.search.SelfInfoUiState
 import com.imcys.bilibilias.ui.runtime.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun SearchScreen(
-    component: SearchComponent,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
     navigationToSettings: () -> Unit,
+    searchViewModel: SearchViewModel = koinViewModel(),
 ) {
-    val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
-    val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
-    val selfInfoUiState by component.selfInfoUiState.collectAsStateWithLifecycle()
+    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchResultUiState by searchViewModel.searchResultUiState.collectAsStateWithLifecycle()
+    val selfInfoUiState by searchViewModel.selfInfoUiState.collectAsStateWithLifecycle()
     SearchContent(
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState,
         selfInfoUiState = selfInfoUiState,
-        onSearchQueryChanged = component::onSearchQueryChanged,
-        onLogout = component::onLogout,
-        onCacheRequest = component::requestCache,
+        onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
+        onLogout = searchViewModel::onLogout,
+        onCacheRequest = searchViewModel::requestCache,
         navigationToLogin = navigationToLogin,
         navigationToPlayer = navigationToPlayer,
         navigationToSettings = navigationToSettings,

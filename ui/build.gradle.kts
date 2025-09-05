@@ -50,7 +50,7 @@ kotlin {
             implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha08")
             implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha08")
 
-            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.koin.compose.viewmodel)
         }
     }
 }
