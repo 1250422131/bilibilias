@@ -21,17 +21,21 @@ import androidx.compose.ui.unit.dp
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.core.datastore.model.Codecs
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
-import com.imcys.bilibilias.logic.setting.SettingsComponent
+import com.imcys.bilibilias.logic.setting.SettingsViewModel
 import com.imcys.bilibilias.ui.component.BackButton
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SettingsScreen(component: SettingsComponent, onBack: () -> Unit) {
-    val state by component.preferences.collectAsState()
+fun SettingsScreen(
+    onBack: () -> Unit,
+    settingsViewModel: SettingsViewModel = koinViewModel(),
+) {
+    val state by settingsViewModel.preferences.collectAsState()
     SettingsContent(
         state = state,
         onBack = onBack,
-        updateTryLook = component::setTryLook,
-        updateDecoderCodec = component::setDecoderCodecPriorityList
+        updateTryLook = settingsViewModel::setTryLook,
+        updateDecoderCodec = settingsViewModel::setDecoderCodecPriorityList
     )
 }
 
