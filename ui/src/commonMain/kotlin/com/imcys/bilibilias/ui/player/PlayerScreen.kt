@@ -9,14 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.imcys.bilibilias.logic.player.PlayerComponent
+import com.imcys.bilibilias.logic.player.PlayerViewModel
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 import org.openani.mediamp.compose.MediampPlayerSurface
 import org.openani.mediamp.compose.rememberMediampPlayer
 import org.openani.mediamp.playUri
 
 @Composable
-fun PlayerScreen(component: PlayerComponent) {
+fun PlayerScreen(playerViewModel: PlayerViewModel = koinViewModel()) {
     VideoSurface()
 }
 
