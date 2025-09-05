@@ -11,6 +11,8 @@ kotlin {
             implementation(libs.androidx.core)
         }
         commonMain.dependencies {
+            api(projects.core.navigation)
+
             implementation(projects.logic)
 
             implementation(projects.core.ffmpeg)

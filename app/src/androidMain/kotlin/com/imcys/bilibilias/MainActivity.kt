@@ -5,22 +5,32 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.navigation3.runtime.EntryProviderBuilder
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.essentyLifecycle
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
+import com.imcys.bilibilias.core.navigation.AsBackStackViewModel
+import com.imcys.bilibilias.core.navigation.AsNavKey
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
 import com.imcys.bilibilias.ui.root.rememberAsAppState
 import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
+import com.imcys.bilibilias.ui.theme.AsTheme
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 class MainActivity : ComponentActivity(), KoinComponent {
 
     private val errorMonitor: ErrorMonitor = get()
+
+    private val backStackViewModel: AsBackStackViewModel by viewModels()
+
+    private val entryProviderBuilders: Set<@JvmSuppressWildcards EntryProviderBuilder<AsNavKey>.() -> Unit> =
+        setOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -36,11 +46,16 @@ class MainActivity : ComponentActivity(), KoinComponent {
         val lifecycleOwner = createLifecycleOwner()
 
         setContent {
-            val appState = rememberAsAppState(errorMonitor)
+            val appState = rememberAsAppState(
+                errorMonitor,
+                asBackStack = backStackViewModel.asBackStack,
+            )
             CompositionLocalProvider(
                 LocalLifecycleOwner provides lifecycleOwner,
             ) {
-                AsApp(component, appState)
+                AsTheme(false) {
+                    AsApp(component, appState, entryProviderBuilders)
+                }
             }
         }
     }

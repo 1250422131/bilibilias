@@ -21,11 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.navigation3.runtime.EntryProviderBuilder
 import bilibilias.ui.generated.resources.Res
 import bilibilias.ui.generated.resources.not_connected
 import bilibilias.ui.generated.resources.unknown_error
@@ -34,20 +36,19 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.data.model.MessageData
 import com.imcys.bilibilias.core.data.model.MessageType
+import com.imcys.bilibilias.core.navigation.AsNavKey
 import com.imcys.bilibilias.logic.root.RootComponent
 import com.imcys.bilibilias.ui.cache.CacheScreen
 import com.imcys.bilibilias.ui.component.AsBackground
 import com.imcys.bilibilias.ui.component.AsGradientBackground
 import com.imcys.bilibilias.ui.component.AsNavigationSuiteScaffold
 import com.imcys.bilibilias.ui.login.LoginScreen
-import com.imcys.bilibilias.ui.navigation.TopLevelDestination
+import com.imcys.bilibilias.ui.navigation.AsNavDisplay
 import com.imcys.bilibilias.ui.player.PlayerScreen
 import com.imcys.bilibilias.ui.search.SearchScreen
 import com.imcys.bilibilias.ui.setting.SettingsScreen
-import com.imcys.bilibilias.ui.theme.AsTheme
 import com.imcys.bilibilias.ui.theme.GradientColors
 import com.imcys.bilibilias.ui.theme.LocalGradientColors
 import org.jetbrains.compose.resources.getString
@@ -55,99 +56,93 @@ import org.jetbrains.compose.resources.getString
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AsApp(
-    component: RootComponent,
     appState: AsAppState,
+    entryProviderBuilders: Set<EntryProviderBuilder<AsNavKey>.() -> Unit>,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    AsTheme(false) {
-        AsBackground {
-            AsGradientBackground {
+    AsBackground(modifier = modifier) {
+        AsGradientBackground {
 
-                val snackbarHostState = remember { SnackbarHostState() }
+            val snackbarHostState = remember { SnackbarHostState() }
 
-                val stateMessage by appState.stateMessage.collectAsState()
-                LaunchedEffect(stateMessage) {
-                    stateMessage?.let { message ->
+            val stateMessage by appState.stateMessage.collectAsState()
+            LaunchedEffect(stateMessage) {
+                stateMessage?.let { message ->
 
-                        // Text and Duration values dictated by the UI
-                        val (text, duration) = getSnackbarValues(message)
+                    // Text and Duration values dictated by the UI
+                    val (text, duration) = getSnackbarValues(message)
 
-                        // Determine whether user clicked action button
-                        val snackBarResult = snackbarHostState.showSnackbar(
-                            message = text,
-                            actionLabel = message.label,
-                            duration = duration,
-                        ) == SnackbarResult.ActionPerformed
+                    // Determine whether user clicked action button
+                    val snackBarResult = snackbarHostState.showSnackbar(
+                        message = text,
+                        actionLabel = message.label,
+                        duration = duration,
+                    ) == SnackbarResult.ActionPerformed
 
-                        // Handle result action
-                        if (snackBarResult) {
-                            message.onConfirm?.invoke()
-                        } else {
-                            message.onDelay?.invoke()
-                        }
-
-                        // Remove Message from List
-                        appState.errorMonitor.clearMessage(message)
+                    // Handle result action
+                    if (snackBarResult) {
+                        message.onConfirm?.invoke()
+                    } else {
+                        message.onDelay?.invoke()
                     }
+
+                    // Remove Message from List
+                    appState.errorMonitor.clearMessage(message)
                 }
-                AsApp(component, snackbarHostState, modifier, windowAdaptiveInfo)
+            }
+            CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+                AsApp(
+                    appState = appState,
+                    snackbarHostState = snackbarHostState,
+                    entryProviderBuilders = entryProviderBuilders,
+                    windowAdaptiveInfo = windowAdaptiveInfo
+                )
             }
         }
     }
 }
 
+// TODO: move to common
+val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+    error("SnackbarHostState state should be initialized at runtime")
+}
+
 @Composable
 internal fun AsApp(
-    component: RootComponent,
+    appState: AsAppState,
     snackbarHostState: SnackbarHostState,
+    entryProviderBuilders: Set<EntryProviderBuilder<AsNavKey>.() -> Unit>,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    val stack by component.stack.subscribeAsState()
-    val activeComponent = stack.active.instance
+    val currentTopLevelKey = appState.currentTopLevelDestination!!.key
+
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
-            item(
-                selected = activeComponent is RootComponent.Child.SearchChild,
-                onClick = component::onSearchClicked,
-                icon = {
-                    Icon(
-                        imageVector = TopLevelDestination.SEARCH.unselectedIcon,
-                        contentDescription = null,
-                    )
-                },
-                selectedIcon = {
-                    Icon(
-                        imageVector = TopLevelDestination.SEARCH.selectedIcon,
-                        contentDescription = null,
-                    )
-                },
-                label = { Text(TopLevelDestination.SEARCH.iconText) },
-                modifier = Modifier
-                    .testTag("NavItem")
-            )
-            item(
-                selected = activeComponent is RootComponent.Child.CacheChild,
-                onClick = component::onCacheClicked,
-                icon = {
-                    Icon(
-                        imageVector = TopLevelDestination.CACHE.unselectedIcon,
-                        contentDescription = null,
-                    )
-                },
-                selectedIcon = {
-                    Icon(
-                        imageVector = TopLevelDestination.CACHE.selectedIcon,
-                        contentDescription = null,
-                    )
-                },
-                label = { Text(TopLevelDestination.CACHE.iconText) },
-                modifier = Modifier
-                    .testTag("NavItem")
-            )
+            appState.topLevelDestinations.forEach { destination ->
+                val selected = destination.key == currentTopLevelKey
+                item(
+                    selected = selected,
+                    onClick = { appState.asBackStack.navigate(destination.key) },
+                    icon = {
+                        Icon(
+                            imageVector = destination.unselectedIcon,
+                            contentDescription = null,
+                        )
+                    },
+                    selectedIcon = {
+                        Icon(
+                            imageVector = destination.selectedIcon,
+                            contentDescription = null,
+                        )
+                    },
+                    label = { Text(destination.iconText) },
+                    modifier = Modifier
+                        .testTag("NiaNavItem")
+                )
+            }
         },
-        shouldShowBottomBar = activeComponent.shouldDisplayBottomBar,
         windowAdaptiveInfo = windowAdaptiveInfo,
     ) {
         Scaffold(
@@ -166,16 +161,10 @@ internal fun AsApp(
                 )
             },
         ) { padding ->
-            Children(
-                component,
-                onShowSnackbar = { message, action ->
-                    snackbarHostState.showSnackbar(
-                        message = message,
-                        actionLabel = action,
-                        duration = SnackbarDuration.Short,
-                    ) == SnackbarResult.ActionPerformed
-                },
-                Modifier.padding(padding)
+            AsNavDisplay(
+                asBackStack = appState.asBackStack,
+                entryProviderBuilders,
+                modifier = Modifier.padding(padding),
             )
         }
     }
@@ -235,7 +224,4 @@ private suspend fun getSnackbarValues(
     }
 }
 
-private val RootComponent.Child.shouldDisplayBottomBar: Boolean
-    get() = this is RootComponent.Child.SearchChild ||
-            this is RootComponent.Child.CacheChild
 private val DarkGreenGray95 = Color(0xFFF0F1EC)

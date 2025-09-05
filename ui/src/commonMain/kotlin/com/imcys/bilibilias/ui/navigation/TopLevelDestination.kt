@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.imcys.bilibilias.core.navigation.AsNavKey
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(
