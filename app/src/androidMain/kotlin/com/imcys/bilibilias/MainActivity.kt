@@ -8,17 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation3.runtime.EntryProviderBuilder
-import com.arkivanov.decompose.defaultComponentContext
-import com.arkivanov.essenty.lifecycle.LifecycleOwner
-import com.arkivanov.essenty.lifecycle.essentyLifecycle
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.navigation.AsBackStackViewModel
 import com.imcys.bilibilias.core.navigation.AsNavKey
-import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
-import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
 import com.imcys.bilibilias.ui.root.rememberAsAppState
-import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
 import com.imcys.bilibilias.ui.theme.AsTheme
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -39,30 +33,18 @@ class MainActivity : ComponentActivity(), KoinComponent {
 //        val notifier = get<Notifier>()
 //        notifier.postNotifications()
 
-        val searchText = getSearchTextFromIntent()
-
-        val context = DefaultAppComponentContext(defaultComponentContext(), get())
-        val component = DefaultRootComponent(context, searchText)
-        val lifecycleOwner = createLifecycleOwner()
+        getSearchTextFromIntent()
 
         setContent {
             val appState = rememberAsAppState(
                 errorMonitor,
                 asBackStack = backStackViewModel.asBackStack,
             )
-            CompositionLocalProvider(
-                LocalLifecycleOwner provides lifecycleOwner,
-            ) {
+            CompositionLocalProvider {
                 AsTheme(false) {
-                    AsApp(component, appState, entryProviderBuilders)
+                    AsApp(appState, entryProviderBuilders)
                 }
             }
-        }
-    }
-
-    private fun createLifecycleOwner(): LifecycleOwner {
-        return object : LifecycleOwner {
-            override val lifecycle get() = essentyLifecycle()
         }
     }
 
