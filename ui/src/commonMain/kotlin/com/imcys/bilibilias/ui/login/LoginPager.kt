@@ -73,6 +73,7 @@ internal fun PagerScope.QrContent(
         QrCodeLoginState.LoginSuccess -> {
             onBack()
         }
+
         is QrCodeLoginState.QRCodeReady -> {
             Box(Modifier.fillMaxSize(), Alignment.Center) {
                 Text("正在生成二维码。。。")
@@ -155,7 +156,7 @@ internal fun PagerScope.QrContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(text = state.message, fontSize = 16.sp)
-
+                @Suppress("DEPRECATION")
                 val clipboard = LocalClipboardManager.current
                 val scope = rememberCoroutineScope()
                 //
