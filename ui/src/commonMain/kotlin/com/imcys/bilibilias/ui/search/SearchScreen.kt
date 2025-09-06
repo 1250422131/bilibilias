@@ -26,6 +26,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +41,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.MediaStream
@@ -49,6 +49,7 @@ import com.imcys.bilibilias.logic.search.SearchViewModel
 import com.imcys.bilibilias.logic.search.SelfInfoUiState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun SearchScreen(
     navigationToLogin: () -> Unit,
@@ -56,9 +57,9 @@ fun SearchScreen(
     navigationToSettings: () -> Unit,
     searchViewModel: SearchViewModel = koinViewModel(),
 ) {
-    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
-    val searchResultUiState by searchViewModel.searchResultUiState.collectAsStateWithLifecycle()
-    val selfInfoUiState by searchViewModel.selfInfoUiState.collectAsStateWithLifecycle()
+    val searchQuery by searchViewModel.searchQuery.collectAsState()
+    val searchResultUiState by searchViewModel.searchResultUiState.collectAsState()
+    val selfInfoUiState by searchViewModel.selfInfoUiState.collectAsState()
     SearchContent(
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState,

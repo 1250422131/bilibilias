@@ -50,12 +50,12 @@ fun CacheScreen(
 ) {
     val state by cacheViewModel.stateFlow.collectAsStateWithLifecycle()
 
-    val canMux by cacheViewModel.canProcess.collectAsStateWithLifecycle()
+//    val canMux by cacheViewModel.canProcess.collectAsStateWithLifecycle()
 
     CaCheContent(
         state,
         onDelete = cacheViewModel::deleteEpisodeCache,
-        canMux = canMux,
+        canMux = true,
         onCombine = cacheViewModel::onCombine
     )
 }

@@ -2,7 +2,6 @@ package com.imcys.bilibilias.logic.search
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
@@ -43,7 +42,6 @@ class SearchViewModel(
 ) : ViewModel() {
     val selfInfoUiState = preferences.userData
         .map { preferences ->
-            viewModelScope
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
         .stateInViewModelScope(SelfInfoUiState.Loading)
