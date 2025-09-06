@@ -63,7 +63,7 @@ kotlin {
 
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(libs.androidx.navigation3.ui)
+            implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha08")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
