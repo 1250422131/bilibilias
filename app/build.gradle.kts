@@ -63,8 +63,6 @@ kotlin {
 
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-
             implementation(libs.androidx.navigation3.ui)
         }
         commonTest.dependencies {
