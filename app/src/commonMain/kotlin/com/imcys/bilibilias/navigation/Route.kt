@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.navigation
 
 import com.imcys.bilibilias.core.navigation.AsNavKey
 import kotlinx.serialization.Serializable

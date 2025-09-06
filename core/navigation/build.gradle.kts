@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.bilibilias.kmp.library)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -11,7 +10,7 @@ kotlin {
             implementation(libs.androidx.savedstate.compose)
             implementation(libs.kotlinx.serialization.core)
 
-            implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.3")
+            implementation(libs.androidx.lifecycle.viewmodel.savedstate)
         }
     }
 }

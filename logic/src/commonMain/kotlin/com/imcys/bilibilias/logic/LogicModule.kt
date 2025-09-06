@@ -10,5 +10,7 @@ import org.koin.dsl.module
 val LogicModule = module {
     factoryOf(::CookieStateMachine)
     factoryOf(::QrCodeLoginStateMachine)
-    viewModelOf(::SearchViewModel)
+    viewModelOf(::SearchViewModel) {
+
+    }
 }

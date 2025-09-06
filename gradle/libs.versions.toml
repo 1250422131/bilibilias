@@ -37,6 +37,7 @@ kotlinx-serialization = "1.9.0"
 ktor = "3.2.3"
 androidx-material3-adaptive = "1.1.2"
 lifecycleCoroutines = "2.5.0"
+navigation3Ui = "1.0.0-alpha08"
 qr = "1.0.1"
 reorderable = "3.0.0"
 settings-ui = "2.13.0"
@@ -45,15 +46,16 @@ uriKmp = "0.0.20"
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
-androidx-compose-adaptive-navigation3 = { module = "org.jetbrains.androidx.compose.material3.adaptive:adaptive-navigation3", version.ref = "androidxAdaptiveNavigation3" }
+androidx-compose-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3", version.ref = "androidxAdaptiveNavigation3" }
 androidx-compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "androidx-material3-adaptive" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx-core" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 
-androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version = "1.0.0-alpha04" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-viewmodel" }
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-viewmodel" }
 androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "androidx-media3" }
 
 androidx-navigation3-runtime = { module = "org.jetbrains.androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation" }
@@ -81,7 +83,6 @@ kermit-io = { module = "co.touchlab:kermit-io", version.ref = "kermit" }
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }

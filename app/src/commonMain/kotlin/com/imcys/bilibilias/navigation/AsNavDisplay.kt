@@ -1,6 +1,5 @@
-package com.imcys.bilibilias.ui.navigation
+package com.imcys.bilibilias.navigation
 
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderBuilder
@@ -12,11 +11,10 @@ import com.imcys.bilibilias.core.navigation.AsBackStack
 import com.imcys.bilibilias.core.navigation.AsNavKey
 
 @Suppress("VisibleForTests")
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun AsNavDisplay(
     asBackStack: AsBackStack,
-    entryProviderBuilders: Set<EntryProviderBuilder<AsNavKey>.() -> Unit>,
+    entryProviderBuilders: EntryProviderBuilder<AsNavKey>.() -> Unit,
     modifier: Modifier = Modifier,
 ) {
 //    val listDetailStrategy = rememberListDetailSceneStrategy<AsNavKey>()
@@ -31,9 +29,7 @@ fun AsNavDisplay(
 //            rememberViewModelStoreNavEntryDecorator(),
         ),
         entryProvider = entryProvider {
-            entryProviderBuilders.forEach { builder ->
-                builder()
-            }
+            entryProviderBuilders()
         },
         modifier = modifier,
     )

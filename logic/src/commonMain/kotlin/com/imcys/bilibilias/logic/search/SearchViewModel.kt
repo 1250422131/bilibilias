@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    searchText: String?,
+//    searchText: String?,
     private val savedStateHandle: SavedStateHandle,
     private val applicationScope: CoroutineScope,
     private val httpDownloader: HttpDownloader,
@@ -47,7 +47,7 @@ class SearchViewModel(
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
         .stateInViewModelScope(SelfInfoUiState.Loading)
-    val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, searchText ?: "")
+    val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 
     val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->

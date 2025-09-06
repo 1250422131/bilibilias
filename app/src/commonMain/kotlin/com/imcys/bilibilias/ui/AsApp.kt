@@ -33,17 +33,17 @@ import bilibilias.app.generated.resources.unknown_error
 import com.imcys.bilibilias.core.data.model.MessageData
 import com.imcys.bilibilias.core.data.model.MessageType
 import com.imcys.bilibilias.core.navigation.AsNavKey
+import com.imcys.bilibilias.navigation.AsNavDisplay
 import com.imcys.bilibilias.ui.component.AsBackground
 import com.imcys.bilibilias.ui.component.AsGradientBackground
 import com.imcys.bilibilias.ui.component.AsNavigationSuiteScaffold
-import com.imcys.bilibilias.ui.navigation.AsNavDisplay
 import org.jetbrains.compose.resources.getString
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AsApp(
     appState: AsAppState,
-    entryProviderBuilders: Set<EntryProviderBuilder<AsNavKey>.() -> Unit>,
+    entryProviderBuilders: EntryProviderBuilder<AsNavKey>.() -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
@@ -98,7 +98,7 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
 internal fun AsApp(
     appState: AsAppState,
     snackbarHostState: SnackbarHostState,
-    entryProviderBuilders: Set<EntryProviderBuilder<AsNavKey>.() -> Unit>,
+    entryProviderBuilders: EntryProviderBuilder<AsNavKey>.() -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {

@@ -41,6 +41,7 @@ kotlin {
             implementation(projects.core.httpDownloader)
             implementation(projects.core.ktorClient)
             implementation(projects.core.ffmpeg)
+            implementation(projects.core.navigation)
             implementation(projects.logic)
             implementation(projects.ui)
 
@@ -61,7 +62,12 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.core.coroutines)
-            implementation(libs.koin.compose)
+
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
+            implementation(libs.androidx.navigation3.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

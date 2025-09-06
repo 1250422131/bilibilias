@@ -54,6 +54,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
 fun KoinApplication.commonModules() = module {
     includes(
+        NavigationModule,
         CommonModule,
         DataModule,
         DataSourceModule,
