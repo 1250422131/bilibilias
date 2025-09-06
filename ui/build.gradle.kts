@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.bilibilias.kmp.library)
     alias(libs.plugins.bilibilias.compose)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -25,20 +24,19 @@ kotlin {
             implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.materialIconsExtended)
 
-            implementation(libs.decompose)
-            implementation(libs.decompose.compose)
-
             implementation(libs.coil.compose)
 
             implementation(libs.qr.kit)
 
             implementation(mediampLibs.mediamp.api)
             implementation(libs.settings.ui)
-            implementation(libs.lifecycle.coroutines)
 
             implementation(libs.reorderable)
 
             implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
         }
     }
 }

@@ -40,18 +40,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.ExperimentalDecomposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.MediaStream
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.logic.search.SearchViewModel
 import com.imcys.bilibilias.logic.search.SelfInfoUiState
-import com.imcys.bilibilias.ui.runtime.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-
-@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun SearchScreen(
     navigationToLogin: () -> Unit,
