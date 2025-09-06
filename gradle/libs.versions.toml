@@ -76,6 +76,7 @@ filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "file
 flowredux = { module = "com.freeletics.flowredux2:flowredux", version.ref = "flowredux" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }

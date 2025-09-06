@@ -32,6 +32,7 @@ kotlin {
 
             implementation(libs.androidx.work.runtime.ktx)
             implementation(libs.koin.androidx.workmanager)
+            implementation(libs.koin.android)
             implementation(libs.kotlinx.coroutines.android)
         }
         commonMain.dependencies {

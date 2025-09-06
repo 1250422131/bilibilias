@@ -17,16 +17,12 @@ fun AsNavDisplay(
     entryProviderBuilders: EntryProviderBuilder<AsNavKey>.() -> Unit,
     modifier: Modifier = Modifier,
 ) {
-//    val listDetailStrategy = rememberListDetailSceneStrategy<AsNavKey>()
-
     NavDisplay(
         backStack = asBackStack.backStack,
-//        sceneStrategy = listDetailStrategy,
         onBack = { count -> asBackStack.popLast(count) },
         entryDecorators = listOf(
             rememberSceneSetupNavEntryDecorator(),
             rememberSavedStateNavEntryDecorator(),
-//            rememberViewModelStoreNavEntryDecorator(),
         ),
         entryProvider = entryProvider {
             entryProviderBuilders()
