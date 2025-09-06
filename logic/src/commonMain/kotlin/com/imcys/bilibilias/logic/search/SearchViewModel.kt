@@ -2,6 +2,7 @@ package com.imcys.bilibilias.logic.search
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.CookieJarDataSource
@@ -29,7 +30,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-//    searchText: String?,
     private val savedStateHandle: SavedStateHandle,
     private val applicationScope: CoroutineScope,
     private val httpDownloader: HttpDownloader,
@@ -45,7 +45,8 @@ class SearchViewModel(
             preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
         }
         .stateInViewModelScope(SelfInfoUiState.Loading)
-    val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
+    val searchQuery: StateFlow<String> =
+        savedStateHandle.getStateFlow(SEARCH_QUERY, getDefaultSearchQuery())
 
     val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
@@ -122,6 +123,16 @@ class SearchViewModel(
             title = title
         )
     }
+
+    private fun getDefaultSearchQuery(): String {
+        return if (BuildConfig.DEBUG) {
+            getSampleSearchQueries().random()
+        } else {
+            ""
+        }
+    }
+
+    private fun getSampleSearchQueries() = listOf("BV1qW4y1k7yh")
 }
 
-private const val SEARCH_QUERY = "searchQuery"
+internal expect val SEARCH_QUERY: String

@@ -1,6 +1,5 @@
 package com.imcys.bilibilias
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,8 +28,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
 //        val notifier = get<Notifier>()
 //        notifier.postNotifications()
 
-        getSearchTextFromIntent()
-
         setContent {
             val appState = rememberAsAppState(
                 errorMonitor,
@@ -43,19 +40,4 @@ class MainActivity : ComponentActivity(), KoinComponent {
             }
         }
     }
-
-    private fun getSearchTextFromIntent(): String? {
-        val intentSearchText = intent.getStringExtra(Intent.EXTRA_TEXT)
-        return intentSearchText ?: if (BuildConfig.DEBUG) { // Use BuildConfig.DEBUG
-            generateRandomTestSearchText()
-        } else {
-            null
-        }
-    }
-
-    private fun generateRandomTestSearchText(): String {
-        return getSampleSearchQueries().random()
-    }
-
-    private fun getSampleSearchQueries() = listOf("BV1qW4y1k7yh")
 }
