@@ -159,7 +159,7 @@ internal fun PagerScope.QrContent(
                 @Suppress("DEPRECATION")
                 val clipboard = LocalClipboardManager.current
                 val scope = rememberCoroutineScope()
-                //
+
                 Text(
                     text = state.url,
                     style = MaterialTheme.typography.labelSmall,
