@@ -76,12 +76,9 @@ android {
 }
 
 dependencies {
-
-
     implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:ffmpeg"))
-
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
@@ -93,7 +90,6 @@ dependencies {
     }
     implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
-//    implementation(libs.firebase.config.ktx)
     implementation(libs.firebase.perf) {
         exclude(group = "com.google.protobuf", module = "protobuf-javalite")
         exclude(group = "com.google.firebase", module = "protolite-well-known-types")
@@ -103,9 +99,6 @@ dependencies {
     implementation(libs.konfetti.compose)
     // 高斯模糊
     implementation(libs.compose.cloudy)
-
-    // 启动屏
-    // implementation(libs.androidx.core.splashscreen)
 
     // 分页
     implementation(libs.paging.compose)
@@ -122,13 +115,4 @@ dependencies {
             compileOnly(it)
         }
     }
-
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 }
