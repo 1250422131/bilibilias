@@ -203,7 +203,7 @@ internal fun PagerScope.CookieContent(
 ) {
     SideEffect {
         if (cookieLoginState.success) {
-//            onBack()
+            onBack()
         }
     }
     Column(
