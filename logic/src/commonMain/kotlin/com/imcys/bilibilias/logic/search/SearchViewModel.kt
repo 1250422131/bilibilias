@@ -13,6 +13,8 @@ import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo
+import com.imcys.bilibilias.core.flow.FlowRestarter
+import com.imcys.bilibilias.core.flow.restartable
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.result.Result.Error
@@ -48,6 +50,7 @@ class SearchViewModel(
     val searchQuery: StateFlow<String> =
         savedStateHandle.getStateFlow(SEARCH_QUERY, getDefaultSearchQuery())
 
+    private val restarter = FlowRestarter()
     val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
             if (query.isEmpty()) {
@@ -78,14 +81,18 @@ class SearchViewModel(
                         }
                     }
             }
-        }.stateInViewModelScope(SearchResultUiState.Loading)
+        }
+            .restartable(restarter)
+            .stateInViewModelScope(SearchResultUiState.Loading)
 
     fun onSearchTriggered(query: String) {}
 
     fun onSearchQueryChanged(query: String) {
         savedStateHandle[SEARCH_QUERY] = query
     }
-
+    fun restartSearch() {
+        restarter.restart()
+    }
     fun onLogout() {
         applicationScope.launch {
             api.exit()
