@@ -2,11 +2,11 @@ package com.imcys.bilibilias.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imcys.bilibilias.common.base.crash.AppException
+import com.google.firebase.Firebase
+import com.google.firebase.app
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
-import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
@@ -14,8 +14,10 @@ import com.imcys.bilibilias.network.AsCookiesStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BILIBILIASAppViewModel(
@@ -25,18 +27,13 @@ class BILIBILIASAppViewModel(
     private val asCookiesStorage: AsCookiesStorage,
     private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
-
-    sealed class UIState {
-        data object Default : UIState()
-        data class AccountCheck(
-            val isCheckLoading: Boolean = false,
-            val newCurrentUser: BILIUsersEntity? = null
-        ) : UIState() // 正在检测
-
-        data object KnowAboutApp : UIState()
-
-        data class AppError(val appException: AppException?) : UIState()
-    }
+    val appSettings = appSettingsRepository.appSettingsFlow.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        AppSettings.getDefaultInstance()
+    )
+    private val _uiState = MutableStateFlow<UIState>(UIState.Default)
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -48,14 +45,13 @@ class BILIBILIASAppViewModel(
         }
     }
 
-    private val _uiState = MutableStateFlow<UIState>(UIState.Default)
-    val uiState = _uiState.asStateFlow()
-
-
-    fun appError(appError: AppException?) {
-        _uiState.value = UIState.AppError(appError)
+    fun updatePrivacyPolicyAgreement(agreed: AppSettings.AgreePrivacyPolicyState) {
+        viewModelScope.launch {
+            appSettingsRepository.updatePrivacyPolicyAgreement(agreed)
+            Firebase.app.isDataCollectionDefaultEnabled =
+                agreed == AppSettings.AgreePrivacyPolicyState.Agreed
+        }
     }
-
 
     fun accountLoginStateError() {
 
@@ -84,7 +80,7 @@ class BILIBILIASAppViewModel(
                     qrCodeLoginRepository.getLoginUserInfo(it.loginPlatform).lastOrNull()
                 loginInfo?.let { info ->
                     if (info.status == ApiStatus.SUCCESS) {
-                        if (!isResult){
+                        if (!isResult) {
                             _uiState.emit(UIState.Default)
                         }
                         isResult = true
