@@ -35,6 +35,7 @@ kotlinx-io = "0.8.0"
 kotlinx-serialization = "1.9.0"
 ktor = "3.2.3"
 androidx-material3-adaptive = "1.1.2"
+navigation3Ui = "1.0.0-alpha08"
 qr = "1.0.1"
 reorderable = "3.0.0"
 settings-ui = "2.13.0"
@@ -56,6 +57,7 @@ androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycl
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "androidx-media3" }
 
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3Ui" }
 androidx-savedstate-compose = { group = "androidx.savedstate", name = "savedstate-compose", version.ref = "androidxSavedStateCompose" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
