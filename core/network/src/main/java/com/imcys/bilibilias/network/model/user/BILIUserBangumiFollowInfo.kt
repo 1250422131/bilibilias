@@ -334,7 +334,7 @@ data class BILIUserBangumiFollowInfo(
             @SerialName("series_id")
             val seriesId: Long,
             @SerialName("series_ord")
-            val seriesOrd: Long,
+            val seriesOrd: Long?,
             @SerialName("title")
             val title: String
         )
