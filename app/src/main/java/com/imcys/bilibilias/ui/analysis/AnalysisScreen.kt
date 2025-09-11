@@ -90,10 +90,10 @@ import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
-import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
@@ -203,7 +203,7 @@ fun ColumnScope.AnalysisVideoCardList(
     downloadInfo: DownloadViewInfo?,
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
-    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
+    analysisBaseInfo: AnalysisBaseInfo,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit,
     onToVideoCodingInfo: () -> Unit
@@ -517,7 +517,7 @@ fun ExtraCache(downloadInfo: DownloadViewInfo?, onCheckCoverDownload: (Boolean) 
 fun AnalysisVideoCard(
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
-    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
+    analysisBaseInfo: AnalysisBaseInfo,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit
 ) {
@@ -553,7 +553,7 @@ fun AnalysisVideoCard(
 fun BILIDonghuaCard(
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     currentEpId: Long,
-    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
+    analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit
 ) {
@@ -706,7 +706,7 @@ fun BILIUserSpaceCard(userInfo: NetWorkResult<BILIUserSpaceAccInfo?>, goToUser: 
 fun BILIVideoCard(
     asLinkResultType: ASLinkResultType.BILI.Video,
     videoInfo: NetWorkResult<BILIVideoViewInfo?>,
-    analysisBaseInfo: AnalysisViewModel.AnalysisBaseInfo,
+    analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit
 ) {

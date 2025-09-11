@@ -33,11 +33,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 
 @OptIn(FlowPreview::class)
 class AnalysisViewModel(
@@ -46,22 +44,6 @@ class AnalysisViewModel(
     private val userInfoRepository: UserInfoRepository,
     private val downloadManager: DownloadManager
 ) : ViewModel() {
-
-    data class AnalysisBaseInfo(
-        val title: String = "",
-        val cover: String = "",
-        val enabledSelectInfo: Boolean = false,
-    )
-
-    data class UIState(
-        val inputAsText: String = "",
-        val linkType: TextType? = null,
-        val asLinkResultType: ASLinkResultType? = null,
-        val isBILILogin: Boolean = false,
-        val downloadInfo: DownloadViewInfo? = null,
-        val isCreateDownloadLoading: Boolean = false,
-        val analysisBaseInfo: AnalysisBaseInfo = AnalysisBaseInfo()
-    )
 
     private val _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
