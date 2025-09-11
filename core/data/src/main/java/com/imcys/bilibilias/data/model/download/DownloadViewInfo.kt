@@ -2,8 +2,17 @@ package com.imcys.bilibilias.data.model.download
 
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import java.util.TreeSet
 
+
+enum class CCFileType {
+    ASS,
+    SRT,
+}
 data class DownloadViewInfo(
     val selectVideoQualityId: Long? = null,
     val selectVideoCode: String = "",
@@ -12,12 +21,17 @@ data class DownloadViewInfo(
     val selectedCid: List<Long> = listOf(),
     val selectedEpId: List<Long> = listOf(),
     val downloadCover: Boolean = false,
+    val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表
+    val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型
+    val videoPlayerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?> = emptyNetWorkResult()
 ) {
+
 
     // 清空cid列表
     fun clearCidList(): DownloadViewInfo = copy(
         selectedCid = emptyList()
     )
+
     // 清空epId列表
     fun clearEpIdList(): DownloadViewInfo = copy(
         selectedEpId = emptyList()
@@ -37,6 +51,26 @@ data class DownloadViewInfo(
         } else {
             selectedEpId + epId
         }
+    )
+
+
+    fun clearCCIdList(): DownloadViewInfo = copy(
+        selectedCCId = emptyList()
+    )
+
+    fun toggleCCId(ccId: Long): DownloadViewInfo = copy(
+        selectedCCId = if (selectedCCId.contains(ccId)) {
+            selectedCCId - ccId
+        } else {
+            // 使用 TreeSet 去重并排序
+            (TreeSet(selectedCCId) + ccId).toList()
+        }
+    )
+
+
+
+    fun updateCCFileType(fileType: CCFileType): DownloadViewInfo = copy(
+        ccFileType = fileType
     )
 
     fun updateVideoQuality(qualityId: Long?, code: String): DownloadViewInfo = copy(

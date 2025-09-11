@@ -9,6 +9,7 @@ import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.AsRegexUtil
 import com.imcys.bilibilias.common.utils.TextType
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.UserInfoRepository
@@ -147,6 +148,12 @@ class AnalysisViewModel(
         )
     }
 
+    fun clearCCIdList() {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.clearCCIdList()
+        )
+    }
+
     fun updateSelectedPlayerInfo(
         cid: Long,
         selectEpisodeType: SelectEpisodeType,
@@ -156,7 +163,7 @@ class AnalysisViewModel(
 
         _uiState.update {
             _uiState.value.copy(
-                analysisBaseInfo =  AnalysisBaseInfo(
+                analysisBaseInfo = AnalysisBaseInfo(
                     enabledSelectInfo = true,
                     title = title,
                     cover = cover.toHttps(),
@@ -166,29 +173,28 @@ class AnalysisViewModel(
 
         when (val result = uiState.value.asLinkResultType) {
             is ASLinkResultType.BILI.Donghua -> {
+
                 result.donghuaViewInfo.data?.let { info ->
                     // 这里cid是ep号
-                    when(selectEpisodeType){
+                    when (selectEpisodeType) {
                         is SelectEpisodeType.AID -> {
                             sendAnalysisEvent(AnalysisEvent("av${selectEpisodeType.aid}"))
                         }
+
                         is SelectEpisodeType.EPID -> {
                             asDonghuaPlayerInfo(null, cid)
                         }
+
                         else -> {}
                     }
                 }
             }
 
             is ASLinkResultType.BILI.Video -> {
-                // 如果当前解析结果的cid与传入的cid相同，则不进行更新
-                if (result.viewInfo.data?.cid == cid) {
-                    return
-                }
-
                 result.viewInfo.data?.let { info ->
                     // 分P
                     info.pages?.firstOrNull { it.cid == cid }?.let {
+                        updatePlayerInfoV2(cid = cid, bvId = info.bvid, aid = info.aid)
                         asVideoPlayerInfo(cid, info.bvid)
                         return@let
                     }
@@ -196,6 +202,7 @@ class AnalysisViewModel(
                     info.ugcSeason?.sections?.forEach { section ->
                         section.episodes.forEach { episode ->
                             episode.pages.firstOrNull { it.cid == cid }?.let {
+                                updatePlayerInfoV2(cid = cid, bvId = episode.bvid, aid = episode.aid)
                                 asVideoPlayerInfo(cid, episode.bvid)
                                 return@let
                             }
@@ -232,6 +239,39 @@ class AnalysisViewModel(
             }
         }
     }
+
+
+    fun updateSelectCCIdList(ccId: Long?, ccFileType: CCFileType) {
+        ccId?.let {
+            if (_uiState.value.asLinkResultType is ASLinkResultType.BILI.Video) {
+                viewModelScope.launch {
+                    _uiState.value = _uiState.value.copy(
+                        downloadInfo = _uiState.value.downloadInfo?.toggleCCId(it)?.copy(
+                            ccFileType = ccFileType
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+   private fun updatePlayerInfoV2(
+        cid: Long,
+        bvId: String?,
+        aid: Long? = null,
+    ) {
+        viewModelScope.launch {
+            videoInfoRepository.getVideoPlayerInfoV2(cid = cid, bvId = bvId, aid = aid).collect {
+                _uiState.emit(_uiState.value.copy(
+                    downloadInfo = _uiState.value.downloadInfo?.copy(
+                        selectedCCId = emptyList(),
+                        videoPlayerInfoV2 = it
+                    )
+                ))
+            }
+        }
+    }
+
 
     private suspend fun analysisInputText(inputAsText: String) {
         val asType = AsRegexUtil.parse(inputAsText)
@@ -453,6 +493,7 @@ class AnalysisViewModel(
                                 )
                             )
                         }
+                        updatePlayerInfoV2(cid = cid, bvId = bvId, aid = aid)
                     }
                 }
             }

@@ -12,6 +12,7 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LIKE_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PLAY_INFO_V2_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_POLL_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_RELATION_STAT_URL
@@ -57,7 +58,9 @@ import com.imcys.bilibilias.network.model.user.BILIUserVideoLikeInfo
 import com.imcys.bilibilias.network.model.user.LikeAndCoinItemData
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
@@ -70,6 +73,7 @@ import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -337,6 +341,26 @@ class BILIBILIWebAPIService(
                 }
             }
         }
+
+    suspend fun getVideoPlayerInfoV2(
+        cid: Long,
+        bvId: String?,
+        aid: Long? = null,
+    ): FlowNetWorkResult<BILIVideoPlayerInfoV2> = httpClient.httpRequest {
+        val newMap = mutableMapOf<String, String>().apply {
+            bvId?.let { put(BVID, it) }
+            aid?.let { put(AID, it.toString()) }
+            put(CID, cid.toString())
+        } + BROWSER_FINGERPRINT
+
+        get(WEB_PLAY_INFO_V2_URL) {
+            encWbi(newMap).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+    suspend fun getVideoCCInfo(url: String): BILIVideoCCInfo = httpClient.get(url).body()
 
     /**
      * 用来解析正确的地址

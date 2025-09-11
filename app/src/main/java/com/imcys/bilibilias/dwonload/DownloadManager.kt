@@ -14,7 +14,10 @@ import android.os.IBinder
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
+import com.imcys.bilibilias.common.utils.CCJsonToAss
+import com.imcys.bilibilias.common.utils.CCJsonToSrt
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
@@ -32,10 +35,14 @@ import com.imcys.bilibilias.database.entity.download.DownloadTaskType
 import com.imcys.bilibilias.dwonload.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
+import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -163,6 +170,16 @@ class DownloadManager(
         val taskResult =
             downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
 
+        // 处理单体下载任务
+        if (downloadViewInfo.selectedCCId.isNotEmpty()) {
+            handelCCDownload(
+                asLinkResultType,
+                downloadViewInfo.videoPlayerInfoV2,
+                downloadViewInfo.selectedCCId,
+                downloadViewInfo.ccFileType
+            )
+        }
+
         taskResult.onSuccess { taskTree ->
             processDownloadTree(taskTree, downloadViewInfo)
         }.onFailure { error ->
@@ -171,6 +188,108 @@ class DownloadManager(
 
         if (!isDownloading) {
             startDownloadQueueService()
+        }
+    }
+
+    // 处理字幕下载任务
+    private fun handelCCDownload(
+        asLinkResultType: ASLinkResultType,
+        playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>,
+        selectedCCId: List<Long>,
+        ccFileType: CCFileType
+    ) {
+        when (asLinkResultType) {
+            is ASLinkResultType.BILI.Video -> {
+                GlobalScope.launch(Dispatchers.IO) {
+                    selectedCCId.forEach {
+                        val ccUrlInfo =
+                            playerInfoV2.data?.subtitle?.subtitles?.firstOrNull { item ->
+                                item.id == it
+                            }
+                        val url = if (ccUrlInfo?.subtitleUrl.isNullOrEmpty()) {
+                            ccUrlInfo?.subtitleUrlV2 ?: ""
+                        } else {
+                            ccUrlInfo.subtitleUrl ?: ""
+                        }
+
+                        // 协议头
+                        val finalUrl = if (!url.contains("https")) "https:" else ""
+                        runCatching {
+                            videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
+                        }.onSuccess { cCInfo ->
+                            saveCCFile(asLinkResultType.viewInfo.data,ccFileType, cCInfo)
+                        }
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun saveCCFile(
+        videoInfo: BILIVideoViewInfo?,
+        ccFileType: CCFileType,
+        biliVideoCCInfo: BILIVideoCCInfo
+    ) {
+        val fileContentStr = when(ccFileType){
+            CCFileType.ASS -> {
+                CCJsonToAss.jsonToAss(
+                    biliVideoCCInfo,
+                    title = videoInfo?.title ?:"字幕",
+                    playResX = videoInfo?.dimension?.width?.toString()?: "1920",
+                    playResY = videoInfo?.dimension?.height?.toString()?: "1080"
+                )
+            }
+            CCFileType.SRT -> {
+                CCJsonToSrt.jsonToSrt(biliVideoCCInfo)
+            }
+        }
+
+        val title = videoInfo?.title ?: "字幕"
+        val fileName = when (ccFileType) {
+            CCFileType.ASS -> "$title.ass"
+            CCFileType.SRT -> "$title.srt"
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val values = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(
+                    MediaStore.Downloads.MIME_TYPE,
+                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
+                )
+                put(
+                    MediaStore.Downloads.RELATIVE_PATH,
+                    Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
+                )
+            }
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                resolver.openOutputStream(uri)?.use { outputStream ->
+                    outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
+                    outputStream.flush()
+                }
+            }
+        } else {
+            val downloadsDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val targetDir = File(downloadsDir, "BILIBILIAS")
+            if (!targetDir.exists()) targetDir.mkdirs()
+            val targetFile = File(targetDir, fileName)
+            FileOutputStream(targetFile).use { outputStream ->
+                outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
+                outputStream.flush()
+            }
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf(targetFile.absolutePath),
+                arrayOf(
+                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
+                ),
+                null
+            )
         }
     }
 
@@ -717,7 +836,7 @@ class DownloadManager(
      */
     private suspend fun buildRefererUrl(task: AppDownloadTask): String {
 
-        return when(task.downloadTask.type){
+        return when (task.downloadTask.type) {
             DownloadTaskType.BILI_VIDEO,
             DownloadTaskType.BILI_DONGHUA -> {
                 val platformId = task.downloadTask.platformId
@@ -727,10 +846,12 @@ class DownloadManager(
                     "https://www.bilibili.com/video/$platformId"
                 }
             }
+
             DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != 0L -> {
                 val realTask = downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
                 "https://www.bilibili.com/video/${realTask?.platformId}"
             }
+
             DownloadTaskType.BILI_VIDEO_SECTION -> error("构造Referer URL失败，任务类型不支持")
         }
     }
@@ -932,7 +1053,8 @@ class DownloadManager(
 
                 // 如果是合集，封面得找到对应的任务
                 DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != null -> {
-                    val realTask = downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
+                    val realTask =
+                        downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
                     "${realTask?.platformId}_pic.${type}"
                 }
 
@@ -1023,7 +1145,11 @@ class DownloadManager(
                                 selectedVideo.baseUrl,
                                 DownloadSubTaskType.VIDEO
                             ),
-                            createSubTask(segment, selectedAudio.finalUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(
+                                segment,
+                                selectedAudio.finalUrl,
+                                DownloadSubTaskType.AUDIO
+                            )
                         )
                     }
 
@@ -1037,7 +1163,11 @@ class DownloadManager(
                     DownloadMode.AUDIO_ONLY -> {
                         val selectedAudio = selectAudioQuality(videoData, downloadViewInfo)
                         listOf(
-                            createSubTask(segment, selectedAudio.finalUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(
+                                segment,
+                                selectedAudio.finalUrl,
+                                DownloadSubTaskType.AUDIO
+                            )
                         )
                     }
                 }

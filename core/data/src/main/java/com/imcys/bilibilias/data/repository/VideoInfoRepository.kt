@@ -19,7 +19,7 @@ class VideoInfoRepository(
     private val usersDataSource: UsersDataSource,
     private val biliUsersDao: BILIUsersDao,
     private val biliUserCookiesDao: BILIUserCookiesDao
-    ) {
+) {
 
     suspend fun getVideoView(
         bvId: String? = null,
@@ -68,4 +68,16 @@ class VideoInfoRepository(
             it
         }
     }
+
+    /**
+     * 获取额外的播放信息
+     */
+    suspend fun getVideoPlayerInfoV2(
+        cid: Long,
+        bvId: String?,
+        aid: Long? = null,
+    ) = webApiService.getVideoPlayerInfoV2(cid, bvId, aid)
+
+    suspend fun getVideoCCInfo(url: String) = webApiService.getVideoCCInfo(url)
+
 }

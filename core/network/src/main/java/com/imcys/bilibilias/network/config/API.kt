@@ -74,5 +74,7 @@ object API {
         val WEB_LIKE_LIST_URL = WEB_API_BASE_URL + "x/space/like/video"
 
         val WEB_COIN_LIST_URL = WEB_API_BASE_URL + "x/space/coin/video"
+
+        val WEB_PLAY_INFO_V2_URL = WEB_API_BASE_URL + "x/player/wbi/v2"
     }
 }

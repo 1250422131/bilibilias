@@ -26,7 +26,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Download
@@ -65,6 +68,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,18 +76,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.emptyNetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
@@ -213,9 +221,15 @@ fun ColumnScope.AnalysisVideoCardList(
     val currentUserInfo by viewModel.currentUserInfo.collectAsState()
 
 
-    var isSelectSingleModel by remember { mutableStateOf(true) } // 是否选择单集缓存模式
+    var isSelectSingleModel by rememberSaveable { mutableStateOf(true) } // 是否选择单集缓存模式
 
     val context = LocalContext.current
+
+    LaunchedEffect(isSelectSingleModel) {
+        if (!isSelectSingleModel) {
+            viewModel.clearCCIdList()
+        }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -328,6 +342,8 @@ fun ColumnScope.AnalysisVideoCardList(
             when (asLinkResultType) {
                 is ASLinkResultType.BILI.Donghua -> {
                     AdvancedSetting(
+                        isSelectSingleModel,
+                        emptyNetWorkResult(),
                         downloadInfo,
                         donghuaPlayerInfo,
                         donghuaPlayerInfo.data?.dash,
@@ -341,11 +357,19 @@ fun ColumnScope.AnalysisVideoCardList(
 
                 is ASLinkResultType.BILI.Video ->
                     AdvancedSetting(
+                        isSelectSingleModel,
+                        asLinkResultType.viewInfo,
                         downloadInfo,
                         videoPlayerInfo,
                         videoPlayerInfo.data?.dash,
                         onCheckCoverDownload = {
                             viewModel.updateDownloadCover(it)
+                        },
+                        onSelectCCId = { id, type ->
+                            viewModel.updateSelectCCIdList(id, type)
+                        },
+                        onCleanCCId = {
+                            viewModel.clearCCIdList()
                         }
                     ) {
                         viewModel.updateDownloadMode(it)
@@ -370,15 +394,18 @@ fun ColumnScope.AnalysisVideoCardList(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedSetting(
+    isSelectSingleModel: Boolean,
+    videoInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
     playerInfo: NetWorkResult<Any?>,
     dash: BILIVideoDash?,
     onCheckCoverDownload: (Boolean) -> Unit,
-    onSelectDownloadMode: (DownloadMode) -> Unit
+    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
+    onCleanCCId: () -> Unit = {},
+    onSelectDownloadMode: (DownloadMode) -> Unit,
 ) {
-    var downloadModeExpanded by remember { mutableStateOf(false) }
-
-    var selectDownloadMode by remember { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
+    var downloadModeExpanded by rememberSaveable { mutableStateOf(false) }
+    var selectDownloadMode by rememberSaveable { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
 
     LaunchedEffect(dash?.audio) {
         if (dash != null && dash.audio.isEmpty()) {
@@ -478,7 +505,14 @@ fun AdvancedSetting(
 
                 Column {
                     Text("缓存加配")
-                    ExtraCache(downloadInfo, onCheckCoverDownload = onCheckCoverDownload)
+                    ExtraCache(
+                        isSelectSingleModel,
+                        downloadInfo,
+                        downloadInfo?.videoPlayerInfoV2,
+                        onCheckCoverDownload = onCheckCoverDownload,
+                        onSelectCCId = onSelectCCId,
+                        onCleanCCId = onCleanCCId
+                    )
                 }
 
             }
@@ -487,7 +521,17 @@ fun AdvancedSetting(
 }
 
 @Composable
-fun ExtraCache(downloadInfo: DownloadViewInfo?, onCheckCoverDownload: (Boolean) -> Unit) {
+fun ExtraCache(
+    isSelectSingleModel: Boolean,
+    downloadInfo: DownloadViewInfo?,
+    playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
+    onCheckCoverDownload: (Boolean) -> Unit,
+    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
+    onCleanCCId: () -> Unit = {}
+) {
+
+    var selectACCDownload by rememberSaveable { mutableStateOf(false) }
+
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -509,7 +553,147 @@ fun ExtraCache(downloadInfo: DownloadViewInfo?, onCheckCoverDownload: (Boolean) 
                 onCheckCoverDownload(!(downloadInfo?.downloadCover ?: false))
             },
         )
+
+        if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty() && isSelectSingleModel) {
+            FilterChip(
+                label = {
+                    Text("字幕下载", fontSize = 12.sp)
+                },
+                selected = selectACCDownload,
+                leadingIcon = {
+                    if (selectACCDownload) {
+                        Icon(
+                            Icons.Outlined.Check,
+                            contentDescription = "已选中图标",
+                            modifier = Modifier.size(15.dp)
+                        )
+                    }
+                },
+                onClick = {
+                    selectACCDownload = !selectACCDownload
+                    if (!selectACCDownload){
+                        onCleanCCId()
+                    }
+                },
+            )
+        }
     }
+
+    if (selectACCDownload) {
+        Text("字幕下载")
+        Spacer(Modifier.height(5.dp))
+        SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectACCCard(
+    downloadInfo: DownloadViewInfo?,
+    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
+) {
+    var selectType by rememberSaveable { mutableStateOf(CCFileType.SRT) }
+    var ccFileTypeExpanded by rememberSaveable { mutableStateOf(false) }
+    if (downloadInfo?.videoPlayerInfoV2 == null) return
+    AsAutoError(downloadInfo.videoPlayerInfoV2, onSuccessContent = {
+        Column {
+            ExposedDropdownMenuBox(
+                expanded = ccFileTypeExpanded,
+                onExpandedChange = {
+                    ccFileTypeExpanded = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shimmer(downloadInfo.videoPlayerInfoV2.status != ApiStatus.SUCCESS),
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .fillMaxWidth(),
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 12.sp
+                    ),
+                    value = selectType.name,
+                    onValueChange = {},
+                    readOnly = true,
+                    singleLine = false,
+                    label = { Text("选择字幕文件类型", fontSize = 12.sp) },
+                    trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                    shape = CardDefaults.shape
+                )
+
+                ExposedDropdownMenu(
+                    expanded = ccFileTypeExpanded,
+                    onDismissRequest = { ccFileTypeExpanded = false },
+                ) {
+                    CCFileType.entries.forEach {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    it.name,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            onClick = {
+                                ccFileTypeExpanded = false
+                                selectType = it
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                        )
+                    }
+                }
+
+            }
+
+            Spacer(Modifier.height(5.dp))
+
+            LazyVerticalGrid(
+                GridCells.Fixed(3),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier
+                    .sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
+                    .shimmer(downloadInfo.videoPlayerInfoV2.status != ApiStatus.SUCCESS),
+            ) {
+                downloadInfo.videoPlayerInfoV2.data?.subtitle?.subtitles?.forEach { item ->
+                    item(key = item.id) {
+                        FilterChip(
+                            selected = downloadInfo.selectedCCId.contains(item.id),
+                            onClick = {
+                                onSelectCCId.invoke(item.id, selectType)
+                            },
+                            label = {
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(60.dp)
+                                        .padding(8.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        item.lanDoc,
+                                        maxLines = 2,
+                                        fontSize = 14.sp,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                            }
+                        )
+                    }
+
+                }
+            }
+        }
+    })
 }
 
 
@@ -573,7 +757,7 @@ fun BILIDonghuaCard(
             }
     }
 
-    var picSaving by remember { mutableStateOf(false) }
+    var picSaving by rememberSaveable { mutableStateOf(false) }
 
     AsAutoError(
         netWorkResult = donghuaViewInfo,
@@ -711,7 +895,7 @@ fun BILIVideoCard(
     savePic: suspend (String?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var picSaving by remember { mutableStateOf(false) }
+    var picSaving by rememberSaveable { mutableStateOf(false) }
 
     AsAutoError(
         netWorkResult = videoInfo,
@@ -858,9 +1042,9 @@ fun AnalysisScaffold(
 ) {
     val haptics = LocalHapticFeedback.current
 
-    var showDownloadTip by remember { mutableStateOf(false) }
+    var showDownloadTip by rememberSaveable { mutableStateOf(false) }
 
-    var showRequestPermissionTip by remember { mutableStateOf(false) }
+    var showRequestPermissionTip by rememberSaveable { mutableStateOf(false) }
 
     val permissionsToRequest = arrayOf(
         permission.READ_EXTERNAL_STORAGE,
