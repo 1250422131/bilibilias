@@ -1086,6 +1086,8 @@ class DownloadManager(
     ): List<DownloadSubTask> {
         // 获取视频播放信息
         val videoInfo = when (nodeType) {
+
+            DownloadTaskNodeType.BILI_VIDEO_INTERACTIVE,
             DownloadTaskNodeType.BILI_VIDEO_PAGE,
             DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
                 videoInfoRepository.getVideoPlayerInfo(

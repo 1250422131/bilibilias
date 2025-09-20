@@ -23,6 +23,7 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,6 +58,11 @@ class AnalysisViewModel(
     private val _videoPlayerInfo =
         MutableStateFlow<NetWorkResult<BILIVideoPlayerInfo?>>(emptyNetWorkResult())
     val videoPlayerInfo = _videoPlayerInfo.asStateFlow()
+
+    private val _interactiveVideo =
+        MutableStateFlow<NetWorkResult<BILISteinEdgeInfo?>>(emptyNetWorkResult())
+    val interactiveVideo = _interactiveVideo.asStateFlow()
+
 
     private val _currentUserInfo = MutableStateFlow<BILIUsersEntity?>(null)
 
@@ -191,7 +198,20 @@ class AnalysisViewModel(
             }
 
             is ASLinkResultType.BILI.Video -> {
-                result.viewInfo.data?.let { info ->
+                val viewData = result.viewInfo.data
+
+                if (viewData?.rights?.isSteinGate != 0L) {
+                    interactiveVideo.value.data?.storyList?.firstOrNull {
+                        it.cid == cid
+                    }?.let { story ->
+                        updatePlayerInfoV2(cid = cid, bvId = viewData?.bvid, aid = viewData?.aid)
+                        asVideoPlayerInfo(cid, viewData?.bvid, viewData?.aid)
+                        return@let
+                    }
+                    return
+                }
+
+                viewData.let { info ->
                     // 分P
                     info.pages?.firstOrNull { it.cid == cid }?.let {
                         updatePlayerInfoV2(cid = cid, bvId = info.bvid, aid = info.aid)
@@ -202,7 +222,11 @@ class AnalysisViewModel(
                     info.ugcSeason?.sections?.forEach { section ->
                         section.episodes.forEach { episode ->
                             episode.pages.firstOrNull { it.cid == cid }?.let {
-                                updatePlayerInfoV2(cid = cid, bvId = episode.bvid, aid = episode.aid)
+                                updatePlayerInfoV2(
+                                    cid = cid,
+                                    bvId = episode.bvid,
+                                    aid = episode.aid
+                                )
                                 asVideoPlayerInfo(cid, episode.bvid)
                                 return@let
                             }
@@ -255,19 +279,21 @@ class AnalysisViewModel(
         }
     }
 
-   private fun updatePlayerInfoV2(
+    private fun updatePlayerInfoV2(
         cid: Long,
         bvId: String?,
         aid: Long? = null,
     ) {
         viewModelScope.launch {
             videoInfoRepository.getVideoPlayerInfoV2(cid = cid, bvId = bvId, aid = aid).collect {
-                _uiState.emit(_uiState.value.copy(
-                    downloadInfo = _uiState.value.downloadInfo?.copy(
-                        selectedCCId = emptyList(),
-                        videoPlayerInfoV2 = it
+                _uiState.emit(
+                    _uiState.value.copy(
+                        downloadInfo = _uiState.value.downloadInfo?.copy(
+                            selectedCCId = emptyList(),
+                            videoPlayerInfoV2 = it
+                        )
                     )
-                ))
+                )
             }
         }
     }
@@ -529,6 +555,10 @@ class AnalysisViewModel(
             when (it.status) {
                 ApiStatus.SUCCESS -> {
                     asVideoPlayerInfo(it.data?.cid ?: 0, it.data?.bvid, it.data?.aid)
+                    // 检查互动视频
+                    if (it.data?.rights?.isSteinGate != 0L) {
+                        handleInteractiveVideo(it.data?.cid ?: 0, it.data?.bvid, it.data?.aid)
+                    }
                 }
 
                 else -> {}
@@ -538,6 +568,24 @@ class AnalysisViewModel(
             )
         }
     }
+
+    private suspend fun AnalysisViewModel.handleInteractiveVideo(
+        cid: Long,
+        bvId: String?,
+        aid: Long?
+    ) {
+        // 获取播放信息V2，里面包含graphVersion
+        val playV2Info = videoInfoRepository.getVideoPlayerInfoV2(cid, bvId = bvId, aid = aid).last()
+        videoInfoRepository.getSteinEdgeInfoV2(
+            aid = aid?.toString(),
+            bvId = bvId,
+            graphVersion = playV2Info.data?.interaction?.graphVersion ?: 0L
+        )
+            .collect { result ->
+                _interactiveVideo.value = result
+            }
+    }
+
 
     /**
      * 便捷的扩展属性，简化UI中的类型判断

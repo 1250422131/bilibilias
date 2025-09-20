@@ -14,6 +14,7 @@ import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowViewModel
 import com.imcys.bilibilias.ui.user.folder.UserFolderViewModel
+import com.imcys.bilibilias.ui.user.history.UserPlayHistoryViewModel
 import com.imcys.bilibilias.ui.user.like.LikeVideoViewModel
 import com.imcys.bilibilias.ui.user.work.WorkListViewModel
 import org.koin.android.ext.koin.androidContext
@@ -24,7 +25,7 @@ import org.koin.dsl.module
 val appModule = module {
     single { androidContext().assets }
     single { androidContext().contentResolver }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { QRCodeLoginViewModel(get(), get(), get(), get()) }
     viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(), get()) }
     viewModel { UserViewModel(get()) }
@@ -38,6 +39,7 @@ val appModule = module {
     viewModel { LikeVideoViewModel(get()) }
     viewModel { SettingViewModel(get()) }
     viewModel { LayoutTypesetViewModel(get()) }
+    viewModel { UserPlayHistoryViewModel(get()) }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

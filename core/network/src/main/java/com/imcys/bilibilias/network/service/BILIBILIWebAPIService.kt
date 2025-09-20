@@ -9,6 +9,7 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_BANGUMI_FOLLOW_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_COIN_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_FAV_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_LIST_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_HISTORY_CURSOR_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LIKE_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
@@ -19,6 +20,7 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_RELATION_STAT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_ARC_SEARCH
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_UPSTAT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPI_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_STEIN_EDGE_INFO_V2_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_VIDEO_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_ACC_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
@@ -51,6 +53,7 @@ import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
 import com.imcys.bilibilias.network.model.user.BILIUserBangumiFollowInfo
 import com.imcys.bilibilias.network.model.user.BILIUserFolderDetailInfo
 import com.imcys.bilibilias.network.model.user.BILIUserFolderListInfo
+import com.imcys.bilibilias.network.model.user.BILIUserHistoryPlayInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
@@ -58,6 +61,7 @@ import com.imcys.bilibilias.network.model.user.BILIUserVideoLikeInfo
 import com.imcys.bilibilias.network.model.user.LikeAndCoinItemData
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
@@ -369,6 +373,44 @@ class BILIBILIWebAPIService(
         .request
         .url
         .toString()
+
+
+    /**
+     * 互动视频
+     */
+    suspend fun getSteinEdgeInfoV2(
+        bvId: String? = null,
+        aid: String? = null,
+        graphVersion: Long?,
+        edgeId: Long? = 0
+    ): FlowNetWorkResult<BILISteinEdgeInfo> =
+        httpClient.httpRequest {
+            val newMap = mutableMapOf<String, String>().apply {
+                bvId?.let { put(BVID, it) }
+                aid?.let { put(AID, it) }
+                graphVersion?.let { put("graph_version", it.toString()) }
+                put("edge_id", edgeId.toString())
+            }
+            get(WEB_STEIN_EDGE_INFO_V2_URL) {
+                newMap.forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }
+        }
+
+    suspend fun getHistoryCursor(
+        max: Long = 0L,
+        viewAt: Long = 0L,
+        ps: Int = 20,
+        type: String = "archive",
+    ): FlowNetWorkResult<BILIUserHistoryPlayInfo> = httpClient.httpRequest {
+        get(WEB_HISTORY_CURSOR_URL) {
+            parameter("max", max)
+            parameter("view_at", viewAt)
+            parameter("type", type)
+            parameter(PS, ps)
+        }
+    }
 
     private suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> = withContext(
         Dispatchers.IO

@@ -46,6 +46,7 @@ val RoamPlugin = createClientPlugin("RoamPlugin", ::RoamPluginConfig) {
     val appSettings = pluginConfig.appSetting
 
     onRequest { request, _ ->
+        if (request.isSSE()) return@onRequest
         if (appSettings?.data?.first()?.enabledRoam == false) return@onRequest
         request.headers.append("Roam-Enabled", "true")
         val originalFull = request.url.toString()

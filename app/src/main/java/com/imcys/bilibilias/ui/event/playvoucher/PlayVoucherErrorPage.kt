@@ -97,6 +97,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
             Button(
                 onClick = {
                     vm.ontUseTVVoucherInfo()
+                    onBlack.invoke()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

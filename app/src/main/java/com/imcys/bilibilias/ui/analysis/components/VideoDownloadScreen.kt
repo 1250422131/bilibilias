@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
@@ -61,6 +62,7 @@ import com.imcys.bilibilias.network.model.video.filterWithSinglePage
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
 
@@ -74,6 +76,7 @@ fun VideoDownloadScreen(
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
+    interactiveVideo: NetWorkResult<BILISteinEdgeInfo?>,
     onUpdateSelectedCid: UpdateSelectedCid,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
@@ -231,7 +234,103 @@ fun VideoDownloadScreen(
                     }
                 })
             }
+
+
+            // 互动视频
+            if (viewInfo.data?.rights?.isSteinGate != 0L){
+                AsAutoError(interactiveVideo, onSuccessContent = {
+                    Column(
+                        Modifier
+                            .animateContentSize()
+                            .shimmer(viewInfo.status != ApiStatus.SUCCESS)
+                    ) {
+                        InteractiveVideoPageScreen(
+                            interactiveVideo.data,
+                            downloadInfo,
+                            onUpdateSelectedCid = onUpdateSelectedCid
+                        )
+                    }
+                })
+            }
+
+
         }
+    }
+}
+
+@Composable
+fun InteractiveVideoPageScreen(
+    steinEdgeInfo: BILISteinEdgeInfo?,
+    downloadInfo: DownloadViewInfo?,
+    onUpdateSelectedCid: UpdateSelectedCid
+) {
+    var currentListIndex by remember { mutableIntStateOf(0) }
+    Column {
+        Text("选择互动视频")
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+            val episodeCount = steinEdgeInfo?.storyList?.size ?: 0
+            val pageCount = ceil(episodeCount / 12.0).toInt()
+            items(
+                pageCount,
+                key = { "p_$it" }
+            ) { index ->
+                val startEp = index * 12 + 1
+                val endEp = minOf((index + 1) * 12, episodeCount)
+                FilterChip(
+                    onClick = {
+                        currentListIndex = index
+                    },
+                    label = {
+                        Text("$startEp~$endEp")
+                    },
+                    selected = index == currentListIndex,
+                )
+            }
+        }
+
+        LazyVerticalGrid(
+            GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
+        ) {
+            val episodeList = steinEdgeInfo?.storyList ?: emptyList()
+            val startIndex = currentListIndex * 12
+            val endIndex = minOf((currentListIndex + 1) * 12, episodeList.size)
+            items(
+                episodeList.subList(startIndex, endIndex)
+            ) {
+                FilterChip(
+                    selected =  downloadInfo?.selectedCid?.contains(it.cid) == true,
+                    onClick = {
+                        onUpdateSelectedCid.invoke(
+                            it.cid,
+                            SelectEpisodeType.AID(it.cid),
+                            it.title,
+                            it.cover
+                        )
+                    },
+                    label = {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(60.dp)
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                it.title,
+                                maxLines = 2,
+                                fontSize = 14.sp,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                )
+            }
+        }
+
     }
 }
 

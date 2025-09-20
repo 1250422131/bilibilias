@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Paid
@@ -92,6 +93,7 @@ internal fun UserScreen(
     onToUserFolder: (mid: Long) -> Unit,
     onToLikeVideo: (mid: Long) -> Unit,
     onToCoinVide: (mid: Long) -> Unit,
+    onToPlayHistory:()->Unit,
 ) {
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()
@@ -134,10 +136,9 @@ internal fun UserScreen(
                             onToLikeVideo.invoke(userRoute.mid)
                         }, onToCoinVide = {
                             onToCoinVide.invoke(userRoute.mid)
-                        })
+                        }, onToPlayHistory = onToPlayHistory)
                 }
             }
-
             fullWidthItem {
                 VideoHeader(spaceArchiveInfoState, onRetry = {
                     vm.getUserPageIno(userRoute.mid)
@@ -237,8 +238,7 @@ private fun VideoHeader(
                     )
                 }
             }
-            Spacer(Modifier.height(24.dp))
-
+            Spacer(Modifier.height(16.dp))
             AsAutoError(
                 netWorkResult = spaceArchiveInfoState,
                 onSuccessContent = {
@@ -287,7 +287,8 @@ fun ActionRow(
     onToUserFolder: () -> Unit = {},
     onToLikeVideo: () -> Unit,
     onToCoinVide: () -> Unit,
-) {
+    onToPlayHistory:()->Unit,
+    ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -306,7 +307,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.ThumbUp, contentDescription = "最近点赞")
                 Spacer(Modifier.height(4.dp))
-                Text("已点赞", fontSize = 14.sp)
+                Text("点赞", fontSize = 14.sp)
             }
         }
 
@@ -314,7 +315,7 @@ fun ActionRow(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
             color = MaterialTheme.colorScheme.primaryContainer,
-            onClick = onToCoinVide
+            onClick = onToPlayHistory
         ) {
             Column(
                 modifier = Modifier
@@ -323,9 +324,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Paid, contentDescription = "最近投币")
+                Icon(Icons.Outlined.History, contentDescription = "最近播放图标")
                 Spacer(Modifier.height(4.dp))
-                Text("已投币", fontSize = 14.sp)
+                Text("最近", fontSize = 14.sp)
             }
         }
 
@@ -375,7 +376,6 @@ fun ActionRow(
 @Composable
 fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
     Column {
-        Spacer(Modifier.height(16.dp))
         SurfaceColorCard(
             Modifier
                 .fillMaxWidth(),
@@ -428,35 +428,36 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     }
                 }
 
-                HorizontalDivider(
-                    Modifier.padding(vertical = 16.dp),
-                    DividerDefaults.Thickness,
-                    MaterialTheme.colorScheme.outlineVariant
-                )
+               if (false){
+                   HorizontalDivider(
+                       Modifier.padding(vertical = 16.dp),
+                       DividerDefaults.Thickness,
+                       MaterialTheme.colorScheme.outlineVariant
+                   )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_mini_acfun_logo_24px),
-                        contentDescription = "AcFunLogo",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.weight(1f))
-                    Text(
-                        "暂未开放",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Icon(
-                        Icons.Outlined.Build,
-                        modifier = Modifier.size(20.dp),
-                        contentDescription = "维护图标",
-                        tint = MaterialTheme.colorScheme.outline
-                    )
-
-                }
+                   Row(
+                       verticalAlignment = Alignment.CenterVertically
+                   ) {
+                       Icon(
+                           painterResource(R.drawable.ic_mini_acfun_logo_24px),
+                           contentDescription = "AcFunLogo",
+                           tint = MaterialTheme.colorScheme.onSurfaceVariant
+                       )
+                       Spacer(Modifier.weight(1f))
+                       Text(
+                           "暂未开放",
+                           fontSize = 16.sp,
+                           color = MaterialTheme.colorScheme.outline
+                       )
+                       Spacer(Modifier.width(8.dp))
+                       Icon(
+                           Icons.Outlined.Build,
+                           modifier = Modifier.size(20.dp),
+                           contentDescription = "维护图标",
+                           tint = MaterialTheme.colorScheme.outline
+                       )
+                   }
+               }
 
             }
         }
@@ -624,7 +625,7 @@ fun TopUserInfo(
             },
             onRetry = onRetry
         )
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(16.dp))
         UserDataInfo(userStatInfoState)
     }
 }

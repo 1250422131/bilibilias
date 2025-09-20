@@ -219,6 +219,7 @@ fun ColumnScope.AnalysisVideoCardList(
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
     val currentUserInfo by viewModel.currentUserInfo.collectAsState()
+    val interactiveVideo by viewModel.interactiveVideo.collectAsState()
 
 
     var isSelectSingleModel by rememberSaveable { mutableStateOf(true) } // 是否选择单集缓存模式
@@ -294,11 +295,18 @@ fun ColumnScope.AnalysisVideoCardList(
                 }
 
                 is ASLinkResultType.BILI.Video -> {
+
+                    if (asLinkResultType.isNotFound()) {
+                       CheckInputASTextTip()
+                        return@item
+                    }
+
                     VideoDownloadScreen(
                         downloadInfo,
                         videoPlayerInfo,
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
+                        interactiveVideo,
                         onUpdateSelectedCid = { it, selectType, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedCidList()
@@ -386,6 +394,25 @@ fun ColumnScope.AnalysisVideoCardList(
         }
     }
 
+}
+
+
+/**
+ * 检查输入
+ */
+@Composable
+fun CheckInputASTextTip() {
+    ASWarringTip {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "输入的视频不存在哦~请检查后重新输入",
+                fontSize = 14.sp,
+            )
+        }
+    }
 }
 
 /**
@@ -571,7 +598,7 @@ fun ExtraCache(
                 },
                 onClick = {
                     selectACCDownload = !selectACCDownload
-                    if (!selectACCDownload){
+                    if (!selectACCDownload) {
                         onCleanCCId()
                     }
                 },
@@ -896,6 +923,9 @@ fun BILIVideoCard(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var picSaving by rememberSaveable { mutableStateOf(false) }
+
+    // 拦截未查到视频的错误
+    if (asLinkResultType.isNotFound()) { return }
 
     AsAutoError(
         netWorkResult = videoInfo,

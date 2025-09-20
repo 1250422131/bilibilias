@@ -5,12 +5,13 @@ import com.imcys.bilibilias.datastore.userAppSettingsStore
 import com.imcys.bilibilias.network.AsCookiesStorage
 import com.imcys.bilibilias.network.config.BILIBILI_URL
 import com.imcys.bilibilias.network.config.REFERER
+import com.imcys.bilibilias.network.plugin.AutoBILIInfoPlugin
 import com.imcys.bilibilias.network.plugin.RiskControlPlugin
 import com.imcys.bilibilias.network.plugin.RoamPlugin
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
@@ -19,6 +20,7 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.sse.SSE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -27,6 +29,7 @@ import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 
 val netWorkModule = module {
@@ -63,13 +66,16 @@ val netWorkModule = module {
     }
 
     single {
-        HttpClient(OkHttp.create {
-            preconfigured = get<OkHttpClient>()
-        }) {
+        HttpClient(CIO) {
             BrowserUserAgent()
             install(HttpTimeout) {
                 requestTimeoutMillis = 10000
             }
+            install(SSE) {
+                maxReconnectionAttempts = 4
+                reconnectionTime = 2.seconds
+            }
+            install(AutoBILIInfoPlugin)
             install(RoamPlugin) {
                 domainReplacement = mapOf(
                     "api.bilibili.com" to "bili-api.misakamoe.com",

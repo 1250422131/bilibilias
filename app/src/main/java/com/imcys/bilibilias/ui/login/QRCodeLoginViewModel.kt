@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -371,7 +372,7 @@ class QRCodeLoginViewModel(
      */
     private fun handleHeaderCookie(responseHeader: Set<Map.Entry<String, List<String>>>?) {
         responseHeader?.forEach {
-            if (it.key == "set-cookie") {
+            if (it.key == "Set-Cookie") {
                 currentCookies.clear()
                 currentCookies.addAll(asCookiesStorage.getAllCookies())
             }

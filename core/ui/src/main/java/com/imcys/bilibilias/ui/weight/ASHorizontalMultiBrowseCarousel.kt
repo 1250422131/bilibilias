@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 @Composable
 inline fun <T> ASHorizontalMultiBrowseCarousel(
     items: List<T>,
+    modifier: Modifier = Modifier,
     autoScroll: Boolean = false,
     scrollTime: Long = 5000L,
     crossinline itemsContent: @Composable CarouselItemScope.(item: T) -> Unit,
@@ -46,7 +47,7 @@ inline fun <T> ASHorizontalMultiBrowseCarousel(
 
     HorizontalMultiBrowseCarousel(
         state = carouselState,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .pointerInput(Unit) {

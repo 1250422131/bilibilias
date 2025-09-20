@@ -80,4 +80,14 @@ class VideoInfoRepository(
 
     suspend fun getVideoCCInfo(url: String) = webApiService.getVideoCCInfo(url)
 
+    /**
+     * 互动视频-获取剧集信息
+     */
+    suspend fun getSteinEdgeInfoV2(
+        bvId: String? = null,
+        aid: String? = null,
+        graphVersion: Long = 0,
+        edgeId: Long? = 0
+    ) = webApiService.getSteinEdgeInfoV2(bvId, aid, graphVersion, edgeId)
+
 }

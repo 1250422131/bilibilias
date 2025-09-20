@@ -53,6 +53,8 @@ import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
 import com.imcys.bilibilias.ui.user.folder.UserFolderRoute
 import com.imcys.bilibilias.ui.user.folder.UserFolderScreen
+import com.imcys.bilibilias.ui.user.history.UserPlayHistoryRoute
+import com.imcys.bilibilias.ui.user.history.UserPlayHistoryScreen
 import com.imcys.bilibilias.ui.user.like.LikePageType
 import com.imcys.bilibilias.ui.user.like.LikeVideoRoute
 import com.imcys.bilibilias.ui.user.like.LikeVideoScreen
@@ -199,6 +201,9 @@ fun BILIBILAISNavDisplay() {
                         },
                         onToCoinVide = { mid ->
                             backStack.add(LikeVideoRoute(mid = mid, type = LikePageType.COIN))
+                        },
+                        onToPlayHistory = {
+                            backStack.add(UserPlayHistoryRoute)
                         }
                     )
                 }
@@ -247,7 +252,10 @@ fun BILIBILAISNavDisplay() {
                 }
                 entry<PlayVoucherErrorRoute> {
                     PlayVoucherErrorPage(
-                        onBlack = { backStack.removeLastOrNull() }
+                        onBlack = {
+                            backStack.removeLastOrNull()
+                            backStack.add(HomeRoute())
+                        }
                     )
                 }
                 entry<WorkListRoute> {
@@ -287,6 +295,12 @@ fun BILIBILAISNavDisplay() {
                 entry<LayoutTypesetRoute> {
                     LayoutTypesetScreen(
                         layoutTypesetRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<UserPlayHistoryRoute>{
+                    UserPlayHistoryScreen(
+                        userPlayHistoryRoute = it,
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }

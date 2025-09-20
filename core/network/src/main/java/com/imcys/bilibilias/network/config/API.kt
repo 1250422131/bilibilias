@@ -76,5 +76,16 @@ object API {
         val WEB_COIN_LIST_URL = WEB_API_BASE_URL + "x/space/coin/video"
 
         val WEB_PLAY_INFO_V2_URL = WEB_API_BASE_URL + "x/player/wbi/v2"
+
+        val WEB_STEIN_EDGE_INFO_V2_URL = WEB_API_BASE_URL + "x/stein/edgeinfo_v2"
+
+        val WEB_HISTORY_CURSOR_URL = WEB_API_BASE_URL + "x/web-interface/history/cursor"
+    }
+
+    object App {
+        const val SSE_HOST = "192.168.88.120"
+        const val SSE_PORT = 8080
+        const val SSE_PATH = "/api/events/subscribe"
+        const val BASE_URL = "http://$SSE_HOST:$SSE_PORT/api/v2/"
     }
 }

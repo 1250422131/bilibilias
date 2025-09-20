@@ -35,6 +35,7 @@ fun NavGraphBuilder.userScreen(
             onToBangumiFollow = {},
             onToUserFolder = {},
             onToLikeVideo = {},
-            onToCoinVide = {})
+            onToCoinVide = {},
+            onToPlayHistory = {})
     }
 }

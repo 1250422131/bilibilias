@@ -13,13 +13,29 @@ import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.config.API.App.SSE_HOST
+import com.imcys.bilibilias.network.config.API.App.SSE_PATH
+import com.imcys.bilibilias.network.config.API.App.SSE_PORT
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
+import com.imcys.bilibilias.network.model.app.BannerConfigInfo
+import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.sse.ClientSSESessionWithDeserialization
+import io.ktor.client.plugins.sse.deserialize
+import io.ktor.client.plugins.sse.sse
+import io.ktor.sse.TypedServerSentEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 class HomeViewModel(
+    private val httpClient: HttpClient,
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val usersDataSource: UsersDataSource,
     private val riskManagementRepository: RiskManagementRepository,
@@ -30,7 +46,14 @@ class HomeViewModel(
     data class UIState(
         val fromLoginEventConsumed: Boolean = false
     )
+
     val appSettings = appSettingsRepository.appSettingsFlow
+
+    val appSettingsState = appSettingsRepository.appSettingsFlow.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        AppSettings.getDefaultInstance()
+    )
 
     private var _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
@@ -50,10 +73,75 @@ class HomeViewModel(
 
     var homeLayoutTypesetList = _homeLayoutTypesetList.asStateFlow()
 
+    private val _bannerList = MutableStateFlow<List<BannerConfigInfo>>(emptyList())
+    val bannerList = _bannerList.asStateFlow()
+
+
+    private val _bulletinInfo = MutableStateFlow<BulletinConfigInfo?>(null)
+    val bulletinInfo = _bulletinInfo.asStateFlow()
+
+    private val _appUpdateInfo = MutableStateFlow<AppUpdateConfigInfo?>(null)
+    val appUpdateInfo = _appUpdateInfo.asStateFlow()
+
     init {
         initLayoutTypeset()
         showBILIUserInfo()
         initDownloadList()
+        requestSSEEvent()
+    }
+
+    private fun requestSSEEvent() {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                httpClient.sse(
+                    host = SSE_HOST,
+                    port = SSE_PORT,
+                    path = SSE_PATH,
+                    deserialize = { typeInfo, jsonString ->
+                        val serializer = Json.serializersModule.serializer(typeInfo.kotlinType!!)
+                        Json.decodeFromString(serializer, jsonString)
+                    }) {
+
+                    while (true) {
+                        incoming.collect { event ->
+                            handleSSEEvent(event)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 处理服务器相关事件
+     */
+    private fun ClientSSESessionWithDeserialization.handleSSEEvent(event: TypedServerSentEvent<String>) {
+        when (event.event) {
+            "banner" -> {
+                val bannerConfigInfo = deserialize<List<BannerConfigInfo>>(event.data)
+                _bannerList.value = bannerConfigInfo ?: emptyList()
+            }
+
+            "bulletin" -> {
+                val bulletinConfigInfo = deserialize<BulletinConfigInfo>(event.data)
+                _bulletinInfo.value = bulletinConfigInfo
+            }
+
+            "appUpdate" -> {
+                val appUpdateInfo = deserialize<AppUpdateConfigInfo>(event.data)
+                _appUpdateInfo.value = appUpdateInfo
+            }
+
+            else -> {
+                println("Received other event: ${event.event} with data: ${event.data}")
+            }
+        }
+    }
+
+    fun updateLastBulletinContent() {
+        viewModelScope.launch {
+            appSettingsRepository.updateLastBulletinContent(_bulletinInfo.value?.content ?: "")
+        }
     }
 
     private fun initLayoutTypeset() {
@@ -100,7 +188,7 @@ class HomeViewModel(
      * [segmentId] 下载任务的ID
      */
     fun pauseDownloadTask(segmentId: Long) {
-       viewModelScope.launch { downloadManager.pauseTask(segmentId) }
+        viewModelScope.launch { downloadManager.pauseTask(segmentId) }
     }
 
     @SuppressLint("MissingPermission")

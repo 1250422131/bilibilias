@@ -10,6 +10,7 @@ import io.ktor.client.statement.request
 
 val RiskControlPlugin = createClientPlugin("RiskControlPlugin") {
     onResponse { response ->
+        if (response.isSSE()) return@onResponse
         val responseBody = response.bodyAsText()
         val url = response.request.url.toString()
         if (responseBody.contains("v_voucher")){

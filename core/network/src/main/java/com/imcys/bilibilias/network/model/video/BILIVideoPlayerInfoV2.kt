@@ -34,7 +34,18 @@ data class BILIVideoPlayerInfoV2(
     val subtitle: Subtitle,
 //    @SerialName("view_poLongs")
 //    val vip: Vip
+    @Serializable
+    val interaction: Interaction? = null,
 ) {
+
+    @Serializable
+    data class Interaction(
+        @SerialName("error_toast")
+        val errorToast: String,
+        @SerialName("graph_version")
+        val graphVersion: Long
+    )
+
     @Serializable
     data class BgmInfo(
         @SerialName("jump_url")

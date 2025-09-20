@@ -2,6 +2,7 @@ package com.imcys.bilibilias.data.repository
 
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
 import com.imcys.bilibilias.data.model.BILIUserStatModel
+import com.imcys.bilibilias.data.model.user.BILIUserHistoryPlayModel
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.LoginPlatform
@@ -151,6 +152,33 @@ class UserInfoRepository(
             BILIUserVideoLikeInfo(
                 list = coinInfo ?: emptyList()
             )
+        }
+    }
+
+    suspend fun getHistoryCursor(
+        max: Long = 0L,
+        viewAt: Long = 0L,
+        ps: Int = 20,
+        type: String = "archive",
+    ) = webApiService.getHistoryCursor(max, viewAt, ps, type).map { networkResult ->
+        networkResult.mapData { historyInfo, apiResponse ->
+            historyInfo?.list?.map { info ->
+                BILIUserHistoryPlayModel(
+                    longTitle = info.longTitle,
+                    title = info.title,
+                    cover = info.cover,
+                    history = info.history,
+                    showTitle = info.showTitle,
+                    duration = info.duration,
+                    tagName = info.tagName,
+                    progress = info.progress,
+                    authorMid = info.authorMid,
+                    authorName = info.authorName,
+                    max = historyInfo.cursor.max,
+                    viewAt = historyInfo.cursor.viewAt
+                )
+            }
+
         }
     }
 

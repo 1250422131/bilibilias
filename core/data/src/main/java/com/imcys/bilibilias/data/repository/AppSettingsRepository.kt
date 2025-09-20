@@ -115,6 +115,15 @@ class AppSettingsRepository(
         }
     }
 
+
+    suspend fun updateLastBulletinContent(content: String) {
+        dataStore.updateData{ currentSettings ->
+            currentSettings.toBuilder()
+                .setLastBulletinContent(content)
+                .build()
+        }
+    }
+
 }
 
 

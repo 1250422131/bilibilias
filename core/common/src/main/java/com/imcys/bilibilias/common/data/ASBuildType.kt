@@ -1,8 +1,7 @@
 package com.imcys.bilibilias.common.data
 
 enum class ASBuildType {
-    RELEASE,
-    DEBUG,
+    OFFICIAL,
     BETA,
     ALPHA,
 }
@@ -10,10 +9,9 @@ enum class ASBuildType {
 
 fun getASBuildType(buildType: String): ASBuildType {
     return when (buildType) {
-        "release" -> ASBuildType.RELEASE
-        "debug" -> ASBuildType.DEBUG
+        "official" -> ASBuildType.OFFICIAL
         "beta" -> ASBuildType.BETA
         "alpha" -> ASBuildType.ALPHA
-        else -> ASBuildType.DEBUG
+        else -> ASBuildType.OFFICIAL
     }
 }

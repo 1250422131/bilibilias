@@ -12,6 +12,9 @@ sealed interface ASLinkResultType {
             val currentBvId: String,
             val viewInfo: NetWorkResult<BILIVideoViewInfo?>
         ) : BILI {
+            fun isNotFound(): Boolean {
+                return viewInfo.status == ApiStatus.ERROR && viewInfo.responseData?.code == -404
+            }
             fun isCanPlay(): Boolean {
                 if (viewInfo.status != ApiStatus.SUCCESS) {
                     return true

@@ -22,6 +22,10 @@ message AppSettings {
   // 最后一次跳过更新的版本code
   int32 last_skip_update_version_code = 6;
 
+  string last_skip_update_version = 7;
+
+  string last_bulletin_content = 8;
+
   enum HomeLayoutType {
     Banner = 0 ;
     Announcement = 1 ;
