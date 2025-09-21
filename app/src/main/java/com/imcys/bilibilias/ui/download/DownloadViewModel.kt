@@ -2,19 +2,16 @@ package com.imcys.bilibilias.ui.download
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.ContentUris
 import android.content.Context
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
+import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.dwonload.DownloadManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -49,6 +46,61 @@ class DownloadViewModel(
     @SuppressLint("MissingPermission")
     fun resumeDownloadTask(segmentId: Long) {
         viewModelScope.launch { downloadManager.resumeTask(segmentId) }
+    }
+
+    /**
+     * 打开下载的文件
+     * [context] 上下文
+     * [segment] 下载任务
+     */
+    fun openDownloadSegmentFile(context: Context, segment: DownloadSegment) {
+        // 文件地址
+        val savePath = segment.savePath
+        if (savePath.startsWith("content://")) {
+            // content uri 直接打开
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val fileUri = savePath.toUri()
+            val type = context.contentResolver.getType(fileUri) ?: ""
+            intent.setDataAndType(fileUri, type)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            try {
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            return
+        } else {
+            // 普通文件路径
+            val file = File(savePath)
+            if (!file.exists()) {
+                Toast.makeText(context, "文件不存在，可能已被删除", Toast.LENGTH_SHORT).show()
+                return
+            }
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val fileUri = try {
+                getUriForFile(context, context.applicationContext.packageName + ".provider", file)
+            } catch (e: Exception) {
+                null
+            }
+            if (fileUri == null) {
+                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                    .show()
+                return
+            }
+            val type = context.contentResolver.getType(fileUri) ?: ""
+            intent.setDataAndType(fileUri, type)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            try {
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
     }
 
     fun deleteDownloadSegment(context: Context, segment: DownloadSegment) {

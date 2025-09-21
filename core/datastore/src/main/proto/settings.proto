@@ -8,6 +8,32 @@ message AppSettings {
 
   KnowAboutApp know_about_app = 2;
 
+  bool enabled_roam = 3;
+
+  bool enabled_dynamic_color = 4;
+
+  message HomeLayoutItem {
+    HomeLayoutType type = 1;
+    bool is_hidden = 2;
+  }
+
+  repeated HomeLayoutItem home_layout_typeset = 5;
+
+  // 最后一次跳过更新的版本code
+  int32 last_skip_update_version_code = 6;
+
+  string last_skip_update_version = 7;
+
+  string last_bulletin_content = 8;
+
+  enum HomeLayoutType {
+    Banner = 0 ;
+    Announcement = 1 ;
+    UpdateInfo = 2;
+    Tools = 3 ;
+    DownloadList = 4;
+  }
+
   enum KnowAboutApp{
     NotKnow = 0;
     Know = 1;

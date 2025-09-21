@@ -26,12 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.common.utils.toMenuVideoCode
+import com.imcys.bilibilias.common.utils.toVideoCode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import kotlin.collections.forEach
 
 /**
@@ -42,6 +44,7 @@ import kotlin.collections.forEach
 fun AudioQualitySelectScreen(
     modifier: Modifier,
     downloadInfo: DownloadViewInfo?,
+    apiStatus: ApiStatus,
     audioList: List<BILIVideoDash.Audio>?,
     onAudioQualityChange: (Long?) -> Unit = {}
 ) {
@@ -52,7 +55,8 @@ fun AudioQualitySelectScreen(
         selectValue = downloadInfo?.selectAudioQualityId ?: 0
     }
 
-    if (!audioList.isNullOrEmpty()) {
+    if (apiStatus == ApiStatus.ERROR) { return }
+    if (!audioList.isNullOrEmpty() || apiStatus != ApiStatus.SUCCESS) {
         ExposedDropdownMenuBox(
             expanded = modelExpanded,
             onExpandedChange = {
@@ -72,7 +76,7 @@ fun AudioQualitySelectScreen(
                 readOnly = true,
                 singleLine = false,
                 label = { Text("选择优先音频质量", fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = false) },
+                trailingIcon = { TrailingIcon(expanded = modelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -80,13 +84,13 @@ fun AudioQualitySelectScreen(
                     focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                shape = CardDefaults.shape
+                shape = CardDefaults.shape,
             )
             ExposedDropdownMenu(
                 expanded = modelExpanded,
                 onDismissRequest = { modelExpanded = false },
             ) {
-                audioList.forEach {
+                audioList?.forEach {
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -123,24 +127,35 @@ fun VideoSupportFormatsSelectScreen(
 ) {
     var videoModelExpanded by remember { mutableStateOf(false) }
     var videoCodeModelExpanded by remember { mutableStateOf(false) }
+    // 选择的视频分辨率
     var selectVideoFormatValue: String by remember { mutableStateOf("") }
+    // 选择的视频编码
     var selectVideoCodeValue: String by remember { mutableStateOf("") }
 
     var supportFormats by remember { mutableStateOf(listOf<BILIVideoSupportFormat>()) }
     var videoCodingList by remember { mutableStateOf(setOf<String>()) }
 
-    LaunchedEffect(downloadInfo?.selectVideoQualityId, downloadInfo?.selectVideoCode) {
+    LaunchedEffect(downloadInfo?.selectVideoCode) {
+        selectVideoCodeValue = downloadInfo?.selectVideoCode ?: ""
+    }
+
+    LaunchedEffect(downloadInfo?.selectVideoQualityId) {
         supportFormats = if (dashVideoList != null) {
             // Dash模式
             val mVideoCodingList = mutableSetOf<String>()
-            mSupportFormats?.forEach {
+            mSupportFormats?.filter {
+                // 筛选出支持的清晰度
+                it.quality == downloadInfo?.selectVideoQualityId
+            }?.forEach {
                 it.codecs.forEach { code ->
                     mVideoCodingList.add(code.split(".")[0])
                 }
             }
             videoCodingList = mVideoCodingList
-            selectVideoCodeValue = downloadInfo?.selectVideoCode ?: ""
-
+            // 更新视频编码选择
+            mVideoCodingList.firstOrNull()?.let {
+                onVideoCodeChange(it)
+            }
             mSupportFormats?.filter { supportFormat ->
                 dashVideoList.any { item -> item.id == supportFormat.quality }
             } ?: emptyList()
@@ -187,7 +202,7 @@ fun VideoSupportFormatsSelectScreen(
                 readOnly = true,
                 singleLine = false,
                 label = { Text("选择优先分辨率", fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = false) },
+                trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -237,14 +252,14 @@ fun VideoSupportFormatsSelectScreen(
                     textStyle = LocalTextStyle.current.copy(
                         fontSize = 12.sp
                     ),
-                    value = selectVideoCodeValue,
+                    value = selectVideoCodeValue.toVideoCode(),
                     onValueChange = {
 
                     },
                     readOnly = true,
                     singleLine = false,
                     label = { Text("选择优先编码", fontSize = 12.sp) },
-                    trailingIcon = { TrailingIcon(expanded = false) },
+                    trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
@@ -263,7 +278,7 @@ fun VideoSupportFormatsSelectScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    it,
+                                    it.toMenuVideoCode(),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             },

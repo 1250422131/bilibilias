@@ -32,11 +32,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.DownloadFinishTaskCard
 import com.imcys.bilibilias.weight.DownloadTaskCard
@@ -56,6 +60,7 @@ fun DownloadScreen(
     val allDownloadSegment by vm.allDownloadSegment.collectAsState()
 
     var selectIndex by remember { mutableIntStateOf(DOWNLOADING_INDEX) }
+    val haptics = LocalHapticFeedback.current
 
     val context = LocalContext.current
     DownloadScaffold(
@@ -69,6 +74,10 @@ fun DownloadScreen(
                     checked = selectIndex == DOWNLOADING_INDEX,
                     onCheckedChange = {
                         selectIndex = DOWNLOADING_INDEX
+                        if (it) {
+                            haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        }
+                        selectIndex = 0
                     },
                 ) {
                     Text("正在下载")
@@ -78,6 +87,10 @@ fun DownloadScreen(
                     checked = selectIndex == DOWNLOADED_INDEX,
                     onCheckedChange = {
                         selectIndex = DOWNLOADED_INDEX
+                        if (it) {
+                            haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        }
+                        selectIndex = 1
                     },
                 ) {
                     Text("已完成下载")
@@ -91,7 +104,8 @@ fun DownloadScreen(
                     DOWNLOADING_INDEX -> {
                         items(downloadListState, key = { it.downloadSegment.segmentId }) {
                             DownloadTaskCard(
-                                it, onPause = {
+                                modifier = Modifier.animateItem(),
+                                task = it, onPause = {
                                     vm.pauseDownloadTask(it.downloadSegment.segmentId)
                                 },
                                 onResume = {
@@ -105,12 +119,14 @@ fun DownloadScreen(
                             it.downloadState == DownloadState.COMPLETED
                         }, key = { it.segmentId }) {
                             DownloadFinishTaskCard(
-                                it,
+                                modifier = Modifier.animateItem(),
+                                downloadSegment = it,
+                                onOpenFile = {
+                                    vm.openDownloadSegmentFile(context, it)
+                                },
                                 onDeleteTaskAndFile = {
                                     vm.deleteDownloadSegment(context, it)
-                                },
-                                onPlay = onPlay,
-                            )
+                                })
                         }
                     }
                 }
@@ -139,17 +155,12 @@ private fun DownloadScaffold(onToBack: () -> Unit, content: @Composable (Padding
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
+                        AsBackIconButton(onClick = {
                             onToBack.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
+                        })
                     },
                     actions = {
-                        IconButton(onClick = {
+                        ASIconButton(onClick = {
                             showDownloadTip = true
                         }) {
                             Icon(

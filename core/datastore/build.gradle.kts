@@ -32,7 +32,9 @@ protobuf {
     protoc {
         artifact = libs.protobuf.protoc.get().toString()
     }
+
     generateProtoTasks {
+
         all().forEach { task ->
             task.builtins {
                 register("java") {
@@ -46,13 +48,14 @@ protobuf {
     }
 
 }
-//androidComponents.beforeVariants {
-//    android.sourceSets.register(it.name) {
-//        val buildDir = layout.buildDirectory.get().asFile
-//        java.srcDir(buildDir.resolve("generated/source/proto/${it.name}/java"))
-//        kotlin.srcDir(buildDir.resolve("generated/source/proto/${it.name}/kotlin"))
-//    }
-//}
+
+androidComponents.beforeVariants {
+    android.sourceSets.findByName(it.name)?.let { sourceSet ->
+        val buildDir = layout.buildDirectory.get().asFile
+        sourceSet.java.srcDir(buildDir.resolve("generated/source/proto/${it.name}/java"))
+        sourceSet.kotlin.srcDir(buildDir.resolve("generated/source/proto/${it.name}/kotlin"))
+    }
+}
 
 
 dependencies {

@@ -46,6 +46,9 @@ object API {
         // 视频详情，通用接口，Webi鉴权
         val WEB_WEBI_VIDEO_VIEW = WEB_API_BASE_URL + "x/web-interface/wbi/view"
 
+        // 视频详情，通用接口，非Webi鉴权
+        val WEB_WEBI_VIDEO_VIEW_NO_WEBI = WEB_API_BASE_URL + "x/web-interface/view"
+
         // 番剧详情，通用接口
         val WEB_WEBI_PGC_SEASON_VIEW = WEB_API_BASE_URL + "pgc/view/web/season"
 
@@ -57,5 +60,32 @@ object API {
 
         // 视频播放信息接口，通用接口
         val WEB_VIDEO_PLAYER_NO_WEBI_URL = WEB_API_BASE_URL + "x/player/playurl"
+
+        // 获取追番列表，TV暂未实现
+        val WEB_BANGUMI_FOLLOW_URL = WEB_API_BASE_URL + "x/space/bangumi/follow/list"
+
+        // 获取收藏夹列表，TV暂未实现
+        val WEB_FOLDER_LIST_URL = WEB_API_BASE_URL + "x/v3/fav/folder/created/list-all"
+
+        // 获取收藏夹内视频，TV暂未实现
+        val WEB_FOLDER_FAV_LIST_URL = WEB_API_BASE_URL + "x/v3/fav/resource/list"
+
+        // 获取点赞列表，TV暂未实现
+        val WEB_LIKE_LIST_URL = WEB_API_BASE_URL + "x/space/like/video"
+
+        val WEB_COIN_LIST_URL = WEB_API_BASE_URL + "x/space/coin/video"
+
+        val WEB_PLAY_INFO_V2_URL = WEB_API_BASE_URL + "x/player/wbi/v2"
+
+        val WEB_STEIN_EDGE_INFO_V2_URL = WEB_API_BASE_URL + "x/stein/edgeinfo_v2"
+
+        val WEB_HISTORY_CURSOR_URL = WEB_API_BASE_URL + "x/web-interface/history/cursor"
+    }
+
+    object App {
+        const val SSE_HOST = "192.168.88.120"
+        const val SSE_PORT = 8080
+        const val SSE_PATH = "/api/events/subscribe"
+        const val BASE_URL = "http://$SSE_HOST:$SSE_PORT/api/v2/"
     }
 }

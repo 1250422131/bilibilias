@@ -1,24 +1,30 @@
 package com.imcys.bilibilias.ui.analysis.components
 
 import androidx.compose.ui.unit.sp
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,30 +38,45 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.SelectEpisodeType
+import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
+
+
+typealias UpdateSelectedEpId = (epId: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
+
+
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DongmhuaDownloadScreen(
     downloadInfo: DownloadViewInfo?,
     donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
+    currentUserInfo: BILIUsersEntity?,
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
-    onUpdateSelectedEpId: (Long?) -> Unit,
+    onUpdateSelectedEpId: UpdateSelectedEpId,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
-    onAudioQualityChange: (Long?) -> Unit = {}
+    onAudioQualityChange: (Long?) -> Unit = {},
+    onSelectSingleModel: (Boolean) -> Unit = { _ -> },
+    onToVideoCodingInfo: () -> Unit
 ) {
 
     var selectSeasonsId by remember {
@@ -66,6 +87,8 @@ fun DongmhuaDownloadScreen(
     }
     var currentEpListIndex by remember { mutableIntStateOf(0) }
 
+    val isVip = currentUserInfo?.isVip() == true
+    val haptics = LocalHapticFeedback.current
 
     LaunchedEffect(donghuaViewInfo.data?.seasonId, donghuaViewInfo.data?.seasons) {
         selectSeasonsId = donghuaViewInfo.data?.seasons
@@ -94,7 +117,20 @@ fun DongmhuaDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("缓存倾向")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("缓存倾向")
+                Spacer(Modifier.width(4.dp))
+                Icon(
+                    Icons.Outlined.Info,
+                    contentDescription = "说明",
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable {
+                            onToVideoCodingInfo.invoke()
+                        })
+                Spacer(Modifier.weight(1f))
+                SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
+            }
             AsAutoError(donghuaPlayerInfo, onSuccessContent = {
                 Column {
                     VideoSupportFormatsSelectScreen(
@@ -111,8 +147,11 @@ fun DongmhuaDownloadScreen(
                     Spacer(Modifier.height(6.dp))
                     // 当音频质量列表不为空时才显示音频质量选择
                     AudioQualitySelectScreen(
-                        Modifier.fillMaxWidth(),
+                        Modifier
+                            .fillMaxWidth()
+                            .shimmer(donghuaPlayerInfo.status != ApiStatus.SUCCESS),
                         downloadInfo,
+                        donghuaPlayerInfo.status,
                         donghuaPlayerInfo.data?.dash?.audio,
                         onAudioQualityChange = onAudioQualityChange
                     )
@@ -145,11 +184,11 @@ fun DongmhuaDownloadScreen(
                                             checked = info.seasonId == selectSeasonsId,
                                             onCheckedChange = {
                                                 if (it) {
+                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                     currentEpListIndex = 0
                                                     selectSeasonsId = info.seasonId
                                                     onSelectSeason(info.seasonId)
                                                 }
-
                                             },
                                         ) {
                                             Text(info.seasonTitle)
@@ -187,31 +226,63 @@ fun DongmhuaDownloadScreen(
                             ) {
                                 val episodeList = donghuaViewInfo.data?.episodes ?: emptyList()
                                 val startIndex = currentEpListIndex * 12
-                                val endIndex = minOf((currentEpListIndex + 1) * 12, episodeList.size)
+                                val endIndex =
+                                    minOf((currentEpListIndex + 1) * 12, episodeList.size)
 
                                 items(episodeList.subList(startIndex, endIndex)) {
-                                    FilterChip(
-                                        selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
-                                        onClick = {
-                                            onUpdateSelectedEpId.invoke(it.epId)
-                                        },
-                                        label = {
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .height(60.dp),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
+                                    Box {
+                                        FilterChip(
+                                            enabled = !(!isVip && it.badge == "会员"),
+                                            selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
+                                            onClick = {
+                                                onUpdateSelectedEpId.invoke(
+                                                    it.epId,
+                                                    if (it.epId == 0L) {
+                                                        SelectEpisodeType.AID(it.aid)
+                                                    } else {
+                                                        SelectEpisodeType.EPID(it.epId)
+                                                    },
+                                                    it.longTitle.ifBlank { it.title },
+                                                    it.cover
+                                                )
+                                            },
+                                            label = {
+                                                Column(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .height(60.dp),
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Text(
+                                                        it.longTitle.ifBlank { it.title },
+                                                        maxLines = 2,
+                                                        fontSize = 14.sp,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                    )
+                                                }
+                                            }
+                                        )
+                                        if (it.badge.isNotEmpty()) {
+                                            Surface(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopEnd),
+                                                shape = FilterChipDefaults.shape,
+                                                color = MaterialTheme.colorScheme.primary,
                                             ) {
                                                 Text(
-                                                    it.longTitle.ifBlank { it.title },
-                                                    maxLines = 2,
-                                                    fontSize = 14.sp,
-                                                    overflow = TextOverflow.Ellipsis,
+                                                    it.badge, modifier = Modifier.padding(3.dp),
+                                                    fontSize = 8.sp,
+                                                    style = TextStyle(
+                                                        platformStyle = PlatformTextStyle(
+                                                            includeFontPadding = false
+                                                        )
+                                                    )
                                                 )
                                             }
                                         }
-                                    )
+
+                                    }
                                 }
                             }
                         }
@@ -231,7 +302,10 @@ fun DongmhuaDownloadScreen(
                                         ToggleButton(
                                             checked = selectSectionId == info.id,
                                             onCheckedChange = {
-                                                selectSectionId = info.id
+                                                if (it) {
+                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                    selectSectionId = info.id
+                                                }
                                             },
                                         ) {
                                             Text(info.title)
@@ -253,7 +327,16 @@ fun DongmhuaDownloadScreen(
                                     FilterChip(
                                         selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
                                         onClick = {
-                                            onUpdateSelectedEpId.invoke(it.epId)
+                                            onUpdateSelectedEpId.invoke(
+                                                it.epId,
+                                                if (it.epId == 0L) {
+                                                    SelectEpisodeType.AID(it.aid)
+                                                } else {
+                                                    SelectEpisodeType.EPID(it.epId)
+                                                },
+                                                it.longTitle.ifBlank { it.title },
+                                                it.cover
+                                            )
                                         },
                                         label = {
                                             Column(

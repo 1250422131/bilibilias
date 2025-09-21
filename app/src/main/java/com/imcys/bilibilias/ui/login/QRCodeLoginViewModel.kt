@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -147,6 +148,7 @@ class QRCodeLoginViewModel(
                 mid = biliLoginUserModel.mid ?: 0L,
                 face = biliLoginUserModel.face ?: "",
                 level = biliLoginUserModel.level ?: 0,
+                vipState = biliLoginUserModel.vipState ?: 0,
                 loginPlatform = uiState.selectedLoginPlatform,
                 accessToken = currentQrCodePollInfo?.accessToken,
                 refreshToken = currentQrCodePollInfo?.refreshToken
@@ -178,7 +180,7 @@ class QRCodeLoginViewModel(
                 qrCodeLoginRepository.insertBILIUserCookie(cookie)
             }
 
-            if (uiState.selectedLoginPlatform != LoginPlatform.MOBILE) {
+            if (uiState.selectedLoginPlatform == LoginPlatform.WEB) {
                 usersDataSource.setUserId(userId)
                 asCookiesStorage.syncDataBaseCookies()
             }
@@ -370,7 +372,7 @@ class QRCodeLoginViewModel(
      */
     private fun handleHeaderCookie(responseHeader: Set<Map.Entry<String, List<String>>>?) {
         responseHeader?.forEach {
-            if (it.key == "set-cookie") {
+            if (it.key == "Set-Cookie") {
                 currentCookies.clear()
                 currentCookies.addAll(asCookiesStorage.getAllCookies())
             }

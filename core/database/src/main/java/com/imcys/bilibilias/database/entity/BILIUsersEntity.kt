@@ -23,10 +23,16 @@ data class BILIUsersEntity(
     val face: String,
     @ColumnInfo("level")
     val level: Int,
+    @ColumnInfo("vip_state")
+    val vipState: Int,
     @ColumnInfo("refresh_token")
     val refreshToken: String?,
     @ColumnInfo("access_token")
     val accessToken: String?,
     @ColumnInfo(name = "created_at")
     val createdAt: Date = Date(),
-)
+) {
+    fun isVip(): Boolean {
+        return vipState > 0
+    }
+}

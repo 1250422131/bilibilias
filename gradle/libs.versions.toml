@@ -1,43 +1,39 @@
 [versions]
-agp = "8.11.0"
-kotlin = "2.2.0"
-coreKtx = "1.16.0"
-junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.2"
-activityCompose = "1.10.1"
-composeBom = "2025.07.00"
-androidTools = "31.9.0"
+agp = "8.13.0"
+kotlin = "2.2.10"
+coreKtx = "1.17.0"
+lifecycleRuntimeKtx = "2.9.3"
+activityCompose = "1.11.0"
+composeBom = "2025.09.00"
+androidTools = "31.13.0"
 androidDesugarJdkLibs = "2.1.5"
 navigationCompose = "2.9.3"
-koinBom = "4.1.0"
-viewmodelCompose = "2.9.2"
-ksp = "2.2.0-2.0.2"
+koinBom = "4.1.1"
+viewmodelCompose = "2.9.3"
+ksp = "2.2.10-2.0.2"
 room = "2.7.2"
 datastore = "1.1.7"
 protobufPlugin = "0.9.5"
-protobuf = "3.25.5"
-firebase = "34.0.0"
+protobuf = "4.32.0"
+firebase = "34.2.0"
 gms = "4.4.3"
-firebase-crashlytics-plugin = "3.0.5"
-firebase-perf-plugin = "2.0.0"
+firebase-crashlytics-plugin = "3.0.6"
+firebase-perf-plugin = "2.0.1"
 konfetti-compose-version = "2.0.5"
 ktorVersion = "3.2.3"
 coil = "3.3.0"
-material3Android = "1.5.0-alpha01"
+material3Android = "1.5.0-alpha03"
 cloudy = "0.2.7"
-splashscreen = "1.2.0-rc01"
-
-nav3Core = "1.0.0-alpha06"
+nav3Core = "1.0.0-alpha08"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
 material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
+paging = "3.3.6"
+palayAppUpdate = "2.1.0"
+playAppReview = "2.0.2"
+kolor = "3.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -69,6 +65,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-inappmessaging-display = { group = "com.google.firebase", name = "firebase-inappmessaging-display" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config" }
 firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx" }
 firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
@@ -76,6 +73,8 @@ firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 konfetti-compose = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti-compose-version" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktorVersion" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktorVersion" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktorVersion" }
+
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktorVersion" }
@@ -85,7 +84,10 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
-androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+paging-compose = { group = "androidx.paging", name = "paging-compose-android", version.ref = "paging" }
+palay-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref= "palayAppUpdate" }
+palay-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref= "playAppReview" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }

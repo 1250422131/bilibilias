@@ -21,10 +21,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -39,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -53,7 +52,7 @@ val LocalUseColorfulIcon = compositionLocalOf { true }
 val LocalVerticalPadding = compositionLocalOf { 16.dp }
 
 @Composable
-fun BannerItem(content: @Composable () -> Unit) {
+fun BannerItem(shape: Shape = RoundedCornerShape(36), content: @Composable () -> Unit) {
     Column {
         Spacer(modifier = Modifier.height(16.dp))
         CompositionLocalProvider(
@@ -288,7 +287,7 @@ fun ColorSettingsItem(
         descriptionText = description,
         onClick = onClick
     ) {
-        IconButton(onClick = { onClick?.invoke() }) {
+        ASIconButton(onClick = { onClick?.invoke() }) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

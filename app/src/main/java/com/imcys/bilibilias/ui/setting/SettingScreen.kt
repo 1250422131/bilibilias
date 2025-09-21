@@ -13,21 +13,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.AudioFile
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
-import androidx.compose.material.icons.outlined.EnergySavingsLeaf
+import androidx.compose.material.icons.outlined.EmojiObjects
+import androidx.compose.material.icons.outlined.MoodBad
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +36,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import com.imcys.bilibilias.R
+import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.BaseSettingsItem
 import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
+import org.koin.androidx.compose.koinViewModel
 
 
 @Preview
@@ -51,13 +59,25 @@ import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 fun SettingScreenPreview() {
     SettingScreen(
         onToRoam = {},
-        onToBack = {})
+        onToBack = {},
+        onToComplaint = {},
+        onToLayoutTypeset = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
+fun SettingScreen(
+    onToRoam: () -> Unit,
+    onToComplaint: () -> Unit,
+    onToLayoutTypeset : () -> Unit,
+    onToBack: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
+    val vm = koinViewModel<SettingViewModel>()
+    val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
+    val haptics = LocalHapticFeedback.current
+
     SettingScaffold(scrollBehavior, onToBack) {
 
         LazyColumn(
@@ -72,26 +92,26 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                     text = "缓存配置"
                 )
             }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.EnergySavingsLeaf,
-                    text = "省电模式",
-                    description = "开启后将不使用FFmpeg进行视频处理，改用原生API处理。",
-                    checked = false,
-                ) {
-
-                }
-            }
-
-            item {
-                SwitchSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.AudioFile),
-                    text = "音频转码",
-                    description = "启用选择仅音频缓存可以得到mp3的音频文件",
-                    checked = false,
-                ) {
-                }
-            }
+//            item {
+//                SwitchSettingsItem(
+//                    imageVector = Icons.Outlined.EnergySavingsLeaf,
+//                    text = "省电模式",
+//                    description = "开启后将不使用FFmpeg进行视频处理，改用原生API处理。",
+//                    checked = false,
+//                ) {
+//
+//                }
+//            }
+//
+//            item {
+//                SwitchSettingsItem(
+//                    painter = rememberVectorPainter(Icons.Outlined.AudioFile),
+//                    text = "音频转码",
+//                    description = "启用选择仅音频缓存可以得到mp3的音频文件",
+//                    checked = false,
+//                ) {
+//                }
+//            }
 
             item {
                 BaseSettingsItem(
@@ -115,13 +135,50 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
 
             item {
                 CategorySettingsItem(
-                    text = "权限设置"
+                    text = "主题设置"
                 )
+            }
+            item {
+                SwitchSettingsItem(
+                    imageVector = Icons.Outlined.Palette,
+                    text = "动态主题",
+                    description = "使用桌面壁纸颜色作为主题",
+                    checked = appSettings.enabledDynamicColor,
+                ) { check ->
+                    haptics.switchHapticFeedback(check)
+                    vm.updateEnabledDynamicColor(check)
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                item {
+                    CategorySettingsItem(
+                        text = "权限设置"
+                    )
+                }
             }
 
             item {
                 DownloadPostNotifications()
             }
+
+
+            item {
+                CategorySettingsItem(
+                    text = "布局配置"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ListAlt),
+                    text = "首页排版",
+                    description = {},
+                    onClick = onToLayoutTypeset
+                )
+            }
+
+
 
             item {
                 CategorySettingsItem(
@@ -138,12 +195,72 @@ fun SettingScreen(onToRoam: () -> Unit, onToBack: () -> Unit) {
                 )
             }
 
+            item {
+                CategorySettingsItem(
+                    text = "关于程序"
+                )
+            }
+
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.EmojiObjects),
+                    text = "我们的立场",
+                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展",
+                    onClick = {
+
+                    }
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = painterResource(R.drawable.ic_licens_24px),
+                    text = "第三方开源许可",
+                    description = {},
+                    onClick = {
+
+                    }
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = painterResource(R.drawable.ic_github_24px),
+                    text = "Github仓库",
+                    description = {},
+                    onClick = {
+                        val intent = Intent().apply {
+                            action = "android.intent.action.VIEW"
+                            data = "https://github.com/1250422131/bilibilias".toUri()
+                        }
+                        context.startActivity(intent)
+                    }
+                )
+            }
+
+            item {
+                CategorySettingsItem(
+                    text = "投诉与反馈"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.MoodBad),
+                    text = "投诉",
+                    descriptionText = "向BILIBILIAS投诉违规行为",
+                    onClick = onToComplaint
+                )
+            }
+
         }
     }
 }
 
 @Composable
 fun DownloadPostNotifications() {
+    val haptics = LocalHapticFeedback.current
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val context = LocalContext.current
@@ -165,20 +282,20 @@ fun DownloadPostNotifications() {
         SwitchSettingsItem(
             imageVector = Icons.Outlined.Notifications,
             text = "前台通知",
-            description = "开启后可以使得在后台的下载任务不会被系统回收。",
+            description = "开启后可以使得在后台的下载任务不会被系统回收",
             checked = hasForegroundServicePermission,
         ) {
+            haptics.switchHapticFeedback(it)
             if (ContextCompat.checkSelfPermission(
                     context,
                     permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
-            } else {
                 showRequestForegroundServiceTip = true
             }
         }
 
-        if (showRequestForegroundServiceTip){
+        if (showRequestForegroundServiceTip) {
             DownloadServicePermissionRequestTipDialog(
                 onDismiss = {
                     showRequestForegroundServiceTip = false
@@ -270,14 +387,9 @@ fun SettingScaffold(
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = { Text(text = "设置") },
                 navigationIcon = {
-                    IconButton(onClick = {
+                    AsBackIconButton(onClick = {
                         onToBack.invoke()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "返回",
-                        )
-                    }
+                    })
                 }
             )
         },

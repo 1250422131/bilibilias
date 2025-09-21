@@ -77,7 +77,6 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_getFFmpegVersion(
 }
 
 // 合并音视频 JNI 方法
-// 合并音视频 JNI 方法
 extern "C" JNIEXPORT void JNICALL
 Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         JNIEnv *env,
@@ -85,15 +84,24 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         jstring videoPath_,
         jstring audioPath_,
         jstring outputPath_,
+        jstring title_,
+        jstring description_,
+        jstring copyright_,
         jobject listener) {
     const char *videoPath = env->GetStringUTFChars(videoPath_, 0);
     const char *audioPath = env->GetStringUTFChars(audioPath_, 0);
     const char *outputPath = env->GetStringUTFChars(outputPath_, 0);
+    const char *title = env->GetStringUTFChars(title_, 0);
+    const char *description = env->GetStringUTFChars(description_, 0);
+    const char *copyright = env->GetStringUTFChars(copyright_, 0);
 
     auto _defer = Defer{[&] {
         env->ReleaseStringUTFChars(videoPath_, videoPath);
         env->ReleaseStringUTFChars(audioPath_, audioPath);
         env->ReleaseStringUTFChars(outputPath_, outputPath);
+        env->ReleaseStringUTFChars(title_, title);
+        env->ReleaseStringUTFChars(description_, description);
+        env->ReleaseStringUTFChars(copyright_, copyright);
     }};
     
     auto callback = FFmpegMergeListener::create(env, listener);
@@ -132,6 +140,11 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         return;
     }
 
+    // 设置元信息
+    av_dict_set(&ofmt_ctx->metadata, "title", title, 0);
+    av_dict_set(&ofmt_ctx->metadata, "description", description, 0);
+    av_dict_set(&ofmt_ctx->metadata, "copyright", copyright, 0);
+
     // 拷贝视频流
     for (unsigned int i = 0; i < ifmt_ctx_v->nb_streams; i++) {
         if (ifmt_ctx_v->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
@@ -140,7 +153,8 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
             video_index_in = i;
             video_index_out = out_stream->index;
             avcodec_parameters_copy(out_stream->codecpar, in_stream->codecpar);
-            out_stream->codecpar->codec_tag = 0;
+            // 默认编码
+            // out_stream->codecpar->codec_tag = 0;
             break;
         }
     }

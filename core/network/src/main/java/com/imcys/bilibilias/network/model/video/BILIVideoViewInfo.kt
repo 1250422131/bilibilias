@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.network.model.video
 
+import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo.UgcSeason.Section.Episode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -237,64 +238,6 @@ data class BILIVideoViewInfo(
     )
 
     @Serializable
-    data class Subtitle(
-        @SerialName("allow_submit")
-        val allowSubmit: Boolean,
-        @SerialName("list")
-        val list: List<Item>
-    ) {
-        @Serializable
-        data class Item(
-            @SerialName("ai_status")
-            val aiStatus: Long,
-            @SerialName("ai_type")
-            val aiType: Long,
-            @SerialName("author")
-            val author: Author,
-            @SerialName("id")
-            val id: Long,
-            @SerialName("id_str")
-            val idStr: String,
-            @SerialName("is_lock")
-            val isLock: Boolean,
-            @SerialName("lan")
-            val lan: String,
-            @SerialName("lan_doc")
-            val lanDoc: String,
-            @SerialName("subtitle_url")
-            val subtitleUrl: String,
-            @SerialName("type")
-            val type: Long
-        ) {
-            @Serializable
-            data class Author(
-                @SerialName("birthday")
-                val birthday: Long?,
-                @SerialName("face")
-                val face: String,
-                @SerialName("in_reg_audit")
-                val inRegAudit: Long?,
-                @SerialName("is_deleted")
-                val isDeleted: Long?,
-                @SerialName("is_fake_account")
-                val isFakeAccount: Long?,
-                @SerialName("is_senior_member")
-                val isSeniorMember: Long?,
-                @SerialName("mid")
-                val mid: Long,
-                @SerialName("name")
-                val name: String,
-                @SerialName("rank")
-                val rank: Long?,
-                @SerialName("sex")
-                val sex: String?,
-                @SerialName("sign")
-                val sign: String?
-            )
-        }
-    }
-
-    @Serializable
     data class UgcSeason(
         @SerialName("attribute")
         val attribute: Long,
@@ -364,7 +307,7 @@ data class BILIVideoViewInfo(
                     @SerialName("aid")
                     val aid: Long,
                     @SerialName("author")
-                    val author: Subtitle.Item.Author,
+                    val author: Subtitle.Item.Author?,
                     @SerialName("copyright")
                     val copyright: Long,
                     @SerialName("ctime")
@@ -447,4 +390,75 @@ data class BILIVideoViewInfo(
         @SerialName("url_image_ani_cut")
         val urlImageAniCut: String
     )
+}
+
+
+@Serializable
+data class Subtitle(
+    @SerialName("allow_submit")
+    val allowSubmit: Boolean,
+    @SerialName("list")
+    val list: List<Item> = emptyList(),
+    @SerialName("subtitles")
+    val subtitles: List<Item> = emptyList()
+) {
+    @Serializable
+    data class Item(
+        @SerialName("ai_status")
+        val aiStatus: Long,
+        @SerialName("ai_type")
+        val aiType: Long,
+        @SerialName("author")
+        val author: Author?,
+        @SerialName("id")
+        val id: Long,
+        @SerialName("id_str")
+        val idStr: String,
+        @SerialName("is_lock")
+        val isLock: Boolean,
+        @SerialName("lan")
+        val lan: String,
+        @SerialName("lan_doc")
+        val lanDoc: String,
+        @SerialName("subtitle_url")
+        val subtitleUrl: String,
+        @SerialName("subtitle_url_v2")
+        val subtitleUrlV2: String?,
+        @SerialName("type")
+        val type: Long
+    ) {
+        @Serializable
+        data class Author(
+            @SerialName("birthday")
+            val birthday: Long?,
+            @SerialName("face")
+            val face: String,
+            @SerialName("in_reg_audit")
+            val inRegAudit: Long?,
+            @SerialName("is_deleted")
+            val isDeleted: Long?,
+            @SerialName("is_fake_account")
+            val isFakeAccount: Long?,
+            @SerialName("is_senior_member")
+            val isSeniorMember: Long?,
+            @SerialName("mid")
+            val mid: Long,
+            @SerialName("name")
+            val name: String,
+            @SerialName("rank")
+            val rank: Long?,
+            @SerialName("sex")
+            val sex: String?,
+            @SerialName("sign")
+            val sign: String?
+        )
+    }
+}
+
+fun List<Episode>.filterWithMultiplePages(): List<Episode> {
+    return filter { it.pages.size > 1 }
+}
+
+fun List<Episode>.filterWithSinglePage(): List<Episode> {
+    return filter { it.pages.size <= 1 }
 }

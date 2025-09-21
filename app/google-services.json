@@ -26,6 +26,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:353498354213:android:e5191e2f88a3c496e7a5cc",
+        "android_client_info": {
+          "package_name": "com.imcys.bilibilias.alpha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ3PLO_XCvt05yJ7rbR_qkgdpIcIusiB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:353498354213:android:addd117323557750e7a5cc",
         "android_client_info": {
           "package_name": "com.imcys.bilibilias.gp"

@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.user
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -22,9 +23,9 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Paid
@@ -38,7 +39,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -56,12 +56,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.NumberUtils
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
@@ -72,8 +72,10 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
+import com.imcys.bilibilias.ui.weight.ASCardGroups
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardGroups
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
@@ -85,9 +87,14 @@ import org.koin.androidx.compose.koinViewModel
 internal fun UserScreen(
     userRoute: UserRoute,
     onToBack: () -> Unit,
-    onToSettings: () -> Unit
+    onToSettings: () -> Unit,
+    onToWorkList: (mid: Long) -> Unit,
+    onToBangumiFollow: (mid: Long) -> Unit,
+    onToUserFolder: (mid: Long) -> Unit,
+    onToLikeVideo: (mid: Long) -> Unit,
+    onToCoinVide: (mid: Long) -> Unit,
+    onToPlayHistory:()->Unit,
 ) {
-
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()
     val userStatInfoState by vm.userStatInfoState.collectAsState()
@@ -100,7 +107,7 @@ internal fun UserScreen(
 
 
 
-    UserScaffold(onToBack,onToSettings) {
+    UserScaffold(onToBack, onToSettings) {
         LazyVerticalGrid(
             GridCells.Fixed(2),
             Modifier
@@ -120,14 +127,24 @@ internal fun UserScreen(
                     PlatformList(uiState.biliUsersEntity)
                 }
                 fullWidthItem {
-                    ActionRow()
+                    ActionRow(
+                        onToBangumiFollow = {
+                            onToBangumiFollow.invoke(userRoute.mid)
+                        }, onToUserFolder = {
+                            onToUserFolder.invoke(userRoute.mid)
+                        }, onToLikeVideo = {
+                            onToLikeVideo.invoke(userRoute.mid)
+                        }, onToCoinVide = {
+                            onToCoinVide.invoke(userRoute.mid)
+                        }, onToPlayHistory = onToPlayHistory)
                 }
             }
-
             fullWidthItem {
-                VideoHeader(spaceArchiveInfoState) {
+                VideoHeader(spaceArchiveInfoState, onRetry = {
                     vm.getUserPageIno(userRoute.mid)
-                }
+                }, onToWorkList = {
+                    onToWorkList.invoke(userRoute.mid)
+                })
             }
 
         }
@@ -137,11 +154,14 @@ internal fun UserScreen(
 }
 
 @Composable
-private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
+private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {}) {
     Row(
         Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .clickable {
+                onClick.invoke()
+            }
     ) {
         Surface(
             Modifier
@@ -151,7 +171,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
             shape = CardDefaults.shape
         ) {
             ASAsyncImage(
-                "${item?.pic?.toHttps()}@672w_378h_1c.avif",
+                "${item?.pic?.toHttps()}@672w_378h_1c",
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = "视频封面"
             )
@@ -190,6 +210,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
 private fun VideoHeader(
     spaceArchiveInfoState: NetWorkResult<BILISpaceArchiveModel?>,
     onRetry: () -> Unit = {},
+    onToWorkList: () -> Unit = {}
 ) {
     SurfaceColorCard {
         Column(
@@ -209,7 +230,7 @@ private fun VideoHeader(
                 Text("投稿视频", color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
-                IconButton(onClick = {}) {
+                ASIconButton(onClick = { onToWorkList.invoke() }) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
                         contentDescription = "更多投稿",
@@ -217,8 +238,7 @@ private fun VideoHeader(
                     )
                 }
             }
-            Spacer(Modifier.height(24.dp))
-
+            Spacer(Modifier.height(16.dp))
             AsAutoError(
                 netWorkResult = spaceArchiveInfoState,
                 onSuccessContent = {
@@ -226,7 +246,9 @@ private fun VideoHeader(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         spaceArchiveInfoState.data?.list?.forEach {
-                            VideoCard(it)
+                            VideoCard(it, onClick = {
+                                sendAnalysisEvent(AnalysisEvent(it.bvid))
+                            })
                         }
                     }
                 },
@@ -260,14 +282,21 @@ private fun LazyGridScope.fullWidthItem(
 }
 
 @Composable
-fun ActionRow() {
+fun ActionRow(
+    onToBangumiFollow: () -> Unit = {},
+    onToUserFolder: () -> Unit = {},
+    onToLikeVideo: () -> Unit,
+    onToCoinVide: () -> Unit,
+    onToPlayHistory:()->Unit,
+    ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToLikeVideo
         ) {
             Column(
                 modifier = Modifier
@@ -278,14 +307,15 @@ fun ActionRow() {
             ) {
                 Icon(Icons.Outlined.ThumbUp, contentDescription = "最近点赞")
                 Spacer(Modifier.height(4.dp))
-                Text("已点赞", fontSize = 14.sp)
+                Text("点赞", fontSize = 14.sp)
             }
         }
 
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToPlayHistory
         ) {
             Column(
                 modifier = Modifier
@@ -294,16 +324,17 @@ fun ActionRow() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Paid, contentDescription = "最近投币")
+                Icon(Icons.Outlined.History, contentDescription = "最近播放图标")
                 Spacer(Modifier.height(4.dp))
-                Text("已投币", fontSize = 14.sp)
+                Text("最近", fontSize = 14.sp)
             }
         }
 
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToUserFolder
         ) {
             Column(
                 modifier = Modifier
@@ -321,7 +352,8 @@ fun ActionRow() {
         Surface(
             modifier = Modifier.weight(1f),
             shape = CardDefaults.shape,
-            color = MaterialTheme.colorScheme.primaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = onToBangumiFollow
         ) {
             Column(
                 modifier = Modifier
@@ -344,7 +376,6 @@ fun ActionRow() {
 @Composable
 fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
     Column {
-        Spacer(Modifier.height(16.dp))
         SurfaceColorCard(
             Modifier
                 .fillMaxWidth(),
@@ -397,35 +428,36 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     }
                 }
 
-                HorizontalDivider(
-                    Modifier.padding(vertical = 16.dp),
-                    DividerDefaults.Thickness,
-                    MaterialTheme.colorScheme.outlineVariant
-                )
+               if (false){
+                   HorizontalDivider(
+                       Modifier.padding(vertical = 16.dp),
+                       DividerDefaults.Thickness,
+                       MaterialTheme.colorScheme.outlineVariant
+                   )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_mini_acfun_logo_24px),
-                        contentDescription = "AcFunLogo",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.weight(1f))
-                    Text(
-                        "暂未开放",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Icon(
-                        Icons.Outlined.Build,
-                        modifier = Modifier.size(20.dp),
-                        contentDescription = "维护图标",
-                        tint = MaterialTheme.colorScheme.outline
-                    )
-
-                }
+                   Row(
+                       verticalAlignment = Alignment.CenterVertically
+                   ) {
+                       Icon(
+                           painterResource(R.drawable.ic_mini_acfun_logo_24px),
+                           contentDescription = "AcFunLogo",
+                           tint = MaterialTheme.colorScheme.onSurfaceVariant
+                       )
+                       Spacer(Modifier.weight(1f))
+                       Text(
+                           "暂未开放",
+                           fontSize = 16.sp,
+                           color = MaterialTheme.colorScheme.outline
+                       )
+                       Spacer(Modifier.width(8.dp))
+                       Icon(
+                           Icons.Outlined.Build,
+                           modifier = Modifier.size(20.dp),
+                           contentDescription = "维护图标",
+                           tint = MaterialTheme.colorScheme.outline
+                       )
+                   }
+               }
 
             }
         }
@@ -434,7 +466,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
 
 @Composable
 fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
-    AsCardGroups(
+    ASCardGroups(
         Modifier
             .fillMaxWidth(),
     ) {
@@ -593,7 +625,7 @@ fun TopUserInfo(
             },
             onRetry = onRetry
         )
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(16.dp))
         UserDataInfo(userStatInfoState)
     }
 }
@@ -616,17 +648,12 @@ private fun UserScaffold(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
+                        AsBackIconButton(onClick = {
                             onToBack.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
+                        })
                     },
                     actions = {
-                        IconButton(onClick = {
+                        ASIconButton(onClick = {
                             onToSettings.invoke()
                         }) {
                             Icon(

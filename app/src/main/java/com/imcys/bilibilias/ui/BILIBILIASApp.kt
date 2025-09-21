@@ -31,7 +31,6 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -42,9 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -56,34 +52,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
-import com.google.firebase.Firebase
-import com.google.firebase.app
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.appErrorHandleChannel
 import com.imcys.bilibilias.common.event.loginErrorChannel
-import com.imcys.bilibilias.data.repository.AppSettingsRepository
-import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay
-import com.imcys.bilibilias.navigation.BILIBILIASNavHost
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.*
-import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
+import com.imcys.bilibilias.ui.weight.ASAsyncImage
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.Konfetti
 import com.imcys.bilibilias.weight.rememberKonfettiState
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
-import kotlin.system.exitProcess
 
-
-@Composable
-fun BILIBILIASApp() {
-    BILIBILIASAppScreen()
-}
 
 @Composable
 internal fun BILIBILIASAppScreen() {
@@ -94,16 +77,10 @@ internal fun BILIBILIASAppScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScaffold() {
-    // 参数注册区域
-    val appSettingsRepository: AppSettingsRepository = koinInject()
-    val appSettings by appSettingsRepository.appSettingsFlow.collectAsState(
-        initial = AppSettings.getDefaultInstance()
-    )
-    val coroutineScope = rememberCoroutineScope()
     val konfettiState = rememberKonfettiState(false)
     val vm = koinViewModel<BILIBILIASAppViewModel>()
+    val appSettings by vm.appSettings.collectAsState()
     val uiState by vm.uiState.collectAsState()
-
 
     // 监听注册区域
     LaunchedEffect(Unit) {
@@ -112,15 +89,20 @@ private fun MainScaffold() {
         }
     }
 
-    LaunchedEffect(Unit) {
-        appErrorHandleChannel.collect {
-            vm.appError(it)
-        }
-    }
-
     // 页面注册区域
-    Box {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        ASAsyncImage(
+            model = "https://youke1.picui.cn/s1/2025/08/29/68b16d2fe4356.jpg",
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize()
+        )
+
         AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
             targetState = uiState,
             transitionSpec = {
                 // 进入动画：淡入
@@ -132,7 +114,8 @@ private fun MainScaffold() {
             },
         ) { targetUiState ->
             when (targetUiState) {
-                Default -> {
+                UIState.Default -> {
+
                     BILIBILAISNavDisplay()
 
                     // Dialog注册区域
@@ -140,67 +123,28 @@ private fun MainScaffold() {
                         showState = appSettings.agreePrivacyPolicyValue <= 1 && appSettings.knowAboutAppValue == 1, // 如果未同意则显示对话框
                         onClickConfirm = {
                             // 同意
-                            coroutineScope.launch {
-                                konfettiState.value = true
-                                appSettingsRepository.updatePrivacyPolicyAgreement(Agreed)
-                                Firebase.app.isDataCollectionDefaultEnabled = true
-
-                            }
+                            konfettiState.value = true
+                            vm.updatePrivacyPolicyAgreement(Agreed)
                         },
                         onClickDismiss = {
                             // 拒绝
-                            coroutineScope.launch {
-                                appSettingsRepository.updatePrivacyPolicyAgreement(Refuse)
-                                Firebase.app.isDataCollectionDefaultEnabled = false
-                            }
+                            vm.updatePrivacyPolicyAgreement(Refuse)
                         }
                     )
-
                 }
 
-                is AccountCheck -> {
+                is UIState.AccountCheck -> {
                     AccountCheckPage(targetUiState)
                 }
 
-                is KnowAboutApp -> {
-                    InstructionsPage(onClickKnowAbout = {
-                        vm.onKnowAboutApp()
-                    })
-                }
-
-                is AppError -> {
-                    AppErrorPage(targetUiState)
+                is UIState.KnowAboutApp -> {
+                    InstructionsPage(onClickKnowAbout = vm::onKnowAboutApp)
                 }
             }
         }
-
         Konfetti(konfettiState)
     }
-
-
 }
-
-@Composable
-fun AppErrorPage(appError: AppError) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "发生错误：${appError.appException?.message}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
-        )
-        Spacer(Modifier.height(10.dp))
-        Button(onClick = {
-            exitProcess(0)
-        }) {
-            Text("退出软件")
-        }
-    }
-}
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,7 +163,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
                             contentDescription = "返回"
@@ -238,62 +182,66 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = CardDefaults.shape
+            Column(
+                Modifier.weight(1f)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = CardDefaults.shape
                 ) {
-                    item {
-                        Text(
-                            """
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        item {
+                            Text(
+                                """
                 您正在使用的软件并非哔哩哔哩/bilibili，而是辅助其的第三方工具软件，与哔哩哔哩没有任何关联。
             """.trimIndent(),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                                 此软件未得到哔哩哔哩许可，哔哩哔哩对此使用软件而造成的一切后果概不负责。
                                 """.trimIndent(),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                                     BILIBILIAS是一款第三方的B站（哔哩哔哩）视频缓存工具，旨在帮助需要离线播放或者剪辑原创视频的自媒体博主。
                                 """.trimIndent(),
-                        )
-                    }
+                            )
+                        }
 
-                    item {
-                        Text(
-                            """
+                        item {
+                            Text(
+                                """
                             在BILIBILIAS缓存的任何内容都不得进行二次传播，仅允许在您自己的终端设备播放或者制作剪辑视频（未经作者允许不得直接搬运）。
                         """.trimIndent(),
 
-                            )
-                    }
-                    item {
-                        Text(
-                            """
+                                )
+                        }
+                        item {
+                            Text(
+                                """
                             如果您违反了规定或者用作了非法用途，那么一切后果将由您自行承担，同时BILIBILIAS可能将禁止您继续使用。
                         """.trimIndent(),
-                        )
+                            )
+                        }
                     }
                 }
             }
-            Spacer(Modifier.weight(1f))
             Button(
                 onClick = {
                     content.startActivity(
@@ -325,7 +273,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AccountCheckPage(targetUiState: AccountCheck) {
+fun AccountCheckPage(targetUiState: UIState.AccountCheck) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)

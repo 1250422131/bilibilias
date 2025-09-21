@@ -7,12 +7,17 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
+import com.imcys.bilibilias.common.utils.CCJsonToAss
+import com.imcys.bilibilias.common.utils.CCJsonToSrt
+import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
@@ -26,13 +31,18 @@ import com.imcys.bilibilias.database.entity.download.DownloadStage
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
+import com.imcys.bilibilias.database.entity.download.DownloadTaskType
 import com.imcys.bilibilias.dwonload.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
+import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,12 +88,16 @@ class DownloadManager(
     companion object {
         // 最大并发
         private const val MAX_CONCURRENT_DOWNLOADS = 1
+
         // 重试次数
         private const val MAX_RETRY_ATTEMPTS = 5
+
         // 重试间隔
         private const val RETRY_DELAY_MS = 3000L
+
         // 文件缓存大小
         private const val DOWNLOAD_BUFFER_SIZE = 64 * 1024
+
         // 下载队列检查间隔
         private const val QUEUE_CHECK_INTERVAL_MS = 1000L
     }
@@ -153,7 +167,18 @@ class DownloadManager(
         asLinkResultType: ASLinkResultType,
         downloadViewInfo: DownloadViewInfo
     ) {
-        val taskResult = downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
+        val taskResult =
+            downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
+
+        // 处理单体下载任务
+        if (downloadViewInfo.selectedCCId.isNotEmpty()) {
+            handelCCDownload(
+                asLinkResultType,
+                downloadViewInfo.videoPlayerInfoV2,
+                downloadViewInfo.selectedCCId,
+                downloadViewInfo.ccFileType
+            )
+        }
 
         taskResult.onSuccess { taskTree ->
             processDownloadTree(taskTree, downloadViewInfo)
@@ -163,6 +188,108 @@ class DownloadManager(
 
         if (!isDownloading) {
             startDownloadQueueService()
+        }
+    }
+
+    // 处理字幕下载任务
+    private fun handelCCDownload(
+        asLinkResultType: ASLinkResultType,
+        playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>,
+        selectedCCId: List<Long>,
+        ccFileType: CCFileType
+    ) {
+        when (asLinkResultType) {
+            is ASLinkResultType.BILI.Video -> {
+                GlobalScope.launch(Dispatchers.IO) {
+                    selectedCCId.forEach {
+                        val ccUrlInfo =
+                            playerInfoV2.data?.subtitle?.subtitles?.firstOrNull { item ->
+                                item.id == it
+                            }
+                        val url = if (ccUrlInfo?.subtitleUrl.isNullOrEmpty()) {
+                            ccUrlInfo?.subtitleUrlV2 ?: ""
+                        } else {
+                            ccUrlInfo.subtitleUrl ?: ""
+                        }
+
+                        // 协议头
+                        val finalUrl = if (!url.contains("https")) "https:" else ""
+                        runCatching {
+                            videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
+                        }.onSuccess { cCInfo ->
+                            saveCCFile(asLinkResultType.viewInfo.data,ccFileType, cCInfo)
+                        }
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun saveCCFile(
+        videoInfo: BILIVideoViewInfo?,
+        ccFileType: CCFileType,
+        biliVideoCCInfo: BILIVideoCCInfo
+    ) {
+        val fileContentStr = when(ccFileType){
+            CCFileType.ASS -> {
+                CCJsonToAss.jsonToAss(
+                    biliVideoCCInfo,
+                    title = videoInfo?.title ?:"字幕",
+                    playResX = videoInfo?.dimension?.width?.toString()?: "1920",
+                    playResY = videoInfo?.dimension?.height?.toString()?: "1080"
+                )
+            }
+            CCFileType.SRT -> {
+                CCJsonToSrt.jsonToSrt(biliVideoCCInfo)
+            }
+        }
+
+        val title = videoInfo?.title ?: "字幕"
+        val fileName = when (ccFileType) {
+            CCFileType.ASS -> "$title.ass"
+            CCFileType.SRT -> "$title.srt"
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val values = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(
+                    MediaStore.Downloads.MIME_TYPE,
+                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
+                )
+                put(
+                    MediaStore.Downloads.RELATIVE_PATH,
+                    Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
+                )
+            }
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                resolver.openOutputStream(uri)?.use { outputStream ->
+                    outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
+                    outputStream.flush()
+                }
+            }
+        } else {
+            val downloadsDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val targetDir = File(downloadsDir, "BILIBILIAS")
+            if (!targetDir.exists()) targetDir.mkdirs()
+            val targetFile = File(targetDir, fileName)
+            FileOutputStream(targetFile).use { outputStream ->
+                outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
+                outputStream.flush()
+            }
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf(targetFile.absolutePath),
+                arrayOf(
+                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
+                ),
+                null
+            )
         }
     }
 
@@ -228,6 +355,85 @@ class DownloadManager(
         pausedTasks.forEach { resumeTask(it.downloadSegment.segmentId) }
     }
 
+
+    /**
+     * 下载封面图片
+     */
+    suspend fun downloadImageToAlbum(imageUrl: String, fileName: String, saveDirName: String) =
+        withContext(Dispatchers.IO) {
+            val response = okHttpClient.newCall(
+                okhttp3.Request.Builder()
+                    .url(imageUrl)
+                    .build()
+            ).execute()
+
+
+            if (!response.isSuccessful) {
+                return@withContext
+            }
+
+            val body = response.body ?: return@withContext
+            val inputStream = body.byteStream()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+ 通过 MediaStore 保存
+                val resolver = context.contentResolver
+                val relativeRoot = Environment.DIRECTORY_PICTURES
+                val relativePath = "$relativeRoot/$saveDirName"
+
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                    put(
+                        MediaStore.Images.Media.MIME_TYPE,
+                        "image/${fileName.substringAfterLast('.')}"
+                    )
+                    put(MediaStore.Images.Media.RELATIVE_PATH, relativePath)
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                    ?: throw IllegalStateException("Failed to insert into MediaStore")
+
+                try {
+                    resolver.openOutputStream(uri, "w")?.use { out ->
+                        inputStream.copyTo(out)
+                        out.flush()
+                    } ?: throw IllegalStateException("Failed to open output stream for $uri")
+                } catch (e: Exception) {
+                    // 写失败时删除占位
+                    runCatching { resolver.delete(uri, null, null) }
+                    throw e
+                } finally {
+                    // 标记写入完成
+                    val done = ContentValues().apply {
+                        put(MediaStore.Images.Media.IS_PENDING, 0)
+                    }
+                    resolver.update(uri, done, null, null)
+                }
+
+            } else {
+                // Android 9 及以下：写入公共目录 + 扫描
+                val baseDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val albumDir = File(baseDir, fileName).apply { if (!exists()) mkdirs() }
+                val outFile = File(albumDir, saveDirName)
+
+                FileOutputStream(outFile).use { out ->
+                    inputStream.copyTo(out)
+                    out.flush()
+                }
+
+                // 通知相册扫描
+                MediaScannerConnection.scanFile(
+                    context,
+                    arrayOf(outFile.absolutePath),
+                    arrayOf("image/${fileName.substringAfterLast('.')}"),
+                    null
+                )
+
+            }
+        }
+
+
     /**
      * 启动下载队列服务
      */
@@ -271,7 +477,8 @@ class DownloadManager(
                 )
             }
             val noActiveJobs = activeDownloadJobs.isEmpty()
-            val noWaitingTasks = _downloadTasks.value.none { it.downloadState == DownloadState.WAITING }
+            val noWaitingTasks =
+                _downloadTasks.value.none { it.downloadState == DownloadState.WAITING }
 
             if (noActiveJobs && noWaitingTasks && (allTasksFinished || _downloadTasks.value.isEmpty())) {
                 break
@@ -457,7 +664,7 @@ class DownloadManager(
         onUpdateProgress: (Float) -> Unit
     ): Boolean = withContext(Dispatchers.IO) {
         val downloaded = if (tempFile.exists()) tempFile.length() else 0L
-        val referer = buildRefererUrl(task.downloadTask.platformId)
+        val referer = buildRefererUrl(task)
 
         val requestBuilder = okhttp3.Request.Builder()
             .url(subTask.downloadUrl)
@@ -516,6 +723,9 @@ class DownloadManager(
             task.downloadSubTasks[0].savePath,
             task.downloadSubTasks[1].savePath,
             "${task.downloadSubTasks[0].savePath}_merged.mp4",
+            task.downloadSegment.title,
+            task.downloadTask.description,
+            buildRefererUrl(task),
             createMergeListener(task, progressCallback)
         )
 
@@ -624,11 +834,25 @@ class DownloadManager(
     /**
      * 构建Referer URL
      */
-    private fun buildRefererUrl(platformId: String): String {
-        return if (platformId.all { it.isDigit() }) {
-            "https://www.bilibili.com/bangumi/play/ss$platformId"
-        } else {
-            "https://www.bilibili.com/video/$platformId"
+    private suspend fun buildRefererUrl(task: AppDownloadTask): String {
+
+        return when (task.downloadTask.type) {
+            DownloadTaskType.BILI_VIDEO,
+            DownloadTaskType.BILI_DONGHUA -> {
+                val platformId = task.downloadTask.platformId
+                if (platformId.all { it.isDigit() }) {
+                    "https://www.bilibili.com/bangumi/play/ss$platformId"
+                } else {
+                    "https://www.bilibili.com/video/$platformId"
+                }
+            }
+
+            DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != 0L -> {
+                val realTask = downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
+                "https://www.bilibili.com/video/${realTask?.platformId}"
+            }
+
+            DownloadTaskType.BILI_VIDEO_SECTION -> error("构造Referer URL失败，任务类型不支持")
         }
     }
 
@@ -657,7 +881,8 @@ class DownloadManager(
      */
     private fun updateTaskState(task: AppDownloadTask, state: DownloadState) {
         val currentTasks = _downloadTasks.value.toMutableList()
-        val index = currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
+        val index =
+            currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
 
         if (index != -1) {
             currentTasks[index] = task.copy(
@@ -673,7 +898,8 @@ class DownloadManager(
      */
     private fun updateTaskStage(task: AppDownloadTask, stage: DownloadStage) {
         val currentTasks = _downloadTasks.value.toMutableList()
-        val index = currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
+        val index =
+            currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
 
         if (index != -1) {
             currentTasks[index] = task.copy(downloadStage = stage)
@@ -712,15 +938,21 @@ class DownloadManager(
 
             // 检查是否已存在同名文件，存在则先删除
             val query = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-            val selection = "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
+            val selection =
+                "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
             val selectionArgs = arrayOf(fileName, Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS")
-            resolver.query(query, arrayOf(MediaStore.Downloads._ID), selection, selectionArgs, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
-                    val existUri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
-                    resolver.delete(existUri, null, null)
+            resolver.query(query, arrayOf(MediaStore.Downloads._ID), selection, selectionArgs, null)
+                ?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val id =
+                            cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
+                        val existUri = ContentUris.withAppendedId(
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                            id
+                        )
+                        resolver.delete(existUri, null, null)
+                    }
                 }
-            }
 
             val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
             if (uri != null) {
@@ -781,7 +1013,8 @@ class DownloadManager(
         suspend fun processNode(node: DownloadTreeNode) {
             node.segments.forEach { segment ->
                 if (!currentTasks.any { it.downloadSegment.platformId == segment.platformId }) {
-                    val downloadSubTasks = createSubTasksForSegment(segment, node.node.nodeType, downloadViewInfo)
+                    val downloadSubTasks =
+                        createSubTasksForSegment(segment, node.node.nodeType, downloadViewInfo)
                     val cover = getCoverForSegment(segment)
 
                     val newTask = AppDownloadTask(
@@ -789,8 +1022,12 @@ class DownloadManager(
                         downloadSegment = segment,
                         downloadSubTasks = downloadSubTasks,
                         downloadStage = DownloadStage.DOWNLOAD,
-                        cover = cover
+                        cover = cover,
                     )
+                    // 下载封面图片
+                    if (downloadViewInfo.downloadCover) {
+                        downloadCoverImageForTask(newTask)
+                    }
                     currentTasks.add(newTask)
                 }
             }
@@ -799,6 +1036,33 @@ class DownloadManager(
 
         taskTree.roots.forEach { processNode(it) }
         _downloadTasks.value = currentTasks
+    }
+
+    /**
+     * 下载任务的封面图片
+     */
+    private fun downloadCoverImageForTask(
+        task: AppDownloadTask,
+    ) {
+
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val type = task.cover?.substringAfterLast(".")
+            val fileName = when (task.downloadTask.type) {
+                DownloadTaskType.BILI_DONGHUA,
+                DownloadTaskType.BILI_VIDEO -> "${task.downloadSegment.platformId}_pic.${type}"
+
+                // 如果是合集，封面得找到对应的任务
+                DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != null -> {
+                    val realTask =
+                        downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
+                    "${realTask?.platformId}_pic.${type}"
+                }
+
+                DownloadTaskType.BILI_VIDEO_SECTION -> error("封面所属任务类型异常")
+            }
+            downloadImageToAlbum(task.cover?.toHttps() ?: "", fileName, "BILIBILIAS")
+        }
+
     }
 
     /**
@@ -822,6 +1086,8 @@ class DownloadManager(
     ): List<DownloadSubTask> {
         // 获取视频播放信息
         val videoInfo = when (nodeType) {
+
+            DownloadTaskNodeType.BILI_VIDEO_INTERACTIVE,
             DownloadTaskNodeType.BILI_VIDEO_PAGE,
             DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
                 videoInfoRepository.getVideoPlayerInfo(
@@ -839,7 +1105,7 @@ class DownloadManager(
                 ).last()
             }
 
-            else -> throw IllegalStateException("缓存类���异常")
+            else -> throw IllegalStateException("缓存类型不支持: ${nodeType.name}")
         }
 
         if (videoInfo.status != ApiStatus.SUCCESS) {
@@ -881,7 +1147,11 @@ class DownloadManager(
                                 selectedVideo.baseUrl,
                                 DownloadSubTaskType.VIDEO
                             ),
-                            createSubTask(segment, selectedAudio.baseUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(
+                                segment,
+                                selectedAudio.finalUrl,
+                                DownloadSubTaskType.AUDIO
+                            )
                         )
                     }
 
@@ -895,7 +1165,11 @@ class DownloadManager(
                     DownloadMode.AUDIO_ONLY -> {
                         val selectedAudio = selectAudioQuality(videoData, downloadViewInfo)
                         listOf(
-                            createSubTask(segment, selectedAudio.baseUrl, DownloadSubTaskType.AUDIO)
+                            createSubTask(
+                                segment,
+                                selectedAudio.finalUrl,
+                                DownloadSubTaskType.AUDIO
+                            )
                         )
                     }
                 }

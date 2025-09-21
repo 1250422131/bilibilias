@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.network
 
 
-import android.util.Log
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
@@ -11,6 +10,7 @@ import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 
@@ -65,7 +65,10 @@ class AsCookiesStorage(
         if (!isInit) {
             syncDataBaseCookies()
         }
-        return cookies
+        return cookies.run {
+            if (usersDataSource.users.first().notUseBuvid3 ){ filter { it.name != "buvid3" }
+            } else { this }
+        }
     }
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
@@ -74,7 +77,6 @@ class AsCookiesStorage(
 
         val mCookie = cookie.copy(domain = requestUrl.host)
         cookies.removeAll { it -> it.name ==  mCookie.name}
-        Log.d("TAG", "addCookie: ${mCookie}")
         cookies.add(mCookie)
     }
 

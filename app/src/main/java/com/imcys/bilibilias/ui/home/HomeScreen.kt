@@ -5,18 +5,14 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,31 +20,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.automirrored.outlined.ArrowRightAlt
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -61,32 +54,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.common.data.ASBuildType
+import com.imcys.bilibilias.common.data.getASBuildType
+import com.imcys.bilibilias.common.utils.AppUtils.getVersion
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
-import com.imcys.bilibilias.database.entity.download.DownloadState
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
+import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
-import com.imcys.bilibilias.ui.weight.AsCardTextField
+import com.imcys.bilibilias.ui.weight.ASCardTextField
+import com.imcys.bilibilias.ui.weight.ASHorizontalMultiBrowseCarousel
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
-import com.imcys.bilibilias.weight.AsErrorCopyIconButton
 import com.imcys.bilibilias.weight.DownloadTaskCard
-import com.skydoves.cloudy.cloudy
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
 
@@ -143,8 +141,8 @@ internal fun HomeScreen(
         }
     }
 
-
-
+    val homeLayoutTypesetList by vm.homeLayoutTypesetList.collectAsState()
+    val pagerState = rememberPagerState(pageCount = { 2 })
     HomeScaffold(
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
@@ -158,52 +156,61 @@ internal fun HomeScreen(
                 .padding(p)
         ) {
             // 内容区
-            LazyColumn(
+            HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page ->
+                Column(Modifier.fillMaxSize()) {
+                    when (page) {
+                        0 -> {
+                            HomeContent(
+                                vm,
+                                homeLayoutTypesetList,
+                                downloadListState,
+                                goToDownloadPage
+                            )
+                        }
+
+                        1 -> {
+                            // TODO 额外工具
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(15.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("敬请期待")
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 分页指示器
+            Row(
                 Modifier
-                    .weight(1f) // 占满除去底部输入框的空间
-                    .padding(horizontal = 15.dp)
-                    .padding(top = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
-                item {
-                    CommonInfoCard(
-                        R.drawable.ic_brand_awareness_24px,
-                        "公告",
-                        "这是一段公告内容"
+                repeat(2) { index ->
+                    val isSelected = pagerState.currentPage == index
+                    Box(
+                        Modifier
+                            .padding(2.dp)
+                            .size(10.dp, 6.dp)
+                            .alpha(if (isSelected) 1f else 0.5f)
+                            .then(
+                                if (isSelected) {
+                                    Modifier
+                                } else {
+                                    Modifier.alpha(0.5f)
+                                }
+                            )
+                            .background(
+                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                shape = CircleShape
+                            )
                     )
                 }
 
-                item {
-                    CommonInfoCard(
-                        R.drawable.ic_info_24px,
-                        "更新内容",
-                        "这是一段更新内容"
-                    )
-                }
-
-                item {
-                    DownloadListCard(
-                        downloadListState,
-                        goToDownloadPage = goToDownloadPage,
-                        onPauseTask = {
-                            vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                        },
-                        onResumeTask = {
-                            vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                        })
-                }
-
-                item {
-                    Text(
-                        "请在Download/BILIBILIAS目录下查看下载内容",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight(330),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
             }
 
             // 底部输入区
@@ -214,7 +221,7 @@ internal fun HomeScreen(
                         .padding(horizontal = 15.dp)
                 ) {
                     Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
-                        AsCardTextField(
+                        ASCardTextField(
                             modifier = Modifier.sharedElement(
                                 sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
                                 animatedVisibilityScope = animatedContentScope
@@ -232,6 +239,186 @@ internal fun HomeScreen(
     LoginInfoBottomDialog(popupUserInfoState, loginUserInfoState, userLoginPlatformList) {
         popupUserInfoState = false
     }
+}
+
+
+/**
+ * 首页内容
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeContent(
+    vm: HomeViewModel,
+    homeLayoutTypesetList: List<AppSettings.HomeLayoutItem>,
+    downloadListState: List<AppDownloadTask>,
+    goToDownloadPage: () -> Unit
+) {
+
+    val bannerList by vm.bannerList.collectAsState()
+    val bulletinInfo by vm.bulletinInfo.collectAsState()
+    val appSettings by vm.appSettingsState.collectAsState()
+    val appUpdateInfo by vm.appUpdateInfo.collectAsState()
+    val context = LocalContext.current
+
+    var closeBulletinDialogShow by remember { mutableStateOf(false) }
+
+
+    LazyColumn(
+        Modifier
+            .padding(horizontal = 15.dp)
+            .padding(top = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        homeLayoutTypesetList.forEach { layout ->
+            when (layout.type) {
+                AppSettings.HomeLayoutType.Banner if !layout.isHidden -> {
+                    item {
+                        ASHorizontalMultiBrowseCarousel(
+                            autoScroll = true,
+                            modifier = Modifier.animateItem(),
+                            items = bannerList
+                        ) { item ->
+                            Box {
+                                ASAsyncImage(
+                                    model = "http://192.168.88.120:8080" + item.url,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(168.dp)
+                                        .maskClip(CardDefaults.shape),
+                                )
+
+                                Text(
+                                    item.title,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.W500,
+                                    color = MaterialTheme.colorScheme.surface,
+                                    maxLines = 2,
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .align(Alignment.BottomStart)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                AppSettings.HomeLayoutType.Announcement if !layout.isHidden -> {
+                    if (appSettings.lastBulletinContent == bulletinInfo?.content) {
+                        // 内容相同，不展示
+                        return@forEach
+                    }
+                    item {
+                        CommonInfoCard(
+                            R.drawable.ic_brand_awareness_24px,
+                            "公告",
+                            bulletinInfo?.content ?: "暂无最新公告",
+                            onClickClose = {
+                                closeBulletinDialogShow = true
+                            }
+                        )
+                    }
+                }
+
+                AppSettings.HomeLayoutType.UpdateInfo if !layout.isHidden -> {
+                    if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
+                        // 版本相同，不展示
+                        return@forEach
+                    }
+
+                    // if (appUpdateInfo?.version == null) return@forEach
+                    if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
+                        return@forEach
+                    }
+                    item {
+                        val content = when (getASBuildType(BuildConfig.FLAVOR)) {
+                            ASBuildType.OFFICIAL,
+                            ASBuildType.BETA -> {
+                                """
+                                    新增：
+                                    ${appUpdateInfo?.feat}
+                                    修复：
+                                    ${appUpdateInfo?.fix}
+                                """.trimIndent()
+                            }
+
+                            ASBuildType.ALPHA -> "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                        }
+                        CommonInfoCard(
+                            R.drawable.ic_info_24px,
+                            "更新内容",
+                            content,
+                            onClickClose = {}
+                        )
+                    }
+                }
+
+                AppSettings.HomeLayoutType.DownloadList if !layout.isHidden -> {
+                    item {
+                        DownloadListCard(
+                            downloadListState,
+                            goToDownloadPage = goToDownloadPage,
+                            onPauseTask = {
+                                vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                            },
+                            onResumeTask = {
+                                vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                            })
+                    }
+                }
+
+                else -> {}
+            }
+
+        }
+
+        item {
+            Text(
+                """
+                            请在Download/BILIBILIAS目录下查看下载内容
+                            内部测试版本，请勿外传
+                        """.trimIndent(),
+                fontSize = 14.sp,
+                fontWeight = FontWeight(330),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
+    /**
+     * 关闭公告对话框
+     */
+    CloseBulletinDialog(closeBulletinDialogShow, onClickConfirm = {
+        vm.updateLastBulletinContent()
+    }, onClickDismiss = {
+        closeBulletinDialogShow = false
+    })
+}
+
+@Composable
+fun CloseBulletinDialog(
+    show: Boolean, onClickConfirm: () -> Unit, onClickDismiss: () -> Unit
+) {
+    ASAlertDialog(
+        showState = show,
+        title = { Text("关闭公告") },
+        text = {
+            Text("关闭后将不再显示，直到有新的公告发布")
+        },
+        confirmButton = {
+            TextButton(onClick = onClickConfirm) {
+                Text(text = "确认")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onClickDismiss) {
+                Text(text = "取消")
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -265,7 +452,7 @@ fun DownloadListCard(
                     modifier = Modifier.alpha(0.72f),
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
+                ASIconButton(onClick = {
                     goToDownloadPage.invoke()
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
@@ -284,13 +471,14 @@ fun DownloadListCard(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (downloadListState.isNotEmpty()) {
-                    downloadListState.subList(0, min(3, downloadListState.size)).forEach { task ->
-                        DownloadTaskCard(task, {
-                            onPauseTask(task)
-                        }, onResume = {
-                            onResumeTask(task)
-                        })
-                    }
+                    downloadListState.subList(0, min(3, downloadListState.size))
+                        .forEach { task ->
+                            DownloadTaskCard(task = task, onPause = {
+                                onPauseTask(task)
+                            }, onResume = {
+                                onResumeTask(task)
+                            })
+                        }
                 } else {
                     Text(
                         "暂无缓存任务",
@@ -315,6 +503,8 @@ private fun HomeScaffold(
     goToAnalysis: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         snackbarHost = {
@@ -356,14 +546,18 @@ private fun HomeScaffold(
                                         .size(40.dp),
                                     shape = CircleShape,
                                     contentDescription = "头像",
-                                    onClick = { goToUserPage() }
+                                    onClick = {
+                                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                        goToUserPage()
+                                    }
                                 )
                             },
                             onLoadingContent = {
                                 ContainedLoadingIndicator()
                             },
                             onDefaultContent = {
-                                IconButton(onClick = {
+                                ASIconButton(onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                     goToLogin()
                                 }) {
                                     Icon(
@@ -373,7 +567,8 @@ private fun HomeScaffold(
                                 }
                             },
                             onErrorContent = { errorMsg, response ->
-                                IconButton(onClick = {
+                                ASIconButton(onClick = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                     goToLogin()
                                 }) {
                                     Icon(
@@ -398,6 +593,7 @@ private fun CommonInfoCard(
     @DrawableRes iconId: Int,
     title: String = "",
     connect: String,
+    onClickClose: () -> Unit
 ) {
     SurfaceColorCard {
         Surface(Modifier.clickable {}, shape = CardDefaults.shape) {
@@ -423,19 +619,21 @@ private fun CommonInfoCard(
                         modifier = Modifier.alpha(0.72f),
                     )
                     Spacer(Modifier.weight(1f))
-                    IconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
-                        Icon(
-                            Icons.Outlined.Close,
-                            contentDescription = "关闭"
-                        )
+                    if (connect != "暂无最新公告") {
+                        ASIconButton(onClick = onClickClose, modifier = Modifier.size(30.dp)) {
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = "关闭"
+                            )
+                        }
                     }
-
                 }
 
                 Text(
                     text = connect,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(330),
+                    maxLines = 2,
                     modifier = Modifier.padding(top = 16.dp)
                 )
 

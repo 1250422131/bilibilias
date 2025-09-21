@@ -26,7 +26,7 @@ fun NavGraphBuilder.settingScreen(
     onToBack: () -> Unit,
 ) {
     composable<SettingRoute> {
-        SettingScreen(onToRoam, onToBack)
+        SettingScreen(onToRoam, onToBack,{},{})
     }
 }
 

@@ -18,6 +18,8 @@ const val BUVID4 = "buvid4"
 
 const val MID = "mid"
 
+const val VMID = "vmid"
+
 const val WTS = "wts"
 
 const val W_RID = "w_rid"
@@ -41,6 +43,14 @@ const val QN = "qn"
 const val FNVAL = "fnval"
 
 const val FOURK = "fourk"
+
+const val MEDIA_ID = "media_id"
+
+const val PN = "pn"
+
+const val PS = "ps"
+
+const val PLATFORM = "platform"
 
 const val TRY_LOOK = "try_look"
 

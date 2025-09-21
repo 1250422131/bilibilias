@@ -1,0 +1,52 @@
+name: Build and Upload Compose APK (Alpha)
+
+on:
+  push:
+    branches: [compose]
+  pull_request:
+    branches: [compose]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '21'
+
+      # 使用该 Action 自带缓存；不要再叠加 actions/cache，避免 400 报错
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 在构建前 clean 一次即可；不要在构建后再 clean
+      - name: Clean
+        run: ./gradlew clean
+
+      - name: Assemble alphaRelease
+        run: ./gradlew :app:assembleAlphaRelease --stacktrace --info
+
+      - name: List outputs (debug)
+        run: |
+          echo "Outputs under app/build/outputs:"
+          ls -R app/build/outputs || true
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK-alpha
+          path: app/build/outputs/apk/alpha/release/app-alpha-release.apk
+          if-no-files-found: error
