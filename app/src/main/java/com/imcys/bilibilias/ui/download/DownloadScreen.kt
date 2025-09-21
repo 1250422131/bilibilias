@@ -122,7 +122,8 @@ fun DownloadScreen(
                                 modifier = Modifier.animateItem(),
                                 downloadSegment = it,
                                 onOpenFile = {
-                                    vm.openDownloadSegmentFile(context, it)
+                                    // vm.openDownloadSegmentFile(context, it)
+                                    onPlay(it)
                                 },
                                 onDeleteTaskAndFile = {
                                     vm.deleteDownloadSegment(context, it)

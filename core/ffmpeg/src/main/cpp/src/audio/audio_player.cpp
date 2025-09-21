@@ -1,199 +1,202 @@
-#include <audio/audio_player.hpp>
-#include <ffmpeg/ffmpeg_util.hpp>
-#include <jni_log.hpp>
+#include "audio/audio_player.hpp"
+#include "jni_log.hpp"
 
-namespace {
-
-    auto get_av_sample_fmt(int format) -> int {
-        switch (format) {
-            case AV_SAMPLE_FMT_S16:
-                [[fallthrough]];
-            case AV_SAMPLE_FMT_S16P:
-                return AAUDIO_FORMAT_PCM_I16;
-            case AV_SAMPLE_FMT_FLT:
-                [[fallthrough]];
-            case AV_SAMPLE_FMT_FLTP:
-                return AAUDIO_FORMAT_PCM_FLOAT;
-            default:
-                return AAUDIO_FORMAT_PCM_I16;
-        }
-    }
+extern "C" {
+#include "libavutil/frame.h"
+#include "libavutil/channel_layout.h"
 }
 
-namespace bilias::audio {
+namespace bilias {
 
+    constexpr int kDefaultSampleRate = 48000;
+    constexpr oboe::AudioFormat kDefaultAudioFormat = oboe::AudioFormat::Float; // For Oboe
+    constexpr AVSampleFormat kDefaultAVSampleFormat = AV_SAMPLE_FMT_FLT;       // For FFmpeg
+    constexpr int kDefaultChannels = 2;
 
-    auto AudioPlayer::init() -> void {
+    AudioPlayer::AudioPlayer(ThreadSafeQueue<AVFrame *> &frame_queue)
+            : audio_frame_queue_(frame_queue) {}
 
+    AudioPlayer::~AudioPlayer() {
+        stop();
     }
 
-    auto AudioPlayer::create_engine() -> void {
-        auto result = slCreateEngine(&engine_obj, 0, nullptr, 0, nullptr, nullptr);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("slCreateEngine failed");
+    bool AudioPlayer::start(AudioParams params) {
+        if (is_playing_.load()) {
+            return true;
         }
-        result = (*engine_obj)->Realize(engine_obj, SL_BOOLEAN_FALSE);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*engine_obj)->Realize failed");
+        audio_params_ = params;
+        if (!init_resampler()) {
+            log_e("Failed to initialize resampler");
+            return false;
         }
-        result = (*engine_obj)->GetInterface(engine_obj, SL_IID_ENGINE, &engine);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*engine_obj)->GetInterface failed");
+
+        oboe::AudioStreamBuilder builder;
+        builder.setDirection(oboe::Direction::Output)
+                ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
+                ->setSharingMode(oboe::SharingMode::Shared)
+                ->setFormat(kDefaultAudioFormat)
+                ->setChannelCount(kDefaultChannels)
+                ->setSampleRate(kDefaultSampleRate)
+                ->setDataCallback(this);
+
+        oboe::Result result = builder.openStream(stream_);
+        if (result != oboe::Result::OK) {
+            log_e("Failed to open Oboe stream: %s", oboe::convertToText(result));
+            return false;
         }
+
+        result = stream_->requestStart();
+        if (result != oboe::Result::OK) {
+            log_e("Failed to start Oboe stream: %s", oboe::convertToText(result));
+            return false;
+        }
+
+        is_playing_.store(true);
+        log_i("Oboe stream started successfully");
+        return true;
     }
 
-    auto AudioPlayer::create_output_mix() -> void {
-        auto result = (*engine)->CreateOutputMix(engine, &output_mix, 0, nullptr, nullptr);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*engine)->CreateOutputMix failed");
-        }
-        result = (*output_mix)->Realize(output_mix, SL_BOOLEAN_FALSE);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*output_mix)->Realize failed");
-        }
-    }
-
-    auto AudioPlayer::create_audio_player() -> void {
-        auto loc_bufq = SLDataLocator_AndroidSimpleBufferQueue {
-            .locatorType = SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
-            .numBuffers = 2
-        };
-        auto loc_fmt = SLDataFormat_PCM {
-            .formatType = SL_DATAFORMAT_PCM,
-            .numChannels = static_cast<SLuint32>(channel_count),
-            .samplesPerSec = static_cast<SLuint32>(sample_rate),
-            .bitsPerSample = static_cast<SLuint32>(bits_per_sample),
-            .containerSize = 0,
-        };
-        auto audio_src = SLDataSource {
-            .pLocator = &loc_bufq,
-            .pFormat = &loc_fmt
-        };
-        auto loc_outmix = SLDataLocator_OutputMix {
-            .locatorType = SL_DATALOCATOR_OUTPUTMIX,
-            .outputMix = output_mix
-        };
-        auto audio_sink = SLDataSink {
-            .pLocator = &loc_outmix,
-            .pFormat = nullptr
-        };
-
-        const SLInterfaceID ids[1] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
-        const SLboolean req[1] = {SL_BOOLEAN_TRUE};
-
-        auto result = (*engine)->CreateAudioPlayer(engine, &player_obj, &audio_src, &audio_sink, 1, ids, req);
-
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*engine)->CreateAudioPlayer failed");
-        }
-        result = (*player_obj)->Realize(player_obj, SL_BOOLEAN_FALSE);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*player_obj)->Realize failed");
-        }
-        result = (*player_obj)->GetInterface(player_obj, SL_IID_PLAY, &player);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*player_obj)->GetInterface failed");
-        }
-        result = (*player_obj)->GetInterface(player_obj, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &player_queue);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*player_obj)->GetInterface failed");
-        }
-        result = (*player)->SetPlayState(player, SL_PLAYSTATE_PLAYING);
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*player)->SetPlayState failed");
-        }
-        result = (*player_queue)->RegisterCallback(player_queue, nullptr, this); // TODO
-        if (result != SL_RESULT_SUCCESS) {
-            throw std::runtime_error("(*player_queue)->RegisterCallback failed");
-        }
-    }
-
-    AAudioPlayer::AAudioPlayer() {
-
-    }
-
-    AAudioPlayer::~AAudioPlayer() {
-        auto s = std::exchange(stream, nullptr);
-        if (s) {
-            AAudioStream_close(s);
-        }
-    }
-
-    auto AAudioPlayer::init(AVFormatContext *ctx) -> void {
-        if (initialized.load()) return;
-
-        if (!ctx) {
-            throw std::runtime_error("AVFormatContext is null");
-        }
-
-        int audio_stream_index = -1;
-
-        for (int i = 0; i < ctx->nb_streams; i++) {
-            if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-                audio_stream_index = i;
-                break;
-            }
-        }
-
-        if (audio_stream_index == -1) {
-            throw std::runtime_error("No audio stream found");
-        }
-
-        auto *audio_stream = ctx->streams[audio_stream_index];
-        auto *codecpar = audio_stream->codecpar;
-
-        this->sample_rate = codecpar->sample_rate;
-        this->channel_count = codecpar->ch_layout.nb_channels;
-        this->format = get_av_sample_fmt(codecpar->format);
-        // this->bits_per_sample = codecpar->bits_per_raw_sample;
-
-        AAudioStreamBuilder *builder{nullptr};
-        auto builder_defer = Defer{[&] {
-            if (builder) {
-                AAudioStreamBuilder_delete(builder);
-            }
-        }};
-        auto result = AAudio_createStreamBuilder(&builder);
-        if (result != AAUDIO_OK) {
-            throw std::runtime_error("AAudio_createStreamBuilder failed");
-        }
-        AAudioStreamBuilder_setDirection(builder, AAUDIO_DIRECTION_OUTPUT);
-        AAudioStreamBuilder_setSharingMode(builder, AAUDIO_SHARING_MODE_EXCLUSIVE);
-        AAudioStreamBuilder_setSampleRate(builder, sample_rate);
-        AAudioStreamBuilder_setChannelCount(builder, channel_count);
-        AAudioStreamBuilder_setFormat(builder, format);
-        AAudioStreamBuilder_setPerformanceMode(builder, AAUDIO_PERFORMANCE_MODE_NONE);
-
-        // TODO callback
-        AAudioStreamBuilder_setDataCallback(builder, nullptr, this);
-        AAudioStreamBuilder_setErrorCallback(builder, nullptr, this);
-
-        result = AAudioStreamBuilder_openStream(builder, &stream);
-        if (result != AAUDIO_OK) {
-            throw std::runtime_error("AAudioStreamBuilder_openStream failed");
-        }
-
-        max_frames_per_burst = AAudioStream_getFramesPerBurst(stream);
-
-        log_i("AAudio stream created: {}Hz, {} channels, {} frames per burst", sample_rate, channel_count, max_frames_per_burst);
-        initialized.store(true);
-    }
-
-    auto AAudioPlayer::play_frame(AVFrame *frame) -> void {
-        if (!swr_ctx || !frame) {
+    void AudioPlayer::stop() {
+        if (!is_playing_.load()) {
             return;
         }
-    }
+        is_playing_.store(false);
 
-    auto AAudioPlayer::start() -> bool {
-        if (initialized.load()) {
-            auto result = AAudioStream_requestStart(stream);
-            return result == AAUDIO_OK;
+        if (stream_) {
+            stream_->stop();
+            stream_->close();
+            stream_.reset();
         }
-        return false;
+        destroy_resampler();
+
+        if (current_frame_) {
+            av_frame_free(&current_frame_);
+            current_frame_ = nullptr;
+        }
+        log_i("Oboe stream stopped");
     }
 
-    auto AAudioPlayer::stop() -> void {
+    oboe::DataCallbackResult AudioPlayer::onAudioReady(
+            oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
+        if (!is_playing_.load()) {
+            // Silence the buffer if not playing
+            memset(audioData, 0, numFrames * oboeStream->getBytesPerFrame());
+            return oboe::DataCallbackResult::Continue;
+        }
+
+        auto *output_buffer = static_cast<float *>(audioData);
+        int frames_filled = 0;
+
+        while (frames_filled < numFrames) {
+            if (!current_frame_) {
+                if (!audio_frame_queue_.try_pop(current_frame_)) {
+                    // Queue is empty, fill remaining with silence
+                    memset(output_buffer + frames_filled, 0,
+                           (numFrames - frames_filled) * oboeStream->getBytesPerFrame());
+                    return oboe::DataCallbackResult::Continue;
+                }
+                current_frame_offset_ = 0;
+                // Update clock
+                if (current_frame_->pts != AV_NOPTS_VALUE) {
+                    clock_ = current_frame_->pts * av_q2d(audio_params_.time_base);
+                }
+            }
+
+            int remaining_samples = current_frame_->nb_samples - current_frame_offset_;
+            int64_t delay = swr_get_delay(swr_ctx_, audio_params_.sample_rate);
+            int64_t dst_nb_samples__ = av_rescale_rnd(delay + remaining_samples, kDefaultSampleRate, audio_params_.sample_rate, AV_ROUND_UP);
+            int dst_nb_samples = std::min((int64_t) (numFrames - frames_filled), dst_nb_samples__);
+
+
+            uint8_t *out_buffer_ptr = resample_buffer_;
+            uint8_t *in_data[AV_NUM_DATA_POINTERS];
+            memcpy(in_data, current_frame_->data, sizeof(current_frame_->data));
+
+            int bytes_per_sample = av_get_bytes_per_sample(audio_params_.sample_format);
+            if (av_sample_fmt_is_planar(audio_params_.sample_format)) {
+                for (int i = 0; i < audio_params_.channel_layout.nb_channels; i++) {
+                    in_data[i] += current_frame_offset_ * bytes_per_sample;
+                }
+            } else {
+                in_data[0] += current_frame_offset_ * bytes_per_sample * audio_params_.channel_layout.nb_channels;
+            }
+
+
+            int converted_samples = swr_convert(
+                    swr_ctx_,
+                    &out_buffer_ptr,
+                    dst_nb_samples,
+                    (const uint8_t **) in_data,
+                    remaining_samples
+            );
+
+            if (converted_samples < 0) {
+                log_e("swr_convert failed");
+                av_frame_free(&current_frame_);
+                current_frame_ = nullptr;
+                continue;
+            }
+
+            int consumed_samples = av_rescale_rnd(converted_samples, audio_params_.sample_rate, kDefaultSampleRate, AV_ROUND_UP);
+
+            memcpy(output_buffer + frames_filled, resample_buffer_,
+                   converted_samples * oboeStream->getBytesPerFrame());
+
+
+            frames_filled += converted_samples;
+            current_frame_offset_ += consumed_samples;
+
+            if (current_frame_offset_ >= current_frame_->nb_samples) {
+                av_frame_free(&current_frame_);
+                current_frame_ = nullptr;
+                current_frame_offset_ = 0;
+            }
+        }
+
+        if (frames_filled < numFrames) {
+            memset(output_buffer + frames_filled, 0,
+                   (numFrames - frames_filled) * oboeStream->getBytesPerFrame());
+        }
+
+        return oboe::DataCallbackResult::Continue;
     }
+
+    bool AudioPlayer::init_resampler() {
+        destroy_resampler();
+    
+        swr_alloc_set_opts2(&swr_ctx_,
+                            &audio_params_.channel_layout, kDefaultAVSampleFormat, kDefaultSampleRate,
+                            &audio_params_.channel_layout, audio_params_.sample_format,
+                            audio_params_.sample_rate,
+                            0, nullptr);
+    
+        if (!swr_ctx_ || swr_init(swr_ctx_) < 0) {
+            log_e("Failed to initialize SwrContext");
+            return false;
+        }
+    
+        // Allocate resample buffer, +1 for rounding
+        int max_out_samples = av_rescale_rnd(4096, kDefaultSampleRate, audio_params_.sample_rate, AV_ROUND_UP) + 1;
+        resample_buffer_size_ = av_samples_get_buffer_size(nullptr, kDefaultChannels, max_out_samples,
+                                                           kDefaultAVSampleFormat, 0);
+        resample_buffer_ = (uint8_t *) av_malloc(resample_buffer_size_);
+        return true;
+    }
+    void AudioPlayer::destroy_resampler() {
+        if (swr_ctx_) {
+            swr_free(&swr_ctx_);
+            swr_ctx_ = nullptr;
+        }
+        if (resample_buffer_) {
+            av_freep(&resample_buffer_);
+            resample_buffer_ = nullptr;
+        }
+    }
+
+    double AudioPlayer::get_clock() {
+        // A more accurate clock would account for buffer latency
+        return clock_;
+    }
+
 }

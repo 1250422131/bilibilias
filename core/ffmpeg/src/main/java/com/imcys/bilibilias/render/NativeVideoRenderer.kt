@@ -21,40 +21,53 @@ fun getFileDescriptorFromContentUri(context: Context, uriString: String): Int? {
     }
 }
 
-class NativeVideoRenderer {
-    private var inner: Ptr = 0
+class NativePlayer {
+    private var playerPtr: Ptr = 0
 
     fun init(surface: Surface, videoFileFd: Int): Boolean {
-        if (inner == 0L) {
-            inner = RenderUtilJNI.createRenderer()
+        if (playerPtr == 0L) {
+            playerPtr = PlayerJNI.createPlayer()
         }
-        if (inner == 0L) {
-            return false;
+        if (playerPtr == 0L) {
+            return false
         }
-        try {
-            return RenderUtilJNI.initRenderer(inner, surface, videoFileFd)
+        return try {
+            PlayerJNI.initPlayer(playerPtr, surface, videoFileFd)
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
     fun setViewport(width: Int, height: Int) {
-        if (inner != 0L) {
-            RenderUtilJNI.setRendererViewports(inner, width, height)
+        if (playerPtr != 0L) {
+            PlayerJNI.setPlayerViewports(playerPtr, width, height)
+        }
+    }
+
+    fun play() {
+        if (playerPtr != 0L) {
+            PlayerJNI.play(playerPtr)
+        }
+    }
+
+    fun pause() {
+        if (playerPtr != 0L) {
+            PlayerJNI.pause(playerPtr)
+        }
+    }
+
+    fun stop() {
+        if (playerPtr != 0L) {
+            PlayerJNI.stop(playerPtr)
         }
     }
 
     fun release() {
-        if (inner != 0L) {
-            RenderUtilJNI.releaseRenderer(inner)
-            inner = 0
-        }
-    }
-
-    fun testPlay() {
-        if (inner != 0L) {
-            RenderUtilJNI.testPlay(inner)
+        if (playerPtr != 0L) {
+            PlayerJNI.releasePlayer(playerPtr)
+            playerPtr = 0
         }
     }
 }

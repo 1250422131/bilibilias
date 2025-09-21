@@ -3,13 +3,13 @@ package com.imcys.bilibilias.ui.play
 import android.content.Context
 import android.view.Surface
 import androidx.lifecycle.ViewModel
-import com.imcys.bilibilias.render.NativeVideoRenderer
+import com.imcys.bilibilias.render.NativePlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PlayViewModel : ViewModel() {
 
-    private val renderer = NativeVideoRenderer()
+    private val renderer = NativePlayer()
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
@@ -29,7 +29,7 @@ class PlayViewModel : ViewModel() {
     }
 
     fun testPlay() {
-        renderer.testPlay()
+        renderer.play()
     }
 
     fun play() {

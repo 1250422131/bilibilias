@@ -2,123 +2,43 @@
 
 #include "traits.hpp"
 #include "ffmpeg_util.hpp"
+#include "audio/audio_player.hpp"
 #include <stdexcept>
-#include <generator.hpp>
+#include <functional>
 
 namespace bilias::ffmpeg {
 
-    template<size_t N>
-    requires ((N % 2) == 0)
-    class RingFrameBuffer final : NonCopy {
-        std::array<AVFrame *, N> buffer{};
-        size_t free_tail{0};
-        size_t prep_tail{0};
-        size_t ready_head{0};
-        size_t cons_head{0};
-
-        std::atomic<size_t> free_count{N};
-        std::atomic<size_t> ready_count{0};
-
-        std::mutex mutex{};
-        std::condition_variable free_cv{};
-        std::condition_variable ready_cv{};
-        std::atomic<bool> stop_flag{false};
-
-    public:
-        RingFrameBuffer() = default;
-
-        auto init() -> void {
-            for (size_t i = 0; i < N; ++i) {
-                auto *f = av_frame_alloc();
-                if (!f) {
-                    throw std::runtime_error("av_frame_alloc failed");
-                }
-                buffer[i] = f;
-            }
-        }
-
-        ~RingFrameBuffer() {
-            free_queue(N);
-        }
-
-        // 获取空闲帧 (解码线程调用)
-        AVFrame *pop_empty_frame() {
-            std::unique_lock lock(mutex);
-            free_cv.wait(lock, [this] {
-                return free_count.load() > 0 || stop_flag.load();;
-            });
-            if (stop_flag.load()) {
-                return nullptr;
-            }
-            auto *f = buffer[free_tail];
-            free_tail = (free_tail + 1) % N;
-            free_count--;
-            return f;
-        }
-
-
-        void mark_frame_ready_one() {
-            std::lock_guard lock(mutex);
-            ready_count++;
-            ready_cv.notify_one();
-        }
-
-        AVFrame *pop_ready_frame() {
-            std::unique_lock lock(mutex);
-            ready_cv.wait(lock, [this] {
-                return ready_count.load() > 0 || stop_flag.load();
-            });
-            if (stop_flag.load()) {
-                if (ready_count.load() == 0) {
-                    return nullptr;
-                }
-            }
-            auto *f = buffer[ready_head];
-            ready_head = (ready_head + 1) % N;
-            ready_count--;
-            return f;
-        }
-
-        void release_one() {
-            std::lock_guard lock(mutex);
-            free_count++;
-            cons_head = (cons_head + 1) % N;
-            free_cv.notify_one();
-        }
-
-        void stop() {
-            stop_flag.store(true);
-            free_cv.notify_all();
-            ready_cv.notify_all();
-        }
-
-    private:
-
-        auto free_queue(size_t size) -> void {
-            for (size_t i = 0; i < size; ++i) {
-                auto ptr = buffer[i];
-                if (ptr) {
-                    av_frame_free(&ptr);
-                }
-               buffer[i] = nullptr;
-            }
-        }
-    };
-
     class FFmpegDecoder final : NonCopy {
-        int fd;
-        AVIOContextPtr avio_ctx{nullptr};
-        AVMallocPtr buffer{nullptr};
-        AVFormatContextPtr format_ctx{nullptr};
-        AVCodecContextPtr codec_ctx{nullptr};
-        int video_stream_index{-1};
+    private:
+        int fd_;
+        AVIOContextPtr avio_ctx_{nullptr};
+        AVMallocPtr buffer_{nullptr};
+        AVFormatContextPtr format_ctx_{nullptr};
 
+        // Video
+        AVCodecContextPtr video_codec_ctx_{nullptr};
+        int video_stream_index_{-1};
+
+        // Audio
+        AVCodecContextPtr audio_codec_ctx_{nullptr};
+        int audio_stream_index_{-1};
 
     public:
-        explicit FFmpegDecoder(int fd) : fd(fd) {}
+        explicit FFmpegDecoder(int fd);
+        ~FFmpegDecoder();
 
-        auto init() -> void;
+        void init();
 
-        auto new_video_generator() -> Generator<AVFrame *>;
+        // Reads the next packet from the stream
+        int read_frame(AVPacket *packet);
+
+        // Decodes a packet and invokes the callback with the resulting frame
+        void decode_packet(AVPacket *packet, const std::function<void(AVFrame *)> &on_frame_decoded);
+
+        // Getters for stream info
+        int get_video_stream_index() const { return video_stream_index_; }
+        int get_audio_stream_index() const { return audio_stream_index_; }
+        AVRational get_video_time_base() const;
+        AudioParams get_audio_params() const;
     };
 }

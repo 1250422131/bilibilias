@@ -1,73 +1,73 @@
 #pragma once
 
-#include <traits.hpp>
-#include <ffmpeg/ffmpeg_free.hpp>
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
-#include <memory>
+#include "threadsafe_queue.hpp"
+#include <oboe/Oboe.h>
 #include <atomic>
-#include <queue>
-#include <mutex>
-#include <condition_variable>
-#include <aaudio/AAudio.h>
-
 
 extern "C" {
-#include <libavutil/frame.h>
-#include <libswresample/swresample.h>
+#include "libavcodec/avcodec.h"
+#include "libswresample/swresample.h"
+#include "libavutil/rational.h"
 }
 
+// Forward declaration
+struct AVFrame;
 
-namespace bilias::audio {
+namespace bilias {
 
-    class AudioPlayer : NonCopy {
-    private:
-        SLObjectItf engine_obj{nullptr};
-        SLEngineItf engine{nullptr};
-        SLObjectItf output_mix{nullptr};
-        SLObjectItf player_obj{nullptr};
-        SLPlayItf player{nullptr};
-        SLAndroidSimpleBufferQueueItf player_queue{nullptr};
-
-        int sample_rate{};
-        int channel_count{};
-        int bits_per_sample{};
-
-        ffmpeg::SwrContextPtr swr_ctx{nullptr};
-
-    public:
-        AudioPlayer() = default;
-
-        auto init() -> void;
-        auto create_engine() -> void;
-        auto create_output_mix() -> void;
-        auto create_audio_player() -> void;
+    struct AudioParams {
+        int sample_rate;
+        int channels;
+        AVSampleFormat sample_format;
+        AVChannelLayout channel_layout;
+        AVRational time_base;
     };
 
-    class AAudioPlayer final {
-    private:
-        AAudioStream *stream{nullptr};
-
-        int sample_rate{};
-        int channel_count{};
-        aaudio_format_t format{AAUDIO_FORMAT_PCM_I16};
-
-        // Audio conversion
-        SwrContext* swr_ctx = nullptr;
-        uint8_t* converted_buffer = nullptr;
-        int converted_buffer_size = 0;
-        int max_frames_per_burst = 0;
-
-
-        std::atomic<bool> initialized{false};
+    class AudioPlayer : public oboe::AudioStreamDataCallback {
     public:
-        AAudioPlayer();
-        ~AAudioPlayer();
+        explicit AudioPlayer(ThreadSafeQueue<AVFrame *> &frame_queue);
+        ~AudioPlayer();
 
-        auto init(AVFormatContext *ctx) -> void;
-        auto play_frame(AVFrame *frame) -> void;
-        auto start() -> bool;
-        auto stop() -> void;
+        AudioPlayer(const AudioPlayer &) = delete;
+        AudioPlayer &operator=(const AudioPlayer &) = delete;
+
+        // Initializes and starts the Oboe audio stream
+        bool start(AudioParams params);
+
+        // Stops and closes the Oboe audio stream
+        void stop();
+
+        // Implementation of Oboe's callback
+        oboe::DataCallbackResult onAudioReady(
+                oboe::AudioStream *oboeStream,
+                void *audioData,
+                int32_t numFrames) override;
+
+        // Gets the current audio clock time in seconds
+        double get_clock();
+
+    private:
+        bool init_resampler();
+        void destroy_resampler();
+
+        ThreadSafeQueue<AVFrame *> &audio_frame_queue_;
+        std::shared_ptr<oboe::AudioStream> stream_;
+        std::atomic<bool> is_playing_{false};
+
+        // Resampling
+        SwrContext *swr_ctx_{nullptr};
+        uint8_t *resample_buffer_{nullptr};
+        size_t resample_buffer_size_{0};
+        AudioParams audio_params_{};
+
+        // Clock
+        double clock_{0.0};
+        AVFrame *current_frame_{nullptr};
+        int current_frame_offset_{0};
+        
+        // Internal buffer state for drain-fill model
+        uint8_t *resample_buffer_ptr_{nullptr};
+        int resampled_data_size_{0};
     };
 
 }

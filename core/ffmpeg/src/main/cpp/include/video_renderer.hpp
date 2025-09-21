@@ -6,7 +6,6 @@
 #include <traits.hpp>
 #include <asgl/egl_manager.hpp>
 #include <asgl/gl_renderer.hpp>
-#include <ffmpeg/ffmpeg_decoder.hpp>
 
 extern "C" {
 #include "libavformat/avformat.h"
@@ -22,7 +21,6 @@ namespace bilias {
     private:
         std::unique_ptr<gl::EGLManager> egl_manager{};
         std::unique_ptr<gl::GLRenderer> renderer{};
-        std::unique_ptr<ffmpeg::FFmpegDecoder> decoder{};
 
         std::atomic<bool> initialized{false};
         std::mutex render_mutex{};
@@ -30,13 +28,16 @@ namespace bilias {
         VideoRenderer();
         ~VideoRenderer();
 
-        auto initialize(ANativeWindow *native_window, int fd) -> bool;
+        auto initialize(ANativeWindow *native_window) -> bool;
         auto render_frame(AVFrame *frame) -> bool;
         auto set_viewport(int width, int height) -> void;
         auto destroy() -> void;
 
-        auto is_initialized() const noexcept -> bool { return initialized; }
+        // EGL context management for the render thread
+        auto setup_context() -> bool;
+        auto tear_down_context() -> void;
+        auto swap_buffers() -> void;
 
-        auto test_play() -> void;
+        auto is_initialized() const noexcept -> bool { return initialized; }
     };
 }

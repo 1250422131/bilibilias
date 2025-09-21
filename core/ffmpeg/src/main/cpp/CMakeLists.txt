@@ -27,6 +27,7 @@ set_target_properties(swresample PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/
 add_library(swscale SHARED IMPORTED)
 set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/libswscale.so)
 
+find_package(oboe REQUIRED CONFIG)
 
 file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/*.cpp")
 #file(GLOB_RECURSE BILI_AS_FFMPEG_MODULES "src/*.ixx")
@@ -57,6 +58,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
         atomic
         GLESv3
         EGL
+        oboe::oboe
 )
 
 set(ARCH_LINK_FLAGS "-Wl,-z,max-page-size=16384" )

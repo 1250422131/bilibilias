@@ -16,6 +16,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags("-DCMAKE_CXX_FLAGS=-frtti -fexceptions -Wno-deprecated-declaration -std=c++23")
+                arguments("-DANDROID_STL=c++_shared")
             }
         }
     }
@@ -29,6 +30,11 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        prefab = true
+    }
+
     externalNativeBuild {
         cmake {
             path("src/main/cpp/CMakeLists.txt")
@@ -40,4 +46,5 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(libs.oboe)
 }
