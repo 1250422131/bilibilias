@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -56,7 +57,7 @@ fun PreviewRoamScreen() {
 @Composable
 fun RoamScreen(
     onToBack: () -> Unit,
-    onGoToQRCodeLogin: () -> Unit = {}
+    onGoToQRCodeLogin: (loginPlatform: LoginPlatform) -> Unit = {}
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -95,6 +96,7 @@ fun RoamScreen(
                             enabled = uiState.isLoginTV || appSettings.enabledRoam,
                             checked = appSettings.enabledRoam,
                             onCheckedChange = {
+                                if (!uiState.isLogin) return@Switch
                                 haptics.switchHapticFeedback(it)
                                 vm.updateRoamEnabledState(it)
                             }
@@ -103,7 +105,7 @@ fun RoamScreen(
                 }
             }
             item {
-                if (!uiState.isLoginTV) {
+                if (!uiState.isLoginTV || !uiState.isLogin) {
                     Column(
                         Modifier.padding(vertical = 5.dp, horizontal = 12.dp),
                     ) {
@@ -121,7 +123,13 @@ fun RoamScreen(
                                     modifier = Modifier.weight(1f)
                                 )
                                 ASIconButton(onClick = {
-                                    onGoToQRCodeLogin.invoke()
+                                    if (!uiState.isLogin) {
+                                        // 未登录登录
+                                        onGoToQRCodeLogin.invoke(LoginPlatform.WEB)
+                                    } else {
+                                        // 未登录TV登录
+                                        onGoToQRCodeLogin.invoke(LoginPlatform.TV)
+                                    }
                                 }) {
                                     Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                                 }

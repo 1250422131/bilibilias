@@ -103,6 +103,8 @@ dependencies {
     // 分页
     implementation(libs.paging.compose)
 
+    implementation(libs.device.compat)
+
     // Google Play 选配
     val googlePlayLibs = listOf(
         libs.palay.app.update.kts,
@@ -115,4 +117,11 @@ dependencies {
             compileOnly(it)
         }
     }
+
+    // 预览工具
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+
 }

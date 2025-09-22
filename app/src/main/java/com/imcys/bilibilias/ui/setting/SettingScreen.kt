@@ -14,8 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
+import androidx.compose.material.icons.outlined.Android
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.EmojiObjects
+import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoodBad
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
@@ -69,8 +72,10 @@ fun SettingScreenPreview() {
 fun SettingScreen(
     onToRoam: () -> Unit,
     onToComplaint: () -> Unit,
-    onToLayoutTypeset : () -> Unit,
-    onToBack: () -> Unit
+    onToLayoutTypeset: () -> Unit,
+    onToBack: () -> Unit,
+    onToAbout: () -> Unit = {},
+    onToVersionInfo: () -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
@@ -195,6 +200,8 @@ fun SettingScreen(
                 )
             }
 
+
+
             item {
                 CategorySettingsItem(
                     text = "关于程序"
@@ -204,25 +211,14 @@ fun SettingScreen(
 
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.EmojiObjects),
-                    text = "我们的立场",
-                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展",
-                    onClick = {
-
-                    }
+                    painter = rememberVectorPainter(Icons.Outlined.Group),
+                    text = "关于",
+                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展！",
+                    onClick = onToAbout
                 )
+
             }
 
-            item {
-                BaseSettingsItem(
-                    painter = painterResource(R.drawable.ic_licens_24px),
-                    text = "第三方开源许可",
-                    description = {},
-                    onClick = {
-
-                    }
-                )
-            }
 
             item {
                 BaseSettingsItem(
@@ -239,6 +235,17 @@ fun SettingScreen(
                 )
             }
 
+//            item {
+//                BaseSettingsItem(
+//                    painter = painterResource(R.drawable.ic_licens_24px),
+//                    text = "第三方开源许可",
+//                    description = {},
+//                    onClick = {
+//
+//                    }
+//                )
+//            }
+
             item {
                 CategorySettingsItem(
                     text = "投诉与反馈"
@@ -252,6 +259,24 @@ fun SettingScreen(
                     descriptionText = "向BILIBILIAS投诉违规行为",
                     onClick = onToComplaint
                 )
+            }
+
+
+
+            item {
+                CategorySettingsItem(
+                    text = "其他"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Android),
+                    text = "设备信息",
+                    descriptionText = "提交反馈时记得带上这个！",
+                    onClick = onToVersionInfo
+                )
+
             }
 
         }

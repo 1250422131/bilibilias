@@ -28,6 +28,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,6 +74,8 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.config.API.App.BASE_URL
+import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
@@ -119,7 +122,8 @@ internal fun HomeScreen(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
-    goToDownloadPage: () -> Unit
+    goToDownloadPage: () -> Unit,
+    goToSetting: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
@@ -148,7 +152,8 @@ internal fun HomeScreen(
         loginUserInfoState,
         goToLogin = goToLogin,
         goToUserPage = { goToUserPage.invoke(loginUserInfoState.data?.mid ?: 0L) },
-        goToAnalysis = goToAnalysis
+        goToAnalysis = goToAnalysis,
+        goToSetting = goToSetting
     ) { p ->
         Column(
             modifier = Modifier
@@ -261,6 +266,7 @@ fun HomeContent(
     val context = LocalContext.current
 
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
+    var bulletinDialogShow by remember { mutableStateOf(false) }
 
 
     LazyColumn(
@@ -280,7 +286,7 @@ fun HomeContent(
                         ) { item ->
                             Box {
                                 ASAsyncImage(
-                                    model = "http://192.168.88.120:8080" + item.url,
+                                    model = BASE_URL + item.url,
                                     contentDescription = "",
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -315,12 +321,19 @@ fun HomeContent(
                             bulletinInfo?.content ?: "暂无最新公告",
                             onClickClose = {
                                 closeBulletinDialogShow = true
+                            },
+                            onClick = {
+                                bulletinDialogShow = true
                             }
                         )
                     }
                 }
 
                 AppSettings.HomeLayoutType.UpdateInfo if !layout.isHidden -> {
+
+                    // Google Play 应用商店版本不展示更新内容
+                    if (BuildConfig.ENABLE_PLAY_APP_MODE) return@forEach
+
                     if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
                         // 版本相同，不展示
                         return@forEach
@@ -396,6 +409,15 @@ fun HomeContent(
     }, onClickDismiss = {
         closeBulletinDialogShow = false
     })
+
+    /**
+     * 公告对话框
+     */
+    BulletinDialog(bulletinInfo, bulletinDialogShow, onClickConfirm = {
+        bulletinDialogShow = false
+        vm.updateLastBulletinContent()
+    })
+
 }
 
 @Composable
@@ -418,6 +440,31 @@ fun CloseBulletinDialog(
                 Text(text = "取消")
             }
         }
+    )
+}
+
+
+@Composable
+fun BulletinDialog(
+    bulletinConfigInfo: BulletinConfigInfo?,
+    show: Boolean, onClickConfirm: () -> Unit,
+) {
+    ASAlertDialog(
+        showState = show,
+        title = { Text("公告") },
+        text = {
+            Column(
+                modifier = Modifier
+            ) {
+                Text(bulletinConfigInfo?.content ?: "")
+                Text(bulletinConfigInfo?.publishDateTime ?: "")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onClickConfirm) {
+                Text(text = "确认")
+            }
+        },
     )
 }
 
@@ -501,6 +548,7 @@ private fun HomeScaffold(
     goToLogin: () -> Unit,
     goToUserPage: () -> Unit,
     goToAnalysis: () -> Unit,
+    goToSetting: () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val haptics = LocalHapticFeedback.current
@@ -556,14 +604,20 @@ private fun HomeScaffold(
                                 ContainedLoadingIndicator()
                             },
                             onDefaultContent = {
-                                ASIconButton(onClick = {
-                                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
-                                    goToLogin()
-                                }) {
-                                    Icon(
-                                        Icons.AutoMirrored.Outlined.Login,
-                                        contentDescription = "登录"
-                                    )
+                                Row {
+                                    ASIconButton(onClick = {
+                                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                        goToLogin()
+                                    }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Outlined.Login,
+                                            contentDescription = "登录"
+                                        )
+                                    }
+                                    Spacer(Modifier.width(2.dp))
+                                    ASIconButton(onClick = goToSetting) {
+                                        Icon(Icons.Outlined.Settings, contentDescription = "设置")
+                                    }
                                 }
                             },
                             onErrorContent = { errorMsg, response ->
@@ -593,10 +647,13 @@ private fun CommonInfoCard(
     @DrawableRes iconId: Int,
     title: String = "",
     connect: String,
-    onClickClose: () -> Unit
+    onClickClose: () -> Unit,
+    onClick:() -> Unit = {}
 ) {
     SurfaceColorCard {
-        Surface(Modifier.clickable {}, shape = CardDefaults.shape) {
+        Surface(Modifier.clickable {
+            onClick.invoke()
+        }, shape = CardDefaults.shape) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)

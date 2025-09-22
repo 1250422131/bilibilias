@@ -27,6 +27,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
@@ -125,10 +126,26 @@ val netWorkModule = module {
                 }
                 level = LogLevel.ALL
             }
-
-
         }
     }
+
+    // 专用于下载的纯净HttpClient，不装任何业务插件
+    single(qualifier = named("DownloadHttpClient")) {
+        HttpClient(CIO) {
+            BrowserUserAgent()
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60000 // 下载可适当延长
+            }
+            install(HttpRequestRetry) {
+                retryOnServerErrors(maxRetries = 3)
+                exponentialDelay()
+            }
+            install(HttpCookies) {
+                storage = get<AsCookiesStorage>()
+            }
+        }
+    }
+
 
     // WebAPI
     single {
@@ -140,5 +157,3 @@ val netWorkModule = module {
     }
 
 }
-
-

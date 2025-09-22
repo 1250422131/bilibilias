@@ -43,6 +43,13 @@ import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import io.ktor.client.HttpClient
+import io.ktor.client.request.head
+import io.ktor.client.request.header
+import io.ktor.client.request.prepareGet
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.http.contentLength
+import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +74,9 @@ import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.yield
+import java.io.RandomAccessFile
 
 /**
  * 下载管理器
@@ -83,6 +93,7 @@ class DownloadManager(
     private val videoInfoRepository: VideoInfoRepository,
     private val json: Json,
     private val okHttpClient: OkHttpClient,
+    private val httpClient: HttpClient
 ) {
 
     companion object {
@@ -633,6 +644,21 @@ class DownloadManager(
         val file = File(subTask.savePath)
         val tempFile = File("${subTask.savePath}.downloading")
 
+        // 1. 获取远端文件长度，判断本地是否已经完整
+        val remoteLength = try {
+            val headResp = httpClient.head(subTask.downloadUrl) {
+                header("Referer", buildRefererUrl(task))
+            }
+            headResp.headers["Content-Length"]?.toLongOrNull() ?: -1L
+        } catch (e: Exception) {
+            -1L // 获取失败也继续尝试下载
+        }
+
+        if (remoteLength > 0 && file.exists() && file.length() >= remoteLength) {
+            onUpdateProgress(1f)
+            return@withContext true
+        }
+
         repeat(MAX_RETRY_ATTEMPTS) { attempt ->
             try {
                 val success = performDownload(subTask, task, tempFile, onUpdateProgress)
@@ -642,8 +668,7 @@ class DownloadManager(
                     return@withContext true
                 }
             } catch (e: CancellationException) {
-                // 协程被取消（暂停或取消任务），直接重新抛出异常，不进行重试
-                throw e
+                throw e // 协程取消，直接抛出
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (attempt < MAX_RETRY_ATTEMPTS - 1) {
@@ -666,47 +691,49 @@ class DownloadManager(
         val downloaded = if (tempFile.exists()) tempFile.length() else 0L
         val referer = buildRefererUrl(task)
 
-        val requestBuilder = okhttp3.Request.Builder()
-            .url(subTask.downloadUrl)
-            .addHeader("Referer", referer)
+        // 发起请求
+        httpClient.prepareGet(subTask.downloadUrl) {
+            header("Referer", referer)
+            if (downloaded > 0) header("Range", "bytes=$downloaded-")
+        }.execute { response ->
+            val channel = response.bodyAsChannel()
+            val total = response.contentLength()?.let { if (downloaded > 0) it + downloaded else it } ?: -1L
 
-        if (downloaded > 0) {
-            requestBuilder.addHeader("Range", "bytes=$downloaded-")
-        }
+            if (total == 0L) {
+                onUpdateProgress(1f)
+                return@execute true
+            }
 
-        val response = okHttpClient.newCall(requestBuilder.build()).execute()
-        val body = response.body ?: return@withContext false
-
-        val total = if (downloaded > 0) {
-            downloaded + body.contentLength()
-        } else {
-            body.contentLength()
-        }
-
-        if (total == 0L) return@withContext true
-
-        body.byteStream().use { input ->
             tempFile.parentFile?.mkdirs()
-            FileOutputStream(tempFile, downloaded > 0).use { output ->
-                val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
-                var currentDownloaded = downloaded
-                var read: Int
+            val raf = RandomAccessFile(tempFile, "rw")
+            if (downloaded > 0) raf.seek(downloaded)
+            var currentDownloaded = downloaded
+            val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
+            var lastEmit = 0L
 
-                while (input.read(buffer).also { read = it } != -1) {
-                    // 检查协程是否被取消（暂停或取消任务时会取消协程）
-                    if (!currentCoroutineContext().isActive) {
-                        throw CancellationException("Download was cancelled or paused")
+            try {
+                while (!channel.isClosedForRead) {
+                    ensureActive() // 检查协程取消
+                    val bytes = channel.readAvailable(buffer, 0, buffer.size)
+                    if (bytes <= 0) break
+                    raf.write(buffer, 0, bytes)
+                    currentDownloaded += bytes
+                    val now = System.currentTimeMillis()
+                    if (now - lastEmit > 100) {
+                        if (total > 0) onUpdateProgress(currentDownloaded.toFloat() / total)
+                        lastEmit = now
                     }
-
-                    output.write(buffer, 0, read)
-                    currentDownloaded += read
-                    onUpdateProgress(currentDownloaded.toFloat() / total)
+                    yield() // 响应暂停/取消
                 }
+                if (total > 0) onUpdateProgress(1f)
+            } finally {
+                raf.close()
             }
         }
 
         return@withContext true
     }
+
 
     /**
      * 合并音视频文件

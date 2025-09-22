@@ -41,6 +41,8 @@ import com.imcys.bilibilias.ui.login.QRCodeLoginScreen
 import com.imcys.bilibilias.ui.login.navigation.LoginRoute
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
 import com.imcys.bilibilias.ui.setting.SettingScreen
+import com.imcys.bilibilias.ui.setting.about.AboutRouter
+import com.imcys.bilibilias.ui.setting.about.AboutScreen
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintRoute
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintScreen
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
@@ -48,6 +50,8 @@ import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
+import com.imcys.bilibilias.ui.setting.version.AppVersionInfoRoute
+import com.imcys.bilibilias.ui.setting.version.AppVersionInfoScreen
 import com.imcys.bilibilias.ui.user.UserScreen
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
@@ -159,6 +163,9 @@ fun BILIBILAISNavDisplay() {
                         },
                         goToDownloadPage = {
                             backStack.addWithReuse(DownloadRoute)
+                        },
+                        goToSetting = {
+                            backStack.addWithReuse(SettingRoute)
                         }
                     )
                 }
@@ -233,17 +240,18 @@ fun BILIBILAISNavDisplay() {
                         },
                         onToBack = { backStack.removeLastOrNull() },
                         onToComplaint = { backStack.addWithReuse(ComplaintRoute) },
-                        onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) }
+                        onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) },
+                        onToAbout = { backStack.addWithReuse(AboutRouter) },
+                        onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) }
                     )
                 }
                 entry<RoamRoute> {
                     RoamScreen(
                         onToBack = { backStack.removeLastOrNull() },
                         onGoToQRCodeLogin = {
-                            // 前往TV登录
                             backStack.addWithReuse(
                                 QRCodeLoginRoute(
-                                    defaultLoginPlatform = LoginPlatform.TV,
+                                    defaultLoginPlatform = it,
                                     isFromRoam = true
                                 )
                             )
@@ -298,9 +306,21 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }
-                entry<UserPlayHistoryRoute>{
+                entry<UserPlayHistoryRoute> {
                     UserPlayHistoryScreen(
                         userPlayHistoryRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<AboutRouter> {
+                    AboutScreen(
+                        aboutRouter = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<AppVersionInfoRoute> {
+                    AppVersionInfoScreen(
+                        appVersionInfoRoute = it,
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }

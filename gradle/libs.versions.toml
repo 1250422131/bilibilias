@@ -31,6 +31,8 @@ paging = "3.3.6"
 palayAppUpdate = "2.1.0"
 playAppReview = "2.0.2"
 kolor = "3.0.1"
+deviceCompat = "1.6"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -85,8 +87,8 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 paging-compose = { group = "androidx.paging", name = "paging-compose-android", version.ref = "paging" }
-palay-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref= "palayAppUpdate" }
-palay-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref= "playAppReview" }
+palay-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref = "palayAppUpdate" }
+palay-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref = "playAppReview" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
 
 # Core Navigation 3 libraries
@@ -95,6 +97,8 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 # Optional add-on libraries
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 androidx-material3-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
+
+device-compat = { module = "com.github.getActivity:DeviceCompat", version.ref = "deviceCompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -117,6 +121,6 @@ compose = [
     "androidx-activity-compose", "androidx-ui-graphics", "androidx-material3",
     "androidx-material3-window-size", "androidx-navigation-compose",
     "androidx-material-icons-extended", "androidx-ui", "androidx-ui-android",
-    "androidx-material3-android","androidx-navigation3-runtime","androidx-navigation3-ui",
+    "androidx-material3-android", "androidx-navigation3-runtime", "androidx-navigation3-ui",
     "androidx-lifecycle-viewmodel-navigation3"
 ]

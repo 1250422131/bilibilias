@@ -9,6 +9,7 @@ import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 
 class RoamViewModel(
@@ -19,13 +20,22 @@ class RoamViewModel(
 ) : ViewModel() {
 
     data class UIState(
-        val isLoginTV: Boolean = false
+        val isLoginTV: Boolean = false,
+        val isLogin: Boolean = false,
     )
 
     private val _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
 
     val appSettings = appSettingsRepository.appSettingsFlow
+
+    init {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLogin = usersDataSource.isLogin(),
+            )
+        }
+    }
 
 
     fun updateLoginTVStatus() {
@@ -37,7 +47,7 @@ class RoamViewModel(
         }
     }
 
-    fun updateRoamEnabledState( isEnabled: Boolean) {
+    fun updateRoamEnabledState(isEnabled: Boolean) {
         viewModelScope.launch {
             appSettingsRepository.updateRoamEnabledState(isEnabled)
         }
