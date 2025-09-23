@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BILIBILIAS</string>
     <string name="common_privacy_policy">隐私政策</string>
-    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS使用Firebase来统计使用数据和发布远程配置，这意味着Firebase会收集您的一些设备信息和使用情况，因此您需要同意下面的<a href=\"https://bilibilias.imcys.com/privacy_policy.html\">《隐私政策》</a>\n                            若您不同意上述隐私政策，App有可能无法接受推送的配置，导致无法正常使用。点击链接查看<a href=\"https://bilibilias.imcys.com/privacy_policy.html\">阅读隐私政策</a>。\n                        "]]></string>
+    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS使用Firebase来统计使用数据和发布远程配置，这意味着Firebase会收集您的一些设备信息和使用情况，因此您需要同意下面的<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">《隐私政策》</a>\n                            若您不同意上述隐私政策，App有可能无法接受推送的配置，导致无法正常使用。点击链接查看<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">阅读隐私政策</a>。\n                        "]]></string>
     <string name="common_agree">同意</string>
     <string name="common_refuse">拒绝</string>
 </resources>

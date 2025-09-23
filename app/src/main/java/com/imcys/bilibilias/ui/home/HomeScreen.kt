@@ -64,6 +64,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.data.ASBuildType
@@ -109,7 +110,7 @@ internal fun HomeRoute(
         goToLogin,
         goToUserPage,
         goToAnalysis,
-        goToDownloadPage
+        goToDownloadPage,
     )
 }
 
@@ -123,7 +124,8 @@ internal fun HomeScreen(
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
     goToDownloadPage: () -> Unit,
-    goToSetting: () -> Unit = {}
+    goToSetting: () -> Unit = {},
+    goToPage: (NavKey) -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
@@ -174,15 +176,7 @@ internal fun HomeScreen(
                         }
 
                         1 -> {
-                            // TODO 额外工具
-                            Box(
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(15.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("敬请期待")
-                            }
+                            ToolsScreen(vm, goToPage)
                         }
                     }
                 }
@@ -215,7 +209,6 @@ internal fun HomeScreen(
                             )
                     )
                 }
-
             }
 
             // 底部输入区
@@ -323,6 +316,7 @@ fun HomeContent(
                                 closeBulletinDialogShow = true
                             },
                             onClick = {
+                                if (bulletinInfo?.content.isNullOrEmpty()) return@CommonInfoCard
                                 bulletinDialogShow = true
                             }
                         )
@@ -648,7 +642,7 @@ private fun CommonInfoCard(
     title: String = "",
     connect: String,
     onClickClose: () -> Unit,
-    onClick:() -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     SurfaceColorCard {
         Surface(Modifier.clickable {

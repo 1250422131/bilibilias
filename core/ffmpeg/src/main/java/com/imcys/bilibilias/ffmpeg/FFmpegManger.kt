@@ -43,7 +43,15 @@ object FFmpegManger {
     ): Result<String> {
         return FFmpegExecutor.executeFFmpeg {
             runCatching {
-                mergeVideoAndAudio(videoPath, audioPath, outputPath, title, description, copyright,listener)
+                mergeVideoAndAudio(
+                    videoPath,
+                    audioPath,
+                    outputPath,
+                    title,
+                    description,
+                    copyright,
+                    listener
+                )
                 "成功"
             }
         }
@@ -67,6 +75,7 @@ object FFmpegManger {
 //            })
 //        }
     }
+
 
 
 }

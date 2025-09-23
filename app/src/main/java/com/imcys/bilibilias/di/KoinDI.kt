@@ -11,6 +11,7 @@ import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.SettingViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
+import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowViewModel
 import com.imcys.bilibilias.ui.user.folder.UserFolderViewModel
@@ -41,6 +42,7 @@ val appModule = module {
     viewModel { SettingViewModel(get()) }
     viewModel { LayoutTypesetViewModel(get()) }
     viewModel { UserPlayHistoryViewModel(get()) }
+    viewModel { FrameExtractorViewModel() }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

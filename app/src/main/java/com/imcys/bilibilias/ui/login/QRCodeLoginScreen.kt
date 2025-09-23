@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.login
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Replay
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.outlined.WebAsset
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -35,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,22 +47,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.common.utils.ASConstant.PRIVACY_POLICY_URL
+import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
-import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import org.koin.androidx.compose.koinViewModel
 import java.net.URLEncoder
@@ -132,7 +141,7 @@ fun QRCodeLoginScreen(
         when (loginUserInfoState) {
             is NetWorkResult.Success<*> -> {
                 vm.saveLoginInfo(loginUserInfoState.data) {
-                    if (route.isFromRoam){
+                    if (route.isFromRoam) {
                         // 如果是从漫游页面进入的，登录成功后直接返回
                         onToBack()
                     } else {
@@ -147,6 +156,7 @@ fun QRCodeLoginScreen(
 
     }
 
+    var agreePrivacyPolicy by rememberSaveable { mutableStateOf(false) }
 
     QRLoginScaffold(onToBack) {
         Box(Modifier.padding(it)) {
@@ -161,12 +171,15 @@ fun QRCodeLoginScreen(
                     route,
                     uiState.selectedLoginPlatform,
                     qrCodeInfoState,
+                    agreePrivacyPolicy,
                     updateLoginPlatform = vm::updateLoginPlatform,
-                    updateQrCode = vm::getLoadLoginQRCodeInfo
+                    updateQrCode = vm::getLoadLoginQRCodeInfo,
+                    updateAgreePrivacyPolicy = { state -> agreePrivacyPolicy = state }
                 )
 
                 // 操作区域
                 ActionButton(
+                    agreePrivacyPolicy,
                     saveQRCodeImage = {
                         vm.saveQRCodeImageToGallery(context)
                     },
@@ -174,6 +187,7 @@ fun QRCodeLoginScreen(
                         vm.goToScanQR(context)
                     }
                 )
+                Spacer(Modifier.height(4.dp))
             }
         }
     }
@@ -214,11 +228,13 @@ private fun QRLoginScaffold(onToBack: () -> Unit, content: @Composable (PaddingV
 
 @Composable
 private fun ActionButton(
+    agreePrivacyPolicy: Boolean,
     saveQRCodeImage: () -> Unit,
     goScanQR: () -> Unit,
 ) {
     Row(Modifier.fillMaxWidth()) {
         Button(
+            enabled = agreePrivacyPolicy,
             modifier = Modifier
                 .weight(1f)
                 .defaultMinSize(minHeight = 48.dp),
@@ -270,9 +286,12 @@ private fun ColumnScope.QRCodeContent(
     route: QRCodeLoginRoute,
     selectedLoginPlatform: LoginPlatform,
     qrCodeInfoState: NetWorkResult<QRCodeInfo?>,
+    agreePrivacyPolicy: Boolean,
     updateLoginPlatform: (LoginPlatform) -> Unit,
-    updateQrCode: () -> Unit
+    updateQrCode: () -> Unit,
+    updateAgreePrivacyPolicy: (Boolean) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
 
     Column(
@@ -298,33 +317,45 @@ private fun ColumnScope.QRCodeContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                when (qrCodeInfoState) {
-                    is NetWorkResult.Error<*> -> {
-                        ASIconButton(onClick = {
-                            updateQrCode()
-                        }) {
-                            Icon(Icons.Outlined.Replay, contentDescription = "重试")
-                        }
-                        Text("网络异常，点击按钮重试。")
-                    }
-
-                    is NetWorkResult.Default<*>,
-                    is NetWorkResult.Loading<*> -> {
-                        ContainedLoadingIndicator()
-                    }
-
-                    is NetWorkResult.Success<*> -> {
-                        ASAsyncImage(
-                            "https://pan.misakamoe.com/qrcode/?url=" + URLEncoder.encode(
-                                qrCodeInfoState.data?.url,
-                                "UTF-8"
-                            ),
-                            contentDescription = "登录二维码",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable {
+                AnimatedContent(agreePrivacyPolicy) {
+                    if (it) {
+                        when (qrCodeInfoState) {
+                            is NetWorkResult.Error<*> -> {
+                                ASIconButton(onClick = {
                                     updateQrCode()
-                                })
+                                }) {
+                                    Icon(Icons.Outlined.Replay, contentDescription = "重试")
+                                }
+                                Text("网络异常，点击按钮重试。")
+                            }
+
+                            is NetWorkResult.Default<*>,
+                            is NetWorkResult.Loading<*> -> {
+                                ContainedLoadingIndicator()
+                            }
+
+                            is NetWorkResult.Success<*> -> {
+                                ASAsyncImage(
+                                    "https://pan.misakamoe.com/qrcode/?url=" + URLEncoder.encode(
+                                        qrCodeInfoState.data?.url,
+                                        "UTF-8"
+                                    ),
+                                    contentDescription = "登录二维码",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable {
+                                            updateQrCode()
+                                        })
+                            }
+                        }
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Outlined.Warning, contentDescription = "未勾选同意隐私政策")
+                            Spacer(Modifier.height(4.dp))
+                            Text("请勾选下方隐私政策")
+                        }
                     }
                 }
             }
@@ -337,7 +368,7 @@ private fun ColumnScope.QRCodeContent(
             ToggleButton(
                 checked = selectedLoginPlatform == LoginPlatform.WEB,
                 onCheckedChange = {
-                    if (it){
+                    if (it) {
                         haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     }
                     updateLoginPlatform(LoginPlatform.WEB)
@@ -364,7 +395,7 @@ private fun ColumnScope.QRCodeContent(
                     enabled = route.isFromRoam,
                     checked = selectedLoginPlatform == LoginPlatform.TV,
                     onCheckedChange = {
-                        if (it){
+                        if (it) {
                             haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                         }
                         updateLoginPlatform(LoginPlatform.TV)
@@ -381,6 +412,34 @@ private fun ColumnScope.QRCodeContent(
                 }
             }
 
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // 勾选同意隐私政策
+            RadioButton(
+                selected = agreePrivacyPolicy,
+                onClick = {
+                    updateAgreePrivacyPolicy(!agreePrivacyPolicy)
+                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+                },
+                modifier = Modifier
+                    .padding(0.dp)
+                    .scale(0.75f)
+                    .size(20.dp)
+            )
+            Text("我已阅读并同意", fontSize = 14.sp)
+            Spacer(Modifier.width(4.dp))
+            Text(
+                "《BILIBILIAS 隐私政策》",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp,
+                modifier = Modifier.clickable {
+                    context.openLink(PRIVACY_POLICY_URL)
+                }
+            )
         }
 
     }

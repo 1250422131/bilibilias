@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.setting.about
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,8 +39,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.utils.ASConstant
+import com.imcys.bilibilias.common.utils.ASConstant.PRIVACY_POLICY_URL
+import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -53,7 +58,6 @@ data object AboutRouter : NavKey
 @Composable
 fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {}) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -67,7 +71,7 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = { Text(text = "关于") },
                 navigationIcon = {
-                    AsBackIconButton {  onToBack.invoke()  }
+                    AsBackIconButton { onToBack.invoke() }
                 }
             )
         },
@@ -103,6 +107,7 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
 @Composable
 fun ButtonArea(
 ) {
+    val context = LocalContext.current
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -110,22 +115,32 @@ fun ButtonArea(
         Surface(
             shape = MaterialShapes.Cookie4Sided.toShape(),
             color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = {
+                context.openLink(ASConstant.QQ_CHANNEL_URL)
+            }
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_qq_channel_2px),
                 contentDescription = "QQ频道",
-                modifier = Modifier.padding(12.dp).size(28.dp),
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(28.dp),
             )
         }
 
         Surface(
             shape = MaterialShapes.Cookie4Sided.toShape(),
             color = MaterialTheme.colorScheme.primaryContainer,
+            onClick = {
+                context.openLink(ASConstant.QQ_GROUP_URL)
+            }
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_qq_24px),
                 contentDescription = "QQ群",
-                modifier = Modifier.padding(12.dp).size(28.dp),
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(28.dp),
             )
         }
     }
@@ -135,7 +150,6 @@ fun ButtonArea(
 fun TitleArea(
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     Column(
         modifier = modifier.fillMaxWidth(1f),
         horizontalAlignment = Alignment.CenterHorizontally

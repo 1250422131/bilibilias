@@ -52,6 +52,8 @@ import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoRoute
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoScreen
+import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
+import com.imcys.bilibilias.ui.tools.frame.FrameExtractorScreen
 import com.imcys.bilibilias.ui.user.UserScreen
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
@@ -166,6 +168,9 @@ fun BILIBILAISNavDisplay() {
                         },
                         goToSetting = {
                             backStack.addWithReuse(SettingRoute)
+                        },
+                        goToPage = { page ->
+                            backStack.addWithReuse(page)
                         }
                     )
                 }
@@ -321,6 +326,12 @@ fun BILIBILAISNavDisplay() {
                 entry<AppVersionInfoRoute> {
                     AppVersionInfoScreen(
                         appVersionInfoRoute = it,
+                        onToBack = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<FrameExtractorRoute> {
+                    FrameExtractorScreen(
+                        frameExtractorRoute = it,
                         onToBack = { backStack.removeLastOrNull() }
                     )
                 }

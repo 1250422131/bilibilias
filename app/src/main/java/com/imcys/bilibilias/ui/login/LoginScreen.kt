@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.login
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,9 +26,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.common.utils.ASConstant
+import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -54,6 +58,7 @@ fun PreviewLoginScreen(){
 @Composable
 fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -132,9 +137,12 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    "·《BILIBILIAS 用户协议》和《BILIBILIAS 隐私协议》",
+                                    "·《BILIBILIAS 隐私协议》",
                                     fontSize = 14.sp,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable{
+                                        context.openLink(ASConstant.PRIVACY_POLICY_URL)
+                                    }
                                 )
                                 Text(
                                     "·使用造成的一切后果 BILIBILIAS 概不负责", fontSize = 14.sp,
