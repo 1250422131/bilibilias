@@ -1,6 +1,10 @@
 package com.imcys.bilibilias.ffmpeg
 
-import kotlinx.coroutines.suspendCancellableCoroutine
+import android.content.Context
+import android.net.Uri
+import android.util.Pair
+import java.io.File
+import java.io.FileOutputStream
 
 object FFmpegManger {
 
@@ -27,6 +31,13 @@ object FFmpegManger {
         copyright: String,
         listener: FFmpegMergeListener
     )
+
+    fun getVideoFrames(
+        videoPath: String,
+        cacheDir: String
+    ): Pair<ArrayList<String>, Int> {
+        return Pair(arrayListOf(), 0)
+    }
 
     init {
         System.loadLibrary("ffmpeg")
@@ -55,27 +66,36 @@ object FFmpegManger {
                 "成功"
             }
         }
-//        suspendCancellableCoroutine { cont ->
-//            mergeVideoAndAudio(videoPath, audioPath, outputPath, object : FFmpegMergeListener {
-//                override fun onProgress(progress: Int) {
-//                    listener.onProgress(progress)
-//                }
-//
-//                override fun onError(errorMsg: String) {
-//                    if (cont.isActive) cont.resumeWith(Result.failure(Exception(errorMsg)))
-//                }
-//
-//                override fun onComplete() {
-//                    if (cont.isActive) cont.resume(Result.success("成功")) { cause, _, _ ->
-//                        Result.success(
-//                            cause.message
-//                        )
-//                    }
-//                }
-//            })
-//        }
     }
 
+    fun getVideoFramesCompat(
+        context: Context,
+        uri: Uri,
+        cacheDir: String
+    ): Pair<ArrayList<String>, Int> {
+        // 确保缓存目录存在
+        val cacheDirectory = File(cacheDir)
+        if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
+            throw IllegalStateException("无法创建缓存目录: $cacheDir")
+        }
 
+        val path = when (uri.scheme) {
+            "file" -> uri.path!!
+            "content" -> {
+                val tempFile = File(cacheDirectory, "video_temp_${System.currentTimeMillis()}.tmp")
+                tempFile.parentFile?.let { if (!it.exists()) it.mkdirs() }
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(tempFile).use { output ->
+                        input.copyTo(output)
+                    }
+                } ?: error("无法打开内容 Uri: $uri")
+                tempFile.absolutePath
+            }
+
+            else -> uri.path ?: uri.toString()
+        }
+
+        return getVideoFrames(path, cacheDirectory.absolutePath)
+    }
 
 }

@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
+import com.imcys.bilibilias.ui.weight.ASCheckThumbSwitch
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.ASIconButton
@@ -92,11 +93,11 @@ fun RoamScreen(
                     ) {
                         Text("启用漫游", fontSize = 18.sp)
                         Spacer(Modifier.weight(1f))
-                        Switch(
+                        ASCheckThumbSwitch(
                             enabled = uiState.isLoginTV || appSettings.enabledRoam,
                             checked = appSettings.enabledRoam,
                             onCheckedChange = {
-                                if (!uiState.isLogin) return@Switch
+                                if (!uiState.isLogin) return@ASCheckThumbSwitch
                                 haptics.switchHapticFeedback(it)
                                 vm.updateRoamEnabledState(it)
                             }

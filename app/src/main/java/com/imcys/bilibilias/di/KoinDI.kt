@@ -42,7 +42,7 @@ val appModule = module {
     viewModel { SettingViewModel(get()) }
     viewModel { LayoutTypesetViewModel(get()) }
     viewModel { UserPlayHistoryViewModel(get()) }
-    viewModel { FrameExtractorViewModel() }
+    viewModel { FrameExtractorViewModel(get(), get(), get()) }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

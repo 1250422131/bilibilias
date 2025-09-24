@@ -187,7 +187,7 @@ fun SwitchSettingsItem(
         descriptionText = description,
         enabled = enabled,
     ) {
-        Switch(
+        ASCheckThumbSwitch(
             checked = checked,
             enabled = enabled,
             onCheckedChange = onCheckedChange,

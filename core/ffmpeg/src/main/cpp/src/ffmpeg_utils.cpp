@@ -3,6 +3,7 @@
 #include <map>
 #include <mutex>
 #include <string_view>
+#include <android/bitmap.h>
 
 #include "traits.hpp"
 #include "ffmpeg_free.hpp"
@@ -15,6 +16,7 @@ extern "C" {
 #include "libavutil/timestamp.h"
 #include "libswresample/swresample.h"
 #include "libswscale/swscale.h"
+#include "libavutil/imgutils.h"
 }
 
 using namespace bilias::ffmpeg;

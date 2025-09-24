@@ -785,7 +785,7 @@ class DownloadManager(
      * 处理合并成功
      */
     private suspend fun handleMergeSuccess(task: AppDownloadTask) {
-        val fileName = "${task.downloadSegment.title}_merged.mp4"
+        val fileName = "${task.downloadSegment.title}.mp4"
         val mergedFile = File("${task.downloadSubTasks[0].savePath}_merged.mp4")
         val uriStr = moveToDownloadAndRegister(mergedFile, fileName, "video/mp4")
 

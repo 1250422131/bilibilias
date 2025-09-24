@@ -1,6 +1,9 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.Manifest.permission
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
@@ -12,6 +15,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,6 +84,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
@@ -110,6 +115,7 @@ import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import kotlinx.coroutines.launch
+import kotlin.text.ifEmpty
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -297,7 +303,7 @@ fun ColumnScope.AnalysisVideoCardList(
                 is ASLinkResultType.BILI.Video -> {
 
                     if (asLinkResultType.isNotFound()) {
-                       CheckInputASTextTip()
+                        CheckInputASTextTip()
                         return@item
                     }
 
@@ -769,6 +775,8 @@ fun BILIDonghuaCard(
     savePic: suspend (String?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
 
     val episodeInfo = remember(donghuaViewInfo, currentEpId) {
         donghuaViewInfo.data?.episodes?.firstOrNull { it.epId == currentEpId }
@@ -856,13 +864,21 @@ fun BILIDonghuaCard(
                             }
                         }
                         Spacer(Modifier.height(16.dp))
-                        Text(
+                        val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: "视频标题",
+                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: "视频标题"
+                        Text(
+                            title,
                             fontSize = 22.sp,
                             modifier = Modifier
                                 .animateContentSize()
-                                .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS),
+                                .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        title.copyText(context, "视频标题")
+                                    }
+                                ),
                         )
                     }
                 }
@@ -923,9 +939,12 @@ fun BILIVideoCard(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var picSaving by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // 拦截未查到视频的错误
-    if (asLinkResultType.isNotFound()) { return }
+    if (asLinkResultType.isNotFound()) {
+        return
+    }
 
     AsAutoError(
         netWorkResult = videoInfo,
@@ -1000,11 +1019,20 @@ fun BILIVideoCard(
                             }
                         }
                         Spacer(Modifier.height(16.dp))
-                        Text(
+                        val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                videoInfo.data?.title ?: "视频标题",
+                                videoInfo.data?.title ?: "视频标题"
+                        Text(
+                            title,
                             fontSize = 22.sp,
-                            modifier = Modifier.animateContentSize()
+                            modifier = Modifier
+                                .animateContentSize()
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        title.copyText(context, "视频标题")
+                                    }
+                                ),
                         )
                     }
                 }
