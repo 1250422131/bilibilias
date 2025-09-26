@@ -1,10 +1,11 @@
-package com.imcys.bilibilias.danmaku.change
+package com.imcys.bilibilias.common.utils
 
-import com.imcys.bilibilias.home.ui.model.VideoCCInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
+
 
 object CCJsonToSrt {
 
-    fun jsonToSrt(videoCCInfo: VideoCCInfo): String {
+    fun jsonToSrt(videoCCInfo: BILIVideoCCInfo): String {
         val srtBuilder = StringBuilder()
         videoCCInfo.body.forEachIndexed { index, it ->
             val startTime = formatSrtTime(it.from)
