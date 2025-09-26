@@ -36,6 +36,8 @@ import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorPage
 import com.imcys.bilibilias.ui.event.playvoucher.navigation.PlayVoucherErrorRoute
 import com.imcys.bilibilias.ui.home.HomeScreen
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
+import com.imcys.bilibilias.ui.login.CookeLoginRoute
+import com.imcys.bilibilias.ui.login.CookeLoginScreen
 import com.imcys.bilibilias.ui.login.LoginScreen
 import com.imcys.bilibilias.ui.login.QRCodeLoginScreen
 import com.imcys.bilibilias.ui.login.navigation.LoginRoute
@@ -52,6 +54,8 @@ import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoRoute
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoScreen
+import com.imcys.bilibilias.ui.tools.donate.DonateRoute
+import com.imcys.bilibilias.ui.tools.donate.DonateScreen
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorScreen
 import com.imcys.bilibilias.ui.user.UserScreen
@@ -88,7 +92,7 @@ fun BILIBILAISNavDisplay() {
 
     LaunchedEffect(Unit) {
         playVoucherErrorChannel.collect {
-            backStack.removeLastOrNull()
+            backStack.removeLastOrNullSafe()
             backStack.addWithReuse(PlayVoucherErrorRoute)
         }
     }
@@ -117,7 +121,7 @@ fun BILIBILAISNavDisplay() {
     SharedTransitionLayout {
         NavDisplay(
             backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
+            onBack = { backStack.removeLastOrNullSafe() },
             transitionSpec = {
                 ContentTransform(
                     // 正向导航：新页面进入 - 只是淡入
@@ -176,7 +180,7 @@ fun BILIBILAISNavDisplay() {
                 }
                 entry<LoginRoute> {
                     LoginScreen(
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         goToQRCodeLogin = {
                             backStack.addWithReuse(QRCodeLoginRoute())
                         }
@@ -185,17 +189,20 @@ fun BILIBILAISNavDisplay() {
                 entry<QRCodeLoginRoute> {
                     QRCodeLoginScreen(
                         it,
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         onBackHomePage = {
                             backStack.clear()
                             backStack.add(HomeRoute(isFormLogin = true))
+                        },
+                        onToCookieLogin = {
+                            backStack.add(CookeLoginRoute)
                         }
                     )
                 }
                 entry<UserRoute> {
                     UserScreen(
                         userRoute = it,
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         onToSettings = {
                             backStack.addWithReuse(SettingRoute)
                         },
@@ -226,7 +233,7 @@ fun BILIBILAISNavDisplay() {
                         vm,
                         this@SharedTransitionLayout,
                         LocalNavAnimatedContentScope.current,
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         goToUser = { mid ->
                             backStack.addWithReuse(UserRoute(mid = mid, isAnalysisUser = true))
                         },
@@ -236,14 +243,14 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<DownloadRoute> {
-                    DownloadScreen(onToBack = { backStack.removeLastOrNull() })
+                    DownloadScreen(onToBack = { backStack.removeLastOrNullSafe() })
                 }
                 entry<SettingRoute> {
                     SettingScreen(
                         onToRoam = {
                             backStack.addWithReuse(RoamRoute)
                         },
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         onToComplaint = { backStack.addWithReuse(ComplaintRoute) },
                         onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) },
                         onToAbout = { backStack.addWithReuse(AboutRouter) },
@@ -252,7 +259,7 @@ fun BILIBILAISNavDisplay() {
                 }
                 entry<RoamRoute> {
                     RoamScreen(
-                        onToBack = { backStack.removeLastOrNull() },
+                        onToBack = { backStack.removeLastOrNullSafe() },
                         onGoToQRCodeLogin = {
                             backStack.addWithReuse(
                                 QRCodeLoginRoute(
@@ -266,7 +273,7 @@ fun BILIBILAISNavDisplay() {
                 entry<PlayVoucherErrorRoute> {
                     PlayVoucherErrorPage(
                         onBlack = {
-                            backStack.removeLastOrNull()
+                            backStack.removeLastOrNullSafe()
                             backStack.add(HomeRoute())
                         }
                     )
@@ -274,66 +281,79 @@ fun BILIBILAISNavDisplay() {
                 entry<WorkListRoute> {
                     WorkListScreen(
                         workListRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<BangumiFollowRoute> {
                     BangumiFollowScreen(
                         bangumiFollowRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<UserFolderRoute> {
                     UserFolderScreen(
                         userFolderRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<LikeVideoRoute> {
                     LikeVideoScreen(
                         likeVideoRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<ComplaintRoute> {
                     ComplaintScreen(
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<VideoCodingInfoRoute> {
                     VideoCodingInfoScreen(
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<LayoutTypesetRoute> {
                     LayoutTypesetScreen(
                         layoutTypesetRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<UserPlayHistoryRoute> {
                     UserPlayHistoryScreen(
                         userPlayHistoryRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<AboutRouter> {
                     AboutScreen(
                         aboutRouter = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<AppVersionInfoRoute> {
                     AppVersionInfoScreen(
                         appVersionInfoRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
                 entry<FrameExtractorRoute> {
                     FrameExtractorScreen(
                         frameExtractorRoute = it,
-                        onToBack = { backStack.removeLastOrNull() }
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
+                }
+                entry<CookeLoginRoute>{
+                    CookeLoginScreen(cookeLoginRoute= it, onToBack = {
+                        backStack.removeLastOrNullSafe()
+                    }, onFinish = {
+                        backStack.clear()
+                        backStack.add(HomeRoute(isFormLogin = true))
+                    })
+                }
+                entry<DonateRoute>{
+                    DonateScreen(donateRoute = it, onToBack = {
+                        backStack.removeLastOrNullSafe()
+                    })
                 }
             }
         )
@@ -365,5 +385,15 @@ inline fun <reified T : NavKey> SnapshotStateList<NavKey>.addWithReuse(route: T)
         }
     } else {
         add(route)
+    }
+}
+
+/**
+ * 安全移除栈顶元素扩展函数
+ * 只要栈中元素大于1时才允许移除，防止最后一页被移除导致异常
+ */
+fun <T> SnapshotStateList<T>.removeLastOrNullSafe() {
+    if (this.size > 1) {
+        this.removeLastOrNull()
     }
 }

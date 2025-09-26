@@ -84,8 +84,12 @@ object API {
 
     object App {
         const val SSE_HOST = "api.misakamoe.com"
-        const val SSE_PORT = 443
+        const val SSE_PORT = 80
         const val SSE_PATH = "/api/events/subscribe"
-        const val BASE_URL = "http://$SSE_HOST:$SSE_PORT/api/v2/"
+        const val BASE_URL = "https://$SSE_HOST/api/v2/"
+
+        const val OLD_BASE_URL = "https://$SSE_HOST/"
+
+        const val OLD_APP_FUNCTION_URL = OLD_BASE_URL + "app/AppFunction.php"
     }
 }

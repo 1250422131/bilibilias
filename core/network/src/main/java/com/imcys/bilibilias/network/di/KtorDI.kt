@@ -8,6 +8,7 @@ import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.plugin.AutoBILIInfoPlugin
 import com.imcys.bilibilias.network.plugin.RiskControlPlugin
 import com.imcys.bilibilias.network.plugin.RoamPlugin
+import com.imcys.bilibilias.network.service.AppAPIService
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import io.ktor.client.HttpClient
@@ -155,5 +156,8 @@ val netWorkModule = module {
     single {
         BILIBILITVAPIService(get())
     }
-
+    // AppAPI
+    single {
+        AppAPIService(get())
+    }
 }

@@ -46,7 +46,7 @@ class AsCookiesStorage(
             val dataBaseCookies =
                 biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
             dataBaseCookies.forEach {
-                cookies.removeAll { cookie -> cookie.name ==  it.name}
+                cookies.removeAll { cookie -> cookie.name == it.name }
                 val cookie = Cookie(
                     name = it.name,
                     value = it.value,
@@ -66,8 +66,11 @@ class AsCookiesStorage(
             syncDataBaseCookies()
         }
         return cookies.run {
-            if (usersDataSource.users.first().notUseBuvid3 ){ filter { it.name != "buvid3" }
-            } else { this }
+            if (usersDataSource.users.first().notUseBuvid3) {
+                filter { it.name != "buvid3" }
+            } else {
+                this
+            }
         }
     }
 
@@ -76,7 +79,7 @@ class AsCookiesStorage(
         if (timestamp < System.currentTimeMillis()) return
 
         val mCookie = cookie.copy(domain = requestUrl.host)
-        cookies.removeAll { it -> it.name ==  mCookie.name}
+        cookies.removeAll { it -> it.name == mCookie.name }
         cookies.add(mCookie)
     }
 
@@ -87,6 +90,11 @@ class AsCookiesStorage(
 
     fun getAllCookies(): MutableList<Cookie> {
         return cookies
+    }
+
+    fun updateAllCookies(cookie: MutableList<Cookie> ) {
+        cookies.clear()
+        cookies.addAll(cookie)
     }
 
     override fun close() {

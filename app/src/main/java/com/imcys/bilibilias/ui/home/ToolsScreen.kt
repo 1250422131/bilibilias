@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,9 +24,12 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.R
+import com.imcys.bilibilias.ui.tools.donate.DonateRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
 
 @Composable
@@ -53,7 +55,7 @@ data class ToolInfo(
 @Composable
 private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 
-    val tools = listOf(
+    val videoTools = listOf(
         ToolInfo(
             name = "逐帧提取",
             desc = "从视频中逐帧提取图片，画手书的好帮手！",
@@ -61,6 +63,15 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
             navKey = FrameExtractorRoute
         )
     )
+    val otherTools = listOf(
+        ToolInfo(
+            name = "捐助我们",
+            desc = "☕请我们喝一杯奶茶吧！",
+            iconRes = R.drawable.ic_credit_card_heart_24px,
+            navKey = DonateRoute
+        )
+    )
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(bottom = 10.dp),
@@ -72,7 +83,19 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         ) {
             Text("视频处理")
         }
-        items(tools) {
+        items(videoTools) {
+            ToolCard(it, onClick = {
+                onToPage.invoke(it.navKey)
+            })
+        }
+
+        item(
+            span = { GridItemSpan(2) }
+        ) {
+            Text("其他")
+        }
+
+        items(otherTools) {
             ToolCard(it, onClick = {
                 onToPage.invoke(it.navKey)
             })
@@ -102,13 +125,24 @@ private fun ToolCard(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = MaterialShapes.Circle.toShape()
             ) {
-                Icon(
-                    toolInfo.icon!!,
-                    contentDescription = "图标",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(22.dp)
-                )
+                toolInfo.icon?.let {
+                    Icon(
+                        it,
+                        contentDescription = "图标",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(22.dp)
+                    )
+                } ?: run {
+                    Icon(
+                        painter = painterResource(toolInfo.iconRes!!),
+                        contentDescription = "图标",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(22.dp)
+                    )
+                }
+
             }
             Spacer(Modifier.height(2.dp))
             Text(toolInfo.name, style = MaterialTheme.typography.titleMedium)
@@ -117,7 +151,7 @@ private fun ToolCard(
                 toolInfo.desc,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
-                minLines = 2
+                minLines = 2,
             )
         }
     }

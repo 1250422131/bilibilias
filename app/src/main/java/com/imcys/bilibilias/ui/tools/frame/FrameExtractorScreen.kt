@@ -268,9 +268,9 @@ private fun FrameExtractorContent(
             .padding(top = 5.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        if (uiState.selectVideoPath.isNullOrEmpty() && false) {
+        if (uiState.selectVideoPath.isNullOrEmpty()) {
             ASWarringTip {
-                Text("请在右上角选择导入视频")
+                Text("请在右上角选择导入视频（暂未实现该页面功能，请留意QQ频道更新）")
             }
         } else {
             Surface(

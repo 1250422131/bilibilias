@@ -381,10 +381,17 @@ fun HomeContent(
 
         item {
             Text(
-                """
+                if (BuildConfig.ENABLE_PLAY_APP_MODE){
+                    """
+                            请在Download/BILIBILIAS目录下查看下载内容
+                            请不要忘记在Google Play填写意见评价
+                        """.trimIndent()
+                } else {
+                    """
                             请在Download/BILIBILIAS目录下查看下载内容
                             内部测试版本，请勿外传
-                        """.trimIndent(),
+                        """.trimIndent()
+                },
                 fontSize = 14.sp,
                 fontWeight = FontWeight(330),
                 modifier = Modifier

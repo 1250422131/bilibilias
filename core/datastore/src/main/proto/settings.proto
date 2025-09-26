@@ -21,9 +21,9 @@ message AppSettings {
 
   // 最后一次跳过更新的版本code
   int32 last_skip_update_version_code = 6;
-
+  // 最后一次跳过的版本名称
   string last_skip_update_version = 7;
-
+  // 最后一次记录不看的公告内容
   string last_bulletin_content = 8;
 
   enum HomeLayoutType {

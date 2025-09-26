@@ -30,8 +30,10 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -108,6 +110,7 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
 fun ButtonArea(
 ) {
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -116,6 +119,7 @@ fun ButtonArea(
             shape = MaterialShapes.Cookie4Sided.toShape(),
             color = MaterialTheme.colorScheme.primaryContainer,
             onClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                 context.openLink(ASConstant.QQ_CHANNEL_URL)
             }
         ) {
@@ -132,6 +136,7 @@ fun ButtonArea(
             shape = MaterialShapes.Cookie4Sided.toShape(),
             color = MaterialTheme.colorScheme.primaryContainer,
             onClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                 context.openLink(ASConstant.QQ_GROUP_URL)
             }
         ) {
@@ -179,7 +184,7 @@ fun TitleArea(
                 Text(
                     modifier = Modifier.padding(top = 12.dp),
                     text = """
-                        过去，我们帮助了许多学生来缓存学习视频到其他设备离线观看，帮助了许多UP主来下载和剪辑视频素材。
+                        过去，我们帮助了许多学生来缓存学习视频到其他设备离线观看，帮助了许多UP主来缓存剪辑视频素材。
                         
                         我们尊重每一位创作者的劳动成果，一路以来多处提醒用户禁止转，也在积极探索更好的版权保护方案，希望能在尊重版权的前提下，帮助更多需要帮助的人。
                         请勿将本软件用于任何商业用途，一切后果自负。
