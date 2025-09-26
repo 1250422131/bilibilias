@@ -7,10 +7,12 @@ import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel
 import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorViewModel
 import com.imcys.bilibilias.ui.home.HomeViewModel
+import com.imcys.bilibilias.ui.login.CookieLoginViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.SettingViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
+import com.imcys.bilibilias.ui.tools.donate.DonateViewModel
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowViewModel
@@ -43,6 +45,8 @@ val appModule = module {
     viewModel { LayoutTypesetViewModel(get()) }
     viewModel { UserPlayHistoryViewModel(get()) }
     viewModel { FrameExtractorViewModel(get(), get(), get()) }
+    viewModel { CookieLoginViewModel(get(), get(), get(),get()) }
+    viewModel { DonateViewModel(get()) }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

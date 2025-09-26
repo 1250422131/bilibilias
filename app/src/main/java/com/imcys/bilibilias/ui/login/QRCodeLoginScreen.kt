@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.outlined.WebAsset
@@ -32,6 +33,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChipDefaults
@@ -48,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,6 +74,7 @@ import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import com.imcys.bilibilias.weight.ASAgreePrivacyPolicy
 import org.koin.androidx.compose.koinViewModel
 import java.net.URLEncoder
 
@@ -79,7 +84,7 @@ internal fun QRCodeLoginRoute(
     onToBack: () -> Unit,
     onBackHomePage: () -> Unit,
 ) {
-    QRCodeLoginScreen(QRCodeLoginRoute(), onToBack, onBackHomePage)
+    QRCodeLoginScreen(QRCodeLoginRoute(), onToBack, onBackHomePage,{})
 }
 
 
@@ -87,7 +92,7 @@ internal fun QRCodeLoginRoute(
 @Composable
 fun QRCodeLoginScreenPreview() {
     ProvideKoinApplication {
-        QRCodeLoginScreen(QRCodeLoginRoute(), {}) {}
+        QRCodeLoginScreen(QRCodeLoginRoute(), {},{}) {}
     }
 }
 
@@ -98,6 +103,7 @@ fun QRCodeLoginScreen(
     route: QRCodeLoginRoute,
     onToBack: () -> Unit,
     onBackHomePage: () -> Unit,
+    onToCookieLogin: () -> Unit
 ) {
     val vm = koinViewModel<QRCodeLoginViewModel>()
     val uiState = vm.uiState
@@ -158,7 +164,7 @@ fun QRCodeLoginScreen(
 
     var agreePrivacyPolicy by rememberSaveable { mutableStateOf(false) }
 
-    QRLoginScaffold(onToBack) {
+    QRLoginScaffold(onToBack,onToCookieLogin) {
         Box(Modifier.padding(it)) {
             Column(
                 Modifier
@@ -195,7 +201,12 @@ fun QRCodeLoginScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QRLoginScaffold(onToBack: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+private fun QRLoginScaffold(
+    onToBack: () -> Unit,
+    onToCookieLogin: () -> Unit,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    var expandedMenu by remember { mutableStateOf(false) }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
@@ -215,6 +226,29 @@ private fun QRLoginScaffold(onToBack: () -> Unit, content: @Composable (PaddingV
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
                                 contentDescription = "返回"
+                            )
+                        }
+                    },
+                    actions = {
+                        ASIconButton(onClick = {
+                            expandedMenu = !expandedMenu
+                        }) {
+                            Icon(
+                                Icons.Outlined.MoreVert,
+                                contentDescription = "操作"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expandedMenu,
+                            onDismissRequest = { expandedMenu = false },
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("使用Cookie登录") },
+                                onClick = {
+                                    expandedMenu = false
+                                    onToCookieLogin.invoke()
+                                }
                             )
                         }
                     }
@@ -413,34 +447,9 @@ private fun ColumnScope.QRCodeContent(
             }
 
         }
-        Spacer(Modifier.height(8.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            // 勾选同意隐私政策
-            RadioButton(
-                selected = agreePrivacyPolicy,
-                onClick = {
-                    updateAgreePrivacyPolicy(!agreePrivacyPolicy)
-                    haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
-                },
-                modifier = Modifier
-                    .padding(0.dp)
-                    .scale(0.75f)
-                    .size(20.dp)
-            )
-            Text("我已阅读并同意", fontSize = 14.sp)
-            Spacer(Modifier.width(4.dp))
-            Text(
-                "《BILIBILIAS 隐私政策》",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp,
-                modifier = Modifier.clickable {
-                    context.openLink(PRIVACY_POLICY_URL)
-                }
-            )
-        }
-
+        Spacer(Modifier.height(10.dp))
+        ASAgreePrivacyPolicy(agreePrivacyPolicy, onClick = {
+            updateAgreePrivacyPolicy(!agreePrivacyPolicy)
+        })
     }
 }

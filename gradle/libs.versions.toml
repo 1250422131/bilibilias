@@ -7,7 +7,6 @@ activityCompose = "1.11.0"
 composeBom = "2025.09.00"
 androidTools = "31.13.0"
 androidDesugarJdkLibs = "2.1.5"
-navigationCompose = "2.9.3"
 koinBom = "4.1.1"
 viewmodelCompose = "2.9.3"
 ksp = "2.2.10-2.0.2"
@@ -48,7 +47,6 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material3-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class-android" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -119,7 +117,7 @@ bilibilias-android-koin = { id = "bilibilias.android.koin" }
 [bundles]
 compose = [
     "androidx-activity-compose", "androidx-ui-graphics", "androidx-material3",
-    "androidx-material3-window-size", "androidx-navigation-compose",
+    "androidx-material3-window-size",
     "androidx-material-icons-extended", "androidx-ui", "androidx-ui-android",
     "androidx-material3-android", "androidx-navigation3-runtime", "androidx-navigation3-ui",
     "androidx-lifecycle-viewmodel-navigation3"

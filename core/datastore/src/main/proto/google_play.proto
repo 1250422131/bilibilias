@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.imcys.bilibilias.datastore";
+option java_multiple_files = true;
+
+message GooglePlaySettings {
+
+  // 使用整个APP流程的次数
+  int64 usage_process_number = 1;
+
+}

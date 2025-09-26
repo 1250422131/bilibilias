@@ -47,18 +47,18 @@ class FrameExtractorViewModel(
                             (segment.downloadMode == DownloadMode.VIDEO_ONLY || segment.downloadMode == DownloadMode.AUDIO_VIDEO)
                 })
 
-
-                it.firstOrNull()?.let { segment ->
-                    // 获取Android/data/com.imcys.bilibilias/files目录
-                    val cacheDir = "${context.externalCacheDir?.absolutePath}/frames/${segment.platformId}"
-                    // 获取视频的所有帧
-                    val result = FFmpegManger.getVideoFramesCompat(
-                        context,
-                        segment.savePath.toUri(),
-                        cacheDir
-                    )
-                    _fpsList.emit(result.first)
-                }
+//
+//                it.firstOrNull()?.let { segment ->
+//                    // 获取Android/data/com.imcys.bilibilias/files目录
+//                    val cacheDir = "${context.externalCacheDir?.absolutePath}/frames/${segment.platformId}"
+//                    // 获取视频的所有帧
+//                    val result = FFmpegManger.getVideoFramesCompat(
+//                        context,
+//                        segment.savePath.toUri(),
+//                        cacheDir
+//                    )
+//                    _fpsList.emit(result.first)
+//                }
             }
         }
     }
