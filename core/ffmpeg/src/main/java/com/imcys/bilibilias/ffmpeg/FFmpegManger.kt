@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ffmpeg
 
 import android.content.Context
 import android.net.Uri
-import android.util.Pair
 import java.io.File
 import java.io.FileOutputStream
 
@@ -31,13 +30,6 @@ object FFmpegManger {
         copyright: String,
         listener: FFmpegMergeListener
     )
-
-    fun getVideoFrames(
-        videoPath: String,
-        cacheDir: String
-    ): Pair<ArrayList<String>, Int> {
-        return Pair(arrayListOf(), 0)
-    }
 
     init {
         System.loadLibrary("ffmpeg")
@@ -68,11 +60,11 @@ object FFmpegManger {
         }
     }
 
-    fun getVideoFramesCompat(
+    fun getVideoTempPath(
         context: Context,
         uri: Uri,
         cacheDir: String
-    ): Pair<ArrayList<String>, Int> {
+    ): String? {
         // 确保缓存目录存在
         val cacheDirectory = File(cacheDir)
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
@@ -95,7 +87,22 @@ object FFmpegManger {
             else -> uri.path ?: uri.toString()
         }
 
-        return getVideoFrames(path, cacheDirectory.absolutePath)
+        return path
     }
 
+    interface FFmpegFrameListener {
+        fun onFrame(data: ByteArray, width: Int, height: Int, index: Int)
+        fun onProgress(progress: Int)
+        fun onComplete()
+    }
+
+    external fun getVideoFramesJNI(
+        videoPath: String,
+        framesPerSecond: Int,
+        listener: FFmpegFrameListener
+    )
+
+    external fun getVideoFrameRate(
+        videoPath: String
+    ): Int
 }

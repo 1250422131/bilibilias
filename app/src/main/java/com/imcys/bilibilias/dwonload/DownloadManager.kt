@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.dwonload
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.ComponentName
 import android.content.ContentUris
 import android.content.ContentValues
@@ -450,7 +451,7 @@ class DownloadManager(
      */
     fun startDownloadQueueService() {
         if (isDownloading) return
-
+        if (!isAppInForeground(context)) return
         val intent = Intent(context, DownloadService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
@@ -467,6 +468,23 @@ class DownloadManager(
             }
         }
     }
+
+
+    /** 判断应用是否在前台 */
+    fun isAppInForeground(context: Context): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcesses = activityManager.runningAppProcesses ?: return false
+        val packageName = context.packageName
+        for (appProcess in appProcesses) {
+            if (appProcess.processName == packageName &&
+                appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
 
     /**
      * 执行下载队列

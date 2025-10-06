@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Android
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.EmojiObjects
+import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoodBad
@@ -76,6 +77,8 @@ fun SettingScreen(
     onToBack: () -> Unit,
     onToAbout: () -> Unit = {},
     onToVersionInfo: () -> Unit = {},
+    onToSystemExpand: () -> Unit = {},
+    onToStorageManagement : () -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
@@ -127,6 +130,16 @@ fun SettingScreen(
                     }
                 )
             }
+
+            item {
+                BaseSettingsItem(
+                    painter = painterResource(R.drawable.ic_save_24px),
+                    text = "存储管理",
+                    descriptionText = "管理APP内存占用",
+                    onClick = onToStorageManagement
+                )
+            }
+
 
             item {
                 BaseSettingsItem(
@@ -277,6 +290,15 @@ fun SettingScreen(
                     onClick = onToVersionInfo
                 )
 
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Extension),
+                    text = "扩展能力",
+                    descriptionText = "提交反馈时记得带上这个！",
+                    onClick = onToSystemExpand
+                )
             }
 
         }

@@ -149,6 +149,7 @@ fun SwitchSettingsItem(
     description: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
+    isImage: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)?,
 ) {
     SwitchSettingsItem(
@@ -158,6 +159,7 @@ fun SwitchSettingsItem(
         description = description,
         checked = checked,
         enabled = enabled,
+        isImage = isImage,
         onCheckedChange = onCheckedChange,
     )
 }
@@ -170,6 +172,7 @@ fun SwitchSettingsItem(
     description: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
+    isImage: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)?,
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
@@ -182,6 +185,7 @@ fun SwitchSettingsItem(
             role = Role.Switch,
             onValueChange = { onCheckedChange?.invoke(it) },
         ),
+        isImage = isImage,
         painter = painter,
         text = text,
         descriptionText = description,
@@ -373,7 +377,7 @@ fun BaseSettingsItem(
                     Image(
                         modifier = Modifier
                             .padding(10.dp)
-                            .size(24.dp),
+                            .size(30.dp),
                         painter = painter,
                         contentDescription = null
                     )

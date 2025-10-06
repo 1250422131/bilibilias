@@ -16,15 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
-import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -47,11 +45,15 @@ import com.imcys.bilibilias.ui.setting.about.AboutRouter
 import com.imcys.bilibilias.ui.setting.about.AboutScreen
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintRoute
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintScreen
+import com.imcys.bilibilias.ui.setting.expand.SystemExpandRoute
+import com.imcys.bilibilias.ui.setting.expand.SystemExpandScreen
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
+import com.imcys.bilibilias.ui.setting.storage.StorageManagementRoute
+import com.imcys.bilibilias.ui.setting.storage.StorageManagementScreen
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoRoute
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoScreen
 import com.imcys.bilibilias.ui.tools.donate.DonateRoute
@@ -254,7 +256,9 @@ fun BILIBILAISNavDisplay() {
                         onToComplaint = { backStack.addWithReuse(ComplaintRoute) },
                         onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) },
                         onToAbout = { backStack.addWithReuse(AboutRouter) },
-                        onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) }
+                        onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) },
+                        onToSystemExpand = {backStack.addWithReuse(SystemExpandRoute)},
+                        onToStorageManagement = { backStack.addWithReuse(StorageManagementRoute) },
                     )
                 }
                 entry<RoamRoute> {
@@ -354,6 +358,17 @@ fun BILIBILAISNavDisplay() {
                     DonateScreen(donateRoute = it, onToBack = {
                         backStack.removeLastOrNullSafe()
                     })
+                }
+                entry<SystemExpandRoute>{
+                    SystemExpandScreen(systemExpandRoute = it, onToBack = {
+                        backStack.removeLastOrNullSafe()
+                    })
+                }
+                entry<StorageManagementRoute> {
+                    StorageManagementScreen(
+                        route = it,
+                        onToBack = { backStack.removeLastOrNullSafe() }
+                    )
                 }
             }
         )

@@ -31,6 +31,7 @@ import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -439,6 +440,8 @@ class AnalysisViewModel(
                     uiState.value.downloadInfo!!
                 )
             }
+            // 等待一下前台服务
+            delay(600L)
             _uiState.value = _uiState.value.copy(isCreateDownloadLoading = false)
         }
     }

@@ -279,7 +279,7 @@ fun HomeContent(
                         ) { item ->
                             Box {
                                 ASAsyncImage(
-                                    model = BASE_URL + item.url,
+                                    model = item.url,
                                     contentDescription = "",
                                     modifier = Modifier
                                         .fillMaxWidth()

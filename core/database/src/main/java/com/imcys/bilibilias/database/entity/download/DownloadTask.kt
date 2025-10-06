@@ -3,6 +3,7 @@ package com.imcys.bilibilias.database.entity.download
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -115,13 +116,13 @@ data class DownloadTaskNode(
         parentColumns = ["node_id"],
         childColumns = ["node_id"],
         onDelete = ForeignKey.CASCADE
-    ),ForeignKey(
+    ), ForeignKey(
         entity = DownloadTask::class,
         parentColumns = ["task_id"],
         childColumns = ["task_id"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("node_id"),Index("task_id")]
+    indices = [Index("node_id"), Index("task_id")]
 )
 @TypeConverters(
     DownloadModeConverter::class, DateConverter::class,
@@ -173,4 +174,9 @@ data class DownloadSegment(
 
     @ColumnInfo(name = "update_time")
     val updateTime: Date = Date(),
-    )
+) {
+    // 仅仅用于临时存储视频时长等信息，不存数据库
+    @Ignore
+    var tempDuration: Long = 0
+
+}

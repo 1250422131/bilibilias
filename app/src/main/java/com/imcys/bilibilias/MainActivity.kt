@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import androidx.compose.runtime.collectAsState
+import com.imcys.bilibilias.ffmpeg.FFmpegManger
 
 class MainActivity : ComponentActivity() {
     private val appSettingsRepository: AppSettingsRepository by inject()

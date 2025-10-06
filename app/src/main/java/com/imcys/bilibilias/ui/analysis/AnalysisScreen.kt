@@ -203,7 +203,7 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ContainedLoadingIndicator()
-                    Text(text = "正在创建下载任务，请不要退出...")
+                    Text(text = "正在创建任务，创建过程中请勿挂后台...")
                 }
             },
             confirmButton = {},

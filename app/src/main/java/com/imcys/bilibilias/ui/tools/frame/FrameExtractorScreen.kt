@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.tools.frame
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +33,7 @@ import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,12 +46,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,10 +67,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavKey
 import coil3.Bitmap
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
+import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel.UIState
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
@@ -72,7 +80,8 @@ import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
-import com.imcys.bilibilias.weight.ASPlayer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -85,6 +94,8 @@ fun FrameExtractorScreen(
     frameExtractorRoute: FrameExtractorRoute,
     onToBack: () -> Unit
 ) {
+
+
     val vm = koinViewModel<FrameExtractorViewModel>()
     val downloadList by vm.allDownloadSegment.collectAsState()
     val context = LocalContext.current
@@ -95,7 +106,11 @@ fun FrameExtractorScreen(
     LaunchedEffect(Unit) {
         vm.initVideoInfo(context)
     }
-
+    DisposableEffect(Unit) {
+        onDispose {
+            vm.deleteCacheDir(context)
+        }
+    }
     FrameExtractorScaffold(
         onToBack = onToBack,
         onShowInputVideo = {
@@ -113,6 +128,8 @@ fun FrameExtractorScreen(
 
     SelectVideoListDialog(showSelectVideoList, downloadList, onClose = {
         showSelectVideoList = false
+    }, onSelectVideo = {
+        vm.importVideo(context, it.savePath, 1)
     })
 
 }
@@ -121,7 +138,8 @@ fun FrameExtractorScreen(
 fun SelectVideoListDialog(
     show: Boolean,
     downloadList: List<DownloadSegment>,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onSelectVideo: (DownloadSegment) -> Unit = {},
 ) {
     ASAlertDialog(
         showState = show,
@@ -134,7 +152,11 @@ fun SelectVideoListDialog(
                 items(downloadList) { item ->
                     Surface(
                         shape = CardDefaults.shape,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            onClose.invoke()
+                            onSelectVideo.invoke(item)
+                        }
                     ) {
 
                         Row(
@@ -171,11 +193,16 @@ fun SelectVideoListDialog(
                             ) {
                                 Text(
                                     text = item.title,
-                                    maxLines = 2,
-                                    minLines = 2,
+                                    maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.W400
+                                )
+
+                                Text(
+                                    "${formatDuration((item.tempDuration / 1000).toInt())}",
+                                    modifier = Modifier.padding(horizontal = 2.dp),
+                                    style = LocalTextStyle.current.copy(fontSize = 10.sp)
                                 )
                             }
                         }
@@ -251,71 +278,102 @@ fun SelectVideoModelDialog(
         })
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FrameExtractorContent(
     vm: FrameExtractorViewModel,
     paddingValues: PaddingValues
 ) {
     val uiState by vm.uiState.collectAsState()
-    var selectFps by remember { mutableIntStateOf(1) }
-    val fpsList by vm.fpsList.collectAsState()
-    val context = LocalContext.current
-
     Column(
         Modifier
+            .fillMaxSize()
             .padding(paddingValues)
             .padding(horizontal = 10.dp)
             .padding(top = 5.dp)
-            .verticalScroll(rememberScrollState())
     ) {
-        if (uiState.selectVideoPath.isNullOrEmpty()) {
-            ASWarringTip {
-                Text("请在右上角选择导入视频（暂未实现该页面功能，请留意QQ频道更新）")
-            }
-        } else {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16 / 9f),
-                shape = CardDefaults.shape
-            ) {
-                ASPlayer(Modifier.fillMaxSize())
+
+        when (val state = uiState) {
+            UIState.Default -> ASWarringTip {
+                Text("请在右上角选择导入视频")
             }
 
-            Spacer(Modifier.height(10.dp))
-            // 选择帧率组件
-            SelectFpsItem(selectFps, {
-                selectFps = it
-            }, 1..30)
-            Spacer(Modifier.height(10.dp))
-            Text("总计:${fpsList.size}", fontSize = 16.sp)
-            FrameList(fpsList, {
-                vm.getFrameBitmap(context, it)
-            })
-            ExportFpsButton()
+            is UIState.ImportSuccess -> ImportSuccessScreen(state, vm)
+            is UIState.Importing -> {
+                Column(
+                    Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(10.dp))
+                    CircularWavyProgressIndicator(
+                        progress = { state.progress },
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "正在导入视频，请稍候...${(state.progress * 100).toInt()}%",
+                        fontSize = 16.sp
+                    )
+                }
+            }
         }
     }
+
 }
+
 
 @Composable
-fun FrameList(fpsList: List<String>, onLoadImage: (String) -> Bitmap?) {
-    LazyRow (
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ){
-        items(fpsList) { item ->
-            onLoadImage.invoke(item)?.let { bitmap ->
+fun ImportSuccessScreen(state: UIState.ImportSuccess, vm: FrameExtractorViewModel) {
+    // 协程
+    val scope = rememberCoroutineScope()
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16 / 9f),
+            shape = CardDefaults.shape
+        ) {
+            // ASPlayer(Modifier.fillMaxSize())
+            HorizontalPager(state = rememberPagerState(pageCount = { state.frameList.size })) { page ->
                 Image(
-                    bitmap = bitmap.asImageBitmap(),
+                    bitmap = state.frameList[page].asImageBitmap(),
                     contentDescription = "帧图片",
                     modifier = Modifier
-                        .width(100.dp)
-                        .aspectRatio(16 / 9f),
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f)
+                        .padding(2.dp),
                 )
             }
-
         }
+
+        Spacer(Modifier.height(10.dp))
+        // 选择帧率组件
+        SelectFpsItem(state.selectFps, state.videoFps, {
+            scope.launch {
+                vm.updateSelectFps(currentFps = it)
+            }
+        }, 1..state.videoFps)
+        Spacer(Modifier.height(10.dp))
+        ExportFpsButton()
     }
 }
+
+// 秒转换时:分:秒格式
+@SuppressLint("DefaultLocale")
+private fun formatDuration(duration: Int): String {
+    val hours = duration / 3600
+    val minutes = (duration % 3600) / 60
+    val seconds = duration % 60
+    return if (hours > 0) {
+        String.format("%d:%02d:%02d", hours, minutes, seconds)
+    } else {
+        String.format("%02d:%02d", minutes, seconds)
+    }
+}
+
 
 @Composable
 fun ExportFpsButton() {
@@ -335,7 +393,8 @@ fun ExportFpsButton() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SelectFpsItem(
-    fps: Int, updateFps: (Int) -> Unit,
+    fps: Int, totalFps: Int,
+    updateFps: (Int) -> Unit,
     valueRange: IntRange,
 ) {
 
@@ -344,9 +403,7 @@ fun SelectFpsItem(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("提取帧率")
-        Spacer(Modifier.height(10.dp))
-
+        Text("最大：$totalFps (帧/秒)")
         Spacer(Modifier.height(10.dp))
         Surface(shape = CardDefaults.shape) {
             Row(

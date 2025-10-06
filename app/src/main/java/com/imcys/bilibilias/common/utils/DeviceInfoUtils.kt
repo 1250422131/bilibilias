@@ -2,6 +2,9 @@ package com.imcys.bilibilias.common.utils
 
 import android.content.Context
 import android.os.Build
+import com.hjq.device.compat.DeviceBrand.*
+import com.hjq.device.compat.DeviceMarketName
+import com.hjq.device.compat.DeviceOs.*
 
 object DeviceInfoUtils {
 
@@ -68,21 +71,21 @@ object DeviceInfoUtils {
         val appVersion = packageInfo?.versionName ?: "未知"
         val systemVersion = Build.VERSION.RELEASE ?: "未知"
         val model = Build.MODEL ?: "未知"
-        val marketModel = getMarketingName() ?: "未知"
+        val marketModel = DeviceMarketName.getMarketName(context) ?: "未知"
         val manufacturer = Build.BRAND ?: "未知"
         val brand = Build.BRAND ?: "未知"
         val brandName = try {
-            com.hjq.device.compat.DeviceBrand.getBrandName() ?: Build.DEVICE
+            getBrandName() ?: Build.DEVICE
         } catch (_: Throwable) {
             Build.DEVICE
         }
         val osName = try {
-            com.hjq.device.compat.DeviceOs.getOsName() ?: "未知"
+            getOsName() ?: "未知"
         } catch (_: Throwable) {
             "未知"
         }
         val osVersionName = try {
-            com.hjq.device.compat.DeviceOs.getOsVersionName() ?: "未知"
+            getOsVersionName() ?: "未知"
         } catch (_: Throwable) {
             "未知"
         }

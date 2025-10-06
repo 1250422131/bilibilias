@@ -60,6 +60,8 @@
             android:name=".dwonload.service.DownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+
+
     </application>
 
 </manifest>

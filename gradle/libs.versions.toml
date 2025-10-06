@@ -1,16 +1,16 @@
 [versions]
 agp = "8.13.0"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.9.3"
 activityCompose = "1.11.0"
-composeBom = "2025.09.00"
+composeBom = "2025.09.01"
 androidTools = "31.13.0"
 androidDesugarJdkLibs = "2.1.5"
 koinBom = "4.1.1"
-viewmodelCompose = "2.9.3"
+viewmodelCompose = "2.9.4"
 ksp = "2.2.10-2.0.2"
-room = "2.7.2"
+room = "2.8.1"
 datastore = "1.1.7"
 protobufPlugin = "0.9.5"
 protobuf = "4.32.0"
@@ -19,18 +19,19 @@ gms = "4.4.3"
 firebase-crashlytics-plugin = "3.0.6"
 firebase-perf-plugin = "2.0.1"
 konfetti-compose-version = "2.0.5"
-ktorVersion = "3.2.3"
+ktorVersion = "3.3.0"
 coil = "3.3.0"
 material3Android = "1.5.0-alpha03"
 cloudy = "0.2.7"
-nav3Core = "1.0.0-alpha08"
+nav3Core = "1.0.0-alpha10"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
 material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 paging = "3.3.6"
 palayAppUpdate = "2.1.0"
 playAppReview = "2.0.2"
 kolor = "3.0.1"
-deviceCompat = "1.6"
+deviceCompat = "2.0"
+shizuku= "13.1.5"
 
 
 [libraries]
@@ -97,6 +98,10 @@ androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecy
 androidx-material3-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 device-compat = { module = "com.github.getActivity:DeviceCompat", version.ref = "deviceCompat" }
+
+shizuku-api = { module = "dev.rikka.shizuku:api", version.ref = "shizuku" }
+shizuku-provider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -12,6 +12,7 @@ import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.SettingViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
+import com.imcys.bilibilias.ui.setting.storage.StorageManagementViewModel
 import com.imcys.bilibilias.ui.tools.donate.DonateViewModel
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
@@ -47,6 +48,7 @@ val appModule = module {
     viewModel { FrameExtractorViewModel(get(), get(), get()) }
     viewModel { CookieLoginViewModel(get(), get(), get(),get()) }
     viewModel { DonateViewModel(get()) }
+    viewModel { StorageManagementViewModel() }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

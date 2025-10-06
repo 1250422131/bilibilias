@@ -3,7 +3,7 @@ package com.imcys.bilibilias.ui.tools.frame
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import androidx.core.graphics.createBitmap
+import kotlinx.coroutines.withContext
+import java.nio.ByteBuffer
 
 class FrameExtractorViewModel(
     private val downloadManager: DownloadManager,
@@ -25,61 +28,137 @@ class FrameExtractorViewModel(
     private val contentResolver: ContentResolver
 ) : ViewModel() {
 
-    data class UIState(
-        val selectVideoPath: String? = null,
-    )
+    sealed interface UIState {
+        data object Default : UIState
 
-    private val _uiState = MutableStateFlow(UIState())
+        data class Importing(
+            val progress: Float = 0f,
+            val selectVideoPath: String? = null,
+        ) : UIState
+
+        data class ImportSuccess(
+            val videoPath: String? = null,
+            val frameList: List<Bitmap> = emptyList(),
+            val videoDuration: Int = 0,
+            val videoFps: Int,
+            val selectFps: Int = 1
+        ) : UIState
+    }
+
+    private val _uiState = MutableStateFlow<UIState>(UIState.Default)
     val uiState = _uiState.asStateFlow()
     private val _allDownloadSegment = MutableStateFlow<List<DownloadSegment>>(emptyList())
     val allDownloadSegment = _allDownloadSegment.asStateFlow()
 
-    private val _fpsList = MutableStateFlow<List<String>>(emptyList())
+    fun importVideo(context: Context, videoPath: String, fps: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val cacheDir =
+                "${context.externalCacheDir?.absolutePath}/frameTemp"
+            deleteCacheDir(context)
+            // 获取临时存储路径
+            val tempVideoPath = FFmpegManger.getVideoTempPath(
+                context,
+                videoPath.toUri(),
+                cacheDir
+            )
+            updateSelectFps(tempVideoPath, fps)
+        }
+    }
 
-    val fpsList = _fpsList.asStateFlow()
+    suspend fun updateSelectFps(videoPath: String? = null, currentFps: Int) =
+        withContext(Dispatchers.IO) {
+
+            val tempVideoPath = videoPath ?: when (_uiState.value) {
+                is UIState.Importing -> {
+                    (_uiState.value as UIState.Importing).selectVideoPath
+                }
+
+                is UIState.ImportSuccess -> {
+                    (_uiState.value as UIState.ImportSuccess).videoPath
+                }
+
+                else -> {
+                    return@withContext
+                }
+            }
+
+            val videoFps = FFmpegManger.getVideoFrameRate(tempVideoPath ?: return@withContext)
+            val bitmapList = mutableListOf<Bitmap>()
+
+            runCatching {
+                FFmpegManger.getVideoFramesJNI(
+                    tempVideoPath,
+                    currentFps,
+                    object : FFmpegManger.FFmpegFrameListener {
+                        override fun onFrame(
+                            data: ByteArray,
+                            width: Int,
+                            height: Int,
+                            index: Int
+                        ) {
+                            val bitmap = createBitmap(width, height)
+                            val buffer = ByteBuffer.wrap(data)
+                            val pixels = IntArray(width * height)
+                            var i = 0
+                            while (buffer.remaining() >= 3 && i < pixels.size) {
+                                val r = buffer.get().toInt() and 0xFF
+                                val g = buffer.get().toInt() and 0xFF
+                                val b = buffer.get().toInt() and 0xFF
+                                pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+                                i++
+                            }
+                            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+                            bitmapList.add(bitmap)
+                        }
+
+                        override fun onProgress(progress: Int) {
+                            _uiState.value = UIState.Importing(
+                                progress = progress / 100f,
+                                selectVideoPath = tempVideoPath
+                            )
+                        }
+
+                        override fun onComplete() {
+                            _uiState.value =
+                                UIState.ImportSuccess(
+                                    videoFps = videoFps,
+                                    frameList = bitmapList,
+                                    selectFps = currentFps,
+                                    videoPath = tempVideoPath
+                                )
+                        }
+
+                    })
+            }
+        }
 
 
     fun initVideoInfo(context: Context) {
+        deleteCacheDir(context)
         viewModelScope.launch(Dispatchers.IO) {
             downloadTaskRepository.getSegmentAll().collect {
                 _allDownloadSegment.emit(it.filter { segment ->
                     segment.downloadState == DownloadState.COMPLETED &&
                             (segment.downloadMode == DownloadMode.VIDEO_ONLY || segment.downloadMode == DownloadMode.AUDIO_VIDEO)
+                }.map { segment ->
+                    val retriever = MediaMetadataRetriever()
+                    retriever.setDataSource(context, segment.savePath.toUri())
+                    val durationStr =
+                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    val durationMs = durationStr?.toLongOrNull() ?: 0L
+                    retriever.release()
+                    segment.apply { tempDuration = durationMs }
                 })
-
-//
-//                it.firstOrNull()?.let { segment ->
-//                    // 获取Android/data/com.imcys.bilibilias/files目录
-//                    val cacheDir = "${context.externalCacheDir?.absolutePath}/frames/${segment.platformId}"
-//                    // 获取视频的所有帧
-//                    val result = FFmpegManger.getVideoFramesCompat(
-//                        context,
-//                        segment.savePath.toUri(),
-//                        cacheDir
-//                    )
-//                    _fpsList.emit(result.first)
-//                }
             }
         }
     }
 
-    // 获取图片文件bitmap
-    fun getFrameBitmap(context: Context, imagePath: String): Bitmap? {
-        return try {
-            val uri = if (imagePath.startsWith("content://")) {
-                imagePath.toUri()
-            } else {
-                val file = File(imagePath)
-                if (!file.exists()) return null
-                file.toUri()
-            }
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream.close()
-            bitmap
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    fun deleteCacheDir(context: Context) {
+        val cacheDir =
+            "${context.externalCacheDir?.absolutePath}/frameTemp"
+        if (File(cacheDir).exists()) {
+            // 删除旧文件
+            File(cacheDir).deleteRecursively()
         }
     }
 
