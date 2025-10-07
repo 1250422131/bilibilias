@@ -16,7 +16,8 @@ data class StorageInfoData(
     val usedBytes: Long,
     val availableBytes: Long,
     val appBytes: Long,
-    val downloadBytes: Long
+    val downloadBytes: Long,
+    val cacheTotalBytes: Long // 聚合缓存、video、audio文件夹大小
 )
 
 object StorageUtil {
@@ -59,6 +60,19 @@ object StorageUtil {
     }
 
     /**
+     * 统计缓存、video、audio文件夹总大小
+     */
+    fun getCacheTotalBytes(context: Context): Long {
+        val cacheSize = getFolderSize(context.cacheDir) + (context.externalCacheDir?.let { getFolderSize(it) } ?: 0L)
+        val videoSize = getFolderSize(context.getExternalFilesDir("video"))
+        val audioSize = getFolderSize(context.getExternalFilesDir("audio"))
+        return cacheSize + videoSize + audioSize
+    }
+
+
+
+
+    /**
      * 返回主存储卷的空间信息，单位 Byte。
      * 如果失败返回所有字段为 -1。
      */
@@ -81,7 +95,7 @@ object StorageUtil {
                 val statFs = StatFs(dir.absolutePath)
                 avail = statFs.availableBytes
             } catch (e: Exception) {
-                return StorageInfoData(-1L, -1L, -1L, -1L, -1L)
+                return StorageInfoData(-1L, -1L, -1L, -1L, -1L, -1L)
             }
         } else {
             val path = getExternalStorageDirectory()
@@ -92,7 +106,8 @@ object StorageUtil {
         val used = total - avail
         val appBytes = getAppUsedBytes(context)
         val downloadBytes = getDownloadUsedBytes()
-        return StorageInfoData(total, used, avail, appBytes, downloadBytes)
+        val cacheTotalBytes = getCacheTotalBytes(context)
+        return StorageInfoData(total, used, avail, appBytes, downloadBytes, cacheTotalBytes)
     }
 
     /**
@@ -126,5 +141,38 @@ object StorageUtil {
             bytes >= KB -> String.format("%.2f KB", bytes / KB.toDouble())
             else -> "$bytes B"
         }
+    }
+
+    /**
+     * 递归删除文件夹及其所有内容
+     */
+    private fun deleteFolderRecursively(file: File?): Boolean {
+        if (file == null || !file.exists()) return true
+        if (file.isFile) return file.delete()
+        var success = true
+        file.listFiles()?.forEach {
+            success = success && deleteFolderRecursively(it)
+        }
+        return file.delete() && success
+    }
+
+    /**
+     * 清空缓存、video、audio文件夹下所有内容
+     * 返回是否全部成功
+     */
+    fun clearCache(context: Context): Boolean {
+        val cacheDirs = listOf(
+            context.cacheDir,
+            context.externalCacheDir,
+            context.getExternalFilesDir("video"),
+            context.getExternalFilesDir("audio")
+        )
+        var allSuccess = true
+        cacheDirs.forEach { dir ->
+            allSuccess = allSuccess && deleteFolderRecursively(dir)
+            // 删除后重新创建文件夹，避免影响后续缓存写入
+            if (dir != null && !dir.exists()) dir.mkdirs()
+        }
+        return allSuccess
     }
 }

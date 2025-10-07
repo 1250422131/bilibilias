@@ -118,6 +118,7 @@ kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization"
 bilibilias-android-library = { id = "bilibilias.android.library" }
 bilibilias-android-application = { id = "bilibilias.android.application" }
 bilibilias-android-koin = { id = "bilibilias.android.koin" }
+bilibilias-android-ffmpegVerification = { id = "bilibilias.android.ffmpegVerification" }
 
 [bundles]
 compose = [

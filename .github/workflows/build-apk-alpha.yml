@@ -32,6 +32,117 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+        # 获取最新的 AS-FFmpeg 版本信息
+      - name: Get latest FFmpeg release info
+        id: ffmpeg_release
+        run: |
+          RELEASE_INFO=$(curl -s https://api.github.com/repos/1250422131/bilibilias-ffmpeg/releases/latest)
+          TAG_NAME=$(echo "$RELEASE_INFO" | jq -r '.tag_name')
+          DOWNLOAD_URL=$(echo "$RELEASE_INFO" | jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url')
+          
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
+          
+          echo "Latest FFmpeg version: $TAG_NAME"
+          echo "Download URL: $DOWNLOAD_URL"
+
+      - name: Cache FFmpeg libraries
+        id: cache-ffmpeg
+        uses: actions/cache@v4
+        with:
+          path: core/ffmpeg/src/main/cpp/ffmpeg
+          key: ffmpeg-${{ steps.ffmpeg_release.outputs.tag_name }}
+          restore-keys: |
+            ffmpeg-
+
+      - name: Download and extract FFmpeg
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
+        run: |
+          echo "Downloading FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }}..."
+          
+          # 下载 FFmpeg
+          wget -q "${{ steps.ffmpeg_release.outputs.download_url }}" -O ffmpeg.tar.gz
+          
+          # 创建目标目录
+          mkdir -p core/ffmpeg/src/main/cpp
+          
+          # 解压到目标目录
+          tar -xzf ffmpeg.tar.gz -C core/ffmpeg/src/main/cpp
+          
+          # 验证解压结果
+          echo "=== Extracted FFmpeg structure ==="
+          ls -la core/ffmpeg/src/main/cpp/ffmpeg/
+          
+          # 验证版本文件
+          if [ -f core/ffmpeg/src/main/cpp/ffmpeg/as-ffmpeg-version ]; then
+            echo "FFmpeg version:"
+            cat core/ffmpeg/src/main/cpp/ffmpeg/as-ffmpeg-version
+          else
+            echo "Warning: as-ffmpeg-version file not found"
+          fi
+          
+          # 验证各个 ABI 的库文件
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            if [ -d "core/ffmpeg/src/main/cpp/ffmpeg/$abi/lib" ]; then
+              echo "=== $abi libraries ==="
+              ls -lh "core/ffmpeg/src/main/cpp/ffmpeg/$abi/lib/"
+            else
+              echo "Error: $abi libraries not found"
+              exit 1
+            fi
+          done
+          
+          # 验证头文件
+          if [ -d "core/ffmpeg/src/main/cpp/ffmpeg/include" ]; then
+            echo "=== Include files ==="
+            ls -lh core/ffmpeg/src/main/cpp/ffmpeg/include/
+          else
+            echo "Error: Include files not found"
+            exit 1
+          fi
+          
+          # 清理下载的压缩包
+          rm -f ffmpeg.tar.gz
+          
+          echo "✅ FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }} downloaded and extracted successfully"
+
+      - name: Verify FFmpeg is ready
+        run: |
+          echo "=== Verifying FFmpeg installation ==="
+          
+          FFMPEG_DIR="core/ffmpeg/src/main/cpp/ffmpeg"
+          
+          if [ ! -d "$FFMPEG_DIR" ]; then
+            echo "❌ Error: FFmpeg directory not found at $FFMPEG_DIR"
+            exit 1
+          fi
+          
+          if [ ! -f "$FFMPEG_DIR/as-ffmpeg-version" ]; then
+            echo "❌ Error: FFmpeg version file not found"
+            exit 1
+          fi
+          
+          VERSION=$(cat "$FFMPEG_DIR/as-ffmpeg-version")
+          echo "✅ FFmpeg version: $VERSION"
+          
+          # 验证所有必需的目录
+          REQUIRED_DIRS=(
+            "$FFMPEG_DIR/arm64-v8a/lib"
+            "$FFMPEG_DIR/armeabi-v7a/lib"
+            "$FFMPEG_DIR/x86_64/lib"
+            "$FFMPEG_DIR/include"
+          )
+          
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "❌ Error: Required directory not found: $dir"
+              exit 1
+            fi
+          done
+          
+          echo "✅ All FFmpeg directories verified successfully"
+
+
       # 在构建前 clean 一次即可；不要在构建后再 clean
       - name: Clean
         run: ./gradlew clean

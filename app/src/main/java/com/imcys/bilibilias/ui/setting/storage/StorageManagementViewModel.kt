@@ -34,5 +34,15 @@ class StorageManagementViewModel : ViewModel() {
         }
     }
 
+    fun cleanAppCache(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (_uiState.value is StorageManagementUIState.Success) {
+                StorageUtil.clearCache(context)
+                val storageInfoData = StorageUtil.getStorageInfoData(context)
+                _uiState.value = StorageManagementUIState.Success(storageInfoData)
+            }
+        }
+    }
+
 
 }

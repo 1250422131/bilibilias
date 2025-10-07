@@ -126,7 +126,7 @@ fun AnimatedStorageRing(
                 )
                 // APP占用设备内存百分比
                 Text(
-                    "占用设备内存${"%.1f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
+                    "占用设备内存${"%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -143,7 +143,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = totalColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text("总空间", Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text("可用空间", Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(

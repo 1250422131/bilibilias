@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.bilibilias.android.library)
+    alias(libs.plugins.bilibilias.android.ffmpegVerification)
 }
 
 android {

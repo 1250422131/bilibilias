@@ -80,6 +80,7 @@ import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASFramePlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -336,19 +337,12 @@ fun ImportSuccessScreen(state: UIState.ImportSuccess, vm: FrameExtractorViewMode
                 .aspectRatio(16 / 9f),
             shape = CardDefaults.shape
         ) {
-            // ASPlayer(Modifier.fillMaxSize())
-            HorizontalPager(state = rememberPagerState(pageCount = { state.frameList.size })) { page ->
-                Image(
-                    bitmap = state.frameList[page].asImageBitmap(),
-                    contentDescription = "帧图片",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16 / 9f)
-                        .padding(2.dp),
-                )
-            }
+            ASFramePlayer(
+                modifier = Modifier.fillMaxSize().aspectRatio(16f / 9f),
+                list = state.frameList,
+                fps = state.selectFps
+            )
         }
-
         Spacer(Modifier.height(10.dp))
         // 选择帧率组件
         SelectFpsItem(state.selectFps, state.videoFps, {

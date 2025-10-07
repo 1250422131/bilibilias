@@ -138,13 +138,22 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_getVideoFramesJNI(
         callback.on_complete();
         return;
     }
-    int64_t duration = fmt_ctx->streams[video_stream_index]->duration;
-    AVRational time_base = fmt_ctx->streams[video_stream_index]->time_base;
-    AVRational frame_rate_r = fmt_ctx->streams[video_stream_index]->avg_frame_rate;
-    double frame_rate = frame_rate_r.num > 0 && frame_rate_r.den > 0 ? (double)frame_rate_r.num / frame_rate_r.den : 25.0;
-    int64_t total_frames = (int64_t)(duration * av_q2d(time_base) * frame_rate);
-    int64_t interval = (int64_t)(frame_rate / framesPerSecond);
-    if (interval < 1) interval = 1;
+    // 获取视频时长（秒）
+    double duration_sec = 0.0;
+    if (fmt_ctx->streams[video_stream_index]->duration > 0) {
+        duration_sec = fmt_ctx->streams[video_stream_index]->duration * av_q2d(fmt_ctx->streams[video_stream_index]->time_base);
+    } else if (fmt_ctx->duration > 0) {
+        duration_sec = fmt_ctx->duration / (double)AV_TIME_BASE;
+    }
+    if (duration_sec <= 0.0) duration_sec = 1.0; // 防止异常
+    int total_target_frames = (int)(framesPerSecond * duration_sec + 0.5); // 四舍五入
+    if (total_target_frames < 1) total_target_frames = 1;
+    // 计算每一帧的目标采样时间点（秒）
+    std::vector<double> target_times;
+    for (int i = 0; i < total_target_frames; ++i) {
+        target_times.push_back(i / (double)framesPerSecond);
+    }
+    size_t next_target = 0;
     AVPacket *pkt = av_packet_alloc();
     AVFrame *frame = av_frame_alloc();
     AVFrame *rgb_frame = av_frame_alloc();
@@ -156,28 +165,41 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_getVideoFramesJNI(
     SwsContext *sws_ctx = sws_getContext(width, height, codec_ctx->pix_fmt,
                                          width, height, AV_PIX_FMT_RGB24,
                                          SWS_BILINEAR, nullptr, nullptr, nullptr);
-    int frame_index = 0;
     int saved_index = 0;
     int last_progress = 0;
-    while (av_read_frame(fmt_ctx, pkt) >= 0) {
+    bool finished = false;
+    while (av_read_frame(fmt_ctx, pkt) >= 0 && next_target < target_times.size()) {
         if (pkt->stream_index == video_stream_index) {
             if (avcodec_send_packet(codec_ctx, pkt) == 0) {
-                while (avcodec_receive_frame(codec_ctx, frame) == 0) {
-                    if (frame_index % interval == 0) {
+                while (avcodec_receive_frame(codec_ctx, frame) == 0 && next_target < target_times.size()) {
+                    // 当前帧的pts转为秒
+                    double pts_sec = 0.0;
+                    if (frame->pts != AV_NOPTS_VALUE) {
+                        pts_sec = frame->pts * av_q2d(fmt_ctx->streams[video_stream_index]->time_base);
+                    } else if (frame->best_effort_timestamp != AV_NOPTS_VALUE) {
+                        pts_sec = frame->best_effort_timestamp * av_q2d(fmt_ctx->streams[video_stream_index]->time_base);
+                    }
+                    // 采样：只要pts_sec >= 目标采样点
+                    while (next_target < target_times.size() && pts_sec >= target_times[next_target]) {
                         sws_scale(sws_ctx, frame->data, frame->linesize, 0, height, rgb_frame->data, rgb_frame->linesize);
                         callback.on_frame(buffer, width, height, saved_index);
                         saved_index++;
-                        int progress = (int)(100.0 * frame_index / total_frames);
+                        int progress = (int)(100.0 * saved_index / total_target_frames);
                         if (progress > last_progress && progress <= 100) {
                             callback.on_progress(progress);
                             last_progress = progress;
                         }
+                        next_target++;
                     }
-                    frame_index++;
+                    if (next_target >= target_times.size()) {
+                        finished = true;
+                        break;
+                    }
                 }
             }
         }
         av_packet_unref(pkt);
+        if (finished) break;
     }
     sws_freeContext(sws_ctx);
     av_free(buffer);
