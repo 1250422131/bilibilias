@@ -142,14 +142,39 @@ jobs:
           
           echo "✅ All AS FFmpeg directories verified successfully"
 
-
       # 在构建前 clean 一次即可；不要在构建后再 clean
       - name: Clean
         run: ./gradlew clean
 
       # 还原签名
       - name: Decode signing keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
+        run: |
+          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
+          echo "Keystore file created:"
+          ls -lh $RUNNER_TEMP/mxjs-debug.jks
+          
+          # 验证魔数
+          MAGIC=$(xxd -p -l 4 $RUNNER_TEMP/mxjs-debug.jks | tr -d '\n')
+          echo "Magic number: $MAGIC"
+          
+          if [ "$MAGIC" != "feedfeed" ]; then
+            echo "❌ Invalid JKS magic number"
+            exit 1
+          fi
+          
+          echo "✅ Valid JKS keystore"
+
+      # 验证 keystore 可读性
+      - name: Verify keystore
+        run: |
+          echo "=== Keystore Verification ==="
+          keytool -list -keystore $RUNNER_TEMP/mxjs-debug.jks \
+            -storepass "${{ secrets.ALPHA_KEYSTORE_PASSWORD }}" \
+            -alias "${{ secrets.ALPHA_KEY_ALIAS }}" || {
+            echo "❌ Failed to read keystore"
+            exit 1
+          }
+          echo "✅ Keystore verified"
 
       # 把密码注入环境变量
       - name: Export signing secrets
