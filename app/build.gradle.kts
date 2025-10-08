@@ -35,7 +35,21 @@ android {
             applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", "false")
-            signingConfig = signingConfigs.getByName("debug")
+
+            // 动态选择签名
+            signingConfig = if (file(System.getenv("RUNNER_TEMP") + "/release.keystore").exists()) {
+                // CI 环境
+                signingConfigs.getByName("alphaRelease").apply {
+                    storeFile = file(System.getenv("RUNNER_TEMP") + "/release.keystore")
+                    storePassword = System.getenv("ALPHA_KEYSTORE_PASSWORD")
+                    keyAlias = System.getenv("ALPHA_KEY_ALIAS")
+                    keyPassword = System.getenv("ALPHA_KEY_PASSWORD")
+                }
+            } else {
+                // 本地环境
+                signingConfigs.getByName("debug")
+            }
+
         }
 
         // 提交Google Play使用
