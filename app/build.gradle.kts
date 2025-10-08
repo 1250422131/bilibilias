@@ -39,7 +39,7 @@ android {
             // 动态选择签名
             signingConfig = if (file(System.getenv("RUNNER_TEMP") + "/mxjs-debug.keystore").exists()) {
                 // CI 环境
-                signingConfigs.getByName("alphaRelease").apply {
+                signingConfigs.getByName("debug").apply {
                     storeFile = file(System.getenv("RUNNER_TEMP") + "/mxjs-debug.keystore")
                     storePassword = System.getenv("ALPHA_KEYSTORE_PASSWORD")
                     keyAlias = System.getenv("ALPHA_KEY_ALIAS")
