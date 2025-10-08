@@ -22,6 +22,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("BILIBILIASSigningConfig") {
+            enableV3Signing = true
+            enableV4Signing = true
+        }
+    }
+
     flavorDimensions += listOf("version")
     productFlavors {
 
@@ -44,6 +51,8 @@ android {
                     storePassword = System.getenv("ALPHA_KEYSTORE_PASSWORD")
                     keyAlias = System.getenv("ALPHA_KEY_ALIAS")
                     keyPassword = System.getenv("ALPHA_KEY_PASSWORD")
+                    enableV3Signing = true
+                    enableV4Signing = true
                 }
             } else {
                 // 本地环境
@@ -65,10 +74,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig?.apply {
-                enableV3Signing = true
-                enableV4Signing = true
-            }
+            signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
