@@ -31,9 +31,14 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Download
@@ -59,12 +64,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -401,7 +408,6 @@ fun ColumnScope.AnalysisVideoCardList(
     }
 
 }
-
 
 /**
  * 检查输入
@@ -745,7 +751,8 @@ fun AnalysisVideoCard(
                 asLinkResultType.viewInfo,
                 analysisBaseInfo,
                 isBILILogin,
-                savePic = savePic
+                savePic = savePic,
+                goToUser = goToUser
             )
         }
 
@@ -935,7 +942,8 @@ fun BILIVideoCard(
     videoInfo: NetWorkResult<BILIVideoViewInfo?>,
     analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
-    savePic: suspend (String?) -> Unit
+    savePic: suspend (String?) -> Unit,
+    goToUser: (Long) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var picSaving by rememberSaveable { mutableStateOf(false) }
@@ -1018,7 +1026,9 @@ fun BILIVideoCard(
                                 }
                             }
                         }
-                        Spacer(Modifier.height(16.dp))
+
+                        AuthorInfoContent(videoInfo, goToUser)
+
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
                                 videoInfo.data?.title ?: "视频标题"
@@ -1087,6 +1097,52 @@ fun BILIVideoCard(
             }
         }
     )
+}
+@Composable
+fun AuthorInfoContent(
+    result: NetWorkResult<BILIVideoViewInfo?>,
+    goToUser: (Long) -> Unit
+) {
+    val videoInfo = result.data
+    val authorList = when {
+        videoInfo?.staff.isNullOrEmpty() -> videoInfo?.owner?.let { listOf(it) } ?: emptyList()
+        else -> videoInfo.staff.filter { it.mid != 0L }
+    }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxWidth().run {
+            if (authorList.size == 1) {
+                clickable { goToUser(authorList.first().mid) }
+            } else this
+        }
+    ) {
+        items(authorList, key = { it.mid }) { user ->
+            Surface(
+                shape = RoundedCornerShape(4.dp),
+                onClick = { goToUser(user.mid) },
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ASAsyncImage(
+                        model = user.face,
+                        contentDescription = "up头像",
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .aspectRatio(1f)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        user.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

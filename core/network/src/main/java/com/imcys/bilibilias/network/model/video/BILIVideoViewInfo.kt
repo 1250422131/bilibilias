@@ -61,6 +61,8 @@ data class BILIVideoViewInfo(
     val noCache: Boolean,
     @SerialName("owner")
     val owner: Owner,
+    @SerialName("staff")
+    val staff: List<Owner> = emptyList(),
     @SerialName("pages")
     val pages: List<Page>?,
     @SerialName("pic")

@@ -54,6 +54,9 @@ fun DownloadScreen(onToBack: () -> Unit) {
     val haptics = LocalHapticFeedback.current
 
     val context = LocalContext.current
+
+    var downloadFinishEditState by remember { mutableStateOf(false) }
+
     DownloadScaffold(
         onToBack = onToBack
     ) { paddingValues ->

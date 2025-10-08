@@ -237,7 +237,7 @@ fun BILIBILAISNavDisplay() {
                         LocalNavAnimatedContentScope.current,
                         onToBack = { backStack.removeLastOrNullSafe() },
                         goToUser = { mid ->
-                            backStack.addWithReuse(UserRoute(mid = mid, isAnalysisUser = true))
+                            backStack.add(UserRoute(mid = mid, isAnalysisUser = true))
                         },
                         onToVideoCodingInfo = {
                             backStack.addWithReuse(VideoCodingInfoRoute)

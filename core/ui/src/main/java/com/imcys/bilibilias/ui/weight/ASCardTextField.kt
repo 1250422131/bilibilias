@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.weight
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -124,9 +125,6 @@ fun ASCardTextField(
                     value = tfv,
                     onValueChange = { newValue ->
                         tfv = newValue
-                        if (clearFocusWhenValueEmptied && newValue.text.isEmpty()) {
-                            focusManager.clearFocus(force = true)
-                        }
                         onValueChange(newValue.text)
                     },
                     singleLine = true,
@@ -140,14 +138,15 @@ fun ASCardTextField(
                 ) { innerTextField ->
                     Column {
                         Spacer(Modifier.height(12.dp))
-                        if (tfv.text.isEmpty() && !hasFocus) {
-                            Text(
-                                hint,
-                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
-                                fontSize = 16.sp,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        } else {
+                        Box {
+                            if (tfv.text.isEmpty()) {
+                                Text(
+                                    hint,
+                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                             innerTextField()
                         }
                         Spacer(Modifier.height(12.dp))
@@ -164,7 +163,6 @@ fun ASCardTextField(
                         haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                         tfv = tfv.copy(text = "", selection = TextRange.Zero)
                         onValueChange("")
-                        focusManager.clearFocus()
                     }
                 )
             }

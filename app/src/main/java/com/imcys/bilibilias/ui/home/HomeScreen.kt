@@ -69,7 +69,9 @@ import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.data.ASBuildType
 import com.imcys.bilibilias.common.data.getASBuildType
+import com.imcys.bilibilias.common.utils.AppUtils
 import com.imcys.bilibilias.common.utils.AppUtils.getVersion
+import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
@@ -261,6 +263,7 @@ fun HomeContent(
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
     var bulletinDialogShow by remember { mutableStateOf(false) }
 
+    vm.initOldAppInfo(context)
 
     LazyColumn(
         Modifier
@@ -285,6 +288,10 @@ fun HomeContent(
                                         .fillMaxWidth()
                                         .height(168.dp)
                                         .maskClip(CardDefaults.shape),
+                                    onClick = {
+                                        // 跳转链接
+                                        context.openLink(item.ref)
+                                    }
                                 )
 
                                 Text(
@@ -337,6 +344,11 @@ fun HomeContent(
                     if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
                         return@forEach
                     }
+
+                    if (appUpdateInfo?.version == getVersion(context).second){
+                        return@forEach
+                    }
+
                     item {
                         val content = when (getASBuildType(BuildConfig.FLAVOR)) {
                             ASBuildType.OFFICIAL,
@@ -349,13 +361,15 @@ fun HomeContent(
                                 """.trimIndent()
                             }
 
-                            ASBuildType.ALPHA -> "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                            ASBuildType.ALPHA ->  appUpdateInfo?.feat ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
                         }
                         CommonInfoCard(
                             R.drawable.ic_info_24px,
                             "更新内容",
                             content,
-                            onClickClose = {}
+                            onClick = {
+                                context.openLink(appUpdateInfo?.url ?: "")
+                            }
                         )
                     }
                 }
@@ -416,7 +430,6 @@ fun HomeContent(
      */
     BulletinDialog(bulletinInfo, bulletinDialogShow, onClickConfirm = {
         bulletinDialogShow = false
-        vm.updateLastBulletinContent()
     })
 
 }
@@ -648,7 +661,7 @@ private fun CommonInfoCard(
     @DrawableRes iconId: Int,
     title: String = "",
     connect: String,
-    onClickClose: () -> Unit,
+    onClickClose: (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     SurfaceColorCard {
@@ -677,7 +690,7 @@ private fun CommonInfoCard(
                         modifier = Modifier.alpha(0.72f),
                     )
                     Spacer(Modifier.weight(1f))
-                    if (connect != "暂无最新公告") {
+                    if (onClickClose != null) {
                         ASIconButton(onClick = onClickClose, modifier = Modifier.size(30.dp)) {
                             Icon(
                                 Icons.Outlined.Close,

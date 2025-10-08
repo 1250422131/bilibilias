@@ -1,8 +1,10 @@
 package com.imcys.bilibilias.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.common.utils.AppUtils
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
@@ -17,15 +19,18 @@ import com.imcys.bilibilias.network.config.API.App.SSE_HOST
 import com.imcys.bilibilias.network.config.API.App.SSE_PATH
 import com.imcys.bilibilias.network.config.API.App.SSE_PORT
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldHomeBannerDataBean
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BannerConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
+import com.imcys.bilibilias.network.service.AppAPIService
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.sse.ClientSSESessionWithDeserialization
 import io.ktor.client.plugins.sse.deserialize
 import io.ktor.client.plugins.sse.sse
 import io.ktor.sse.TypedServerSentEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,7 +45,9 @@ class HomeViewModel(
     private val usersDataSource: UsersDataSource,
     private val riskManagementRepository: RiskManagementRepository,
     private val downloadManager: DownloadManager,
-    private val appSettingsRepository: AppSettingsRepository
+    private val appSettingsRepository: AppSettingsRepository,
+    private val appAPIService: AppAPIService
+
 ) : ViewModel() {
 
     data class UIState(
@@ -88,6 +95,51 @@ class HomeViewModel(
         showBILIUserInfo()
         initDownloadList()
         requestSSEEvent()
+    }
+
+    fun initOldAppInfo(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // 旧版捐助信息
+            val bannerInfo = async {
+                appAPIService.getAppOldBanner().onSuccess {
+                    _bannerList.value = it.textList.mapIndexed { index, string ->
+                        BannerConfigInfo(
+                            title = string,
+                            url = it.imgUrlList.getOrNull(index) ?: "",
+                            ref = it.dataList.getOrNull(index) ?: "",
+                            id = index,
+                            sort = index
+                        )
+                    }
+                }
+            }
+
+            val updateInfo = async {
+                appAPIService.getAppOldUpdateInfo(AppUtils.getVersion(context = context).second)
+                    .onSuccess {
+                        _appUpdateInfo.value = AppUpdateConfigInfo(
+                            id = 30,
+                            version = it.version,
+                            url = it.url,
+                            feat = it.gxnotice,
+                            fix = it.gxnotice,
+                            remark = "",
+                            forcedUpdate = true,
+                            publishDateTime = "最近"
+                        )
+
+                        _bulletinInfo.value = BulletinConfigInfo(
+                            id = 20,
+                            content = it.notice,
+                            publishDateTime = "最近"
+                        )
+                    }
+            }
+            bannerInfo.start()
+            updateInfo.start()
+
+
+        }
     }
 
     private fun requestSSEEvent() {

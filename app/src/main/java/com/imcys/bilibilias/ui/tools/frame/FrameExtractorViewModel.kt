@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import androidx.core.graphics.createBitmap
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 
@@ -43,6 +44,12 @@ class FrameExtractorViewModel(
             val videoFps: Int,
             val selectFps: Int = 1
         ) : UIState
+
+        data class Exporting(
+            val progress: Float = 0f,
+            val exportPath: String = "",
+        ) : UIState
+
     }
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Default)
@@ -159,6 +166,34 @@ class FrameExtractorViewModel(
         if (File(cacheDir).exists()) {
             // 删除旧文件
             File(cacheDir).deleteRecursively()
+        }
+    }
+
+
+    fun exportFrameToImage(context: Context, exportUri: String) {
+        if (_uiState.value is UIState.ImportSuccess) {
+            val oldUIState = (_uiState.value as UIState.ImportSuccess).copy()
+            val uiState = _uiState.value as UIState.ImportSuccess
+            viewModelScope.launch(Dispatchers.IO) {
+                val treeUri = exportUri.toUri()
+                val docFile = DocumentFile.fromTreeUri(
+                    context, treeUri
+                )
+                uiState.frameList.forEachIndexed { index, bitmap ->
+                    _uiState.value = UIState.Exporting(
+                        progress = (index + 1) / uiState.frameList.size.toFloat(),
+                        exportPath = exportUri
+                    )
+                    val fileName = "frame_${index + 1}.png"
+                    val file = docFile?.createFile("image/png", fileName)
+                    file?.uri?.let { fileUri ->
+                        contentResolver.openOutputStream(fileUri)?.use { out ->
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                        }
+                    }
+                }
+                _uiState.value = oldUIState
+            }
         }
     }
 

@@ -1,7 +1,9 @@
 package com.imcys.bilibilias.ui.tools.frame
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,10 +22,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
@@ -58,7 +57,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -67,9 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavKey
-import coil3.Bitmap
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel.UIState
@@ -81,7 +77,8 @@ import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASFramePlayer
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -89,7 +86,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 data object FrameExtractorRoute : NavKey
 
-
+private const val AWAIT_TIME = 2000L
 @Composable
 fun FrameExtractorScreen(
     frameExtractorRoute: FrameExtractorRoute,
@@ -317,6 +314,24 @@ private fun FrameExtractorContent(
                     )
                 }
             }
+
+            is UIState.Exporting -> {
+                Column(
+                    Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(10.dp))
+                    CircularWavyProgressIndicator(
+                        progress = { state.progress },
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "正在导出中，请不要退出...${(state.progress * 100).toInt()}%",
+                        fontSize = 16.sp
+                    )
+                }
+            }
         }
     }
 
@@ -327,6 +342,7 @@ private fun FrameExtractorContent(
 fun ImportSuccessScreen(state: UIState.ImportSuccess, vm: FrameExtractorViewModel) {
     // 协程
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
 
@@ -338,7 +354,8 @@ fun ImportSuccessScreen(state: UIState.ImportSuccess, vm: FrameExtractorViewMode
             shape = CardDefaults.shape
         ) {
             ASFramePlayer(
-                modifier = Modifier.fillMaxSize().aspectRatio(16f / 9f),
+                modifier = Modifier
+                    .fillMaxSize(),
                 list = state.frameList,
                 fps = state.selectFps
             )
@@ -351,7 +368,9 @@ fun ImportSuccessScreen(state: UIState.ImportSuccess, vm: FrameExtractorViewMode
             }
         }, 1..state.videoFps)
         Spacer(Modifier.height(10.dp))
-        ExportFpsButton()
+        ExportFpsButton(onExport = {
+            vm.exportFrameToImage(context = context,it)
+        })
     }
 }
 
@@ -370,11 +389,12 @@ private fun formatDuration(duration: Int): String {
 
 
 @Composable
-fun ExportFpsButton() {
+fun ExportFpsButton(onExport: (String) -> Unit = {}) {
+    var showExportDialog by remember { mutableStateOf(false) }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Button(
             modifier = Modifier,
-            onClick = { }
+            onClick = { showExportDialog = true }
         ) {
             Text(
                 "导出逐帧图片",
@@ -382,15 +402,64 @@ fun ExportFpsButton() {
             )
         }
     }
+
+    ExportDialog(showExportDialog,onDismiss = {
+        showExportDialog = false
+    }, onSelectUri = { uri ->
+        showExportDialog = false
+        onExport(uri)
+    })
+
+}
+
+@Composable
+fun ExportDialog(
+    showExportDialog: Boolean,
+    onDismiss: (() -> Unit)? = null,
+    onSelectUri: (String) -> Unit = {}
+) {
+    val context = LocalContext.current
+    var selectUri by remember { mutableStateOf("") }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectUri = it.toString()
+            onSelectUri(selectUri)
+        }
+    }
+
+    ASAlertDialog(
+        showState = showExportDialog,
+        title = { Text("选择导出位置") },
+        text = {
+            Text("请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。")
+        },
+        confirmButton = {
+            Button(onClick = { launcher.launch(null) }) {
+                Text("选择位置")
+            }
+        },
+        onDismiss = onDismiss,
+        dismissButton = {
+            Button(onClick = { onDismiss?.invoke() }) {
+                Text("取消")
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SelectFpsItem(
-    fps: Int, totalFps: Int,
+    fps: Int,
+    totalFps: Int,
     updateFps: (Int) -> Unit,
     valueRange: IntRange,
 ) {
+    var currentFps by remember { mutableIntStateOf(fps) }
+    val scope = rememberCoroutineScope()
+    var updateJob by remember { mutableStateOf<Job?>(null) }
 
     Column(
         Modifier
@@ -407,21 +476,36 @@ fun SelectFpsItem(
             ) {
 
                 Button(
-                    enabled = fps - 1 >= valueRange.start,
+                    enabled = currentFps - 1 >= valueRange.start,
                     shape = CardDefaults.shape,
                     onClick = {
-                        updateFps(fps - 1)
+                        updateJob?.cancel()
+                        updateJob = scope.launch {
+                            currentFps = currentFps - 1
+                            delay(AWAIT_TIME)
+                            updateFps(currentFps)
+                        }
                     }
                 ) {
                     Text("-", fontSize = 20.sp)
                 }
 
                 BasicTextField(
-                    value = "$fps",
+                    value = "$currentFps",
                     onValueChange = {
                         val num = it.toIntOrNull()
-                        if (num != null && num in valueRange.start..valueRange.endInclusive) {
-                            updateFps(num)
+                        val localValue = if (num != null && num > valueRange.endInclusive) {
+                            valueRange.endInclusive
+                        } else if (num != null && num < valueRange.start) {
+                            valueRange.start
+                        } else {
+                            num ?: 1
+                        }
+                        updateJob?.cancel()
+                        updateJob = scope.launch {
+                            currentFps = localValue
+                            delay(AWAIT_TIME)
+                            updateFps(localValue)
                         }
                     },
                     textStyle = LocalTextStyle.current.copy(
@@ -449,7 +533,12 @@ fun SelectFpsItem(
                     enabled = fps <= valueRange.endInclusive - 1,
                     shape = CardDefaults.shape,
                     onClick = {
-                        updateFps(fps + 1)
+                        updateJob?.cancel()
+                        updateJob = scope.launch {
+                            currentFps = currentFps + 1
+                            delay(AWAIT_TIME)
+                            updateFps(currentFps)
+                        }
                     }
                 ) {
                     Text("+", fontSize = 20.sp)

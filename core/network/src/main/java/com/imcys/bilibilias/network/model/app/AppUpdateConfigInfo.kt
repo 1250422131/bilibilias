@@ -9,6 +9,7 @@ data class AppUpdateConfigInfo(
     val feat: String,
     val fix: String,
     val remark: String,
+    val url: String = "",
     val forcedUpdate: Boolean,
     val publishDateTime: String
 )

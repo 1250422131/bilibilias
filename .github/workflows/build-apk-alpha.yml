@@ -33,7 +33,7 @@ jobs:
         run: chmod +x ./gradlew
 
         # 获取最新的 AS-FFmpeg 版本信息
-      - name: Get latest FFmpeg release info
+      - name: Get latest AS FFmpeg release info
         id: ffmpeg_release
         run: |
           RELEASE_INFO=$(curl -s https://api.github.com/repos/1250422131/bilibilias-ffmpeg/releases/latest)
@@ -43,10 +43,10 @@ jobs:
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
           
-          echo "Latest FFmpeg version: $TAG_NAME"
+          echo "Latest AS FFmpeg version: $TAG_NAME"
           echo "Download URL: $DOWNLOAD_URL"
 
-      - name: Cache FFmpeg libraries
+      - name: Cache AS FFmpeg libraries
         id: cache-ffmpeg
         uses: actions/cache@v4
         with:
@@ -55,12 +55,12 @@ jobs:
           restore-keys: |
             ffmpeg-
 
-      - name: Download and extract FFmpeg
+      - name: Download and extract AS FFmpeg
         if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         run: |
-          echo "Downloading FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }}..."
+          echo "Downloading AS FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }}..."
           
-          # 下载 FFmpeg
+          # 下载 AS FFmpeg
           wget -q "${{ steps.ffmpeg_release.outputs.download_url }}" -O ffmpeg.tar.gz
           
           # 创建目标目录
@@ -70,7 +70,7 @@ jobs:
           tar -xzf ffmpeg.tar.gz -C core/ffmpeg/src/main/cpp
           
           # 验证解压结果
-          echo "=== Extracted FFmpeg structure ==="
+          echo "=== Extracted AS FFmpeg structure ==="
           ls -la core/ffmpeg/src/main/cpp/ffmpeg/
           
           # 验证版本文件
@@ -104,26 +104,26 @@ jobs:
           # 清理下载的压缩包
           rm -f ffmpeg.tar.gz
           
-          echo "✅ FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }} downloaded and extracted successfully"
+          echo "✅ AS FFmpeg ${{ steps.ffmpeg_release.outputs.tag_name }} downloaded and extracted successfully"
 
-      - name: Verify FFmpeg is ready
+      - name: Verify AS FFmpeg is ready
         run: |
           echo "=== Verifying FFmpeg installation ==="
           
           FFMPEG_DIR="core/ffmpeg/src/main/cpp/ffmpeg"
           
           if [ ! -d "$FFMPEG_DIR" ]; then
-            echo "❌ Error: FFmpeg directory not found at $FFMPEG_DIR"
+            echo "❌ Error: AS FFmpeg directory not found at $FFMPEG_DIR"
             exit 1
           fi
           
           if [ ! -f "$FFMPEG_DIR/as-ffmpeg-version" ]; then
-            echo "❌ Error: FFmpeg version file not found"
+            echo "❌ Error: AS FFmpeg version file not found"
             exit 1
           fi
           
           VERSION=$(cat "$FFMPEG_DIR/as-ffmpeg-version")
-          echo "✅ FFmpeg version: $VERSION"
+          echo "✅ AS FFmpeg version: $VERSION"
           
           # 验证所有必需的目录
           REQUIRED_DIRS=(
@@ -140,7 +140,7 @@ jobs:
             fi
           done
           
-          echo "✅ All FFmpeg directories verified successfully"
+          echo "✅ All AS FFmpeg directories verified successfully"
 
 
       # 在构建前 clean 一次即可；不要在构建后再 clean

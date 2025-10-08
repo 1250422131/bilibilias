@@ -7,5 +7,6 @@ data class BannerConfigInfo(
     val id: Int,
     val title: String,
     val url: String,
+    val ref : String = "",
     val sort: Int,
 )

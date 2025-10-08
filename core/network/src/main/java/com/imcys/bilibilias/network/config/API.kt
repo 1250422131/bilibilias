@@ -91,5 +91,7 @@ object API {
         const val OLD_BASE_URL = "https://$SSE_HOST/"
 
         const val OLD_APP_FUNCTION_URL = OLD_BASE_URL + "app/AppFunction.php"
+
+        const val OLD_APP_INFO_URL: String = OLD_BASE_URL + "app/bilibilias.php"
     }
 }

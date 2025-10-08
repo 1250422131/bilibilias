@@ -1,0 +1,18 @@
+package com.imcys.bilibilias.network.model.app
+
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+data class AppOldHomeBannerDataBean (
+    val code: Int = 0,
+    val time: Int = 0,
+    val imgUrlList: List<String> = emptyList(),
+    val textList: List<String> = emptyList(),
+    val typeList: List<String> = emptyList(),
+    val dataList: List<String> = emptyList(),
+    val successToast: List<String> = emptyList(),
+    val failToast: List<String> = emptyList(),
+    val postData: List<String> = emptyList(),
+    val token: List<Int> = emptyList()
+)

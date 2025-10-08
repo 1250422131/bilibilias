@@ -62,7 +62,8 @@ fun ASFramePlayer(modifier: Modifier, list: List<Bitmap>, fps: Int) {
             "${currentFrame + 1} / $totalFrames",
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 10.dp, top = 10.dp)
+                .padding(start = 10.dp, top = 10.dp),
+            color = MaterialTheme.colorScheme.primary
         )
         Column(
             Modifier
@@ -107,7 +108,8 @@ fun ASFramePlayer(modifier: Modifier, list: List<Bitmap>, fps: Int) {
             // 进度显示
             Text(
                 text = "${((currentFrame + 1) / fps.toFloat()).format1()}s / ${duration}s",
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
