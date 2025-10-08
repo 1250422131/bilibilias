@@ -65,6 +65,11 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig?.apply {
+                enableV3Signing = true
+                enableV4Signing = true
+            }
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
