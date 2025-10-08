@@ -149,7 +149,7 @@ jobs:
       # 还原签名
       - name: Decode signing keystore
         run: |
-          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
+          printf '%s' "${{ secrets.ALPHA_KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
           echo "Keystore file created:"
           ls -lh $RUNNER_TEMP/mxjs-debug.jks
           
