@@ -149,7 +149,7 @@ jobs:
 
       # 还原签名
       - name: Decode signing keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
 
       # 把密码注入环境变量
       - name: Export signing secrets
