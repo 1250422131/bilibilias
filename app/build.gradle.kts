@@ -35,6 +35,7 @@ android {
         create("official") {
             dimension = "version"
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
         }
 
         create("alpha") {
@@ -74,7 +75,6 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
