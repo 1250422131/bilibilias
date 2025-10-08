@@ -35,12 +35,12 @@ android {
             applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", "false")
-
-            // 动态选择签名
-            signingConfig = if (file(System.getenv("RUNNER_TEMP") + "/mxjs-debug.jks").exists()) {
+            // 动态签名配置
+            val runnerTemp = System.getenv("RUNNER_TEMP")
+            signingConfig = if (runnerTemp != null && file("$runnerTemp/mxjs-debug.jks").exists()) {
                 // CI 环境
-                signingConfigs.getByName("debug").apply {
-                    storeFile = file(System.getenv("RUNNER_TEMP") + "/mxjs-debug.jks")
+                signingConfigs.create("ci-alpha").apply {
+                    storeFile = file("$runnerTemp/mxjs-debug.jks")
                     storePassword = System.getenv("ALPHA_KEYSTORE_PASSWORD")
                     keyAlias = System.getenv("ALPHA_KEY_ALIAS")
                     keyPassword = System.getenv("ALPHA_KEY_PASSWORD")
