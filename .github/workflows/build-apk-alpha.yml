@@ -150,19 +150,7 @@ jobs:
       - name: Decode signing keystore
         run: |
           printf '%s' "${{ secrets.ALPHA_KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
-          echo "Keystore file created:"
-          ls -lh $RUNNER_TEMP/mxjs-debug.jks
-          
-          # 验证魔数
-          MAGIC=$(xxd -p -l 4 $RUNNER_TEMP/mxjs-debug.jks | tr -d '\n')
-          echo "Magic number: $MAGIC"
-          
-          if [ "$MAGIC" != "feedfeed" ]; then
-            echo "❌ Invalid JKS magic number"
-            exit 1
-          fi
-          
-          echo "✅ Valid JKS keystore"
+
 
       # 验证 keystore 可读性
       - name: Verify keystore
