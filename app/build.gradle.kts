@@ -68,6 +68,7 @@ android {
             applicationIdSuffix = BILIBILIASBuildType.BETA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
             buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
         }
     }
 
@@ -146,6 +147,9 @@ dependencies {
     // Shizuku
     implementation(libs.shizuku.api)
     implementation(libs.shizuku.provider)
+
+    // xposed
+    compileOnly(libs.xposed.api)
 
     // 预览工具
     androidTestImplementation(platform(libs.androidx.compose.bom))

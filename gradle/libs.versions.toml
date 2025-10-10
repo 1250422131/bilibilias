@@ -4,7 +4,7 @@ kotlin = "2.2.20"
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.9.3"
 activityCompose = "1.11.0"
-composeBom = "2025.09.01"
+composeBom = "2025.10.00"
 androidTools = "31.13.0"
 androidDesugarJdkLibs = "2.1.5"
 koinBom = "4.1.1"
@@ -31,7 +31,8 @@ palayAppUpdate = "2.1.0"
 playAppReview = "2.0.2"
 kolor = "3.0.1"
 deviceCompat = "2.0"
-shizuku= "13.1.5"
+shizuku = "13.1.5"
+xposed = "82"
 
 
 [libraries]
@@ -102,6 +103,7 @@ device-compat = { module = "com.github.getActivity:DeviceCompat", version.ref = 
 shizuku-api = { module = "dev.rikka.shizuku:api", version.ref = "shizuku" }
 shizuku-provider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku" }
 
+xposed-api = { module = "de.robv.android.xposed:api", version.ref = "xposed" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
@@ -22,7 +23,7 @@ class GooglePlayAppUpdateManage(
     context: Context,
     private val appSettingsRepository: AppSettingsRepository
 ) : ASAppUpdateManage() {
-    private lateinit var appUpdateManager: AppUpdateManager
+    private var appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context)
 
     private var lastAppUpdateType = AppUpdateType.FLEXIBLE
 
