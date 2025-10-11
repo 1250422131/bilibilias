@@ -53,8 +53,8 @@ class CookieLoginViewModel(
                     )
                 }
         )
-        asCookiesStorage.updateAllCookies(currentCookies)
         viewModelScope.launch {
+            asCookiesStorage.updateAllCookies(currentCookies)
             qrCodeLoginRepository.getLoginUserInfo(LoginPlatform.WEB).collect {
                 _loginUserInfoState.value = it
             }

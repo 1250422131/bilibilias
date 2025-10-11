@@ -17,6 +17,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -104,6 +105,8 @@ class MainActivity : ComponentActivity() {
                             googlePlaySkipVersionListener.invoke()
                             showSkipVersion.value = false
                         }
+                    }, onDismiss = {
+                        showSkipVersion.value = false
                     })
                 }
             }
@@ -127,12 +130,13 @@ class MainActivity : ComponentActivity() {
                 title = { Text("跳过更新") },
                 text = { Text("如果您暂时不想更新，可以跳过此版本，等下个版本再进行更新。") },
                 confirmButton = {
-                    Button(onClick = onConfirm) {
+                    TextButton(onClick = onConfirm) {
                         Text("跳过此版本")
                     }
+
                 },
                 dismissButton = {
-                    Button(onClick = onDismiss) {
+                    TextButton(onClick = onDismiss) {
                         Text("下次再说")
                     }
                 }
@@ -215,7 +219,7 @@ class MainActivity : ComponentActivity() {
                 // 跳过版本号监听
                 googlePlaySkipVersionListener = {
                     lifecycleScope.launch(Dispatchers.IO) {
-                       appSettingsRepository.updateLastSkipUpdateVersionCode(getUpdateVersion())
+                        appSettingsRepository.updateLastSkipUpdateVersionCode(getUpdateVersion())
                     }
                 }
                 // 检查更新
@@ -229,6 +233,7 @@ class MainActivity : ComponentActivity() {
             // handle callback
             if (result.resultCode != RESULT_OK) {
                 // 详见：https://developer.android.google.cn/guide/playcore/in-app-updates/kotlin-java?hl=zh-cn#setup
+                showSkipVersion.value = true
             }
         }
 
@@ -237,18 +242,6 @@ class MainActivity : ComponentActivity() {
      */
     private fun GooglePlayAppUpdateManage.handleGooglePlayUpdate() {
         lifecycleScope.launch(Dispatchers.IO) {
-            // 灵活更新，非必须
-            if (checkAppFlexibleUpdate()) {
-                registerFlexibleUpdateListener { state ->
-                    if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                        showGooglePlayUpdateSnackBar()
-                    }
-                }
-                startUpdate(appUpdateLauncher, updateFinish = {
-                    showGooglePlayUpdateSnackBar()
-                })
-                return@launch
-            }
             if (checkAppImmediateUpdate()) {
                 startUpdate(appUpdateLauncher, updateFinish = {
                     showGooglePlayUpdateSnackBar()

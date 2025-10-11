@@ -170,7 +170,7 @@ fun BILIBILAISNavDisplay() {
                             backStack.addWithReuse(AnalysisRoute())
                         },
                         goToDownloadPage = {
-                            backStack.addWithReuse(DownloadRoute)
+                            backStack.addWithReuse(DownloadRoute())
                         },
                         goToSetting = {
                             backStack.addWithReuse(SettingRoute)
@@ -245,7 +245,9 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<DownloadRoute> {
-                    DownloadScreen(onToBack = { backStack.removeLastOrNullSafe() })
+                    DownloadScreen(
+                        it,
+                        onToBack = { backStack.removeLastOrNullSafe() })
                 }
                 entry<SettingRoute> {
                     SettingScreen(
@@ -367,7 +369,10 @@ fun BILIBILAISNavDisplay() {
                 entry<StorageManagementRoute> {
                     StorageManagementScreen(
                         route = it,
-                        onToBack = { backStack.removeLastOrNullSafe() }
+                        onToBack = { backStack.removeLastOrNullSafe() },
+                        onToDownloadList = {
+                            backStack.add(DownloadRoute(1))
+                        }
                     )
                 }
             }

@@ -402,25 +402,7 @@ class DownloadManager(
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
 
-                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                    ?: throw IllegalStateException("Failed to insert into MediaStore")
-
-                try {
-                    resolver.openOutputStream(uri, "w")?.use { out ->
-                        inputStream.copyTo(out)
-                        out.flush()
-                    } ?: throw IllegalStateException("Failed to open output stream for $uri")
-                } catch (e: Exception) {
-                    // 写失败时删除占位
-                    runCatching { resolver.delete(uri, null, null) }
-                    throw e
-                } finally {
-                    // 标记写入完成
-                    val done = ContentValues().apply {
-                        put(MediaStore.Images.Media.IS_PENDING, 0)
-                    }
-                    resolver.update(uri, done, null, null)
-                }
+                resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
             } else {
                 // Android 9 及以下：写入公共目录 + 扫描

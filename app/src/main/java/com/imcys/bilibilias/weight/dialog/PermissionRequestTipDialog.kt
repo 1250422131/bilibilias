@@ -6,6 +6,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
 @Composable
@@ -31,12 +32,12 @@ fun PermissionRequestTipDialog(
             title = { Text(title) },
             text = { Text(message) },
             confirmButton = {
-                Button(onClick = onConfirm) {
+                TextButton(onClick = onConfirm) {
                     Text(confirmText)
                 }
             },
             dismissButton = {
-                Button(onClick = onDismiss) {
+                TextButton(onClick = onDismiss) {
                     Text(dismissText)
                 }
             }

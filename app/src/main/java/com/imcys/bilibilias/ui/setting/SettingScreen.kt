@@ -121,15 +121,15 @@ fun SettingScreen(
 //                }
 //            }
 
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.DriveFileRenameOutline),
-                    text = "命名规则",
-                    descriptionText = "使用自定义规则进行视频命名",
-                    onClick = {
-                    }
-                )
-            }
+//            item {
+//                BaseSettingsItem(
+//                    painter = rememberVectorPainter(Icons.Outlined.DriveFileRenameOutline),
+//                    text = "命名规则",
+//                    descriptionText = "使用自定义规则进行视频命名",
+//                    onClick = {
+//                    }
+//                )
+//            }
 
             item {
                 BaseSettingsItem(
@@ -259,20 +259,20 @@ fun SettingScreen(
 //                )
 //            }
 
-            item {
-                CategorySettingsItem(
-                    text = "投诉与反馈"
-                )
-            }
-
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.MoodBad),
-                    text = "投诉",
-                    descriptionText = "向BILIBILIAS投诉违规行为",
-                    onClick = onToComplaint
-                )
-            }
+//            item {
+//                CategorySettingsItem(
+//                    text = "投诉与反馈"
+//                )
+//            }
+//
+//            item {
+//                BaseSettingsItem(
+//                    painter = rememberVectorPainter(Icons.Outlined.MoodBad),
+//                    text = "投诉",
+//                    descriptionText = "向BILIBILIAS投诉违规行为",
+//                    onClick = onToComplaint
+//                )
+//            }
 
 
 
@@ -292,14 +292,14 @@ fun SettingScreen(
 
             }
 
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.Extension),
-                    text = "扩展能力",
-                    descriptionText = "提交反馈时记得带上这个！",
-                    onClick = onToSystemExpand
-                )
-            }
+//            item {
+//                BaseSettingsItem(
+//                    painter = rememberVectorPainter(Icons.Outlined.Extension),
+//                    text = "扩展能力",
+//                    descriptionText = "提交反馈时记得带上这个！",
+//                    onClick = onToSystemExpand
+//                )
+//            }
 
         }
     }

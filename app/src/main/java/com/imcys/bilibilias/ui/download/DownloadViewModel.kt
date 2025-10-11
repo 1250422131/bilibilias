@@ -103,6 +103,24 @@ class DownloadViewModel(
 
     }
 
+    fun downloadSelectedTasks(segments: List<DownloadSegment>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            segments.forEach { segment->
+                runCatching {
+                    val savePath = segment.savePath
+                    if (savePath.startsWith("content://")) {
+                        val uri = savePath.toUri()
+                        contentResolver.delete(uri, null, null)
+                    } else {
+                        val file = File(savePath)
+                        if (!file.exists()) {} else { file.delete() }
+                    }
+                }
+                downloadTaskRepository.deleteSegment(segment.segmentId)
+            }
+        }
+    }
+
     fun deleteDownloadSegment(context: Context, segment: DownloadSegment) {
         viewModelScope.launch(Dispatchers.IO) {
             var deleteSuccess = false

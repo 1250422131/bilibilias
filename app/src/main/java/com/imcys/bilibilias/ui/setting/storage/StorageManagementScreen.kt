@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.setting.storage
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,17 +46,18 @@ data object StorageManagementRoute : NavKey
 @Composable
 fun StorageManagementScreen(
     route: StorageManagementRoute,
-    onToBack: () -> Unit
+    onToBack: () -> Unit,
+    onToDownloadList: () -> Unit,
 ) {
     StorageManagementScaffold(
         onToBack = onToBack,
     ) {
-        StorageManagementContent(it)
+        StorageManagementContent(it, onToDownloadList)
     }
 }
 
 @Composable
-fun StorageManagementContent(paddingValues: PaddingValues) {
+fun StorageManagementContent(paddingValues: PaddingValues, onToDownloadList: () -> Unit) {
     val content = LocalContext.current
     val vm = koinViewModel<StorageManagementViewModel>()
     val uiState by vm.uiState.collectAsState()
@@ -74,11 +74,12 @@ fun StorageManagementContent(paddingValues: PaddingValues) {
         }
 
         is StorageManagementViewModel.StorageManagementUIState.Success -> {
-            StorageManagementSuccessScreen(paddingValues
-                , state.storageInfoData,
+            StorageManagementSuccessScreen(
+                paddingValues, state.storageInfoData,
                 onCleanCache = {
                     vm.cleanAppCache(content)
-                }
+                },
+                onToDownloadList
             )
         }
     }
@@ -88,7 +89,8 @@ fun StorageManagementContent(paddingValues: PaddingValues) {
 fun StorageManagementSuccessScreen(
     paddingValues: PaddingValues,
     data: StorageInfoData,
-    onCleanCache:()->Unit
+    onCleanCache: () -> Unit,
+    onToDownloadList: () -> Unit
 ) {
     Column(
         Modifier
@@ -115,7 +117,8 @@ fun StorageManagementSuccessScreen(
         StorageContent(
             title = "缓存视频",
             dataNumStr = "${StorageUtil.formatSize(data.downloadBytes)}",
-            description = "已下载的视频文件大小"
+            description = "已下载的视频文件大小",
+            onClick = onToDownloadList,
         )
 
 

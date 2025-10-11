@@ -17,8 +17,8 @@ android {
     defaultConfig {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias"
-        versionCode = 300
-        versionName = "3.0.0-PlumBlossom-6"
+        versionCode = 302
+        versionName = "3.0.0-PlumBlossom-8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

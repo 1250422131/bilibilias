@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.update
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -72,15 +73,11 @@ class GooglePlayAppUpdateManage(
                 }
 
                 // 如果有更新，启动更新
-                if (appUpdateInfo.updateAvailability()
-                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                ) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        activityResultLauncher,
-                        AppUpdateOptions.newBuilder(lastAppUpdateType).build()
-                    )
-                }
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    activityResultLauncher,
+                    AppUpdateOptions.newBuilder(lastAppUpdateType).build()
+                )
             }
     }
 
@@ -100,27 +97,21 @@ class GooglePlayAppUpdateManage(
         return suspendCancellableCoroutine { cont ->
             appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
 
-                // 如果用户选择了跳过该版本更新，则不再提示
-                if (lastSkipUpdateVersionCode == appUpdateInfo.availableVersionCode()) {
-                    cont.resumeWith(Result.success(false))
-                    return@addOnSuccessListener
-                }
+                apply {
+                    val versionCode = appUpdateInfo.availableVersionCode()
+                    if (lastSkipUpdateVersionCode == versionCode) {
+                        cont.resumeWith(Result.success(false))
+                        return@apply
+                    }
 
-                // 灵活版本3天内不提示更新
-                if (updateType == AppUpdateType.FLEXIBLE && (appUpdateInfo.clientVersionStalenessDays
-                        ?: -1) < 3
-                ) {
-                    cont.resumeWith(Result.success(false))
-                    return@addOnSuccessListener
-                }
-
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(updateType)
-                ) {
-                    lastAppUpdateType = updateType
-                    cont.resumeWith(Result.success(true))
-                } else {
-                    cont.resumeWith(Result.success(false))
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                        && appUpdateInfo.isUpdateTypeAllowed(updateType)
+                    ) {
+                        lastAppUpdateType = updateType
+                        cont.resumeWith(Result.success(true))
+                    } else {
+                        cont.resumeWith(Result.success(false))
+                    }
                 }
             }
         }

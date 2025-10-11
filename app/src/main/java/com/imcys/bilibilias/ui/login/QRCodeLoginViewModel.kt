@@ -45,6 +45,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.core.graphics.createBitmap
+import java.io.File
+import java.io.FileOutputStream
 import java.net.URLEncoder
 
 class QRCodeLoginViewModel(
@@ -229,39 +231,42 @@ class QRCodeLoginViewModel(
 
 
     private fun saveImageWithMediaStore(bitmap: Bitmap, context: Context) {
-
         val borderWidth = 20 // 白色边框宽度
         val bitmapWithBorder = addWhiteBorder(bitmap, borderWidth)
 
         val fileName = "BILIBILIAS_LOGIN_QR.jpeg"
         val relativePath = "${Environment.DIRECTORY_PICTURES}/BILIBILIAS"
 
-        // 查询是否已存在同名文件
-        val selection = "${MediaStore.MediaColumns.DISPLAY_NAME}=? AND ${MediaStore.MediaColumns.RELATIVE_PATH}=?"
-        val selectionArgs = arrayOf(fileName, relativePath)
-        val uriQuery = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val cursor = contentResolver.query(uriQuery, arrayOf(MediaStore.MediaColumns._ID), selection, selectionArgs, null)
-
-        val uri = if (cursor != null && cursor.moveToFirst()) {
-            // 已存在则获取其uri
-            val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
-            cursor.close()
-            Uri.withAppendedPath(uriQuery, id.toString())
-        } else {
-            cursor?.close()
-            // 不存在则新建
+        val uri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                 put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
             }
             contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        } else {
+            val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val dir = File(picturesDir, "BILIBILIAS")
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, fileName)
+            try {
+                FileOutputStream(file).use { fos ->
+                    bitmapWithBorder.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                }
+                // 通知媒体库刷新
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.DATA, file.absolutePath)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                }
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                null // 已经保存到文件系统
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
 
-        if (uri != null) {
-            contentResolver.openOutputStream(uri, "rwt")?.use { outputStream ->
-                bitmapWithBorder.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            }
+        if (uri != null || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "保存失败", Toast.LENGTH_SHORT).show()
@@ -370,7 +375,7 @@ class QRCodeLoginViewModel(
     /**
      * 保存Cookie
      */
-    private fun handleHeaderCookie(responseHeader: Set<Map.Entry<String, List<String>>>?) {
+    private suspend fun handleHeaderCookie(responseHeader: Set<Map.Entry<String, List<String>>>?) {
         responseHeader?.forEach {
             if (it.key == "Set-Cookie") {
                 currentCookies.clear()

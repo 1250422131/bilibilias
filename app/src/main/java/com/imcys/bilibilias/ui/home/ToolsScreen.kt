@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.tools.donate.DonateRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
@@ -89,16 +90,18 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
             })
         }
 
-        item(
-            span = { GridItemSpan(2) }
-        ) {
-            Text("其他")
-        }
+        if (!BuildConfig.ENABLE_PLAY_APP_MODE) {
+            item(
+                span = { GridItemSpan(2) }
+            ) {
+                Text("其他")
+            }
 
-        items(otherTools) {
-            ToolCard(it, onClick = {
-                onToPage.invoke(it.navKey)
-            })
+            items(otherTools) {
+                ToolCard(it, onClick = {
+                    onToPage.invoke(it.navKey)
+                })
+            }
         }
     }
 

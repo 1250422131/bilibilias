@@ -5,5 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-object DownloadRoute: NavKey
+data class DownloadRoute(
+    val defaultListIndex: Int = 0,
+): NavKey
 

@@ -12,6 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.ExperimentalSerializationApi
 
 
@@ -24,6 +26,8 @@ class AsCookiesStorage(
     private val daoCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
     private suspend fun isLogin() = usersDataSource.isLogin()
     private var isInit = false
+    // 添加协程的 Mutex 锁
+    private val cookieMutex = Mutex()
 
     init {
         // 初始化当前Cookie
@@ -45,18 +49,20 @@ class AsCookiesStorage(
             // 登录
             val dataBaseCookies =
                 biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
-            dataBaseCookies.forEach {
-                cookies.removeAll { cookie -> cookie.name == it.name }
-                val cookie = Cookie(
-                    name = it.name,
-                    value = it.value,
-                    encoding = CookieEncoding.valueOf(it.encoding.name),
-                    domain = it.domain,
-                    path = it.path,
-                    secure = it.secure,
-                    httpOnly = it.httpOnly
-                )
-                cookies.add(cookie)
+            cookieMutex.withLock {
+                dataBaseCookies.forEach {
+                    cookies.removeAll { cookie -> cookie.name == it.name }
+                    val cookie = Cookie(
+                        name = it.name,
+                        value = it.value,
+                        encoding = CookieEncoding.valueOf(it.encoding.name),
+                        domain = it.domain,
+                        path = it.path,
+                        secure = it.secure,
+                        httpOnly = it.httpOnly
+                    )
+                    cookies.add(cookie)
+                }
             }
         }
     }
@@ -65,11 +71,13 @@ class AsCookiesStorage(
         if (!isInit) {
             syncDataBaseCookies()
         }
-        return cookies.run {
-            if (usersDataSource.users.first().notUseBuvid3) {
-                filter { it.name != "buvid3" }
-            } else {
-                this
+        return cookieMutex.withLock {
+            cookies.run {
+                if (usersDataSource.users.first().notUseBuvid3) {
+                    filter { it.name != "buvid3" }
+                } else {
+                    this.toList()
+                }
             }
         }
     }
@@ -79,22 +87,30 @@ class AsCookiesStorage(
         if (timestamp < System.currentTimeMillis()) return
 
         val mCookie = cookie.copy(domain = requestUrl.host)
-        cookies.removeAll { it -> it.name == mCookie.name }
-        cookies.add(mCookie)
+        cookieMutex.withLock {
+            cookies.removeAll { it -> it.name == mCookie.name }
+            cookies.add(mCookie)
+        }
     }
 
 
-    fun getCookieValue(key: String): String? {
-        return cookies.find { it.name == key }?.value
+    suspend fun getCookieValue(key: String): String? {
+        return cookieMutex.withLock {
+            cookies.find { it.name == key }?.value
+        }
     }
 
-    fun getAllCookies(): MutableList<Cookie> {
-        return cookies
+    suspend fun getAllCookies(): MutableList<Cookie> {
+        return cookieMutex.withLock {
+            cookies.toMutableList()
+        }
     }
 
-    fun updateAllCookies(cookie: MutableList<Cookie> ) {
-        cookies.clear()
-        cookies.addAll(cookie)
+    suspend fun updateAllCookies(cookie: MutableList<Cookie>) {
+        cookieMutex.withLock {
+            cookies.clear()
+            cookies.addAll(cookie)
+        }
     }
 
     override fun close() {

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.weight
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -31,11 +33,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.PlatformTextStyle
@@ -214,7 +218,9 @@ fun DownloadTaskCard(
 fun DownloadFinishTaskCard(
     modifier: Modifier = Modifier,
     downloadSegment: DownloadSegment,
-    onOpenFile: () -> Unit = {},
+    downloadFinishEditState: Boolean,
+    selectDeleteList: SnapshotStateList<DownloadSegment>,
+    onSelect: () -> Unit = {},
     onDeleteTaskAndFile: () -> Unit
 ) {
 
@@ -224,7 +230,6 @@ fun DownloadFinishTaskCard(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = CardDefaults.shape,
         modifier = modifier.fillMaxWidth(),
-        onClick = onOpenFile
     ) {
         Row(
             modifier = Modifier
@@ -235,7 +240,8 @@ fun DownloadFinishTaskCard(
             // 左侧图片
             Column(
                 modifier = Modifier
-                    .weight(0.3f)
+                    .weight(0.4f)
+                    .aspectRatio(16f / 9f)
                     .fillMaxHeight(),
             ) {
                 ASAsyncImage(
@@ -253,7 +259,7 @@ fun DownloadFinishTaskCard(
             // 右侧内容
             Column(
                 modifier = Modifier
-                    .weight(0.7f)
+                    .weight(0.6f)
                     .fillMaxHeight()
                     .align(Alignment.CenterVertically), // 垂直居中
                 verticalArrangement = Arrangement.SpaceBetween
@@ -294,10 +300,22 @@ fun DownloadFinishTaskCard(
                     .align(Alignment.CenterVertically), // 垂直居中
                 verticalArrangement = Arrangement.Center
             ) {
-                ASIconButton(onClick = {
-                    showDeleteDialog = true
-                }) {
-                    Icon(Icons.Outlined.Delete, contentDescription = "删除下载任务")
+
+                AnimatedContent(downloadFinishEditState) { state ->
+                    if (!state) {
+                        ASIconButton(onClick = {
+                            showDeleteDialog = true
+                        }) {
+                            Icon(Icons.Outlined.Delete, contentDescription = "删除下载任务")
+                        }
+                    } else {
+                        Checkbox(
+                            checked = downloadSegment in selectDeleteList,
+                            onCheckedChange = {
+                                onSelect()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -309,7 +327,7 @@ fun DownloadFinishTaskCard(
                 title = { Text("删除下载任务") },
                 text = { Text("是否删除该下载任务及其文件？") },
                 confirmButton = {
-                    androidx.compose.material3.TextButton(
+                    TextButton(
                         onClick = {
                             onDeleteTaskAndFile()
                             showDeleteDialog = false
@@ -319,7 +337,7 @@ fun DownloadFinishTaskCard(
                     }
                 },
                 dismissButton = {
-                    androidx.compose.material3.TextButton(
+                    TextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
                         Text("取消")

@@ -43,6 +43,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -247,26 +248,26 @@ fun SelectVideoModelDialog(
                         Text("从已下载导入")
                     }
                 }
-                Spacer(Modifier.height(5.dp))
-                Surface(
-                    shape = CardDefaults.shape,
-                    border = CardDefaults.outlinedCardBorder(),
-                    color = Color.Transparent,
-                    onClick = {
-                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
-                    }
-                ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(15.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Outlined.FileOpen, contentDescription = null)
-                        Spacer(Modifier.width(10.dp))
-                        Text("从本地文件导入")
-                    }
-                }
+//                Spacer(Modifier.height(5.dp))
+//                Surface(
+//                    shape = CardDefaults.shape,
+//                    border = CardDefaults.outlinedCardBorder(),
+//                    color = Color.Transparent,
+//                    onClick = {
+//                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+//                    }
+//                ) {
+//                    Row(
+//                        Modifier
+//                            .fillMaxWidth()
+//                            .padding(15.dp),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Icon(Icons.Outlined.FileOpen, contentDescription = null)
+//                        Spacer(Modifier.width(10.dp))
+//                        Text("从本地文件导入")
+//                    }
+//                }
 
             }
         }, confirmButton = {
@@ -436,13 +437,13 @@ fun ExportDialog(
             Text("请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。")
         },
         confirmButton = {
-            Button(onClick = { launcher.launch(null) }) {
+            TextButton(onClick = { launcher.launch(null) }) {
                 Text("选择位置")
             }
         },
         onDismiss = onDismiss,
         dismissButton = {
-            Button(onClick = { onDismiss?.invoke() }) {
+            TextButton(onClick = { onDismiss?.invoke() }) {
                 Text("取消")
             }
         }
