@@ -34,6 +34,7 @@ import com.imcys.bilibilias.common.utils.ASConstant
 import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 
 
@@ -47,7 +48,7 @@ internal fun LoginRoute(
 
 @Preview
 @Composable
-fun PreviewLoginScreen(){
+fun PreviewLoginScreen() {
     ProvideKoinApplication {
         LoginScreen({}, {})
     }
@@ -74,14 +75,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
-                            onToBack.invoke()
-                        }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
-                            )
-                        }
+                        AsBackIconButton { onToBack.invoke() }
                     }
                 )
             }
@@ -140,7 +134,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     "·《BILIBILIAS 隐私协议》",
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.clickable{
+                                    modifier = Modifier.clickable {
                                         context.openLink(ASConstant.PRIVACY_POLICY_URL)
                                     }
                                 )

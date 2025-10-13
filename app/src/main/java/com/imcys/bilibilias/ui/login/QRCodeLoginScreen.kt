@@ -147,7 +147,7 @@ fun QRCodeLoginScreen(
         when (loginUserInfoState) {
             is NetWorkResult.Success<*> -> {
                 vm.saveLoginInfo(loginUserInfoState.data) {
-                    if (route.isFromRoam) {
+                    if (route.isFromRoam || route.isFromAnalysis) {
                         // 如果是从漫游页面进入的，登录成功后直接返回
                         onToBack()
                     } else {

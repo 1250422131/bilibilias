@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import androidx.compose.runtime.collectAsState
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
+import com.imcys.bilibilias.ui.weight.ASTextButton
 
 class MainActivity : ComponentActivity() {
     private val appSettingsRepository: AppSettingsRepository by inject()
@@ -130,13 +131,13 @@ class MainActivity : ComponentActivity() {
                 title = { Text("跳过更新") },
                 text = { Text("如果您暂时不想更新，可以跳过此版本，等下个版本再进行更新。") },
                 confirmButton = {
-                    TextButton(onClick = onConfirm) {
+                    ASTextButton(onClick = onConfirm) {
                         Text("跳过此版本")
                     }
 
                 },
                 dismissButton = {
-                    TextButton(onClick = onDismiss) {
+                    ASTextButton(onClick = onDismiss) {
                         Text("下次再说")
                     }
                 }

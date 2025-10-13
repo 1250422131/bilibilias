@@ -54,6 +54,7 @@ import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import kotlin.math.ceil
 import kotlin.text.ifEmpty
 
@@ -327,7 +328,7 @@ fun DownloadFinishTaskCard(
                 title = { Text("删除下载任务") },
                 text = { Text("是否删除该下载任务及其文件？") },
                 confirmButton = {
-                    TextButton(
+                    ASTextButton(
                         onClick = {
                             onDeleteTaskAndFile()
                             showDeleteDialog = false
@@ -337,7 +338,7 @@ fun DownloadFinishTaskCard(
                     }
                 },
                 dismissButton = {
-                    TextButton(
+                    ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
                         Text("取消")

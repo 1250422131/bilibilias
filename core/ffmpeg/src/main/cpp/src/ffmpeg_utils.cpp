@@ -22,36 +22,36 @@ extern "C" {
 using namespace bilias::ffmpeg;
 
 namespace {
-    
+
     class FFmpegMergeListener {
         JNIEnv *env;
         jobject o_listener;
         jmethodID m_on_error;
         jmethodID m_on_complete;
         jmethodID m_on_progress;
-        
+
     public:
         FFmpegMergeListener(
-            JNIEnv *env, 
-            jobject o_listener,
-            jmethodID m_on_error,
-            jmethodID m_on_complete,
-            jmethodID m_on_progress
-        ) noexcept : env(env), o_listener(o_listener), m_on_error(m_on_error),
-        m_on_complete(m_on_complete), m_on_progress(m_on_progress) {}
-        
+                JNIEnv *env,
+                jobject o_listener,
+                jmethodID m_on_error,
+                jmethodID m_on_complete,
+                jmethodID m_on_progress
+        ) noexcept: env(env), o_listener(o_listener), m_on_error(m_on_error),
+                    m_on_complete(m_on_complete), m_on_progress(m_on_progress) {}
+
         auto on_error(std::string_view msg) {
             env->CallVoidMethod(o_listener, m_on_error, env->NewStringUTF(msg.data()));
         }
-        
+
         auto on_complete() {
             env->CallVoidMethod(o_listener, m_on_complete);
         }
-        
+
         auto on_progress(int progress) {
             env->CallVoidMethod(o_listener, m_on_progress, progress);
         }
-        
+
         static auto create(JNIEnv *env, jobject listener) -> FFmpegMergeListener {
             auto listenerCls = env->GetObjectClass(listener);
             auto onError = env->GetMethodID(listenerCls, "onError", "(Ljava/lang/String;)V");
@@ -104,7 +104,7 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
         env->ReleaseStringUTFChars(description_, description);
         env->ReleaseStringUTFChars(copyright_, copyright);
     }};
-    
+
     auto callback = FFmpegMergeListener::create(env, listener);
 
     AVFormatContext *ifmt_ctx_v = nullptr, *ifmt_ctx_a = nullptr;
@@ -134,7 +134,8 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     }
 
     // 创建输出
-    auto [ofmt_ctx, ctx_result] = bilias_avformat_alloc_output_context2(nullptr, nullptr, outputPath);
+    auto [ofmt_ctx, ctx_result] = bilias_avformat_alloc_output_context2(nullptr, nullptr,
+                                                                        outputPath);
 
     if (!ofmt_ctx) {
         callback.on_error("无法创建输出文件");
@@ -218,15 +219,19 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
             // 读视频
             ret = av_read_frame(ifmt_ctx_v, &pkt);
             if (ret >= 0) {
-                if(pkt.stream_index == video_index_in) {
+                if (pkt.stream_index == video_index_in) {
                     pkt.stream_index = video_index_out;
                     // 时间戳转换
-                    pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_v->streams[video_index_in]->time_base,
+                    pkt.pts = av_rescale_q_rnd(pkt.pts,
+                                               ifmt_ctx_v->streams[video_index_in]->time_base,
                                                ofmt_ctx->streams[video_index_out]->time_base,
-                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                    pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_v->streams[video_index_in]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF |
+                                                             AV_ROUND_PASS_MINMAX));
+                    pkt.dts = av_rescale_q_rnd(pkt.dts,
+                                               ifmt_ctx_v->streams[video_index_in]->time_base,
                                                ofmt_ctx->streams[video_index_out]->time_base,
-                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                                               (AVRounding) (AV_ROUND_NEAR_INF |
+                                                             AV_ROUND_PASS_MINMAX));
                     pkt.duration = av_rescale_q(pkt.duration,
                                                 ifmt_ctx_v->streams[video_index_in]->time_base,
                                                 ofmt_ctx->streams[video_index_out]->time_base);
@@ -255,12 +260,16 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
             if (ret >= 0) {
                 if (pkt.stream_index == audio_index_in) {
                     pkt.stream_index = audio_index_out;
-                    pkt.pts = av_rescale_q_rnd(pkt.pts, ifmt_ctx_a->streams[audio_index_in]->time_base,
+                    pkt.pts = av_rescale_q_rnd(pkt.pts,
+                                               ifmt_ctx_a->streams[audio_index_in]->time_base,
                                                ofmt_ctx->streams[audio_index_out]->time_base,
-                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                    pkt.dts = av_rescale_q_rnd(pkt.dts, ifmt_ctx_a->streams[audio_index_in]->time_base,
+                                               (AVRounding) (AV_ROUND_NEAR_INF |
+                                                             AV_ROUND_PASS_MINMAX));
+                    pkt.dts = av_rescale_q_rnd(pkt.dts,
+                                               ifmt_ctx_a->streams[audio_index_in]->time_base,
                                                ofmt_ctx->streams[audio_index_out]->time_base,
-                                               (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                                               (AVRounding) (AV_ROUND_NEAR_INF |
+                                                             AV_ROUND_PASS_MINMAX));
                     pkt.duration = av_rescale_q(pkt.duration,
                                                 ifmt_ctx_a->streams[audio_index_in]->time_base,
                                                 ofmt_ctx->streams[audio_index_out]->time_base);
@@ -274,7 +283,8 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
                                               AV_TIME_BASE / total_duration);
                         if (progress > last_progress && progress <= 100) {
                             jclass listenerCls = env->GetObjectClass(listener);
-                            jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress", "(I)V");
+                            jmethodID onProgress = env->GetMethodID(listenerCls, "onProgress",
+                                                                    "(I)V");
                             env->CallVoidMethod(listener, onProgress, progress);
                             last_progress = progress;
                         }
@@ -296,4 +306,26 @@ Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_mergeVideoAndAudio(
     if (ifmt_ctx_v) avformat_close_input(&ifmt_ctx_v);
     if (ifmt_ctx_a) avformat_close_input(&ifmt_ctx_a);
     if (ofmt_ctx && !(ofmt_ctx->oformat->flags & AVFMT_NOFILE)) avio_closep(&ofmt_ctx->pb);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_imcys_bilibilias_ffmpeg_FFmpegManger_checkSign(
+        JNIEnv *env,
+        jobject thiz,
+        jstring apkSign_
+) {
+    const char *apkSign = env->GetStringUTFChars(apkSign_, 0);
+
+    auto _defer = Defer{[&] {
+        env->ReleaseStringUTFChars(apkSign_, apkSign);
+    }};
+
+    const char *officeSign = "8E:B3:80:FB:C0:32:86:98:5B:8F:86:59:B2:79:16:75:A0:AB:21:DB";
+    const char *officeAlphaSign = "7F:44:47:60:4B:BF:FB:A8:06:FD:13:DF:7F:E3:5D:AA:70:4B:D5:54";
+
+    bool result1 = strcmp(apkSign, officeSign) == 0;
+    bool result2 = strcmp(apkSign, officeAlphaSign) == 0;
+
+    return (result1 || result2) ? JNI_TRUE : JNI_FALSE;
+
 }

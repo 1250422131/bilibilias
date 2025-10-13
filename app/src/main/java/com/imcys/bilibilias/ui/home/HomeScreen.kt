@@ -1,5 +1,9 @@
 package com.imcys.bilibilias.ui.home
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.util.Base64
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -26,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.Login
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Settings
@@ -76,6 +81,7 @@ import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
+import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.config.API.App.BASE_URL
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
@@ -86,12 +92,15 @@ import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.ASHorizontalMultiBrowseCarousel
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.DownloadTaskCard
 import org.koin.androidx.compose.koinViewModel
+import java.security.MessageDigest
 import kotlin.math.min
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -262,6 +271,14 @@ fun HomeContent(
 
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
     var bulletinDialogShow by remember { mutableStateOf(false) }
+    var unknownAppSign by remember { mutableStateOf(false) }
+
+    val currentSHA1 = rememberSignatureSHA1(context)
+    LaunchedEffect(currentSHA1) {
+        if (currentSHA1 == null || !FFmpegManger.checkSign(currentSHA1) ) {
+            unknownAppSign = true
+        }
+    }
 
     vm.initOldAppInfo(context)
 
@@ -271,16 +288,30 @@ fun HomeContent(
             .padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (unknownAppSign) {
+            item {
+                ASWarringTip(Modifier.animateItem().animateContentSize()) {
+                    Text(
+                        if (BuildConfig.DEBUG){
+                            "当前App处于Debug模式，如果您并非开发人员，请谨慎使用，建议在Github公开的渠道进行下载。"
+                        } else {
+                            "当前应用签名未知，请谨慎使用！建议在Github公开的渠道进行下载。"
+                        }
+                    )
+                }
+            }
+        }
+
         homeLayoutTypesetList.forEach { layout ->
             when (layout.type) {
-                AppSettings.HomeLayoutType.Banner if (!layout.isHidden  && !BuildConfig.ENABLE_PLAY_APP_MODE) -> {
+                AppSettings.HomeLayoutType.Banner if (!layout.isHidden && !BuildConfig.ENABLE_PLAY_APP_MODE) -> {
                     item {
                         ASHorizontalMultiBrowseCarousel(
                             autoScroll = true,
-                            modifier = Modifier.animateItem(),
+                            modifier = Modifier.animateItem().animateContentSize(),
                             items = bannerList
                         ) { item ->
-                            Box {
+                            Box(Modifier.maskClip(CardDefaults.shape)) {
                                 ASAsyncImage(
                                     model = item.url,
                                     contentDescription = "",
@@ -288,6 +319,7 @@ fun HomeContent(
                                         .fillMaxWidth()
                                         .height(168.dp)
                                         .maskClip(CardDefaults.shape),
+                                    shape = CardDefaults.shape,
                                     onClick = {
                                         // 跳转链接
                                         context.openLink(item.ref)
@@ -345,7 +377,7 @@ fun HomeContent(
                         return@forEach
                     }
 
-                    if (appUpdateInfo?.version == getVersion(context).second){
+                    if (appUpdateInfo?.version == getVersion(context).second) {
                         return@forEach
                     }
 
@@ -361,7 +393,8 @@ fun HomeContent(
                                 """.trimIndent()
                             }
 
-                            ASBuildType.ALPHA ->  appUpdateInfo?.feat ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                            ASBuildType.ALPHA -> appUpdateInfo?.feat
+                                ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
                         }
                         CommonInfoCard(
                             R.drawable.ic_info_24px,
@@ -395,7 +428,7 @@ fun HomeContent(
 
         item {
             Text(
-                if (BuildConfig.ENABLE_PLAY_APP_MODE){
+                if (BuildConfig.ENABLE_PLAY_APP_MODE) {
                     """
                             请在Download/BILIBILIAS目录下查看下载内容
                             请不要忘记在Google Play填写意见评价
@@ -445,12 +478,12 @@ fun CloseBulletinDialog(
             Text("关闭后将不再显示，直到有新的公告发布")
         },
         confirmButton = {
-            TextButton(onClick = onClickConfirm) {
+            ASTextButton(onClick = onClickConfirm) {
                 Text(text = "确认")
             }
         },
         dismissButton = {
-            TextButton(onClick = onClickDismiss) {
+            ASTextButton(onClick = onClickDismiss) {
                 Text(text = "取消")
             }
         }
@@ -475,7 +508,7 @@ fun BulletinDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onClickConfirm) {
+            ASTextButton(onClick = onClickConfirm) {
                 Text(text = "确认")
             }
         },
@@ -624,7 +657,7 @@ private fun HomeScaffold(
                                         goToLogin()
                                     }) {
                                         Icon(
-                                            Icons.AutoMirrored.Outlined.Login,
+                                            Icons.Outlined.AccountCircle,
                                             contentDescription = "登录"
                                         )
                                     }
@@ -640,7 +673,7 @@ private fun HomeScaffold(
                                     goToLogin()
                                 }) {
                                     Icon(
-                                        Icons.AutoMirrored.Outlined.Login,
+                                        Icons.Outlined.AccountCircle,
                                         contentDescription = "登录"
                                     )
                                 }
@@ -672,6 +705,7 @@ private fun CommonInfoCard(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
                     .fillMaxWidth()
+                    .animateContentSize()
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -763,4 +797,38 @@ private fun LoginInfoBottomDialog(
             }
         }
     }
+}
+
+@Composable
+fun rememberSignatureSHA1(context: Context = LocalContext.current): String? {
+    val packageName = context.packageName
+    return remember(packageName, context) {
+        try {
+            val packageInfo = context.packageManager.getPackageInfo(
+                packageName,
+                if (android.os.Build.VERSION.SDK_INT >= 28)
+                    PackageManager.GET_SIGNING_CERTIFICATES else PackageManager.GET_SIGNATURES
+            )
+            val signatures = if (android.os.Build.VERSION.SDK_INT >= 28) {
+                packageInfo.signingInfo?.apkContentsSigners
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.signatures
+            }
+            val cert = signatures?.getOrNull(0)?.toByteArray()
+            if (cert != null) {
+                val md = MessageDigest.getInstance("SHA1")
+                val publicKey = md.digest(cert)
+                publicKey.joinToString(":") { "%02X".format(it) }
+            } else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+
+
+private fun isSignatureSHA1Match(actual: String?, expected: String): Boolean {
+    return actual?.equals(expected, ignoreCase = true) == true
 }

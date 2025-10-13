@@ -80,6 +80,8 @@ object API {
         val WEB_STEIN_EDGE_INFO_V2_URL = WEB_API_BASE_URL + "x/stein/edgeinfo_v2"
 
         val WEB_HISTORY_CURSOR_URL = WEB_API_BASE_URL + "x/web-interface/history/cursor"
+
+        val WEB_LOGOUT_URL = LOGIN_BASE_URL + "login/exit/v2"
     }
 
     object App {

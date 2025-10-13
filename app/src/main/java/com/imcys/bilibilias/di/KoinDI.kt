@@ -42,7 +42,7 @@ val appModule = module {
     viewModel { BangumiFollowViewModel(get()) }
     viewModel { UserFolderViewModel(get()) }
     viewModel { LikeVideoViewModel(get()) }
-    viewModel { SettingViewModel(get()) }
+    viewModel { SettingViewModel(get(),get(),get(),get(),get(),get()) }
     viewModel { LayoutTypesetViewModel(get()) }
     viewModel { UserPlayHistoryViewModel(get()) }
     viewModel { FrameExtractorViewModel(get(), get(), get()) }

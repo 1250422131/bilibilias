@@ -8,14 +8,12 @@ import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.BILIUserCookiesEntity
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.LoginPlatform
-import com.imcys.bilibilias.datastore.User
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.mapData
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.network.model.QRCodePollInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class QRCodeLoginRepository(

@@ -7,11 +7,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -234,18 +232,25 @@ class QRCodeLoginViewModel(
         val borderWidth = 20 // 白色边框宽度
         val bitmapWithBorder = addWhiteBorder(bitmap, borderWidth)
 
-        val fileName = "BILIBILIAS_LOGIN_QR.jpeg"
+        // 时间戳
+        val fileName = "QR_${System.currentTimeMillis()}.jpeg"
         val relativePath = "${Environment.DIRECTORY_PICTURES}/BILIBILIAS"
 
-        val uri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                 put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
             }
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            val uri =
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            if (uri == null) return
+            contentResolver.openOutputStream(uri, "rwt")?.use { outputStream ->
+                bitmapWithBorder.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
         } else {
-            val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val picturesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val dir = File(picturesDir, "BILIBILIAS")
             if (!dir.exists()) dir.mkdirs()
             val file = File(dir, fileName)
@@ -265,12 +270,7 @@ class QRCodeLoginViewModel(
                 null
             }
         }
-
-        if (uri != null || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, "保存失败", Toast.LENGTH_SHORT).show()
-        }
+        Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
     }
 
     fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {

@@ -7,27 +7,30 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Android
-import androidx.compose.material.icons.outlined.DriveFileRenameOutline
-import androidx.compose.material.icons.outlined.EmojiObjects
-import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Group
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.MoodBad
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -35,7 +38,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -43,11 +48,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
+import com.imcys.bilibilias.ui.weight.ASAlertDialog
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -55,6 +63,8 @@ import com.imcys.bilibilias.ui.weight.BaseSettingsItem
 import com.imcys.bilibilias.ui.weight.CategorySettingsItem
 import com.imcys.bilibilias.ui.weight.SwitchSettingsItem
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -68,7 +78,7 @@ fun SettingScreenPreview() {
         onToLayoutTypeset = {})
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingScreen(
     onToRoam: () -> Unit,
@@ -78,13 +88,19 @@ fun SettingScreen(
     onToAbout: () -> Unit = {},
     onToVersionInfo: () -> Unit = {},
     onToSystemExpand: () -> Unit = {},
-    onToStorageManagement : () -> Unit = {},
+    onToStorageManagement: () -> Unit = {},
+    onLogoutFinish: (Long) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val vm = koinViewModel<SettingViewModel>()
     val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
     val haptics = LocalHapticFeedback.current
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    val uiState by vm.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    var showLogoutLoading by remember { mutableStateOf(false) }
+
 
     SettingScaffold(scrollBehavior, onToBack) {
 
@@ -275,21 +291,32 @@ fun SettingScreen(
 //            }
 
 
+            if (uiState.isLogin) {
 
-            item {
-                CategorySettingsItem(
-                    text = "其他"
-                )
-            }
+                item {
+                    CategorySettingsItem(
+                        text = "账户"
+                    )
+                }
 
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.Android),
-                    text = "设备信息",
-                    descriptionText = "提交反馈时记得带上这个！",
-                    onClick = onToVersionInfo
-                )
+                item {
+                    BaseSettingsItem(
+                        painter = rememberVectorPainter(Icons.Outlined.Android),
+                        text = "设备信息",
+                        descriptionText = "提交反馈时记得带上这个！",
+                        onClick = onToVersionInfo
+                    )
 
+                }
+
+                item {
+                    BaseSettingsItem(
+                        painter = rememberVectorPainter(Icons.AutoMirrored.Default.Logout),
+                        text = "退出登录",
+                        descriptionText = "清空登录信息，解除登录占用。",
+                        onClick = { showLogoutDialog = true }
+                    )
+                }
             }
 
 //            item {
@@ -302,7 +329,51 @@ fun SettingScreen(
 //            }
 
         }
+
+        // 退出登录对话框
+        ASAlertDialog(
+            showState = showLogoutDialog,
+            title = { Text("退出登录") },
+            text = {
+                Column(
+                    Modifier.animateContentSize().fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (showLogoutLoading) {
+                        ContainedLoadingIndicator()
+                        Text("退出中....")
+                    } else {
+                        Text("是否退出登录？退出登录将清除登录信息，解除登录占用。")
+                    }
+                }
+            },
+            onDismiss = {
+                showLogoutDialog = false
+            },
+            confirmButton = {
+                ASTextButton(onClick = {
+                    showLogoutLoading = true
+                    coroutineScope.launch(Dispatchers.IO) {
+                        vm.logout()
+                        showLogoutLoading = false
+                        showLogoutDialog = false
+                        onLogoutFinish(uiState.currentMid)
+                    }
+                }) {
+                    Text("退出登录")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                }) {
+                    Text("取消")
+                }
+            }
+
+        )
     }
+
 }
 
 @Composable

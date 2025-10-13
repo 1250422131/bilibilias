@@ -113,6 +113,7 @@ import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -135,6 +136,7 @@ fun AnalysisScreen(
     onToBack: () -> Unit,
     goToUser: (mid: Long) -> Unit,
     onToVideoCodingInfo: () -> Unit,
+    onToLogin: () -> Unit
 ) {
 
     val uiState by vm.uiState.collectAsState()
@@ -183,7 +185,8 @@ fun AnalysisScreen(
                     uiState.analysisBaseInfo,
                     vm,
                     goToUser,
-                    onToVideoCodingInfo = onToVideoCodingInfo
+                    onToVideoCodingInfo = onToVideoCodingInfo,
+                    onToLogin = onToLogin
                 )
             }
 
@@ -228,7 +231,8 @@ fun ColumnScope.AnalysisVideoCardList(
     analysisBaseInfo: AnalysisBaseInfo,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit,
-    onToVideoCodingInfo: () -> Unit
+    onToVideoCodingInfo: () -> Unit,
+    onToLogin: () -> Unit
 ) {
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
@@ -256,7 +260,7 @@ fun ColumnScope.AnalysisVideoCardList(
         item {
             AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
                 viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
-            }, goToUser)
+            }, goToUser,onToLogin)
         }
         item {
             when (asLinkResultType) {
@@ -743,8 +747,9 @@ fun AnalysisVideoCard(
     isBILILogin: Boolean,
     analysisBaseInfo: AnalysisBaseInfo,
     savePic: suspend (String?) -> Unit,
-    goToUser: (Long) -> Unit
-) {
+    goToUser: (Long) -> Unit,
+    onToLogin:()->Unit,
+    ) {
     when (asLinkResultType) {
         is ASLinkResultType.BILI.Video -> {
             BILIVideoCard(
@@ -753,7 +758,8 @@ fun AnalysisVideoCard(
                 analysisBaseInfo,
                 isBILILogin,
                 savePic = savePic,
-                goToUser = goToUser
+                goToUser = goToUser,
+                onToLogin = onToLogin
             )
         }
 
@@ -767,7 +773,8 @@ fun AnalysisVideoCard(
                 asLinkResultType.currentEpId,
                 analysisBaseInfo,
                 isBILILogin,
-                savePic = savePic
+                savePic = savePic,
+                onToLogin = onToLogin
             )
         }
     }
@@ -780,7 +787,8 @@ fun BILIDonghuaCard(
     currentEpId: Long,
     analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
-    savePic: suspend (String?) -> Unit
+    savePic: suspend (String?) -> Unit,
+    onToLogin:()->Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -906,7 +914,7 @@ fun BILIDonghuaCard(
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
-                            ASIconButton(onClick = {}) {
+                            ASIconButton(onClick = onToLogin) {
                                 Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
@@ -945,7 +953,8 @@ fun BILIVideoCard(
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit,
-) {
+    onToLogin:()->Unit,
+    ) {
     val coroutineScope = rememberCoroutineScope()
     var picSaving by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
@@ -1064,10 +1073,6 @@ fun BILIVideoCard(
                                 "当前视频属充电视频，请充电后申请缓存。",
                                 fontSize = 14.sp,
                             )
-                            Spacer(Modifier.weight(1f))
-                            ASIconButton(onClick = {}) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
-                            }
                         }
                     }
                 }
@@ -1089,7 +1094,7 @@ fun BILIVideoCard(
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
-                            ASIconButton(onClick = {}) {
+                            ASIconButton(onClick = onToLogin) {
                                 Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
@@ -1310,7 +1315,7 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
             )
         },
         confirmButton = {
-            TextButton(onClick = onDownload) {
+            ASTextButton(onClick = onDownload) {
                 Text("了解")
             }
         },

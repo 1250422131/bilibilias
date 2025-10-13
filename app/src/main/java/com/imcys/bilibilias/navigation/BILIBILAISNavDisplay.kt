@@ -99,26 +99,23 @@ fun BILIBILAISNavDisplay() {
         }
     }
 
-
-    val popTransitionSpec = remember {
-        ContentTransform(
-            // 返回导航：上一个页面进入 - 从放大状态恢复
-            scaleIn(
-                initialScale = 1.1F,
-                animationSpec = tween(
-                    durationMillis = 400,
-                    easing = FastOutSlowInEasing
-                )
-            ),
-            // 返回导航：当前页面退出 - 淡出+放大
-            fadeOut(
-                animationSpec = tween(
-                    durationMillis = 400,
-                    easing = FastOutSlowInEasing
-                )
+    fun createPopTransitionSpec() = ContentTransform(
+        // 返回导航：上一个页面进入 - 从放大状态恢复
+        scaleIn(
+            initialScale = 1.1F,
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = FastOutSlowInEasing
+            )
+        ),
+        // 返回导航：当前页面退出 - 淡出+放大
+        fadeOut(
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = FastOutSlowInEasing
             )
         )
-    }
+    )
 
     SharedTransitionLayout {
         NavDisplay(
@@ -144,10 +141,11 @@ fun BILIBILAISNavDisplay() {
                 )
             },
             popTransitionSpec = {
-                popTransitionSpec
+                createPopTransitionSpec()
             },
             predictivePopTransitionSpec = {
-                popTransitionSpec
+                // 无动画
+                createPopTransitionSpec()
             },
             entryDecorators = listOf(
                 rememberSceneSetupNavEntryDecorator(),
@@ -241,6 +239,9 @@ fun BILIBILAISNavDisplay() {
                         },
                         onToVideoCodingInfo = {
                             backStack.addWithReuse(VideoCodingInfoRoute)
+                        },
+                        onToLogin = {
+                            backStack.addWithReuse(QRCodeLoginRoute(isFromAnalysis = true))
                         }
                     )
                 }
@@ -261,6 +262,13 @@ fun BILIBILAISNavDisplay() {
                         onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) },
                         onToSystemExpand = {backStack.addWithReuse(SystemExpandRoute)},
                         onToStorageManagement = { backStack.addWithReuse(StorageManagementRoute) },
+                        onLogoutFinish = {
+                            backStack.firstOrNull {
+                                it is UserRoute && !it.isAnalysisUser
+                            }?.let {
+                                backStack.remove(it)
+                            }
+                        }
                     )
                 }
                 entry<RoamRoute> {

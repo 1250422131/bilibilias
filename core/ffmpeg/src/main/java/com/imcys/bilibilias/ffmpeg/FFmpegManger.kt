@@ -105,4 +105,6 @@ object FFmpegManger {
     external fun getVideoFrameRate(
         videoPath: String
     ): Int
+
+    external fun checkSign(apkSign: String):Boolean
 }

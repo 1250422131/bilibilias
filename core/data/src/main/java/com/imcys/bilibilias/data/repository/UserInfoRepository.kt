@@ -182,4 +182,6 @@ class UserInfoRepository(
         }
     }
 
+    suspend fun logout(biliJct: String) = webApiService.logout(biliJct)
+
 }

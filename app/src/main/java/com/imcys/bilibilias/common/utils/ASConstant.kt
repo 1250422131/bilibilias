@@ -7,4 +7,7 @@ object ASConstant {
     const val QQ_CHANNEL_URL = "https://pd.qq.com/s/15f4xoaz8"
     // QQ群
     const val QQ_GROUP_URL = "https://qm.qq.com/q/qtosJDJmIo"
+
+
+    const val OFFICE_SIGN = ""
 }

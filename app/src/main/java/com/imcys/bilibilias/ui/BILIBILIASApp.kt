@@ -60,6 +60,7 @@ import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.Konfetti
@@ -325,12 +326,12 @@ fun PrivacyPolicyDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onClickConfirm) {
+            ASTextButton(onClick = onClickConfirm) {
                 Text(text = stringResource(R.string.common_agree))
             }
         },
         dismissButton = {
-            TextButton(onClick = onClickDismiss) {
+            ASTextButton(onClick = onClickDismiss) {
                 Text(text = stringResource(R.string.common_refuse))
             }
         }

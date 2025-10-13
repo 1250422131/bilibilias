@@ -92,9 +92,25 @@ class HomeViewModel(
 
     init {
         initLayoutTypeset()
-        showBILIUserInfo()
         initDownloadList()
         requestSSEEvent()
+        monitorUserState()
+    }
+
+    /**
+     * 监听用户登录状态变化
+     */
+    private fun monitorUserState() {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersDataSource.users.collect {
+                if (it.currentUserId == 0L) {
+                    _loginUserInfoState.value = emptyNetWorkResult()
+                    _userLoginPlatformList.value = emptyList()
+                } else {
+                    showBILIUserInfo()
+                }
+            }
+        }
     }
 
     fun initOldAppInfo(context: Context) {

@@ -1,6 +1,5 @@
-package com.imcys.bilibilias.common.utils
+package com.imcys.bilibilias.common.utils.download
 
-import android.content.Context
 import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit

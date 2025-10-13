@@ -69,9 +69,11 @@ import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
@@ -411,6 +413,15 @@ class BILIBILIWebAPIService(
             parameter(PS, ps)
         }
     }
+
+    suspend fun logout(biliJct: String): FlowNetWorkResult<String> = httpClient.httpRequest {
+        post(WEB_LOGIN_INFO_URL) {
+            formData {
+                append("bili_jct", biliJct)
+            }
+        }
+    }
+
 
     private suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> = withContext(
         Dispatchers.IO

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.utils
+package com.imcys.bilibilias.common.utils.download
 
 import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 

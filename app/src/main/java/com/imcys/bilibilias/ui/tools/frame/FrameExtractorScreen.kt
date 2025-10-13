@@ -73,6 +73,7 @@ import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel.UIState
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -437,13 +438,13 @@ fun ExportDialog(
             Text("请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。")
         },
         confirmButton = {
-            TextButton(onClick = { launcher.launch(null) }) {
+            ASTextButton(onClick = { launcher.launch(null) }) {
                 Text("选择位置")
             }
         },
         onDismiss = onDismiss,
         dismissButton = {
-            TextButton(onClick = { onDismiss?.invoke() }) {
+            ASTextButton(onClick = { onDismiss?.invoke() }) {
                 Text("取消")
             }
         }

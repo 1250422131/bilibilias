@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -180,7 +181,7 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                 title = { Text("批量删除任务") },
                 text = { Text("确定要删除选中的任务记录和文件吗？") },
                 confirmButton = {
-                    TextButton(
+                    ASTextButton(
                         onClick = {
                             vm.downloadSelectedTasks(selectDeleteList.toList())
                             showDeleteDialog = false
@@ -190,7 +191,7 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                     }
                 },
                 dismissButton = {
-                    TextButton(
+                    ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
                         Text("取消")

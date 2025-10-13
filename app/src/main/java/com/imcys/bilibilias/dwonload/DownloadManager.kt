@@ -15,8 +15,8 @@ import android.os.IBinder
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
-import com.imcys.bilibilias.common.utils.CCJsonToAss
-import com.imcys.bilibilias.common.utils.CCJsonToSrt
+import com.imcys.bilibilias.common.utils.download.CCJsonToAss
+import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
@@ -73,8 +73,6 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.yield
 import java.io.RandomAccessFile
