@@ -23,6 +23,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
+import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -83,7 +84,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BILIBILAISNavDisplay() {
 
-    val backStack = remember { mutableStateListOf<NavKey>(HomeRoute()) }
+    val viewModel = koinViewModel<BILIBILIASAppViewModel>()
+    val backStack = viewModel.backStack
 
     // 监听解析事件
     LaunchedEffect(Unit) {

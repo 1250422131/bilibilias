@@ -1,7 +1,10 @@
 package com.imcys.bilibilias.ui
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
@@ -11,6 +14,7 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.AsCookiesStorage
+import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +38,8 @@ class BILIBILIASAppViewModel(
     )
     private val _uiState = MutableStateFlow<UIState>(UIState.Default)
     val uiState = _uiState.asStateFlow()
-
+    // 添加 backStack 用于在屏幕旋转时保存所在页面
+    val backStack = mutableListOf<NavKey>(HomeRoute()).toMutableStateList()
     init {
         viewModelScope.launch(Dispatchers.IO) {
             appSettingsRepository.appSettingsFlow.collect {
