@@ -87,6 +87,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
         Box(Modifier.padding(it)) {
             Column(Modifier.padding(24.dp)) {
                 LazyColumn(
+                    Modifier.weight(1f).padding(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
@@ -168,9 +169,6 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                         }
                     }
                 }
-
-                Spacer(Modifier.weight(1f))
-
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()

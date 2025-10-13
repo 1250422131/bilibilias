@@ -74,13 +74,13 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
     )
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(minSize = 180.dp),
         modifier = Modifier.padding(bottom = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         item(
-            span = { GridItemSpan(2) }
+            span = { GridItemSpan(maxLineSpan) }
         ) {
             Text("视频处理")
         }
@@ -92,7 +92,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 
         if (!BuildConfig.ENABLE_PLAY_APP_MODE) {
             item(
-                span = { GridItemSpan(2) }
+                span = { GridItemSpan(maxLineSpan) }
             ) {
                 Text("其他")
             }

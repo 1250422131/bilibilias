@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Base64
 import android.util.Log
+import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -50,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
+import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -125,7 +129,7 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 internal fun HomeScreen(
     homeRoute: HomeRoute,
@@ -224,22 +228,29 @@ internal fun HomeScreen(
 
             // 底部输入区
             with(sharedTransitionScope) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp)
-                ) {
-                    Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
-                        ASCardTextField(
-                            modifier = Modifier.sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
-                                animatedVisibilityScope = animatedContentScope
-                            ),
-                            value = "", onValueChange = {},
-                            enabled = false, readOnly = true
-                        )
+                val windowSizeClass = calculateWindowSizeClass(LocalActivity.current as Activity)
+                when (windowSizeClass.widthSizeClass) {
+                    WindowWidthSizeClass.Compact -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp)
+                        ) {
+                            Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
+                                ASCardTextField(
+                                    modifier = Modifier.sharedElement(
+                                        sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
+                                        animatedVisibilityScope = animatedContentScope
+                                    ),
+                                    value = "", onValueChange = {},
+                                    enabled = false, readOnly = true
+                                )
+
+                            }
+                            Spacer(Modifier.height(20.dp))
+                        }
                     }
-                    Spacer(Modifier.height(20.dp))
+                    WindowWidthSizeClass.Medium , WindowWidthSizeClass.Expanded -> {}
                 }
             }
         }
@@ -587,7 +598,9 @@ fun DownloadListCard(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 private fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
@@ -633,6 +646,21 @@ private fun HomeScaffold(
                     ),
                     navigationIcon = {},
                     actions = {
+                        val windowSizeClass = calculateWindowSizeClass(LocalActivity.current as Activity)
+                        when (windowSizeClass.widthSizeClass) {
+                            WindowWidthSizeClass.Compact -> {}
+                            WindowWidthSizeClass.Medium,WindowWidthSizeClass.Expanded -> {
+                                Icon(
+                                    Icons.Outlined.Search,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .size(30.dp)
+                                        .clickable { goToAnalysis() }
+                                )
+                            }
+                        }
                         AsAutoError(
                             loginUserInfoState, onSuccessContent = {
                                 ASAsyncImage(

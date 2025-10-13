@@ -28,7 +28,7 @@ fun ASAgreePrivacyPolicy(agreePrivacyPolicy: Boolean, onClick: () -> Unit) {
     val haptics = LocalHapticFeedback.current
     val context = LocalContext.current
     Row(
-        modifier = Modifier.fillMaxWidth(),
+//        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -45,12 +45,13 @@ fun ASAgreePrivacyPolicy(agreePrivacyPolicy: Boolean, onClick: () -> Unit) {
                 .size(20.dp)
         )
         Text("我已阅读并同意", fontSize = 14.sp)
-        Spacer(Modifier.width(4.dp))
         Text(
-            "《BILIBILIAS 隐私政策》",
+            text = "《BILIBILIAS 隐私政策》",
             color = MaterialTheme.colorScheme.primary,
             fontSize = 14.sp,
-            modifier = Modifier.clickable {
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .clickable {
                 context.openLink(PRIVACY_POLICY_URL)
             }
         )
