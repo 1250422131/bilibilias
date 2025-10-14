@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.setting.storage
 
-import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,14 +38,14 @@ import com.imcys.bilibilias.common.utils.StorageUtil
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import com.imcys.bilibilias.weight.ASAnimatedContent
 import com.imcys.bilibilias.weight.AnimatedStorageRing
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Serializable
-@Parcelize
-data object StorageManagementRoute : NavKey, Parcelable
+data object StorageManagementRoute : NavKey
 
 @Composable
 fun StorageManagementScreen(
@@ -57,12 +56,15 @@ fun StorageManagementScreen(
     StorageManagementScaffold(
         onToBack = onToBack,
     ) {
-        StorageManagementContent(it, onToDownloadList)
+        StorageManagementContent(Modifier.padding(it), onToDownloadList)
     }
 }
 
 @Composable
-fun StorageManagementContent(paddingValues: PaddingValues, onToDownloadList: () -> Unit) {
+fun StorageManagementContent(
+    modifier: Modifier = Modifier,
+    onToDownloadList: () -> Unit
+) {
     val content = LocalContext.current
     val vm = koinViewModel<StorageManagementViewModel>()
     val uiState by vm.uiState.collectAsState()
@@ -80,7 +82,8 @@ fun StorageManagementContent(paddingValues: PaddingValues, onToDownloadList: () 
 
         is StorageManagementViewModel.StorageManagementUIState.Success -> {
             StorageManagementSuccessScreen(
-                paddingValues, state.storageInfoData,
+                modifier,
+                state.storageInfoData,
                 onCleanCache = {
                     vm.cleanAppCache(content)
                 },
@@ -92,15 +95,14 @@ fun StorageManagementContent(paddingValues: PaddingValues, onToDownloadList: () 
 
 @Composable
 fun StorageManagementSuccessScreen(
-    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
     data: StorageInfoData,
     onCleanCache: () -> Unit,
     onToDownloadList: () -> Unit
 ) {
     Column(
-        Modifier
+        modifier
             .verticalScroll(rememberScrollState())
-            .padding(paddingValues)
             .padding(vertical = 10.dp)
             .padding(horizontal = 10.dp)
             .fillMaxSize(),

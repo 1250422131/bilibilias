@@ -38,8 +38,7 @@ class BILIBILIASAppViewModel(
     )
     private val _uiState = MutableStateFlow<UIState>(UIState.Default)
     val uiState = _uiState.asStateFlow()
-    // 添加 backStack 用于在屏幕旋转时保存所在页面
-    val backStack = mutableListOf<NavKey>(HomeRoute()).toMutableStateList()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             appSettingsRepository.appSettingsFlow.collect {

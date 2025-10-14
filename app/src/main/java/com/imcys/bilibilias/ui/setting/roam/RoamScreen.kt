@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -25,7 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,13 +36,14 @@ import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASCheckThumbSwitch
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
-import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.BannerItem
 import com.imcys.bilibilias.ui.weight.TipSettingsItem
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.maybeNestedScroll
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -78,81 +78,103 @@ fun RoamScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-
     RoamSettingScaffold(
         scrollBehavior = scrollBehavior,
         onToBack
     ) { paddingValues ->
-        LazyColumn(Modifier.padding(paddingValues)) {
-            item {
+        RoamSettingContent(
+            modifier = Modifier
+                .maybeNestedScroll(scrollBehavior)
+                .padding(paddingValues),
+            uiState,
+            appSettings,
+            haptics,
+            vm,
+            onGoToQRCodeLogin
+        )
+    }
+}
 
-                BannerItem {
-                    Row(
-                        Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("启用漫游", fontSize = 18.sp)
-                        Spacer(Modifier.weight(1f))
-                        ASCheckThumbSwitch(
-                            enabled = uiState.isLoginTV || appSettings.enabledRoam,
-                            checked = appSettings.enabledRoam,
-                            onCheckedChange = {
-                                if (!uiState.isLogin) return@ASCheckThumbSwitch
-                                haptics.switchHapticFeedback(it)
-                                vm.updateRoamEnabledState(it)
-                            }
-                        )
-                    }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RoamSettingContent(
+    modifier: Modifier = Modifier,
+    uiState: RoamViewModel.UIState,
+    appSettings: AppSettings,
+    haptics: HapticFeedback,
+    vm: RoamViewModel,
+    onGoToQRCodeLogin: (LoginPlatform) -> Unit
+) {
+
+    LazyColumn(modifier = modifier) {
+        item {
+            BannerItem {
+                Row(
+                    Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("启用漫游", fontSize = 18.sp)
+                    Spacer(Modifier.weight(1f))
+                    ASCheckThumbSwitch(
+                        enabled = uiState.isLoginTV || appSettings.enabledRoam,
+                        checked = appSettings.enabledRoam,
+                        onCheckedChange = {
+                            if (!uiState.isLogin) return@ASCheckThumbSwitch
+                            haptics.switchHapticFeedback(it)
+                            vm.updateRoamEnabledState(it)
+                        }
+                    )
                 }
             }
-            item {
-                if (!uiState.isLoginTV || !uiState.isLogin) {
-                    Column(
-                        Modifier.padding(vertical = 5.dp, horizontal = 12.dp),
+        }
+        item {
+            if (!uiState.isLoginTV || !uiState.isLogin) {
+                Column(
+                    Modifier.padding(vertical = 5.dp, horizontal = 12.dp),
+                ) {
+                    ASWarringTip(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        enabledPadding = false
                     ) {
-                        ASWarringTip(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-                            enabledPadding = false
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    "你当前还未登录漫游身份，点击登录后才可开启哦。",
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                ASIconButton(onClick = {
-                                    if (!uiState.isLogin) {
-                                        // 未登录登录
-                                        onGoToQRCodeLogin.invoke(LoginPlatform.WEB)
-                                    } else {
-                                        // 未登录TV登录
-                                        onGoToQRCodeLogin.invoke(LoginPlatform.TV)
-                                    }
-                                }) {
-                                    Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
+                            Text(
+                                "你当前还未登录漫游身份，点击登录后才可开启哦。",
+                                fontSize = 14.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            ASIconButton(onClick = {
+                                if (!uiState.isLogin) {
+                                    // 未登录登录
+                                    onGoToQRCodeLogin.invoke(LoginPlatform.WEB)
+                                } else {
+                                    // 未登录TV登录
+                                    onGoToQRCodeLogin.invoke(LoginPlatform.TV)
                                 }
+                            }) {
+                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
                             }
                         }
                     }
                 }
             }
+        }
 
 
-            item {
-                TipSettingsItem(
-                    """
+        item {
+            TipSettingsItem(
+                """
                     漫游服务并非会使用VPN方式提供代理，而是中间服务器白名单请求转发。
                     
                     开启后您的账户的部分网络请求和身份信息会被带到我们的服务器上，通过我们的服务代理请求。
                 """.trimIndent()
-                )
-            }
-
+            )
         }
+
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

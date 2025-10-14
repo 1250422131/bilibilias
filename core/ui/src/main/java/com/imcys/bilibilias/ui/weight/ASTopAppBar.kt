@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.weight
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -11,8 +12,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 
 enum class BILIBILIASTopAppBarStyle {
     Small, Large, CenterAligned
@@ -29,50 +32,55 @@ fun ASTopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    alwaysDisplay: Boolean = false
 ) {
-
+    val windowWidthSizeClass = rememberWidthSizeClass()
+    if (windowWidthSizeClass != WindowWidthSizeClass.Compact && !alwaysDisplay) return
     val mColors = colors ?: when (style) {
         BILIBILIASTopAppBarStyle.Small -> TopAppBarDefaults.topAppBarColors()
         BILIBILIASTopAppBarStyle.Large -> TopAppBarDefaults.topAppBarColors()
         BILIBILIASTopAppBarStyle.CenterAligned -> TopAppBarDefaults.topAppBarColors()
     }
-
     val topBarModifier = Modifier.padding(contentPadding())
-    when (style) {
-        BILIBILIASTopAppBarStyle.Small -> {
-            TopAppBar(
-                title = title,
-                modifier = topBarModifier,
-                navigationIcon = navigationIcon,
-                actions = actions,
-                windowInsets = windowInsets,
-                colors = mColors,
-                scrollBehavior = scrollBehavior
-            )
-        }
+    AnimatedVisibility(windowWidthSizeClass == WindowWidthSizeClass.Compact || alwaysDisplay) {
+        when (style) {
+            BILIBILIASTopAppBarStyle.Small -> {
+                TopAppBar(
+                    title = title,
+                    modifier = topBarModifier,
+                    navigationIcon = navigationIcon,
+                    actions = actions,
+                    windowInsets = windowInsets,
+                    colors = mColors,
+                    scrollBehavior = scrollBehavior
+                )
+            }
 
-        BILIBILIASTopAppBarStyle.Large -> {
-            LargeTopAppBar(
-                modifier = topBarModifier,
-                title = title,
-                navigationIcon = navigationIcon,
-                actions = actions,
-                windowInsets = windowInsets,
-                colors = mColors,
-                scrollBehavior = scrollBehavior
-            )
-        }
+            BILIBILIASTopAppBarStyle.Large -> {
+                LargeTopAppBar(
+                    modifier = topBarModifier,
+                    title = title,
+                    navigationIcon = navigationIcon,
+                    actions = actions,
+                    windowInsets = windowInsets,
+                    colors = mColors,
+                    scrollBehavior = scrollBehavior
+                )
+            }
 
-        BILIBILIASTopAppBarStyle.CenterAligned -> {
-            CenterAlignedTopAppBar(
-                modifier = topBarModifier,
-                title = title,
-                navigationIcon = navigationIcon,
-                actions = actions,
-                windowInsets = windowInsets,
-                colors = mColors,
-                scrollBehavior = scrollBehavior
-            )
+            BILIBILIASTopAppBarStyle.CenterAligned -> {
+                CenterAlignedTopAppBar(
+                    modifier = topBarModifier,
+                    title = title,
+                    navigationIcon = navigationIcon,
+                    actions = actions,
+                    windowInsets = windowInsets,
+                    colors = mColors,
+                    scrollBehavior = scrollBehavior
+                )
+            }
         }
     }
+
+
 }

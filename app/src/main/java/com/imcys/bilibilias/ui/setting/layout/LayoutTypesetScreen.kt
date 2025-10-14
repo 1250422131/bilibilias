@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.setting.layout
 
-import android.os.Parcelable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
@@ -47,6 +47,8 @@ import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import com.imcys.bilibilias.weight.ASAnimatedContent
+import com.imcys.bilibilias.weight.maybeNestedScroll
 import com.imcys.bilibilias.weight.reorderable.ItemPosition
 import com.imcys.bilibilias.weight.reorderable.ReorderableItem
 import com.imcys.bilibilias.weight.reorderable.detectReorderAfterLongPress
@@ -58,8 +60,7 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Serializable
-@Parcelize
-object LayoutTypesetRoute : NavKey, Parcelable
+object LayoutTypesetRoute : NavKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,16 +72,21 @@ fun LayoutTypesetScreen(layoutTypesetRoute: LayoutTypesetRoute, onToBack: () -> 
         scrollBehavior = scrollBehavior,
         onToBack = onToBack
     ) {
-        LayoutTypesetContent(vm = vm, paddingValues = it, homeLayoutList, onMove = { from, to ->
-            vm.moveLayoutItem(from.index, to.index)
-        })
+        LayoutTypesetContent(
+            modifier = Modifier
+                .maybeNestedScroll(scrollBehavior)
+                .padding(it),
+            vm = vm,
+            homeLayoutList, onMove = { from, to ->
+                vm.moveLayoutItem(from.index, to.index)
+            })
     }
 }
 
 @Composable
 fun LayoutTypesetContent(
+    modifier: Modifier = Modifier,
     vm: LayoutTypesetViewModel,
-    paddingValues: PaddingValues,
     homeLayoutList: List<AppSettings.HomeLayoutItem>,
     onMove: (ItemPosition, ItemPosition) -> Unit,
 ) {
@@ -91,8 +97,7 @@ fun LayoutTypesetContent(
 
     LazyColumn(
         state = state.listState,
-        modifier = Modifier
-            .padding(paddingValues)
+        modifier = modifier
             .padding(vertical = 5.dp, horizontal = 10.dp)
             .reorderable(state)
             .detectReorderAfterLongPress(state),

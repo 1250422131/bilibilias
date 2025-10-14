@@ -1,14 +1,11 @@
 package com.imcys.bilibilias.ui.setting.navigation
 
-import android.os.Parcelable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Parcelize
-object SettingRoute: NavKey, Parcelable
+object SettingRoute: NavKey
 
 @Serializable
-@Parcelize
-object RoamRoute: NavKey, Parcelable
+object RoamRoute: NavKey

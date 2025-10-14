@@ -7,6 +7,7 @@ import android.util.Log
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -149,7 +150,7 @@ internal fun HomeScreen(
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
-
+    val windowSizeClass = rememberWidthSizeClass()
     val downloadListState by vm.downloadListState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -229,28 +230,31 @@ internal fun HomeScreen(
 
             // 底部输入区
             with(sharedTransitionScope) {
-                when (rememberWidthSizeClass()) {
-                    WindowWidthSizeClass.Compact -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp)
-                        ) {
-                            Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
-                                ASCardTextField(
-                                    modifier = Modifier.sharedElement(
-                                        sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
-                                        animatedVisibilityScope = animatedContentScope
-                                    ),
-                                    value = "", onValueChange = {},
-                                    enabled = false, readOnly = true
-                                )
+                AnimatedContent(windowSizeClass) {
+                    when (it) {
+                        WindowWidthSizeClass.Compact -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 15.dp)
+                            ) {
+                                Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
+                                    ASCardTextField(
+                                        modifier = Modifier.sharedElement(
+                                            sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
+                                            animatedVisibilityScope = animatedContentScope
+                                        ),
+                                        value = "", onValueChange = {},
+                                        enabled = false, readOnly = true
+                                    )
 
+                                }
+                                Spacer(Modifier.height(20.dp))
                             }
-                            Spacer(Modifier.height(20.dp))
                         }
+
+                        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {}
                     }
-                    WindowWidthSizeClass.Medium , WindowWidthSizeClass.Expanded -> {}
                 }
             }
         }

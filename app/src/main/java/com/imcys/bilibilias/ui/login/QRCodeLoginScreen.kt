@@ -1,14 +1,15 @@
 package com.imcys.bilibilias.ui.login
 
-import android.app.Activity
-import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +44,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,17 +60,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imcys.bilibilias.common.utils.ASConstant.PRIVACY_POLICY_URL
-import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.di.ProvideKoinApplication
+import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
@@ -89,7 +87,7 @@ internal fun QRCodeLoginRoute(
     onToBack: () -> Unit,
     onBackHomePage: () -> Unit,
 ) {
-    QRCodeLoginScreen(QRCodeLoginRoute(), onToBack, onBackHomePage,{})
+    QRCodeLoginScreen(QRCodeLoginRoute(), onToBack, onBackHomePage, {})
 }
 
 
@@ -97,12 +95,12 @@ internal fun QRCodeLoginRoute(
 @Composable
 fun QRCodeLoginScreenPreview() {
     ProvideKoinApplication {
-        QRCodeLoginScreen(QRCodeLoginRoute(), {},{}) {}
+        QRCodeLoginScreen(QRCodeLoginRoute(), {}, {}) {}
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun QRCodeLoginScreen(
     route: QRCodeLoginRoute,
@@ -116,6 +114,8 @@ fun QRCodeLoginScreen(
     val qrCodeScanInfoState by vm.qrCodeScanInfoState.collectAsState()
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
     val context = LocalContext.current
+    val windowWidthSizeClass = rememberWidthSizeClass()
+    var agreePrivacyPolicy by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(route.defaultLoginPlatform) {
         vm.updateLoginPlatform(route.defaultLoginPlatform)
@@ -130,14 +130,17 @@ fun QRCodeLoginScreen(
                             qrCodeScanInfoState.data
                         )
                     }
+
                     86038 -> {
                         // 二维码失效
                         vm.getLoadLoginQRCodeInfo()
                     }
+
                     else -> {
                     }
                 }
             }
+
             else -> {}
         }
     }
@@ -156,43 +159,170 @@ fun QRCodeLoginScreen(
                     }
                 }
             }
+
             else -> {}
         }
     }
 
-    var agreePrivacyPolicy by rememberSaveable { mutableStateOf(false) }
+    QRLoginScaffold(onToBack, onToCookieLogin) {
+        Column(
+            Modifier
+                .padding(it)
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp)
+        ) {
+            SharedTransitionLayout {
+                AnimatedContent(windowWidthSizeClass,label = "扫码登录内容区域") { size ->
+                    when (size) {
+                        WindowWidthSizeClass.Compact -> {
+                            QRCodeLoginContentWidthCompact(
+                                vm,
+                                route,
+                                uiState,
+                                qrCodeInfoState,
+                                agreePrivacyPolicy,
+                                updateAgreePrivacyPolicy = { state ->
+                                    agreePrivacyPolicy = state
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
+                                sharedTransitionScope = this@SharedTransitionLayout
+                            )
+                        }
 
-    QRLoginScaffold(onToBack,onToCookieLogin) {
-        Box(Modifier.padding(it)) {
-            Column(
+                        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+                            QRCodeLoginContentWidthMediumAndExpanded(
+                                vm,
+                                route,
+                                uiState,
+                                qrCodeInfoState,
+                                agreePrivacyPolicy,
+                                updateAgreePrivacyPolicy = { state ->
+                                    agreePrivacyPolicy = state
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
+                                sharedTransitionScope = this@SharedTransitionLayout
+                            )
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun QRCodeLoginContentWidthMediumAndExpanded(
+    vm: QRCodeLoginViewModel,
+    route: QRCodeLoginRoute,
+    uiState: QRCodeLoginViewModel.UIState,
+    qrCodeInfoState: NetWorkResult<QRCodeInfo?>,
+    agreePrivacyPolicy: Boolean,
+    updateAgreePrivacyPolicy: (Boolean) -> Unit,
+    animatedVisibilityScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope,
+) {
+    val context = LocalContext.current
+    Row(Modifier.fillMaxWidth()) {
+        with(sharedTransitionScope) {
+            // QR内容区域
+            QRCodeContent(
                 Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp)
+                    .weight(6f)
+                    .fillMaxHeight()
+                    .sharedElement(
+                        rememberSharedContentState(key = "qrCodeContent"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
+                route,
+                uiState.selectedLoginPlatform,
+                qrCodeInfoState,
+                agreePrivacyPolicy,
+                updateLoginPlatform = vm::updateLoginPlatform,
+                updateQrCode = vm::getLoadLoginQRCodeInfo,
+                updateAgreePrivacyPolicy = { state -> updateAgreePrivacyPolicy(state) }
+            )
+            // 操作区域
+            Box(
+                Modifier
+                    .weight(4f)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center
             ) {
-
-                // QR内容区域
-                QRCodeContent(
-                    route,
-                    uiState.selectedLoginPlatform,
-                    qrCodeInfoState,
-                    agreePrivacyPolicy,
-                    updateLoginPlatform = vm::updateLoginPlatform,
-                    updateQrCode = vm::getLoadLoginQRCodeInfo,
-                    updateAgreePrivacyPolicy = { state -> agreePrivacyPolicy = state }
-                )
-                // 操作区域
                 ActionButton(
+                    Modifier.fillMaxWidth().sharedElement(
+                        rememberSharedContentState(key = "actionButton"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
                     agreePrivacyPolicy,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     saveQRCodeImage = {
                         vm.saveQRCodeImageToGallery(context)
                     },
                     goScanQR = {
                         vm.goToScanQR(context)
-                    }
+                    },
                 )
             }
+
         }
     }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun QRCodeLoginContentWidthCompact(
+    vm: QRCodeLoginViewModel,
+    route: QRCodeLoginRoute,
+    uiState: QRCodeLoginViewModel.UIState,
+    qrCodeInfoState: NetWorkResult<QRCodeInfo?>,
+    agreePrivacyPolicy: Boolean,
+    updateAgreePrivacyPolicy: (Boolean) -> Unit,
+    animatedVisibilityScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope,
+) {
+    val context = LocalContext.current
+    Column(Modifier.fillMaxWidth()) {
+        with(sharedTransitionScope) {
+            // QR内容区域
+            QRCodeContent(
+                Modifier
+                    .weight(1f)
+                    .sharedElement(
+                        rememberSharedContentState(key = "qrCodeContent"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
+                route,
+                uiState.selectedLoginPlatform,
+                qrCodeInfoState,
+                agreePrivacyPolicy,
+                updateLoginPlatform = vm::updateLoginPlatform,
+                updateQrCode = vm::getLoadLoginQRCodeInfo,
+                updateAgreePrivacyPolicy = { state -> updateAgreePrivacyPolicy(state) }
+            )
+            // 操作区域
+            ActionButton(
+                Modifier
+                   .fillMaxWidth()
+                    .sharedElement(
+                        rememberSharedContentState(key = "actionButton"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
+                agreePrivacyPolicy,
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope= sharedTransitionScope,
+                saveQRCodeImage = {
+                    vm.saveQRCodeImageToGallery(context)
+                },
+                goScanQR = {
+                    vm.goToScanQR(context)
+                }
+            )
+        }
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -256,58 +386,134 @@ private fun QRLoginScaffold(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ActionButton(
+    modifier: Modifier,
     agreePrivacyPolicy: Boolean,
     saveQRCodeImage: () -> Unit,
     goScanQR: () -> Unit,
+    animatedVisibilityScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
-    Row(Modifier.fillMaxWidth()) {
-        Button(
-            enabled = agreePrivacyPolicy,
-            modifier = Modifier
-                .weight(1f)
-                .defaultMinSize(minHeight = 48.dp),
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
-            shape = CardDefaults.shape,
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-            onClick = { saveQRCodeImage() }
-        ) {
-            Icon(
-                Icons.Outlined.Download,
-                contentDescription = "下载二维码",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(
-                "下载二维码",
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontSize = 16.sp
-            )
-        }
-        Spacer(Modifier.width(24.dp))
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .defaultMinSize(minHeight = 48.dp),
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
-            shape = CardDefaults.shape,
-            onClick = { goScanQR() },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-        ) {
-            Icon(
-                Icons.AutoMirrored.Outlined.OpenInNew,
-                contentDescription = "去扫描",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(
-                "去扫描",
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontSize = 16.sp
-            )
+    val windowWidthSizeClass = rememberWidthSizeClass()
+    with(sharedTransitionScope){
+        AnimatedContent(windowWidthSizeClass) { size->
+            when(size){
+                WindowWidthSizeClass.Compact -> {
+                    Row(modifier) {
+                        Button(
+                            enabled = agreePrivacyPolicy,
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = "downloadQRButton"),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .weight(1f)
+                                .defaultMinSize(minHeight = 48.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
+                            shape = CardDefaults.shape,
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                            onClick = { saveQRCodeImage() }
+                        ) {
+                            Icon(
+                                Icons.Outlined.Download,
+                                contentDescription = "下载二维码",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                "下载二维码",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(Modifier.width(24.dp))
+                        Button(
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = "goToScanQRButton"),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .weight(1f)
+                                .defaultMinSize(minHeight = 48.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
+                            shape = CardDefaults.shape,
+                            onClick = { goScanQR() },
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Outlined.OpenInNew,
+                                contentDescription = "去扫描",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                "去扫描",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+                }
+                WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded ->{
+                    Column (modifier) {
+                        Button(
+                            enabled = agreePrivacyPolicy,
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = "downloadQRButton"),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
+                            shape = CardDefaults.shape,
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                            onClick = { saveQRCodeImage() }
+                        ) {
+                            Icon(
+                                Icons.Outlined.Download,
+                                contentDescription = "下载二维码",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                "下载二维码",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Button(
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = "goToScanQRButton"),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
+                            shape = CardDefaults.shape,
+                            onClick = { goScanQR() },
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Outlined.OpenInNew,
+                                contentDescription = "去扫描",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                "去扫描",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -316,7 +522,7 @@ private fun PlatformToggleButton(
     route: QRCodeLoginRoute,
     selectedLoginPlatform: LoginPlatform,
     updateLoginPlatform: (LoginPlatform) -> Unit,
-){
+) {
     val haptics = LocalHapticFeedback.current
     ToggleButton(
         checked = selectedLoginPlatform == LoginPlatform.WEB,
@@ -368,33 +574,28 @@ private fun PlatformToggleButton(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-private fun ColumnScope.QRCodeContent(
+private fun QRCodeContent(
+    modifier: Modifier = Modifier,
     route: QRCodeLoginRoute,
     selectedLoginPlatform: LoginPlatform,
     qrCodeInfoState: NetWorkResult<QRCodeInfo?>,
     agreePrivacyPolicy: Boolean,
     updateLoginPlatform: (LoginPlatform) -> Unit,
     updateQrCode: () -> Unit,
-    updateAgreePrivacyPolicy: (Boolean) -> Unit = {}
+    updateAgreePrivacyPolicy: (Boolean) -> Unit = {},
 ) {
     Box(
-        modifier =  Modifier
-        .weight(1f)
-        .fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
-        when (rememberWidthSizeClass()) {
-            WindowWidthSizeClass.Compact -> {}
-            WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
-                Column { PlatformToggleButton(route, selectedLoginPlatform, updateLoginPlatform) }
-            }
-        }
+        val widthSizeClass = rememberWidthSizeClass()
         Column(
             modifier = Modifier.align(Alignment.Center),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
-            val modifier = when (rememberWidthSizeClass()) {
+            val modifier = when (widthSizeClass) {
                 WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth(0.6f)
                 WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> Modifier.fillMaxHeight(0.6f)
                 else -> Modifier
@@ -416,8 +617,8 @@ private fun ColumnScope.QRCodeContent(
                 ) {
                     AnimatedContent(agreePrivacyPolicy) {
                         if (it) {
-                            when (qrCodeInfoState) {
-                                is NetWorkResult.Error<*> -> {
+                            when (qrCodeInfoState.status) {
+                                ApiStatus.ERROR -> {
                                     ASIconButton(onClick = {
                                         updateQrCode()
                                     }) {
@@ -425,13 +626,13 @@ private fun ColumnScope.QRCodeContent(
                                     }
                                     Text("网络异常，点击按钮重试。")
                                 }
-                                is NetWorkResult.Default<*>,
-                                is NetWorkResult.Loading<*>
+
+                                ApiStatus.DEFAULT,
+                                ApiStatus.LOADING
                                     -> {
                                     ContainedLoadingIndicator()
                                 }
-
-                                is NetWorkResult.Success<*> -> {
+                                ApiStatus.SUCCESS -> {
                                     ASAsyncImage(
                                         "https://pan.misakamoe.com/qrcode/?url=" + URLEncoder.encode(
                                             qrCodeInfoState.data?.url,
@@ -464,13 +665,7 @@ private fun ColumnScope.QRCodeContent(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             ) {
-                when (rememberWidthSizeClass()) {
-                    WindowWidthSizeClass.Compact -> {
-                        PlatformToggleButton(route, selectedLoginPlatform, updateLoginPlatform)
-                    }
-
-                    WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {}
-                }
+                PlatformToggleButton(route, selectedLoginPlatform, updateLoginPlatform)
             }
             ASAgreePrivacyPolicy(agreePrivacyPolicy, onClick = {
                 updateAgreePrivacyPolicy(!agreePrivacyPolicy)

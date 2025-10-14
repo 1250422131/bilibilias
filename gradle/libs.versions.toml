@@ -35,6 +35,7 @@ shizuku = "13.1.5"
 xposed = "82"
 window = "1.5.0"
 adaptive = "1.2.0-rc01"
+adaptiveNavigation3 = "1.3.0-alpha01"
 
 
 [libraries]
@@ -100,9 +101,10 @@ material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "k
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-navigation3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "adaptiveNavigation3" }
+
 # Optional add-on libraries
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
-androidx-material3-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 device-compat = { module = "com.github.getActivity:DeviceCompat", version.ref = "deviceCompat" }
 
@@ -135,5 +137,5 @@ compose = [
     "androidx-material3-window-size",
     "androidx-material-icons-extended", "androidx-ui", "androidx-ui-android",
     "androidx-material3-android", "androidx-navigation3-runtime", "androidx-navigation3-ui",
-    "androidx-lifecycle-viewmodel-navigation3"
+    "androidx-lifecycle-viewmodel-navigation3","androidx-navigation3-adaptive"
 ]

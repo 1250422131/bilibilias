@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.ui.setting.about
 
-import android.content.Intent
-import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,14 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -43,21 +36,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.ASConstant
-import com.imcys.bilibilias.common.utils.ASConstant.PRIVACY_POLICY_URL
 import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
-import kotlinx.android.parcel.Parcelize
+import com.imcys.bilibilias.weight.maybeNestedScroll
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Parcelize
-data object AboutRouter : NavKey, Parcelable
+data object AboutRouter : NavKey
 
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,18 +71,24 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
                 }
             )
         },
-    ) {
-        AboutContent(it,scrollBehavior.nestedScrollConnection)
+    ) { paddingValues ->
+        AboutContent(
+            modifier = Modifier.maybeNestedScroll(scrollBehavior),
+            paddingValues = paddingValues,
+        )
     }
 
 }
+
 @Composable
-fun AboutContent(paddingValues: PaddingValues,connection: NestedScrollConnection){
+fun AboutContent(
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues,
+) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .padding(paddingValues)
-            .fillMaxSize()
-            .nestedScroll(connection),
+            .fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

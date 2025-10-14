@@ -9,21 +9,25 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
-import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -80,12 +84,11 @@ import org.koin.androidx.compose.koinViewModel
  * BILIBILAIS导航显示组件
  * 计划迁移到Compose Navigation 3.0
  */
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun BILIBILAISNavDisplay() {
-
-    val viewModel = koinViewModel<BILIBILIASAppViewModel>()
-    val backStack = viewModel.backStack
+    val backStack = rememberNavBackStack(HomeRoute())
+    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
     // 监听解析事件
     LaunchedEffect(Unit) {
@@ -123,6 +126,7 @@ fun BILIBILAISNavDisplay() {
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNullSafe() },
+            sceneStrategy = listDetailStrategy,
             transitionSpec = {
                 ContentTransform(
                     // 正向导航：新页面进入 - 只是淡入
@@ -146,14 +150,8 @@ fun BILIBILAISNavDisplay() {
                 createPopTransitionSpec()
             },
             predictivePopTransitionSpec = {
-                // 无动画
                 createPopTransitionSpec()
             },
-            entryDecorators = listOf(
-                rememberSceneSetupNavEntryDecorator(),
-                rememberSavedStateNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(),
-            ),
             entryProvider = entryProvider {
                 entry<HomeRoute> {
                     HomeScreen(
@@ -252,7 +250,21 @@ fun BILIBILAISNavDisplay() {
                         it,
                         onToBack = { backStack.removeLastOrNullSafe() })
                 }
-                entry<SettingRoute> {
+                entry<SettingRoute>(
+                    metadata = ListDetailSceneStrategy.listPane(
+                        detailPlaceholder = {
+                            Column(
+                                Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    "请选择右侧选项",
+                                )
+                            }
+                        }
+                    )
+                ) {
                     SettingScreen(
                         onToRoam = {
                             backStack.addWithReuse(RoamRoute)
@@ -262,7 +274,7 @@ fun BILIBILAISNavDisplay() {
                         onToLayoutTypeset = { backStack.addWithReuse(LayoutTypesetRoute) },
                         onToAbout = { backStack.addWithReuse(AboutRouter) },
                         onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) },
-                        onToSystemExpand = {backStack.addWithReuse(SystemExpandRoute)},
+                        onToSystemExpand = { backStack.addWithReuse(SystemExpandRoute) },
                         onToStorageManagement = { backStack.addWithReuse(StorageManagementRoute) },
                         onLogoutFinish = {
                             backStack.firstOrNull {
@@ -273,7 +285,9 @@ fun BILIBILAISNavDisplay() {
                         }
                     )
                 }
-                entry<RoamRoute> {
+                entry<RoamRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     RoamScreen(
                         onToBack = { backStack.removeLastOrNullSafe() },
                         onGoToQRCodeLogin = {
@@ -318,7 +332,9 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<ComplaintRoute> {
+                entry<ComplaintRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     ComplaintScreen(
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
@@ -328,7 +344,9 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<LayoutTypesetRoute> {
+                entry<LayoutTypesetRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     LayoutTypesetScreen(
                         layoutTypesetRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
@@ -340,13 +358,17 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<AboutRouter> {
+                entry<AboutRouter>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     AboutScreen(
                         aboutRouter = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<AppVersionInfoRoute> {
+                entry<AppVersionInfoRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     AppVersionInfoScreen(
                         appVersionInfoRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
@@ -358,25 +380,29 @@ fun BILIBILAISNavDisplay() {
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<CookeLoginRoute>{
-                    CookeLoginScreen(cookeLoginRoute= it, onToBack = {
+                entry<CookeLoginRoute> {
+                    CookeLoginScreen(cookeLoginRoute = it, onToBack = {
                         backStack.removeLastOrNullSafe()
                     }, onFinish = {
                         backStack.clear()
                         backStack.add(HomeRoute(isFormLogin = true))
                     })
                 }
-                entry<DonateRoute>{
+                entry<DonateRoute> {
                     DonateScreen(donateRoute = it, onToBack = {
                         backStack.removeLastOrNullSafe()
                     })
                 }
-                entry<SystemExpandRoute>{
+                entry<SystemExpandRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     SystemExpandScreen(systemExpandRoute = it, onToBack = {
                         backStack.removeLastOrNullSafe()
                     })
                 }
-                entry<StorageManagementRoute> {
+                entry<StorageManagementRoute>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
                     StorageManagementScreen(
                         route = it,
                         onToBack = { backStack.removeLastOrNullSafe() },
@@ -399,11 +425,11 @@ fun BILIBILAISNavDisplay() {
  * - 参数不同：替换该路由实例并移除其之后的所有元素
  * 否则添加新的路由实例
  */
-inline fun <reified T : NavKey> SnapshotStateList<NavKey>.addWithReuse(route: T) {
+inline fun <reified T : NavKey> NavBackStack<T>.addWithReuse(route: T) {
     val existingIndex = indexOfFirst { it::class == T::class }
 
     if (existingIndex != -1) {
-        val existingRoute = get(existingIndex) as T
+        val existingRoute = get(existingIndex)
         // 比较路由对象的完整内容，而不只是类型
         if (existingRoute == route) {
             // 参数相同，只需移除目标之后的所有元素
@@ -422,7 +448,7 @@ inline fun <reified T : NavKey> SnapshotStateList<NavKey>.addWithReuse(route: T)
  * 安全移除栈顶元素扩展函数
  * 只要栈中元素大于1时才允许移除，防止最后一页被移除导致异常
  */
-fun <T> SnapshotStateList<T>.removeLastOrNullSafe() {
+fun <T : NavKey> NavBackStack<T>.removeLastOrNullSafe() {
     if (this.size > 1) {
         this.removeLastOrNull()
     }

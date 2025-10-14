@@ -95,12 +95,6 @@ private fun MainScaffold() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceContainer)
     ) {
-        ASAsyncImage(
-            model = "https://youke1.picui.cn/s1/2025/08/29/68b16d2fe4356.jpg",
-            contentDescription = "",
-            modifier = Modifier.fillMaxSize()
-        )
-
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = uiState,
@@ -115,8 +109,12 @@ private fun MainScaffold() {
         ) { targetUiState ->
             when (targetUiState) {
                 UIState.Default -> {
-
-                    BILIBILAISNavDisplay()
+                    Surface(
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                    ) {
+                        BILIBILAISNavDisplay()
+                    }
 
                     // Dialog注册区域
                     PrivacyPolicyDialog(
