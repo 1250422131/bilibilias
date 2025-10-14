@@ -2,10 +2,6 @@ package com.imcys.bilibilias.ui.home
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Base64
-import android.util.Log
-import android.app.Activity
-import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
@@ -32,7 +28,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
@@ -51,10 +46,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
-import androidx.compose.material3.windowsizeclass.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,7 +74,6 @@ import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.data.ASBuildType
 import com.imcys.bilibilias.common.data.getASBuildType
-import com.imcys.bilibilias.common.utils.AppUtils
 import com.imcys.bilibilias.common.utils.AppUtils.getVersion
 import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.data.model.BILILoginUserModel
@@ -88,17 +82,16 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
-import com.imcys.bilibilias.network.config.API.App.BASE_URL
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
-import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.ASHorizontalMultiBrowseCarousel
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTextButton
+import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
@@ -649,6 +642,7 @@ private fun HomeScaffold(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {},
+                    alwaysDisplay = true,
                     actions = {
                         when (rememberWidthSizeClass()) {
                             WindowWidthSizeClass.Compact -> {}
