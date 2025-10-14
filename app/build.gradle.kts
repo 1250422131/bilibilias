@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias { libs.plugins.kotlin.parcelize }
 
 }
 val enablePlayAppMode: String by project
@@ -150,12 +151,16 @@ dependencies {
 
     // xposed
     compileOnly(libs.xposed.api)
+    //UI
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.adaptive.layout)
+    implementation(libs.androidx.adaptive.navigation)
 
     // 预览工具
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    debugImplementation(libs.androidx.window)
 
 }

@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.setting.version
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,11 +42,13 @@ import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 
 @Serializable
-data object AppVersionInfoRoute : NavKey
+@Parcelize
+data object AppVersionInfoRoute : NavKey, Parcelable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +72,7 @@ fun AppVersionInfoScreen(
 
 @Preview
 @Composable
-private fun VersionInfoContent(padding: PaddingValues = PaddingValues(0.dp)) {
+fun VersionInfoContent(padding: PaddingValues = PaddingValues(0.dp)) {
     val context = LocalContext.current
     val deviceInfo by remember {
         mutableStateOf(DeviceInfoUtils.getDeviceInfo(context))

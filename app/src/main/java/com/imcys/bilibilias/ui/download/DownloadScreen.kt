@@ -68,6 +68,33 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
     val selectDeleteList = remember { mutableStateListOf<DownloadSegment>() }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+
+
+    DownloadScaffold(onToBack = onToBack) { paddingValues ->
+        DownloadContent(route,onToBack,paddingValues)
+
+    }
+
+
+}
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun DownloadContent(
+    route: DownloadRoute,
+    onToBack: () -> Unit,
+    paddingValues: PaddingValues = PaddingValues(0.dp)
+) {
+    val vm = koinViewModel<DownloadViewModel>()
+    val downloadListState by vm.downloadListState.collectAsState()
+    val allDownloadSegment by vm.allDownloadSegment.collectAsState()
+    val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
+
+    var selectIndex by remember { mutableIntStateOf(0) }
+    var downloadFinishEditState by remember { mutableStateOf(false) }
+    val selectDeleteList = remember { mutableStateListOf<DownloadSegment>() }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(route.defaultListIndex) {
         selectIndex = route.defaultListIndex
     }
@@ -102,107 +129,101 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
         }
     }
 
-    DownloadScaffold(onToBack = onToBack) { paddingValues ->
-        Column(Modifier.padding(paddingValues)) {
-            AnimatedContent(downloadFinishEditState, label = "") { state ->
-                if (state) {
-                    EditTopTools(
-                        completedSegments, selectDeleteList,
-                        onUpdateDownloadFinishEditState = {
-                            downloadFinishEditState = it
-                        },
-                        onUpdateShowDeleteDialog = {
-                            showDeleteDialog = it
-                        }
-                    )
-                } else {
-                    PageChangeTools(selectIndex, haptics, onUpdateSelectIndex = {
-                        selectIndex = it
-                    })
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier.padding(bottom = 10.dp, end = 10.dp, start = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(11.dp)
-            ) {
-                when (selectIndex) {
-                    0 -> {
-                        items(downloadListState, key = { it.downloadSegment.platformId }) {
-                            DownloadTaskCard(
-                                modifier = Modifier.animateItem(),
-                                task = it,
-                                onPause = {
-                                    vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                                },
-                                onResume = {
-                                    vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                                }
-                            )
-                        }
+    Column(Modifier.padding(paddingValues)) {
+        AnimatedContent(downloadFinishEditState, label = "") { state ->
+            if (state) {
+                EditTopTools(
+                    completedSegments, selectDeleteList,
+                    onUpdateDownloadFinishEditState = {
+                        downloadFinishEditState = it
+                    },
+                    onUpdateShowDeleteDialog = {
+                        showDeleteDialog = it
                     }
+                )
+            } else {
+                PageChangeTools(selectIndex, haptics, onUpdateSelectIndex = {
+                    selectIndex = it
+                })
+            }
+        }
 
-                    1 -> {
-                        items(completedSegments, key = { it.segmentId }) { segment ->
-                            DownloadFinishTaskCard(
-                                modifier = Modifier
-                                    .animateItem()
-                                    .combinedClickable(
-                                        onLongClick = {
-                                            downloadFinishEditState = !downloadFinishEditState
-                                        }
-                                    ) {
-                                        if (downloadFinishEditState) {
-                                            updateSelectItems(segment)
-                                        } else {
-                                            vm.openDownloadSegmentFile(context, segment)
-                                        }
-                                    },
-                                downloadSegment = segment,
-                                downloadFinishEditState = downloadFinishEditState,
-                                selectDeleteList = selectDeleteList,
-                                onDeleteTaskAndFile = {
-                                    vm.deleteDownloadSegment(context, segment)
+        LazyColumn(
+            modifier = Modifier.padding(bottom = 10.dp, end = 10.dp, start = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(11.dp)
+        ) {
+            when (selectIndex) {
+                0 -> {
+                    items(downloadListState, key = { it.downloadSegment.platformId }) {
+                        DownloadTaskCard(
+                            modifier = Modifier.animateItem(),
+                            task = it,
+                            onPause = {
+                                vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                            },
+                            onResume = {
+                                vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                            }
+                        )
+                    }
+                }
+
+                1 -> {
+                    items(completedSegments, key = { it.segmentId }) { segment ->
+                        DownloadFinishTaskCard(
+                            modifier = Modifier
+                                .animateItem()
+                                .combinedClickable(
+                                    onLongClick = {
+                                        downloadFinishEditState = !downloadFinishEditState
+                                    }
+                                ) {
+                                    if (downloadFinishEditState) {
+                                        updateSelectItems(segment)
+                                    } else {
+                                        vm.openDownloadSegmentFile(context, segment)
+                                    }
                                 },
-                                onSelect = {
-                                    updateSelectItems(segment)
-                                }
-                            )
-                        }
+                            downloadSegment = segment,
+                            downloadFinishEditState = downloadFinishEditState,
+                            selectDeleteList = selectDeleteList,
+                            onDeleteTaskAndFile = {
+                                vm.deleteDownloadSegment(context, segment)
+                            },
+                            onSelect = {
+                                updateSelectItems(segment)
+                            }
+                        )
                     }
                 }
             }
         }
-
-        if (showDeleteDialog) {
-            // 显示删除对话框
-            AlertDialog(
-                onDismissRequest = { showDeleteDialog = false },
-                title = { Text("批量删除任务") },
-                text = { Text("确定要删除选中的任务记录和文件吗？") },
-                confirmButton = {
-                    ASTextButton(
-                        onClick = {
-                            vm.downloadSelectedTasks(selectDeleteList.toList())
-                            showDeleteDialog = false
-                        }
-                    ) {
-                        Text("删除")
-                    }
-                },
-                dismissButton = {
-                    ASTextButton(
-                        onClick = { showDeleteDialog = false }
-                    ) {
-                        Text("取消")
-                    }
-                }
-            )
-        }
-
     }
 
-
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("批量删除任务") },
+            text = { Text("确定要删除选中的任务记录和文件吗？") },
+            confirmButton = {
+                ASTextButton(
+                    onClick = {
+                        vm.downloadSelectedTasks(selectDeleteList.toList())
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text("删除")
+                }
+            },
+            dismissButton = {
+                ASTextButton(
+                    onClick = { showDeleteDialog = false }
+                ) {
+                    Text("取消")
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

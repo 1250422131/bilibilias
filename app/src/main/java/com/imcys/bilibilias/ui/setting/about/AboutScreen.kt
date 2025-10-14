@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.setting.about
 
 import android.content.Intent
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -50,10 +52,12 @@ import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object AboutRouter : NavKey
+@Parcelize
+data object AboutRouter : NavKey, Parcelable
 
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,31 +82,32 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
             )
         },
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            item {
-                IconArea()
-            }
-
-            item {
-                Spacer(Modifier.height(10.dp))
-                TitleArea()
-            }
-
-            item {
-                Spacer(Modifier.height(10.dp))
-                ButtonArea()
-            }
-        }
+        AboutContent(it,scrollBehavior.nestedScrollConnection)
     }
 
+}
+@Composable
+fun AboutContent(paddingValues: PaddingValues,connection: NestedScrollConnection){
+    LazyColumn(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .nestedScroll(connection),
+        contentPadding = PaddingValues(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+            IconArea()
+        }
+        item {
+            Spacer(Modifier.height(10.dp))
+            TitleArea()
+        }
+        item {
+            Spacer(Modifier.height(10.dp))
+            ButtonArea()
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

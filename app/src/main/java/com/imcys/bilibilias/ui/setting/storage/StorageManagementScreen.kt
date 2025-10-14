@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.setting.storage
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,9 +40,13 @@ import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.AnimatedStorageRing
+import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
-data object StorageManagementRoute : NavKey
+@Serializable
+@Parcelize
+data object StorageManagementRoute : NavKey, Parcelable
 
 @Composable
 fun StorageManagementScreen(

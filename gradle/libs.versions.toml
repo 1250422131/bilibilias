@@ -34,6 +34,7 @@ deviceCompat = "2.0"
 shizuku = "13.1.5"
 xposed = "82"
 window = "1.5.0"
+adaptive = "1.2.0-rc01"
 
 
 [libraries]
@@ -64,6 +65,9 @@ androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-window = {module = "androidx.window:window", version.ref = "window"}
+androidx-adaptive = {module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive"}
+androidx-adaptive-layout = {module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive"}
+androidx-adaptive-navigation = {module = "androidx.compose.material3.adaptive:adaptive-navigation",version.ref = "adaptive"}
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -118,6 +122,7 @@ gms-google-services = { id = "com.google.gms.google-services", version.ref = "gm
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-perf-plugin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = {id = "kotlin-parcelize"}
 
 bilibilias-android-library = { id = "bilibilias.android.library" }
 bilibilias-android-application = { id = "bilibilias.android.application" }

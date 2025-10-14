@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.setting.layout
 
+import android.os.Parcelable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,12 +52,14 @@ import com.imcys.bilibilias.weight.reorderable.ReorderableItem
 import com.imcys.bilibilias.weight.reorderable.detectReorderAfterLongPress
 import com.imcys.bilibilias.weight.reorderable.rememberReorderableLazyListState
 import com.imcys.bilibilias.weight.reorderable.reorderable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 
 @Serializable
-object LayoutTypesetRoute : NavKey
+@Parcelize
+object LayoutTypesetRoute : NavKey, Parcelable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
