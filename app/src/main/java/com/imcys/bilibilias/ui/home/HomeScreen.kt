@@ -90,6 +90,7 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.config.API.App.BASE_URL
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -228,8 +229,7 @@ internal fun HomeScreen(
 
             // 底部输入区
             with(sharedTransitionScope) {
-                val windowSizeClass = calculateWindowSizeClass(LocalActivity.current as Activity)
-                when (windowSizeClass.widthSizeClass) {
+                when (rememberWidthSizeClass()) {
                     WindowWidthSizeClass.Compact -> {
                         Column(
                             modifier = Modifier
@@ -646,8 +646,7 @@ private fun HomeScaffold(
                     ),
                     navigationIcon = {},
                     actions = {
-                        val windowSizeClass = calculateWindowSizeClass(LocalActivity.current as Activity)
-                        when (windowSizeClass.widthSizeClass) {
+                        when (rememberWidthSizeClass()) {
                             WindowWidthSizeClass.Compact -> {}
                             WindowWidthSizeClass.Medium,WindowWidthSizeClass.Expanded -> {
                                 Icon(

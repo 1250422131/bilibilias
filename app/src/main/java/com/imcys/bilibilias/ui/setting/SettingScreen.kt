@@ -1,11 +1,9 @@
 package com.imcys.bilibilias.ui.setting
 
 import android.Manifest.permission
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -62,13 +60,13 @@ import com.imcys.bilibilias.ui.setting.about.AboutContent
 import com.imcys.bilibilias.ui.setting.about.AboutRouter
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetContent
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
-import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetScaffold
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementContent
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementRoute
 import com.imcys.bilibilias.ui.setting.version.AppVersionInfoRoute
 import com.imcys.bilibilias.ui.setting.version.VersionInfoContent
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTextButton
@@ -121,10 +119,10 @@ fun SettingScreen(
     val coroutineScope = rememberCoroutineScope()
     var showLogoutLoading by remember { mutableStateOf(false) }
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<NavKey>()
-    val windowSizeClass = calculateWindowSizeClass(activity = LocalActivity.current as Activity)
+    val windowWidthSizeClass = rememberWidthSizeClass()
 
     val onBackClick: () -> Unit = {
-        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact &&
+        if ( windowWidthSizeClass == WindowWidthSizeClass.Compact &&
             scaffoldNavigator.currentDestination?.pane == ListDetailPaneScaffoldRole.Detail
         ) {
             // 竖屏模式导航回列表页面
@@ -132,6 +130,7 @@ fun SettingScreen(
                 scaffoldNavigator.navigateBack()
             }
         } else {
+            // 其他情况（横屏或列表页面），调用外部的 onToBack
             onToBack()
         }
     }
@@ -828,7 +827,7 @@ fun SettingScaffold(
                     scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 scrollBehavior = scrollBehavior,
-                style = when (calculateWindowSizeClass(activity = LocalActivity.current as Activity).widthSizeClass) {
+                style = when (rememberWidthSizeClass()) {
                         WindowWidthSizeClass.Compact -> BILIBILIASTopAppBarStyle.Large
                         else -> BILIBILIASTopAppBarStyle.Small
                 },

@@ -74,6 +74,7 @@ import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.ui.login.navigation.QRCodeLoginRoute
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -381,8 +382,7 @@ private fun ColumnScope.QRCodeContent(
         .weight(1f)
         .fillMaxWidth()
     ) {
-        val windowSizeClass = calculateWindowSizeClass(LocalActivity.current as Activity)
-        when (windowSizeClass.widthSizeClass) {
+        when (rememberWidthSizeClass()) {
             WindowWidthSizeClass.Compact -> {}
             WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
                 Column { PlatformToggleButton(route, selectedLoginPlatform, updateLoginPlatform) }
@@ -394,7 +394,7 @@ private fun ColumnScope.QRCodeContent(
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
-            val modifier = when (windowSizeClass.widthSizeClass) {
+            val modifier = when (rememberWidthSizeClass()) {
                 WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth(0.6f)
                 WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> Modifier.fillMaxHeight(0.6f)
                 else -> Modifier
@@ -464,7 +464,7 @@ private fun ColumnScope.QRCodeContent(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             ) {
-                when (windowSizeClass.widthSizeClass) {
+                when (rememberWidthSizeClass()) {
                     WindowWidthSizeClass.Compact -> {
                         PlatformToggleButton(route, selectedLoginPlatform, updateLoginPlatform)
                     }
