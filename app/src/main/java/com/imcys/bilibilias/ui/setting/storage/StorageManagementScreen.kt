@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.common.utils.StorageInfoData
 import com.imcys.bilibilias.common.utils.StorageUtil
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -100,6 +102,7 @@ fun StorageManagementSuccessScreen(
     onCleanCache: () -> Unit,
     onToDownloadList: () -> Unit
 ) {
+    val windowWidthSizeClass = rememberWidthSizeClass()
     Column(
         modifier
             .verticalScroll(rememberScrollState())
@@ -115,7 +118,9 @@ fun StorageManagementSuccessScreen(
         ) {
             AnimatedStorageRing(
                 data, modifier = Modifier
-                    .fillMaxWidth(0.6f)
+                    .fillMaxWidth(
+                        if (windowWidthSizeClass == WindowWidthSizeClass.Compact) 0.6f else 0.4f
+                    )
                     .aspectRatio(1f)
             )
 
@@ -247,6 +252,7 @@ private fun StorageManagementScaffold(
                             onToBack.invoke()
                         })
                     },
+                    alwaysDisplay = false
                 )
             }
         },

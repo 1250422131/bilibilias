@@ -37,6 +37,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +50,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -84,7 +85,7 @@ import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
-import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
+import com.imcys.bilibilias.ui.utils.rememberHeightSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
@@ -124,7 +125,11 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 internal fun HomeScreen(
     homeRoute: HomeRoute,
@@ -143,7 +148,8 @@ internal fun HomeScreen(
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
-    val windowSizeClass = rememberWidthSizeClass()
+    val windowHeightSizeClass = rememberHeightSizeClass()
+
     val downloadListState by vm.downloadListState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -162,6 +168,8 @@ internal fun HomeScreen(
     HomeScaffold(
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         goToLogin = goToLogin,
         goToUserPage = { goToUserPage.invoke(loginUserInfoState.data?.mid ?: 0L) },
         goToAnalysis = goToAnalysis,
@@ -223,9 +231,10 @@ internal fun HomeScreen(
 
             // 底部输入区
             with(sharedTransitionScope) {
-                AnimatedContent(windowSizeClass) {
+                AnimatedContent(windowHeightSizeClass) {
                     when (it) {
-                        WindowWidthSizeClass.Compact -> {
+                        WindowHeightSizeClass.Compact -> {}
+                        WindowHeightSizeClass.Medium, WindowHeightSizeClass.Expanded -> {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -238,15 +247,26 @@ internal fun HomeScreen(
                                             animatedVisibilityScope = animatedContentScope
                                         ),
                                         value = "", onValueChange = {},
-                                        enabled = false, readOnly = true
+                                        enabled = false, readOnly = true,
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier.sharedElement(
+                                                    sharedTransitionScope.rememberSharedContentState(
+                                                        key = "icon-input-analysis"
+                                                    ),
+                                                    animatedVisibilityScope = animatedContentScope
+                                                ),
+                                                imageVector = Icons.Outlined.Search,
+                                                tint = MaterialTheme.colorScheme.onPrimary,
+                                                contentDescription = null
+                                            )
+                                        }
                                     )
 
                                 }
                                 Spacer(Modifier.height(20.dp))
                             }
                         }
-
-                        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {}
                     }
                 }
             }
@@ -283,7 +303,7 @@ fun HomeContent(
 
     val currentSHA1 = rememberSignatureSHA1(context)
     LaunchedEffect(currentSHA1) {
-        if (currentSHA1 == null || !FFmpegManger.checkSign(currentSHA1) ) {
+        if (currentSHA1 == null || !FFmpegManger.checkSign(currentSHA1)) {
             unknownAppSign = true
         }
     }
@@ -298,9 +318,13 @@ fun HomeContent(
     ) {
         if (unknownAppSign) {
             item {
-                ASWarringTip(Modifier.animateItem().animateContentSize()) {
+                ASWarringTip(
+                    Modifier
+                        .animateItem()
+                        .animateContentSize()
+                ) {
                     Text(
-                        if (BuildConfig.DEBUG){
+                        if (BuildConfig.DEBUG) {
                             "当前App处于Debug模式，如果您并非开发人员，请谨慎使用，建议在Github公开的渠道进行下载。"
                         } else {
                             "当前应用签名未知，请谨慎使用！建议在Github公开的渠道进行下载。"
@@ -316,7 +340,9 @@ fun HomeContent(
                     item {
                         ASHorizontalMultiBrowseCarousel(
                             autoScroll = true,
-                            modifier = Modifier.animateItem().animateContentSize(),
+                            modifier = Modifier
+                                .animateItem()
+                                .animateContentSize(),
                             items = bannerList
                         ) { item ->
                             Box(Modifier.maskClip(CardDefaults.shape)) {
@@ -595,20 +621,24 @@ fun DownloadListCard(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3WindowSizeClassApi::class
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalSharedTransitionApi::class
 )
 @Composable
 private fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     loginUserInfoState: NetWorkResult<BILILoginUserModel?>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     goToLogin: () -> Unit,
     goToUserPage: () -> Unit,
     goToAnalysis: () -> Unit,
     goToSetting: () -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
+    val windowHeightSizeClass = rememberHeightSizeClass()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -642,22 +672,7 @@ private fun HomeScaffold(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
                     navigationIcon = {},
-                    alwaysDisplay = true,
                     actions = {
-                        when (rememberWidthSizeClass()) {
-                            WindowWidthSizeClass.Compact -> {}
-                            WindowWidthSizeClass.Medium,WindowWidthSizeClass.Expanded -> {
-                                Icon(
-                                    Icons.Outlined.Search,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                        .size(30.dp)
-                                        .clickable { goToAnalysis() }
-                                )
-                            }
-                        }
                         AsAutoError(
                             loginUserInfoState, onSuccessContent = {
                                 ASAsyncImage(
@@ -706,6 +721,39 @@ private fun HomeScaffold(
                         Spacer(Modifier.width(15.dp))
                     }
                 )
+            }
+        },
+        floatingActionButton = {
+            with(sharedTransitionScope) {
+                AnimatedContent(windowHeightSizeClass) {
+                    when (it) {
+                        WindowHeightSizeClass.Compact -> {
+                            FloatingActionButton(
+                                onClick = goToAnalysis,
+                                modifier = Modifier.sharedElement(
+                                    sharedTransitionScope.rememberSharedContentState(
+                                        key = "card-input-analysis"
+                                    ),
+                                    animatedVisibilityScope = animatedContentScope,
+                                ),
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.sharedElement(
+                                        sharedTransitionScope.rememberSharedContentState(
+                                            key = "icon-input-analysis"
+                                        ),
+                                        animatedVisibilityScope = animatedContentScope
+                                    ),
+                                    imageVector = Icons.Outlined.Search,
+                                    contentDescription = "视频解析",
+                                )
+                            }
+                        }
+
+                        WindowHeightSizeClass.Medium, WindowHeightSizeClass.Expanded -> {}
+                    }
+                }
             }
         }
     ) {

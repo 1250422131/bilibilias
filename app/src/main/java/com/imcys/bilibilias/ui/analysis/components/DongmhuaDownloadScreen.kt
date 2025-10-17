@@ -12,37 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
@@ -51,15 +40,13 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
-import kotlin.math.ceil
 
 
 typealias UpdateSelectedEpId = (epId: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
-
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -85,7 +72,6 @@ fun DongmhuaDownloadScreen(
     var selectSectionId by remember {
         mutableStateOf<Long?>(null)
     }
-    var currentEpListIndex by remember { mutableIntStateOf(0) }
 
     val isVip = currentUserInfo?.isVip() == true
     val haptics = LocalHapticFeedback.current
@@ -172,97 +158,21 @@ fun DongmhuaDownloadScreen(
                                 .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
                         ) {
                             Text("选择缓存剧集")
-                            Column {
-                                LazyRow(
-                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                                ) {
-                                    items(
-                                        donghuaViewInfo.data?.seasons ?: emptyList(),
-                                        key = { it.seasonId }
-                                    ) { info ->
-                                        ToggleButton(
-                                            checked = info.seasonId == selectSeasonsId,
-                                            onCheckedChange = {
-                                                if (it) {
-                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                                    currentEpListIndex = 0
-                                                    selectSeasonsId = info.seasonId
-                                                    onSelectSeason(info.seasonId)
-                                                }
-                                            },
-                                        ) {
-                                            Text(info.seasonTitle)
-                                        }
-                                    }
-                                }
-
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                                    val episodeCount = donghuaViewInfo.data?.episodes?.size ?: 0
-                                    val pageCount = ceil(episodeCount / 12.0).toInt()
-                                    items(
-                                        pageCount,
-                                        key = { "ep_$it" }
-                                    ) { index ->
-                                        val startEp = index * 12 + 1
-                                        val endEp = minOf((index + 1) * 12, episodeCount)
-                                        FilterChip(
-                                            onClick = {
-                                                currentEpListIndex = index
-                                            },
-                                            label = {
-                                                Text("$startEp~$endEp")
-                                            },
-                                            selected = index == currentEpListIndex,
-                                        )
-                                    }
-                                }
-                            }
-
-                            LazyVerticalGrid(
-                                GridCells.Fixed(3),
-                                verticalArrangement = Arrangement.spacedBy(10.dp),
-                                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-                            ) {
-                                val episodeList = donghuaViewInfo.data?.episodes ?: emptyList()
-                                val startIndex = currentEpListIndex * 12
-                                val endIndex =
-                                    minOf((currentEpListIndex + 1) * 12, episodeList.size)
-
-                                items(episodeList.subList(startIndex, endIndex)) {
+                            ASSectionEpisodeSelection(
+                                sectionList = donghuaViewInfo.data?.seasons,
+                                episodeList = donghuaViewInfo.data?.episodes,
+                                sectionChecked = {
+                                    selectSeasonsId == it.seasonId
+                                },
+                                episodeSelected = {
+                                    downloadInfo?.selectedEpId?.contains(it.epId) == true
+                                },
+                                episodeTitle = { it.longTitle.ifBlank { it.title } },
+                                sectionTitle = { it.seasonTitle },
+                                episodeEnabled = { !(!isVip && it.badge == "会员") },
+                                episodeContentContainer = { it, content ->
                                     Box {
-                                        FilterChip(
-                                            enabled = !(!isVip && it.badge == "会员"),
-                                            selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
-                                            onClick = {
-                                                onUpdateSelectedEpId.invoke(
-                                                    it.epId,
-                                                    if (it.epId == 0L) {
-                                                        SelectEpisodeType.AID(it.aid)
-                                                    } else {
-                                                        SelectEpisodeType.EPID(it.epId)
-                                                    },
-                                                    it.longTitle.ifBlank { it.title },
-                                                    it.cover
-                                                )
-                                            },
-                                            label = {
-                                                Column(
-                                                    Modifier
-                                                        .fillMaxWidth()
-                                                        .height(60.dp),
-                                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                                    verticalArrangement = Arrangement.Center
-                                                ) {
-                                                    Text(
-                                                        it.longTitle.ifBlank { it.title },
-                                                        maxLines = 2,
-                                                        fontSize = 14.sp,
-                                                        overflow = TextOverflow.Ellipsis,
-                                                    )
-                                                }
-                                            }
-                                        )
+                                        content()
                                         if (it.badge.isNotEmpty()) {
                                             Surface(
                                                 modifier = Modifier
@@ -283,8 +193,25 @@ fun DongmhuaDownloadScreen(
                                         }
 
                                     }
+                                },
+                                onUpdateSelected = {
+                                    onUpdateSelectedEpId.invoke(
+                                        it.epId,
+                                        if (it.epId == 0L) {
+                                            SelectEpisodeType.AID(it.aid)
+                                        } else {
+                                            SelectEpisodeType.EPID(it.epId)
+                                        },
+                                        it.longTitle.ifBlank { it.title },
+                                        it.cover
+                                    )
+                                },
+                                onSelectSection = { info ->
+                                    selectSeasonsId = info.seasonId
+                                    onSelectSeason(info.seasonId)
                                 }
-                            }
+
+                            )
                         }
                         Column(
                             Modifier
@@ -292,71 +219,34 @@ fun DongmhuaDownloadScreen(
                                 .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
                         ) {
                             Text("选择缓存预告")
-                            Column {
-                                LazyRow(
-                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                                ) {
-                                    items(donghuaViewInfo.data?.section ?: emptyList(), key = {
-                                        it.id
-                                    }) { info ->
-                                        ToggleButton(
-                                            checked = selectSectionId == info.id,
-                                            onCheckedChange = {
-                                                if (it) {
-                                                    haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                                    selectSectionId = info.id
-                                                }
-                                            },
-                                        ) {
-                                            Text(info.title)
-                                        }
-                                    }
-                                }
-                            }
-                            Spacer(Modifier.height(6.dp))
-                            LazyVerticalGrid(
-                                GridCells.Fixed(3),
-                                verticalArrangement = Arrangement.spacedBy(10.dp),
-                                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-                            ) {
-                                items(
-                                    donghuaViewInfo.data?.section?.firstOrNull { it.id == selectSectionId }?.episodes
-                                        ?: emptyList()
-                                ) {
-                                    FilterChip(
-                                        selected = downloadInfo?.selectedEpId?.contains(it.epId) == true,
-                                        onClick = {
-                                            onUpdateSelectedEpId.invoke(
-                                                it.epId,
-                                                if (it.epId == 0L) {
-                                                    SelectEpisodeType.AID(it.aid)
-                                                } else {
-                                                    SelectEpisodeType.EPID(it.epId)
-                                                },
-                                                it.longTitle.ifBlank { it.title },
-                                                it.cover
-                                            )
+                            ASSectionEpisodeSelection(
+                                sectionList = donghuaViewInfo.data?.section,
+                                sectionTitle = { it.title },
+                                sectionChecked = { selectSectionId == it.id },
+                                episodeList = donghuaViewInfo.data?.section?.firstOrNull { it.id == selectSectionId }?.episodes,
+                                episodeSelected = {
+                                    downloadInfo?.selectedEpId?.contains(it.epId) == true
+                                },
+                                episodeTitle = {
+                                    it.longTitle.ifBlank { it.title }
+                                },
+                                onSelectSection = {
+                                    selectSectionId = it.id
+                                },
+                                onUpdateSelected = {
+                                    onUpdateSelectedEpId.invoke(
+                                        it.epId,
+                                        if (it.epId == 0L) {
+                                            SelectEpisodeType.AID(it.aid)
+                                        } else {
+                                            SelectEpisodeType.EPID(it.epId)
                                         },
-                                        label = {
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .height(60.dp)
-                                                    .padding(8.dp),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    it.longTitle.ifBlank { it.title }, maxLines = 2,
-                                                    fontSize = 14.sp,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                )
-                                            }
-                                        }
+                                        it.longTitle.ifBlank { it.title },
+                                        it.cover
                                     )
                                 }
-                            }
+
+                            )
                         }
                     }
                 })

@@ -62,7 +62,8 @@ import com.imcys.bilibilias.network.model.video.filterWithSinglePage
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
-import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASEpisodeSelection
+import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
 import kotlin.math.ceil
 
@@ -264,72 +265,23 @@ fun InteractiveVideoPageScreen(
     downloadInfo: DownloadViewInfo?,
     onUpdateSelectedCid: UpdateSelectedCid
 ) {
-    var currentListIndex by remember { mutableIntStateOf(0) }
     Column {
         Text("选择互动视频")
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            val episodeCount = steinEdgeInfo?.storyList?.size ?: 0
-            val pageCount = ceil(episodeCount / 12.0).toInt()
-            items(
-                pageCount,
-                key = { "p_$it" }
-            ) { index ->
-                val startEp = index * 12 + 1
-                val endEp = minOf((index + 1) * 12, episodeCount)
-                FilterChip(
-                    onClick = {
-                        currentListIndex = index
-                    },
-                    label = {
-                        Text("$startEp~$endEp")
-                    },
-                    selected = index == currentListIndex,
+        ASEpisodeSelection(
+            episodeList = steinEdgeInfo?.storyList,
+            episodeSelected = {
+                downloadInfo?.selectedCid?.contains(it.cid) == true
+            },
+            episodeTitle = {it.title},
+            onUpdateEpisodeSelected = {
+                onUpdateSelectedCid.invoke(
+                    it.cid,
+                    SelectEpisodeType.AID(it.cid),
+                    it.title,
+                    it.cover
                 )
             }
-        }
-
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-        ) {
-            val episodeList = steinEdgeInfo?.storyList ?: emptyList()
-            val startIndex = currentListIndex * 12
-            val endIndex = minOf((currentListIndex + 1) * 12, episodeList.size)
-            items(
-                episodeList.subList(startIndex, endIndex)
-            ) {
-                FilterChip(
-                    selected =  downloadInfo?.selectedCid?.contains(it.cid) == true,
-                    onClick = {
-                        onUpdateSelectedCid.invoke(
-                            it.cid,
-                            SelectEpisodeType.AID(it.cid),
-                            it.title,
-                            it.cover
-                        )
-                    },
-                    label = {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(60.dp)
-                                .padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                it.title,
-                                maxLines = 2,
-                                fontSize = 14.sp,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                )
-            }
-        }
+        )
 
     }
 }
@@ -341,73 +293,22 @@ fun VideoPageScreen(
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
-    var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
-
-    Column {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            val episodeCount = viewInfo.data?.pages?.size ?: 0
-            val pageCount = ceil(episodeCount / 12.0).toInt()
-            items(
-                pageCount,
-                key = { "p_$it" }
-            ) { index ->
-                val startEp = index * 12 + 1
-                val endEp = minOf((index + 1) * 12, episodeCount)
-                FilterChip(
-                    onClick = {
-                        currentVideoPageListIndex = index
-                    },
-                    label = {
-                        Text("$startEp~$endEp")
-                    },
-                    selected = index == currentVideoPageListIndex,
-                )
-            }
-        }
-    }
-    LazyVerticalGrid(
-        GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-    ) {
-        val episodeList = viewInfo.data?.pages ?: emptyList()
-        val startIndex = currentVideoPageListIndex * 12
-        val endIndex =
-            minOf((currentVideoPageListIndex + 1) * 12, episodeList.size)
-        items(
-            episodeList.subList(startIndex, endIndex)
-        ) {
-            FilterChip(
-                selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
-                onClick = {
-                    onUpdateSelectedCid.invoke(
-                        it.cid,
-                        SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
-                        it.part,
-                        viewInfo.data?.pic ?: ""
-                    )
-                },
-                label = {
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            it.part,
-                            maxLines = 2,
-                            fontSize = 14.sp,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
+    ASEpisodeSelection(
+        episodeList = viewInfo.data?.pages,
+        episodeSelected = {
+            downloadInfo?.selectedCid?.contains(it.cid) == true
+        },
+        episodeTitle = {it.part},
+        onUpdateEpisodeSelected = {
+            onUpdateSelectedCid.invoke(
+                it.cid,
+                SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
+                it.part,
+                viewInfo.data?.pic ?: ""
             )
         }
-    }
+    )
+
 }
 
 
@@ -425,7 +326,6 @@ fun UgcSeasonPageScreen(
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
-    var currentVideoPageListIndex by remember { mutableIntStateOf(0) }
     var videoEpisodeExpanded by remember { mutableStateOf(false) }
 
     val epVideoList = (viewInfo.data?.ugcSeason?.sections?.firstOrNull {
@@ -482,7 +382,6 @@ fun UgcSeasonPageScreen(
                         },
                         onClick = {
                             videoEpisodeExpanded = false
-                            currentVideoPageListIndex = 0
                             onSelectEpisodeId.invoke(it.id)
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -503,72 +402,22 @@ fun UgcSeasonPageScreen(
 
 
         val episodeList = episodes.firstOrNull { selectEpisodeId == it.id }?.pages ?: emptyList()
-
-        Column {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                val episodeCount = episodeList.size
-                val pageCount = ceil(episodeCount / 12.0).toInt()
-                items(
-                    pageCount,
-                    key = { "p_$it" }
-                ) { index ->
-                    val startEp = index * 12 + 1
-                    val endEp = minOf((index + 1) * 12, episodeCount)
-                    FilterChip(
-                        onClick = {
-                            currentVideoPageListIndex = index
-                        },
-                        label = {
-                            Text("$startEp~$endEp")
-                        },
-                        selected = index == currentVideoPageListIndex,
-                    )
-                }
-            }
-        }
-
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-        ) {
-            val startIndex = currentVideoPageListIndex * 12
-            val endIndex =
-                minOf((currentVideoPageListIndex + 1) * 12, episodeList.size)
-            items(
-                episodeList.subList(startIndex, endIndex)
-            ) {
-                FilterChip(
-                    selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
-                    onClick = {
-                        onUpdateSelectedCid.invoke(
-                            it.cid,
-                            SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
-                            it.part,
-                            viewInfo.data?.pic ?: ""
-                        )
-                    },
-                    label = {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(60.dp)
-                                .padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                it.part,
-                                maxLines = 2,
-                                fontSize = 14.sp,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
+        ASEpisodeSelection(
+            episodeList = episodeList,
+            episodeSelected = {
+                downloadInfo?.selectedCid?.contains(it.cid) == true
+            },
+            episodeTitle = {it.part},
+            onUpdateEpisodeSelected = {
+                onUpdateSelectedCid.invoke(
+                    it.cid,
+                    SelectEpisodeType.BVID(viewInfo.data?.bvid ?: ""),
+                    it.part,
+                    viewInfo.data?.pic ?: ""
                 )
             }
-        }
+        )
+
     }
 }
 
@@ -584,103 +433,25 @@ fun UgcSeasonScreen(
     onSelectSectionId: (Long) -> Unit,
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
-
-    var currentSectionPageListIndex by remember { mutableIntStateOf(0) }
-    val haptics = LocalHapticFeedback.current
-
-    Column {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(
-                viewInfo.data?.ugcSeason?.sections ?: emptyList(),
-                key = { it.id }
-            ) { info ->
-                ToggleButton(
-                    checked = info.id == selectSectionId,
-                    onCheckedChange = {
-                        if (it) {
-                            haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                            currentSectionPageListIndex = 0
-                            onSelectSectionId.invoke(info.id)
-                        }
-                    },
-                ) {
-                    Text(info.title)
-                }
-            }
+    ASSectionEpisodeSelection(
+        sectionList = viewInfo.data?.ugcSeason?.sections ?: emptyList(),
+        sectionTitle = { info-> info.title },
+        sectionChecked = {it.id == selectSectionId },
+        episodeList = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
+            it.id == selectSectionId
+        }?.episodes?.filterWithSinglePage(),
+        episodeSelected = {downloadInfo?.selectedCid?.contains(it.cid) == true},
+        episodeTitle = { it.title },
+        onSelectSection = {
+            onSelectSectionId.invoke(it.id)
+        },
+        onUpdateSelected = {
+            onUpdateSelectedCid.invoke(
+                it.cid,
+                SelectEpisodeType.BVID(it.bvid),
+                it.title,
+                it.arc.pic
+            )
         }
-
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            val episodeCount = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
-                it.id == selectSectionId
-            }?.episodes?.filterWithSinglePage()?.size ?: 0
-            val pageCount = ceil(episodeCount / 12.0).toInt()
-            items(
-                pageCount,
-                key = { "ep_$it" }
-            ) { index ->
-                val startEp = index * 12 + 1
-                val endEp = minOf((index + 1) * 12, episodeCount)
-                FilterChip(
-                    onClick = {
-                        currentSectionPageListIndex = index
-                    },
-                    label = {
-                        Text("$startEp~$endEp")
-                    },
-                    selected = index == currentSectionPageListIndex,
-                )
-            }
-        }
-
-
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-        ) {
-            val episodeList = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
-                it.id == selectSectionId
-            }?.episodes?.filterWithSinglePage() ?: emptyList()
-            val startIndex = currentSectionPageListIndex * 12
-            val endIndex =
-                minOf((currentSectionPageListIndex + 1) * 12, episodeList.size)
-            items(
-                episodeList.subList(startIndex, endIndex)
-            ) {
-                FilterChip(
-                    selected = downloadInfo?.selectedCid?.contains(it.cid) == true,
-                    onClick = {
-                        onUpdateSelectedCid.invoke(
-                            it.cid,
-                            SelectEpisodeType.BVID(it.bvid),
-                            it.title,
-                            it.arc.pic
-                        )
-                    },
-                    label = {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(60.dp)
-                                .padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                it.title,
-                                maxLines = 2,
-                                fontSize = 14.sp,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                )
-            }
-        }
-
-
-    }
+    )
 }

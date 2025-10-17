@@ -156,7 +156,8 @@ private fun VersionInfoScaffold(
                     AsBackIconButton(onClick = {
                         onToBack.invoke()
                     })
-                }
+                },
+                alwaysDisplay = false
             )
         },
     ) {

@@ -32,7 +32,7 @@ fun ASTopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    alwaysDisplay: Boolean = false
+    alwaysDisplay: Boolean = true
 ) {
     val windowWidthSizeClass = rememberWidthSizeClass()
     if (windowWidthSizeClass != WindowWidthSizeClass.Compact && !alwaysDisplay) return

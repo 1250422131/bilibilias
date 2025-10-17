@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NorthEast
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -172,6 +173,18 @@ fun AnalysisScreen(
                         onValueChange = { value ->
                             vm.updateInputAsText(value)
                         },
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.sharedElement(
+                                    sharedTransitionScope.rememberSharedContentState(
+                                        key = "icon-input-analysis"
+                                    ),
+                                    animatedVisibilityScope = animatedContentScope
+                                ),
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = "视频解析",
+                            )
+                        }
                     )
                     Spacer(Modifier.height(16.dp))
                 }

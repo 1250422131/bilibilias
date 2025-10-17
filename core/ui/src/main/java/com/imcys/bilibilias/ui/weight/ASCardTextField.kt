@@ -55,12 +55,18 @@ fun ASCardTextField(
     readOnly: Boolean = false,
     autoFocus: Boolean = true,
     requestFocusDelayMillis: Long = 300L,
-    clearFocusWhenValueEmptied: Boolean = false
+    clearFocusWhenValueEmptied: Boolean = false,
+    leadingIcon: @Composable () -> Unit = {
+        Icon(
+            Icons.Outlined.Search,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            contentDescription = null
+        )
+    }
 ) {
     var firstOpen by remember { mutableStateOf(true) }
     var hasFocus by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
     var tfv by remember { mutableStateOf(TextFieldValue(text = value)) }
 
@@ -101,11 +107,7 @@ fun ASCardTextField(
         ) {
             Spacer(Modifier.width(16.dp))
 
-            Icon(
-                Icons.Outlined.Search,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null
-            )
+            leadingIcon()
 
             CompositionLocalProvider(
                 LocalTextSelectionColors provides TextSelectionColors(

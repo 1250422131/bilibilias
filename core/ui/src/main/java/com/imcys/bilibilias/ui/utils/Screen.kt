@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.utils
 import android.app.Activity
 import android.content.Context
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -16,4 +17,13 @@ fun rememberWidthSizeClass(context: Context = LocalContext.current): WindowWidth
     if (activity == null) { return remember { WindowWidthSizeClass.Compact } }
     val windowSizeClass = calculateWindowSizeClass(activity)
     return remember(windowSizeClass) { windowSizeClass.widthSizeClass }
+}
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+fun rememberHeightSizeClass(context: Context = LocalContext.current): WindowHeightSizeClass {
+    val activity = context as Activity?
+    if (activity == null) { return remember { WindowHeightSizeClass.Compact } }
+    val windowSizeClass = calculateWindowSizeClass(activity)
+    return remember(windowSizeClass) { windowSizeClass.heightSizeClass }
 }

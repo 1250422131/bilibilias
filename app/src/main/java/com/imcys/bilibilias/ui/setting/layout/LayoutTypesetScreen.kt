@@ -178,7 +178,8 @@ fun LayoutTypesetScaffold(
                     AsBackIconButton(onClick = {
                         onToBack.invoke()
                     })
-                }
+                },
+                alwaysDisplay = false
             )
         },
     ) {

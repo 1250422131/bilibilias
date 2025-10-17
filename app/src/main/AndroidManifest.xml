@@ -30,11 +30,6 @@
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
 
-        <meta-data android:name="xposedmodule" android:value="false" />
-        <meta-data android:name="xposeddescription" android:value="快捷缓存B站视频" />
-        <meta-data android:name="xposedminversion" android:value="54" />
-
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
