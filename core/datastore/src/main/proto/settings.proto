@@ -26,6 +26,8 @@ message AppSettings {
   // 最后一次记录不看的公告内容
   string last_bulletin_content = 8;
 
+  string download_uri = 9;
+
   enum HomeLayoutType {
     Banner = 0 ;
     Announcement = 1 ;

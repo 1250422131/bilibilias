@@ -124,6 +124,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun saveDownloadSAFUriString(uriString: String) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.toBuilder()
+                .setDownloadUri(uriString)
+                .build()
+        }
+    }
+
 }
 
 

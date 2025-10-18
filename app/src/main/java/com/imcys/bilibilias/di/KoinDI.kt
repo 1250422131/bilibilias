@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.di
 
 import com.imcys.bilibilias.BILIBILIASApplication
+import com.imcys.bilibilias.datastore.userAppSettingsStore
 import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
@@ -48,7 +49,8 @@ val appModule = module {
     viewModel { FrameExtractorViewModel(get(), get(), get()) }
     viewModel { CookieLoginViewModel(get(), get(), get(),get()) }
     viewModel { DonateViewModel(get()) }
-    viewModel { StorageManagementViewModel() }
+    viewModel { StorageManagementViewModel(get()) }
+    factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(
             androidContext() as BILIBILIASApplication,

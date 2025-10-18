@@ -1,5 +1,12 @@
 package com.imcys.bilibilias.ui.setting.storage
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,10 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -37,14 +47,15 @@ import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.common.utils.StorageInfoData
 import com.imcys.bilibilias.common.utils.StorageUtil
 import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
-import com.imcys.bilibilias.weight.ASAnimatedContent
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.AnimatedStorageRing
-import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 @Serializable
 data object StorageManagementRoute : NavKey
@@ -67,12 +78,12 @@ fun StorageManagementContent(
     modifier: Modifier = Modifier,
     onToDownloadList: () -> Unit
 ) {
-    val content = LocalContext.current
+    val context = LocalContext.current
     val vm = koinViewModel<StorageManagementViewModel>()
     val uiState by vm.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        vm.loadStorageInfo(content)
+        vm.loadStorageInfo(context)
     }
 
 
@@ -86,10 +97,14 @@ fun StorageManagementContent(
             StorageManagementSuccessScreen(
                 modifier,
                 state.storageInfoData,
+                state.hasDownloadSAFPermission,
                 onCleanCache = {
-                    vm.cleanAppCache(content)
+                    vm.cleanAppCache(context)
                 },
-                onToDownloadList
+                onToDownloadList = onToDownloadList,
+                onSaveDownloadUri = {
+                    vm.saveDownloadUri(context, it)
+                }
             )
         }
     }
@@ -99,10 +114,28 @@ fun StorageManagementContent(
 fun StorageManagementSuccessScreen(
     modifier: Modifier = Modifier,
     data: StorageInfoData,
+    hasDownloadSAFPermission: Boolean,
     onCleanCache: () -> Unit,
-    onToDownloadList: () -> Unit
+    onToDownloadList: () -> Unit,
+    onSaveDownloadUri: (uri: Uri) -> Unit,
 ) {
     val windowWidthSizeClass = rememberWidthSizeClass()
+    val context = LocalContext.current
+    val downloadLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { uri ->
+            if (uri != null) {
+                try {
+                    context.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    onSaveDownloadUri(uri)
+                } catch (_: Exception) {
+                }
+
+            }
+        }
+
     Column(
         modifier
             .verticalScroll(rememberScrollState())
@@ -126,11 +159,41 @@ fun StorageManagementSuccessScreen(
 
         }
 
+        if (!hasDownloadSAFPermission) {
+            ASWarringTip {
+                Row {
+                    Text(
+                        "应用存储权限未完全获取，可能导致存储数据不准确，点击授权后重新计算。",
+                        Modifier.weight(1f)
+                    )
+                    ASIconButton(onClick = {
+                        val downloadsDir =
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        val targetDir = File(downloadsDir, "BILIBILIAS")
+                        if (!targetDir.exists()) {
+                            runCatching { targetDir.mkdirs() }
+                        }
+                        val relativePath =
+                            targetDir.absolutePath.substringAfter("/storage/emulated/0/")
+                        val downloadUri = DocumentsContract.buildDocumentUri(
+                            "com.android.externalstorage.documents",
+                            "primary:$relativePath"
+                        )
+                        downloadLauncher.launch(downloadUri)
+                    }) {
+                        Icon(Icons.Outlined.NorthEast, contentDescription = "去授权")
+                    }
+                }
+            }
+        }
+
         StorageContent(
-            title = "缓存视频",
+            title = "音视频文件",
             dataNumStr = "${StorageUtil.formatSize(data.downloadBytes)}",
-            description = "已下载的视频文件大小",
-            onClick = onToDownloadList,
+            description = "已下载的音视频文件大小",
+            onClick = {
+                Toast.makeText(context, "尚未支持", Toast.LENGTH_SHORT).show()
+            },
         )
 
 

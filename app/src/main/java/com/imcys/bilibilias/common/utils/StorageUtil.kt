@@ -1,26 +1,37 @@
 package com.imcys.bilibilias.common.utils
 
 import android.app.usage.StorageStatsManager
-import android.os.storage.StorageManager
-import android.os.storage.StorageVolume
-import android.os.StatFs
 import android.content.Context
 import android.os.Build
-import android.os.Environment.*
+import android.os.Environment.DIRECTORY_DOWNLOADS
+import android.os.Environment.getExternalStorageDirectory
+import android.os.Environment.getExternalStoragePublicDirectory
+import android.os.StatFs
+import android.os.storage.StorageManager
+import android.os.storage.StorageVolume
+import androidx.core.net.toUri
+import androidx.datastore.core.DataStore
+import androidx.documentfile.provider.DocumentFile
+import com.imcys.bilibilias.datastore.AppSettings
+import kotlinx.coroutines.flow.first
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
-import java.util.*
+import java.util.UUID
 
-// 新增数据类，包含总空间、已用空间、可用空间、APP占用空间、BILIBILIAS文件夹占用空间
 data class StorageInfoData(
     val totalBytes: Long,
     val usedBytes: Long,
     val availableBytes: Long,
     val appBytes: Long,
     val downloadBytes: Long,
-    val cacheTotalBytes: Long // 聚合缓存、video、audio文件夹大小
+    val cacheTotalBytes: Long
 )
 
-object StorageUtil {
+object StorageUtil: KoinComponent {
+
+    private val appSettingsStore: DataStore<AppSettings> by inject()
+
     /**
      * 获取文件夹占用空间（递归统计）
      */
@@ -50,8 +61,17 @@ object StorageUtil {
         return size
     }
 
+    // 递归统计DocumentFile大小
+    private fun getDocumentFileSize(docFile: DocumentFile?): Long {
+        if (docFile == null || !docFile.exists()) return 0L
+        if (docFile.isFile) return docFile.length()
+        var size = 0L
+        docFile.listFiles().forEach { size += getDocumentFileSize(it) }
+        return size
+    }
+
     /**
-     * 获取Download/BILIBILIAS文件夹占用空间
+     * 获取Download/BILIBILIAS文件夹占用空间（兼容原有方式）
      */
     private fun getDownloadUsedBytes(): Long {
         val bilibiliasDir =
@@ -76,7 +96,7 @@ object StorageUtil {
      * 返回主存储卷的空间信息，单位 Byte。
      * 如果失败返回所有字段为 -1。
      */
-    fun getStorageInfoData(context: Context): StorageInfoData {
+    suspend fun getStorageInfoData(context: Context): StorageInfoData {
         val total: Long
         val avail: Long
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -105,25 +125,11 @@ object StorageUtil {
         }
         val used = total - avail
         val appBytes = getAppUsedBytes(context)
-        val downloadBytes = getDownloadUsedBytes()
+        val downloadBytes = getASDownloadFolderSize(context)
         val cacheTotalBytes = getCacheTotalBytes(context)
         return StorageInfoData(total, used, avail, appBytes, downloadBytes, cacheTotalBytes)
     }
 
-    /**
-     * 统一入口：返回 GB 为单位的字符串，方便调试。
-     */
-    fun getStorageInfo(context: Context): String {
-        val info = getStorageInfoData(context)
-        return String.format(
-            Locale.getDefault(),
-            "总空间：%.2f GB，已用：%.2f GB，可用：%.2f GB，APP占用：%.2f GB，BILIBILIAS占用：%.2f GB",
-            info.totalBytes / 1_073_741_824.0,
-            info.usedBytes / 1_073_741_824.0,
-            info.availableBytes / 1_073_741_824.0,
-            info.appBytes / 1_073_741_824.0,
-        )
-    }
 
     /**
      * 将字节数转换为合适的单位（MB、GB、TB），返回最小满足的单位字符串（大写）。
@@ -174,5 +180,42 @@ object StorageUtil {
             if (dir != null && !dir.exists()) dir.mkdirs()
         }
         return allSuccess
+    }
+
+    /**
+     * 检查是否已获得BILIBILIAS文件夹的SAF权限
+     */
+    suspend fun hasASDownloadSAFPermission(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true
+        val uriString = run {
+            val appSettings = appSettingsStore.data.first()
+            appSettings.downloadUri
+        }
+        if (uriString.isNullOrEmpty()) return false
+        val uri = uriString.toUri()
+        val docFile = DocumentFile.fromTreeUri(context, uri)
+        return docFile != null && docFile.exists() && docFile.isDirectory
+    }
+
+    /**
+     * 统计Download/BILIBILIAS文件夹及其所有子文件夹的大小
+     * 优先使用SAF权限统计，否则用传统方式
+     */
+    suspend fun getASDownloadFolderSize(context: Context): Long {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return getDownloadUsedBytes()
+        }
+        val uriString = run {
+            val appSettings = appSettingsStore.data.first()
+            appSettings.downloadUri
+        }
+        if (!uriString.isNullOrEmpty()) {
+            val uri = uriString.toUri()
+            val docFile = DocumentFile.fromTreeUri(context, uri)
+            if (docFile != null && docFile.exists() && docFile.isDirectory) {
+                return getDocumentFileSize(docFile)
+            }
+        }
+        return getDownloadUsedBytes()
     }
 }
