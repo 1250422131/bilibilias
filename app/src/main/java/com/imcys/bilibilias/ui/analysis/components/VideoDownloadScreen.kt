@@ -11,13 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CardDefaults
@@ -28,26 +22,20 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
@@ -65,7 +53,6 @@ import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.weight.ASEpisodeSelection
 import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
-import kotlin.math.ceil
 
 
 typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
@@ -75,6 +62,7 @@ typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType,
 fun VideoDownloadScreen(
     downloadInfo: DownloadViewInfo?,
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
+    isSelectSingleModel: Boolean,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     interactiveVideo: NetWorkResult<BILISteinEdgeInfo?>,
@@ -157,7 +145,7 @@ fun VideoDownloadScreen(
                             onToVideoCodingInfo.invoke()
                         })
                 Spacer(Modifier.weight(1f))
-                SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
+                SwitchSelectModelTabRow(isSelectSingleModel,onSelectSingle = onSelectSingleModel)
             }
             AsAutoError(videoPlayerInfo, onSuccessContent = {
                 Column {

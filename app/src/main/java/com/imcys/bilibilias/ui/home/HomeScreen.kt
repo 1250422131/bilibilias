@@ -451,7 +451,11 @@ fun HomeContent(
                             },
                             onResumeTask = {
                                 vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                            })
+                            },
+                            onCancelTask = {
+                                vm.cancelDownloadTask(it.downloadSegment.segmentId)
+                            }
+                        )
                     }
                 }
 
@@ -555,7 +559,8 @@ fun DownloadListCard(
     downloadListState: List<AppDownloadTask>,
     goToDownloadPage: () -> Unit,
     onPauseTask: (task: AppDownloadTask) -> Unit,
-    onResumeTask: (task: AppDownloadTask) -> Unit
+    onResumeTask: (task: AppDownloadTask) -> Unit,
+    onCancelTask: (task: AppDownloadTask) -> Unit,
 ) {
     SurfaceColorCard {
         Column(
@@ -605,6 +610,8 @@ fun DownloadListCard(
                                 onPauseTask(task)
                             }, onResume = {
                                 onResumeTask(task)
+                            }, onCancel = {
+                                onCancelTask(task)
                             })
                         }
                 } else {

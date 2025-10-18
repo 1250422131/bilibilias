@@ -137,6 +137,9 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                                 },
                                 onResume = {
                                     vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                                },
+                                onCancel = {
+                                    vm.cancelDownloadTask(it.downloadSegment.segmentId)
                                 }
                             )
                         }

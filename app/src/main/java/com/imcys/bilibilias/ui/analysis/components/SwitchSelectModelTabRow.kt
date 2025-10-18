@@ -25,9 +25,11 @@ import androidx.compose.ui.zIndex
 
 @Preview
 @Composable
-fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
+fun SwitchSelectModelTabRow(isSelectSingleModel: Boolean = true, onSelectSingle: (Boolean) -> Unit = {}) {
     val haptics = LocalHapticFeedback.current
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember(isSelectSingleModel) { mutableIntStateOf(
+        if (isSelectSingleModel) 0 else 1
+    ) }
     SecondaryTabRow(
         selectedTabIndex = selectedTabIndex,
         divider = {},
@@ -51,7 +53,6 @@ fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
                 if (selectedTabIndex != 0) {
                     haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                 }
-                selectedTabIndex = 0
                 onSelectSingle.invoke(true)
             }, modifier = Modifier.zIndex(2f)
         ) {
@@ -71,7 +72,6 @@ fun SwitchSelectModelTabRow(onSelectSingle: (Boolean) -> Unit = {}) {
                 if (selectedTabIndex != 1) {
                     haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                 }
-                selectedTabIndex = 1
                 onSelectSingle.invoke(false)
             }, modifier = Modifier.zIndex(2f)
         ) {

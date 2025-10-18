@@ -48,6 +48,9 @@ class DownloadViewModel(
         viewModelScope.launch { downloadManager.resumeTask(segmentId) }
     }
 
+    fun cancelDownloadTask(segmentId: Long) {
+        viewModelScope.launch { downloadManager.cancelTask(segmentId) }
+    }
     /**
      * 打开下载的文件
      * [context] 上下文

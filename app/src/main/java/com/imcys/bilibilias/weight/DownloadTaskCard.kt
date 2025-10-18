@@ -66,6 +66,7 @@ fun DownloadTaskCard(
     task: AppDownloadTask,
     onPause: () -> Unit = {},
     onResume: () -> Unit = {},
+    onCancel: () -> Unit = {}
 ) {
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
@@ -185,6 +186,21 @@ fun DownloadTaskCard(
 
                     Spacer(Modifier.width(10.dp))
 
+
+                    // 暂停时可取消任务
+                    if (task.downloadState != DownloadState.DOWNLOADING) {
+                        Spacer(Modifier.width(10.dp))
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = "取消下载",
+                            modifier = Modifier.clickable {
+                                onCancel()
+                            }
+                        )
+                    }
+
+                    Spacer(Modifier.width(4.dp))
+
                     if (task.downloadState == DownloadState.DOWNLOADING || task.downloadState == DownloadState.PAUSE) {
                         Icon(
                             if (task.downloadState == DownloadState.DOWNLOADING) {
@@ -204,9 +220,8 @@ fun DownloadTaskCard(
                                     onResume()
                                 }
                             })
+
                     }
-
-
                 }
             }
         }

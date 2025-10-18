@@ -55,6 +55,7 @@ fun DongmhuaDownloadScreen(
     downloadInfo: DownloadViewInfo?,
     donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
     currentUserInfo: BILIUsersEntity?,
+    isSelectSingleModel: Boolean,
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
@@ -115,7 +116,10 @@ fun DongmhuaDownloadScreen(
                             onToVideoCodingInfo.invoke()
                         })
                 Spacer(Modifier.weight(1f))
-                SwitchSelectModelTabRow(onSelectSingle = onSelectSingleModel)
+                SwitchSelectModelTabRow(
+                    isSelectSingleModel = isSelectSingleModel,
+                    onSelectSingle = onSelectSingleModel
+                )
             }
             AsAutoError(donghuaPlayerInfo, onSuccessContent = {
                 Column {

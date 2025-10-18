@@ -49,7 +49,7 @@ class AnalysisViewModel(
     private val downloadManager: DownloadManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UIState())
+    private val _uiState = MutableStateFlow(AnalysisUIState())
     val uiState = _uiState.asStateFlow()
 
     private val _donghuaPlayerInfo =
@@ -593,22 +593,22 @@ class AnalysisViewModel(
     /**
      * 便捷的扩展属性，简化UI中的类型判断
      */
-    val UIState.isVideoType: Boolean
+    val AnalysisUIState.isVideoType: Boolean
         get() = asLinkResultType is ASLinkResultType.BILI.Video
 
-    val UIState.isDonghuaType: Boolean
+    val AnalysisUIState.isDonghuaType: Boolean
         get() = asLinkResultType is ASLinkResultType.BILI.Donghua
 
-    val UIState.isUserType: Boolean
+    val AnalysisUIState.isUserType: Boolean
         get() = asLinkResultType is ASLinkResultType.BILI.User
 
-    val UIState.canDownload: Boolean
+    val AnalysisUIState.canDownload: Boolean
         get() = isVideoType || isDonghuaType
 
     /**
      * 获取当前选中的项目数量
      */
-    val UIState.selectedItemCount: Int
+    val AnalysisUIState.selectedItemCount: Int
         get() = when {
             isVideoType -> downloadInfo?.selectedCid?.size ?: 0
             isDonghuaType -> downloadInfo?.selectedEpId?.size ?: 0
@@ -618,7 +618,7 @@ class AnalysisViewModel(
     /**
      * 获取当前内容的类型描述
      */
-    val UIState.contentTypeDescription: String
+    val AnalysisUIState.contentTypeDescription: String
         get() = when {
             isVideoType -> "视频"
             isDonghuaType -> "动画"
@@ -626,6 +626,15 @@ class AnalysisViewModel(
             else -> "未知"
         }
 
+    fun updateSelectSingleModel(isSelectSingleModel: Boolean){
+        viewModelScope.launch {
+            clearCCIdList()
+            val currentState = _uiState.replayCache.firstOrNull() ?: AnalysisUIState()
+            _uiState.emit(currentState.copy(
+                isSelectSingleModel = isSelectSingleModel,
+            ))
+        }
+    }
     /**
      * 清空所有选中项
      */

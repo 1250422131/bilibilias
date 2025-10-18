@@ -264,6 +264,10 @@ class HomeViewModel(
         viewModelScope.launch { downloadManager.resumeTask(segmentId) }
     }
 
+    fun cancelDownloadTask(segmentId: Long) {
+        viewModelScope.launch { downloadManager.cancelTask(segmentId) }
+    }
+
     suspend fun initCurrentUserInfo() {
         if (!usersDataSource.isLogin()) return
         val biliUserList =

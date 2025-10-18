@@ -1,9 +1,6 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.Manifest.permission
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
@@ -47,7 +44,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -65,15 +61,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -141,6 +134,7 @@ fun AnalysisScreen(
 ) {
 
     val uiState by vm.uiState.collectAsState()
+    val isSelectSingleModel = uiState.isSelectSingleModel
 
     LaunchedEffect(analysisRoute.asInputText) {
         // 解析分享内容
@@ -196,8 +190,9 @@ fun AnalysisScreen(
                     type,
                     uiState.isBILILogin,
                     uiState.analysisBaseInfo,
-                    vm,
-                    goToUser,
+                    isSelectSingleModel = isSelectSingleModel,
+                    viewModel = vm,
+                    goToUser =  goToUser,
                     onToVideoCodingInfo = onToVideoCodingInfo,
                     onToLogin = onToLogin
                 )
@@ -242,6 +237,7 @@ fun ColumnScope.AnalysisVideoCardList(
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
     analysisBaseInfo: AnalysisBaseInfo,
+    isSelectSingleModel: Boolean,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit,
     onToVideoCodingInfo: () -> Unit,
@@ -252,16 +248,7 @@ fun ColumnScope.AnalysisVideoCardList(
     val currentUserInfo by viewModel.currentUserInfo.collectAsState()
     val interactiveVideo by viewModel.interactiveVideo.collectAsState()
 
-
-    var isSelectSingleModel by rememberSaveable { mutableStateOf(true) } // 是否选择单集缓存模式
-
     val context = LocalContext.current
-
-    LaunchedEffect(isSelectSingleModel) {
-        if (!isSelectSingleModel) {
-            viewModel.clearCCIdList()
-        }
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -282,6 +269,7 @@ fun ColumnScope.AnalysisVideoCardList(
                         downloadInfo,
                         donghuaPlayerInfo,
                         currentUserInfo,
+                        isSelectSingleModel,
                         asLinkResultType.currentEpId,
                         asLinkResultType.donghuaViewInfo,
                         onSelectSeason = {
@@ -313,7 +301,7 @@ fun ColumnScope.AnalysisVideoCardList(
                             viewModel.updateAudioQualityId(it)
                         },
                         onSelectSingleModel = {
-                            isSelectSingleModel = it
+                            viewModel.updateSelectSingleModel(it)
                             if (it) {
                                 // 切换到单选模式，清空已选择列表
                                 val lastEpId = downloadInfo?.selectedEpId?.lastOrNull()
@@ -335,6 +323,7 @@ fun ColumnScope.AnalysisVideoCardList(
                     VideoDownloadScreen(
                         downloadInfo,
                         videoPlayerInfo,
+                        isSelectSingleModel,
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
                         interactiveVideo,
@@ -362,7 +351,7 @@ fun ColumnScope.AnalysisVideoCardList(
                             viewModel.updateAudioQualityId(it)
                         },
                         onSelectSingleModel = {
-                            isSelectSingleModel = it
+                            viewModel.updateSelectSingleModel(it)
                             if (it) {
                                 // 切换到单选模式，清空已选择列表
                                 val lastCid = downloadInfo?.selectedCid?.lastOrNull()
