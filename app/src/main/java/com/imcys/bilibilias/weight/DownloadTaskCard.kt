@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -191,7 +192,7 @@ fun DownloadTaskCard(
                     if (task.downloadState != DownloadState.DOWNLOADING) {
                         Spacer(Modifier.width(10.dp))
                         Icon(
-                            Icons.Outlined.Delete,
+                            Icons.Outlined.Close,
                             contentDescription = "取消下载",
                             modifier = Modifier.clickable {
                                 onCancel()
