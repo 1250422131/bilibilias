@@ -12,10 +12,12 @@ import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
@@ -31,7 +33,6 @@ import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -46,11 +47,14 @@ class AnalysisViewModel(
     usersDataSource: UsersDataSource,
     private val videoInfoRepository: VideoInfoRepository,
     private val userInfoRepository: UserInfoRepository,
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val appSettingsRepository: AppSettingsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AnalysisUIState())
     val uiState = _uiState.asStateFlow()
+
+    val appSettings = appSettingsRepository.appSettingsFlow
 
     private val _donghuaPlayerInfo =
         MutableStateFlow<NetWorkResult<BILIDonghuaPlayerInfo?>>(emptyNetWorkResult())
@@ -94,6 +98,12 @@ class AnalysisViewModel(
 
         viewModelScope.launch {
             _currentUserInfo.value = userInfoRepository.getCurrentUser()
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            appSettings.collect {
+                _uiState.update { it.copy(episodeListMode = it.episodeListMode) }
+            }
         }
 
     }
@@ -440,8 +450,6 @@ class AnalysisViewModel(
                     uiState.value.downloadInfo!!
                 )
             }
-            // 等待一下前台服务
-            delay(600L)
             _uiState.value = _uiState.value.copy(isCreateDownloadLoading = false)
         }
     }
@@ -578,7 +586,8 @@ class AnalysisViewModel(
         aid: Long?
     ) {
         // 获取播放信息V2，里面包含graphVersion
-        val playV2Info = videoInfoRepository.getVideoPlayerInfoV2(cid, bvId = bvId, aid = aid).last()
+        val playV2Info =
+            videoInfoRepository.getVideoPlayerInfoV2(cid, bvId = bvId, aid = aid).last()
         videoInfoRepository.getSteinEdgeInfoV2(
             aid = aid?.toString(),
             bvId = bvId,
@@ -626,15 +635,18 @@ class AnalysisViewModel(
             else -> "未知"
         }
 
-    fun updateSelectSingleModel(isSelectSingleModel: Boolean){
+    fun updateSelectSingleModel(isSelectSingleModel: Boolean) {
         viewModelScope.launch {
             clearCCIdList()
             val currentState = _uiState.replayCache.firstOrNull() ?: AnalysisUIState()
-            _uiState.emit(currentState.copy(
-                isSelectSingleModel = isSelectSingleModel,
-            ))
+            _uiState.emit(
+                currentState.copy(
+                    isSelectSingleModel = isSelectSingleModel,
+                )
+            )
         }
     }
+
     /**
      * 清空所有选中项
      */
@@ -670,5 +682,14 @@ class AnalysisViewModel(
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(downloadMode = downloadMode)
         )
+    }
+
+    fun updateEpisodeListMode(it: AppSettings.EpisodeListMode) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                episodeListMode = it
+            )
+            appSettingsRepository.updateEpisodeListMode(it)
+        }
     }
 }

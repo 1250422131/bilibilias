@@ -35,7 +35,7 @@ val appModule = module {
     viewModel { QRCodeLoginViewModel(get(), get(), get(), get()) }
     viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(), get()) }
     viewModel { UserViewModel(get()) }
-    viewModel { AnalysisViewModel(get(), get(), get(), get()) }
+    viewModel { AnalysisViewModel(get(), get(), get(), get(), get()) }
     viewModel { DownloadViewModel(get(), get(), get()) }
     viewModel { PlayVoucherErrorViewModel(get()) }
     viewModel { RoamViewModel(get(), get(), get(), get()) }

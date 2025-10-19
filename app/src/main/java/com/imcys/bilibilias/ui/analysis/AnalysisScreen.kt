@@ -92,6 +92,7 @@ import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
@@ -135,6 +136,7 @@ fun AnalysisScreen(
 
     val uiState by vm.uiState.collectAsState()
     val isSelectSingleModel = uiState.isSelectSingleModel
+    val episodeListMode = uiState.episodeListMode
 
     LaunchedEffect(analysisRoute.asInputText) {
         // 解析分享内容
@@ -191,6 +193,7 @@ fun AnalysisScreen(
                     uiState.isBILILogin,
                     uiState.analysisBaseInfo,
                     isSelectSingleModel = isSelectSingleModel,
+                    episodeListMode = episodeListMode,
                     viewModel = vm,
                     goToUser =  goToUser,
                     onToVideoCodingInfo = onToVideoCodingInfo,
@@ -238,10 +241,11 @@ fun ColumnScope.AnalysisVideoCardList(
     isBILILogin: Boolean,
     analysisBaseInfo: AnalysisBaseInfo,
     isSelectSingleModel: Boolean,
+    episodeListMode: AppSettings.EpisodeListMode,
     viewModel: AnalysisViewModel,
     goToUser: (Long) -> Unit,
     onToVideoCodingInfo: () -> Unit,
-    onToLogin: () -> Unit
+    onToLogin: () -> Unit,
 ) {
     val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
@@ -270,6 +274,7 @@ fun ColumnScope.AnalysisVideoCardList(
                         donghuaPlayerInfo,
                         currentUserInfo,
                         isSelectSingleModel,
+                        episodeListMode,
                         asLinkResultType.currentEpId,
                         asLinkResultType.donghuaViewInfo,
                         onSelectSeason = {
@@ -309,7 +314,10 @@ fun ColumnScope.AnalysisVideoCardList(
                                 viewModel.updateSelectedEpIdList(lastEpId)
                             }
                         },
-                        onToVideoCodingInfo = onToVideoCodingInfo
+                        onToVideoCodingInfo = onToVideoCodingInfo,
+                        onUpdateEpisodeListMode = {
+                            viewModel.updateEpisodeListMode(it)
+                        }
                     )
                 }
 
@@ -324,6 +332,7 @@ fun ColumnScope.AnalysisVideoCardList(
                         downloadInfo,
                         videoPlayerInfo,
                         isSelectSingleModel,
+                        episodeListMode,
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
                         interactiveVideo,
@@ -359,7 +368,10 @@ fun ColumnScope.AnalysisVideoCardList(
                                 viewModel.updateSelectedCidList(lastCid)
                             }
                         },
-                        onToVideoCodingInfo = onToVideoCodingInfo
+                        onToVideoCodingInfo = onToVideoCodingInfo,
+                        onUpdateEpisodeListMode = {
+                            viewModel.updateEpisodeListMode(it)
+                        }
                     )
                 }
 

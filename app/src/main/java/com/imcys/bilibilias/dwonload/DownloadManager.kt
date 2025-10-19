@@ -58,6 +58,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -433,10 +434,13 @@ class DownloadManager(
         if (isDownloading) return
         if (!isAppInForeground(context)) return
         val intent = Intent(context, DownloadService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent)
-        } else {
-            context.startService(intent)
+
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
 
         val bindResult = context.bindService(intent, downloadConn, Context.BIND_AUTO_CREATE)
@@ -496,7 +500,7 @@ class DownloadManager(
 
         // 清理工作
         downloadService.onDownloadFinished()
-        context.unbindService(downloadConn)
+        runCatching { context.unbindService(downloadConn) }
         isDownloading = false
     }
 

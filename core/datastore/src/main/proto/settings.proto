@@ -28,6 +28,13 @@ message AppSettings {
 
   string download_uri = 9;
 
+  EpisodeListMode episode_list_mode = 10;
+
+  enum EpisodeListMode{
+    EpisodeListMode_Grid = 0;
+    EpisodeListMode_List = 1;
+  }
+
   enum HomeLayoutType {
     Banner = 0 ;
     Announcement = 1 ;

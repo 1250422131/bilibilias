@@ -34,7 +34,8 @@ class DownloadService : Service() {
     override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground()
+        // 防止用户突然进后台
+        runCatching { startForeground() }
         return START_STICKY
     }
 

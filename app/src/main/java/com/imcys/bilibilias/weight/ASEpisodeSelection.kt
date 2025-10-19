@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.datastore.AppSettings
 import kotlin.math.ceil
 
 private const val PAGE_SIZE = 12
@@ -43,6 +44,7 @@ fun <T, R> ASSectionEpisodeSelection(
     episodeEnabled: (T) -> Boolean = { true },
     sectionTitle: (R) -> String = { "" },
     episodeTitle: (T) -> String,
+    episodeListMode : AppSettings.EpisodeListMode = AppSettings.EpisodeListMode.EpisodeListMode_Grid,
     onUpdateSelected: (T) -> Unit,
     onSelectSection: (R) -> Unit = {},
     episodeKeyOf: ((T) -> Any)? = null,
@@ -80,6 +82,7 @@ fun <T, R> ASSectionEpisodeSelection(
             episodeSelected = episodeSelected,
             episodeEnabled = episodeEnabled,
             episodeTitle = episodeTitle,
+            episodeListMode = episodeListMode,
             onUpdateEpisodeSelected = onUpdateSelected,
             episodeKeyOf = episodeKeyOf,
             episodeContentContainer = episodeContentContainer,
@@ -96,6 +99,7 @@ fun <T> ASEpisodeSelection(
     episodeSelected: (T) -> Boolean,
     episodeEnabled: (T) -> Boolean = { true },
     episodeTitle: (T) -> String,
+    episodeListMode : AppSettings.EpisodeListMode = AppSettings.EpisodeListMode.EpisodeListMode_List,
     onUpdateEpisodeSelected: (T) -> Unit,
     episodeKeyOf: ((T) -> Any)? = null,
     episodeContentContainer: @Composable (T, content: @Composable () -> Unit) -> Unit = { data, content ->
@@ -134,11 +138,13 @@ fun <T> ASEpisodeSelection(
         }
     }
 
+    val isList = episodeListMode == AppSettings.EpisodeListMode.EpisodeListMode_List
+    val showRowNumber = if (isList) 3 else 2
     LazyVerticalGrid(
-        GridCells.Fixed(3),
+        if (isList) GridCells.Fixed(1) else GridCells.Fixed(3),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
-        modifier = modifier.sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
+        modifier = modifier.sizeIn(maxHeight = (60 * showRowNumber + showRowNumber * 10).dp)
     ) {
         itemsIndexed(
             items = pageItems,

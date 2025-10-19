@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.analysis.components
 
-import androidx.compose.ui.unit.sp
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,8 +32,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -42,8 +43,10 @@ import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.weight.ASEpisodeTitle
 import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
+import com.imcys.bilibilias.weight.OnUpdateEpisodeListMode
 
 
 typealias UpdateSelectedEpId = (epId: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
@@ -56,6 +59,7 @@ fun DongmhuaDownloadScreen(
     donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
     currentUserInfo: BILIUsersEntity?,
     isSelectSingleModel: Boolean,
+    episodeListMode: AppSettings.EpisodeListMode,
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
@@ -64,6 +68,7 @@ fun DongmhuaDownloadScreen(
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
     onSelectSingleModel: (Boolean) -> Unit = { _ -> },
+    onUpdateEpisodeListMode: OnUpdateEpisodeListMode,
     onToVideoCodingInfo: () -> Unit
 ) {
 
@@ -161,100 +166,112 @@ fun DongmhuaDownloadScreen(
                                 .animateContentSize()
                                 .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
                         ) {
-                            Text("选择缓存剧集")
-                            ASSectionEpisodeSelection(
-                                sectionList = donghuaViewInfo.data?.seasons,
-                                episodeList = donghuaViewInfo.data?.episodes,
-                                sectionChecked = {
-                                    selectSeasonsId == it.seasonId
-                                },
-                                episodeSelected = {
-                                    downloadInfo?.selectedEpId?.contains(it.epId) == true
-                                },
-                                episodeTitle = { it.longTitle.ifBlank { it.title } },
-                                sectionTitle = { it.seasonTitle },
-                                episodeEnabled = { !(!isVip && it.badge == "会员") },
-                                episodeContentContainer = { it, content ->
-                                    Box {
-                                        content()
-                                        if (it.badge.isNotEmpty()) {
-                                            Surface(
-                                                modifier = Modifier
-                                                    .align(Alignment.TopEnd),
-                                                shape = FilterChipDefaults.shape,
-                                                color = MaterialTheme.colorScheme.primary,
-                                            ) {
-                                                Text(
-                                                    it.badge, modifier = Modifier.padding(3.dp),
-                                                    fontSize = 8.sp,
-                                                    style = TextStyle(
-                                                        platformStyle = PlatformTextStyle(
-                                                            includeFontPadding = false
+                            Column {
+                                ASEpisodeTitle(
+                                    "选择缓存剧集",
+                                    episodeListMode = episodeListMode,
+                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                                )
+                                ASSectionEpisodeSelection(
+                                    sectionList = donghuaViewInfo.data?.seasons,
+                                    episodeList = donghuaViewInfo.data?.episodes,
+                                    sectionChecked = {
+                                        selectSeasonsId == it.seasonId
+                                    },
+                                    episodeSelected = {
+                                        downloadInfo?.selectedEpId?.contains(it.epId) == true
+                                    },
+                                    episodeTitle = { it.longTitle.ifBlank { it.title } },
+                                    episodeListMode = episodeListMode,
+                                    sectionTitle = { it.seasonTitle },
+                                    episodeEnabled = { !(!isVip && it.badge == "会员") },
+                                    episodeContentContainer = { it, content ->
+                                        Box {
+                                            content()
+                                            if (it.badge.isNotEmpty()) {
+                                                Surface(
+                                                    modifier = Modifier
+                                                        .align(Alignment.TopEnd),
+                                                    shape = FilterChipDefaults.shape,
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                ) {
+                                                    Text(
+                                                        it.badge, modifier = Modifier.padding(3.dp),
+                                                        fontSize = 8.sp,
+                                                        style = TextStyle(
+                                                            platformStyle = PlatformTextStyle(
+                                                                includeFontPadding = false
+                                                            )
                                                         )
                                                     )
-                                                )
+                                                }
                                             }
+
                                         }
-
+                                    },
+                                    onUpdateSelected = {
+                                        onUpdateSelectedEpId.invoke(
+                                            it.epId,
+                                            if (it.epId == 0L) {
+                                                SelectEpisodeType.AID(it.aid)
+                                            } else {
+                                                SelectEpisodeType.EPID(it.epId)
+                                            },
+                                            it.longTitle.ifBlank { it.title },
+                                            it.cover
+                                        )
+                                    },
+                                    onSelectSection = { info ->
+                                        selectSeasonsId = info.seasonId
+                                        onSelectSeason(info.seasonId)
                                     }
-                                },
-                                onUpdateSelected = {
-                                    onUpdateSelectedEpId.invoke(
-                                        it.epId,
-                                        if (it.epId == 0L) {
-                                            SelectEpisodeType.AID(it.aid)
-                                        } else {
-                                            SelectEpisodeType.EPID(it.epId)
-                                        },
-                                        it.longTitle.ifBlank { it.title },
-                                        it.cover
-                                    )
-                                },
-                                onSelectSection = { info ->
-                                    selectSeasonsId = info.seasonId
-                                    onSelectSeason(info.seasonId)
-                                }
 
-                            )
-                        }
-                        Column(
-                            Modifier
-                                .animateContentSize()
-                                .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
-                        ) {
-                            Text("选择缓存预告")
-                            ASSectionEpisodeSelection(
-                                sectionList = donghuaViewInfo.data?.section,
-                                sectionTitle = { it.title },
-                                sectionChecked = { selectSectionId == it.id },
-                                episodeList = donghuaViewInfo.data?.section?.firstOrNull { it.id == selectSectionId }?.episodes,
-                                episodeSelected = {
-                                    downloadInfo?.selectedEpId?.contains(it.epId) == true
-                                },
-                                episodeTitle = {
-                                    it.longTitle.ifBlank { it.title }
-                                },
-                                onSelectSection = {
-                                    selectSectionId = it.id
-                                },
-                                onUpdateSelected = {
-                                    onUpdateSelectedEpId.invoke(
-                                        it.epId,
-                                        if (it.epId == 0L) {
-                                            SelectEpisodeType.AID(it.aid)
-                                        } else {
-                                            SelectEpisodeType.EPID(it.epId)
-                                        },
-                                        it.longTitle.ifBlank { it.title },
-                                        it.cover
-                                    )
-                                }
+                                )
+                            }
 
-                            )
+                            Column(
+                                Modifier
+                                    .animateContentSize()
+                                    .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
+                            ) {
+                                ASEpisodeTitle(
+                                    "选择缓存预告",
+                                    episodeListMode,
+                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                                )
+                                ASSectionEpisodeSelection(
+                                    sectionList = donghuaViewInfo.data?.section,
+                                    sectionTitle = { it.title },
+                                    episodeListMode = episodeListMode,
+                                    sectionChecked = { selectSectionId == it.id },
+                                    episodeList = donghuaViewInfo.data?.section?.firstOrNull { it.id == selectSectionId }?.episodes,
+                                    episodeSelected = {
+                                        downloadInfo?.selectedEpId?.contains(it.epId) == true
+                                    },
+                                    episodeTitle = {
+                                        it.longTitle.ifBlank { it.title }
+                                    },
+                                    onSelectSection = {
+                                        selectSectionId = it.id
+                                    },
+                                    onUpdateSelected = {
+                                        onUpdateSelectedEpId.invoke(
+                                            it.epId,
+                                            if (it.epId == 0L) {
+                                                SelectEpisodeType.AID(it.aid)
+                                            } else {
+                                                SelectEpisodeType.EPID(it.epId)
+                                            },
+                                            it.longTitle.ifBlank { it.title },
+                                            it.cover
+                                        )
+                                    }
+
+                                )
+                            }
                         }
                     }
                 })
-
         }
     }
 }

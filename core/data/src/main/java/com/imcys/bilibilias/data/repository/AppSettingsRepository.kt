@@ -132,6 +132,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateEpisodeListMode(it: AppSettings.EpisodeListMode) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                episodeListMode = it
+            }
+        }
+    }
+
 }
 
 

@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
@@ -51,8 +52,10 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.weight.ASEpisodeSelection
+import com.imcys.bilibilias.weight.ASEpisodeTitle
 import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
+import com.imcys.bilibilias.weight.OnUpdateEpisodeListMode
 
 
 typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
@@ -63,6 +66,7 @@ fun VideoDownloadScreen(
     downloadInfo: DownloadViewInfo?,
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     isSelectSingleModel: Boolean,
+    episodeListMode: AppSettings.EpisodeListMode,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     interactiveVideo: NetWorkResult<BILISteinEdgeInfo?>,
@@ -71,7 +75,8 @@ fun VideoDownloadScreen(
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
     onSelectSingleModel: (Boolean) -> Unit = { _ -> },
-    onToVideoCodingInfo: () -> Unit
+    onToVideoCodingInfo: () -> Unit,
+    onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -181,12 +186,17 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        Text("选择缓存合集")
+
+                        ASEpisodeTitle("选择缓存合集",
+                            episodeListMode = episodeListMode,
+                            onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                        )
 
                         UgcSeasonScreen(
                             viewInfo,
                             downloadInfo,
                             selectSectionId,
+                            episodeListMode,
                             onSelectSectionId = {
                                 selectSectionId = it
                             },
@@ -198,6 +208,7 @@ fun VideoDownloadScreen(
                             downloadInfo,
                             selectSectionId,
                             selectEpisodeId,
+                            episodeListMode,
                             onSelectEpisodeId = {
                                 selectEpisodeId = it
                             },
@@ -214,11 +225,12 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        Text("选择缓存子集")
+                        ASEpisodeTitle("选择缓存子集",episodeListMode,onUpdateEpisodeListMode)
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
-                            onUpdateSelectedCid = onUpdateSelectedCid
+                            episodeListMode,
+                            onUpdateSelectedCid = onUpdateSelectedCid,
                         )
                     }
                 })
@@ -236,7 +248,9 @@ fun VideoDownloadScreen(
                         InteractiveVideoPageScreen(
                             interactiveVideo.data,
                             downloadInfo,
-                            onUpdateSelectedCid = onUpdateSelectedCid
+                            episodeListMode = episodeListMode,
+                            onUpdateSelectedCid = onUpdateSelectedCid,
+                            onUpdateEpisodeListMode = onUpdateEpisodeListMode
                         )
                     }
                 })
@@ -251,12 +265,16 @@ fun VideoDownloadScreen(
 fun InteractiveVideoPageScreen(
     steinEdgeInfo: BILISteinEdgeInfo?,
     downloadInfo: DownloadViewInfo?,
-    onUpdateSelectedCid: UpdateSelectedCid
+    episodeListMode : AppSettings.EpisodeListMode,
+    onUpdateSelectedCid: UpdateSelectedCid,
+    onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
         Text("选择互动视频")
+        ASEpisodeTitle("选择互动视频",episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
         ASEpisodeSelection(
             episodeList = steinEdgeInfo?.storyList,
+            episodeListMode = episodeListMode,
             episodeSelected = {
                 downloadInfo?.selectedCid?.contains(it.cid) == true
             },
@@ -278,6 +296,7 @@ fun InteractiveVideoPageScreen(
 fun VideoPageScreen(
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
+    episodeListMode: AppSettings.EpisodeListMode,
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
@@ -286,6 +305,7 @@ fun VideoPageScreen(
         episodeSelected = {
             downloadInfo?.selectedCid?.contains(it.cid) == true
         },
+        episodeListMode = episodeListMode,
         episodeTitle = {it.part},
         onUpdateEpisodeSelected = {
             onUpdateSelectedCid.invoke(
@@ -310,6 +330,7 @@ fun UgcSeasonPageScreen(
     downloadInfo: DownloadViewInfo?,
     selectSectionId: Long?,
     selectEpisodeId: Long?,
+    episodeListMode: AppSettings.EpisodeListMode,
     onSelectEpisodeId: (Long?) -> Unit,
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
@@ -391,6 +412,7 @@ fun UgcSeasonPageScreen(
 
         val episodeList = episodes.firstOrNull { selectEpisodeId == it.id }?.pages ?: emptyList()
         ASEpisodeSelection(
+            episodeListMode = episodeListMode,
             episodeList = episodeList,
             episodeSelected = {
                 downloadInfo?.selectedCid?.contains(it.cid) == true
@@ -418,6 +440,7 @@ fun UgcSeasonScreen(
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
     selectSectionId: Long?,
+    episodeListMode: AppSettings.EpisodeListMode,
     onSelectSectionId: (Long) -> Unit,
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
@@ -430,6 +453,7 @@ fun UgcSeasonScreen(
         }?.episodes?.filterWithSinglePage(),
         episodeSelected = {downloadInfo?.selectedCid?.contains(it.cid) == true},
         episodeTitle = { it.title },
+        episodeListMode = episodeListMode,
         onSelectSection = {
             onSelectSectionId.invoke(it.id)
         },

@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.analysis
 import com.imcys.bilibilias.common.utils.TextType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
+import com.imcys.bilibilias.datastore.AppSettings
 
 data class AnalysisUIState(
     val inputAsText: String = "",
@@ -12,5 +13,7 @@ data class AnalysisUIState(
     val downloadInfo: DownloadViewInfo? = null,
     val isCreateDownloadLoading: Boolean = false,
     val analysisBaseInfo: AnalysisBaseInfo = AnalysisBaseInfo(),
-    val isSelectSingleModel: Boolean = true
-)
+    val isSelectSingleModel: Boolean = true,
+    val  episodeListMode : AppSettings.EpisodeListMode = AppSettings.EpisodeListMode.EpisodeListMode_Grid,
+
+    )
