@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.setting.storage
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
@@ -189,10 +190,31 @@ fun StorageManagementSuccessScreen(
 
         StorageContent(
             title = "音视频文件",
-            dataNumStr = "${StorageUtil.formatSize(data.downloadBytes)}",
+            dataNumStr = StorageUtil.formatSize(data.downloadBytes),
             description = "已下载的音视频文件大小",
             onClick = {
-                Toast.makeText(context, "尚未支持", Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    val targetDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BILIBILIAS")
+                        .apply {
+                        if (!exists()) mkdirs()
+                    }
+                    val relativePath =
+                        targetDir.absolutePath.substringAfter("/storage/emulated/0/")
+                    val downloadUri = DocumentsContract.buildDocumentUri(
+                        "com.android.externalstorage.documents",
+                        "primary:$relativePath"
+                    )
+                    setDataAndType(
+                        downloadUri,
+                        "vnd.android.document/directory"
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(context, "未找到文件管理器", Toast.LENGTH_SHORT).show()
+                }
             },
         )
 
