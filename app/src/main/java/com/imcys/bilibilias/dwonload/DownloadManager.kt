@@ -13,10 +13,12 @@ import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
 import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
+import com.imcys.bilibilias.common.utils.download.DanmakuXmlUtil
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
@@ -37,6 +39,7 @@ import com.imcys.bilibilias.dwonload.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
@@ -228,7 +231,7 @@ class DownloadManager(
                         runCatching {
                             videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
                         }.onSuccess { cCInfo ->
-                            saveCCFile(asLinkResultType.viewInfo.data,ccFileType, cCInfo)
+                            saveCCFile(asLinkResultType.viewInfo.data, ccFileType, cCInfo)
                         }
                     }
                 }
@@ -243,15 +246,16 @@ class DownloadManager(
         ccFileType: CCFileType,
         biliVideoCCInfo: BILIVideoCCInfo
     ) {
-        val fileContentStr = when(ccFileType){
+        val fileContentStr = when (ccFileType) {
             CCFileType.ASS -> {
                 CCJsonToAss.jsonToAss(
                     biliVideoCCInfo,
-                    title = videoInfo?.title ?:"字幕",
-                    playResX = videoInfo?.dimension?.width?.toString()?: "1920",
-                    playResY = videoInfo?.dimension?.height?.toString()?: "1080"
+                    title = videoInfo?.title ?: "字幕",
+                    playResX = videoInfo?.dimension?.width?.toString() ?: "1920",
+                    playResY = videoInfo?.dimension?.height?.toString() ?: "1080"
                 )
             }
+
             CCFileType.SRT -> {
                 CCJsonToSrt.jsonToSrt(biliVideoCCInfo)
             }
@@ -699,7 +703,8 @@ class DownloadManager(
             if (downloaded > 0) header("Range", "bytes=$downloaded-")
         }.execute { response ->
             val channel = response.bodyAsChannel()
-            val total = response.contentLength()?.let { if (downloaded > 0) it + downloaded else it } ?: -1L
+            val total =
+                response.contentLength()?.let { if (downloaded > 0) it + downloaded else it } ?: -1L
 
             if (total == 0L) {
                 onUpdateProgress(1f)
@@ -1057,6 +1062,9 @@ class DownloadManager(
                     if (downloadViewInfo.downloadCover) {
                         downloadCoverImageForTask(newTask)
                     }
+                    if (downloadViewInfo.downloadDanmaku) {
+                        downloadDanmakuForTask(newTask)
+                    }
                     currentTasks.add(newTask)
                 }
             }
@@ -1065,6 +1073,70 @@ class DownloadManager(
 
         taskTree.roots.forEach { processNode(it) }
         _downloadTasks.value = currentTasks
+    }
+
+
+    /**
+     * 下载任务的弹幕
+     */
+    private fun downloadDanmakuForTask(newTask: AppDownloadTask) {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val oid = newTask.downloadSegment.platformUniqueId
+            val danmakuElemList = mutableListOf<DanmakuElem>()
+            var index = 0
+            suspend fun getDanmakuPage(index: Int) =
+                videoInfoRepository.getDanmaku(oid = oid.toLong(), segmentIndex = index)
+            while (true) {
+                val result = getDanmakuPage(index)
+                result.getOrNull()?.let {
+                    danmakuElemList.addAll(it.elems)
+                } ?: run { break }
+                index++
+            }
+            val danmakuStr =
+                DanmakuXmlUtil.toBilibiliDanmakuXml(danmakuElemList, oid.toLong())
+
+            val fileName = "${newTask.downloadSegment.title}.xml"
+            val resolver = context.contentResolver
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                    put(MediaStore.Downloads.MIME_TYPE, "application/xml")
+                    put(
+                        MediaStore.Downloads.RELATIVE_PATH,
+                        Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS/Danmaku"
+                    )
+                }
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                uri?.let {
+                    resolver.openOutputStream(it)?.use { outputStream ->
+                        outputStream.write(danmakuStr.toByteArray(Charsets.UTF_8))
+                        outputStream.flush()
+                    }
+                }
+            } else {
+                val downloadsDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val targetDir = File(downloadsDir, "BILIBILIAS/Danmaku")
+                if (!targetDir.exists()) targetDir.mkdirs()
+                val targetFile = File(targetDir, fileName)
+                try {
+                    FileOutputStream(targetFile).use { out ->
+                        out.write(danmakuStr.toByteArray(Charsets.UTF_8))
+                        out.flush()
+                    }
+                    MediaScannerConnection.scanFile(
+                        context,
+                        arrayOf(targetFile.absolutePath),
+                        arrayOf("application/xml"),
+                        null
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     /**

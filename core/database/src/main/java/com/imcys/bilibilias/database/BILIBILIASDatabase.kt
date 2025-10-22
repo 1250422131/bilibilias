@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
@@ -20,8 +21,8 @@ import com.imcys.bilibilias.database.entity.download.DownloadTaskNode
         DownloadTaskNode::class,
         DownloadSegment::class,
     ],
-    version = 1,
-    exportSchema = false,
+    version = 2,
+    exportSchema = true,
 )
 internal abstract class BILIBILIASDatabase : RoomDatabase() {
     abstract fun biliUsersDao(): BILIUsersDao

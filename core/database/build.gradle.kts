@@ -5,6 +5,10 @@ plugins {
     alias(libs.plugins.kotlin.plugin.serialization)
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 android {
     namespace = "com.imcys.bilibilias.database"
 }

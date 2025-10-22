@@ -4,7 +4,9 @@ import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
@@ -89,5 +91,12 @@ class VideoInfoRepository(
         graphVersion: Long = 0,
         edgeId: Long? = 0
     ) = webApiService.getSteinEdgeInfoV2(bvId, aid, graphVersion, edgeId)
+
+    suspend fun getDanmaku(
+        pid: Long? = null,
+        oid: Long,
+        segmentIndex: Int,
+        type: Int = 1
+    ) = webApiService.getDanmaku(pid, oid,segmentIndex, type)
 
 }

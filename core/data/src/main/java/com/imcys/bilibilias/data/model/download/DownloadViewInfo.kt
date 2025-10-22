@@ -21,6 +21,7 @@ data class DownloadViewInfo(
     val selectedCid: List<Long> = listOf(),
     val selectedEpId: List<Long> = listOf(),
     val downloadCover: Boolean = false,
+    val downloadDanmaku: Boolean = false,
     val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表
     val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型
     val videoPlayerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?> = emptyNetWorkResult()

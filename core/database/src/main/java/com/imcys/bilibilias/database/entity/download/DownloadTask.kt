@@ -151,6 +151,10 @@ data class DownloadSegment(
     @ColumnInfo(name = "platform_id")
     val platformId: String,
 
+    // 平台唯一ID，如果是B站视频/番剧那就是CID，不同的平台唯一ID不同
+    @ColumnInfo(name = "platform_unique_id", defaultValue = "")
+    val platformUniqueId: String,
+
     @ColumnInfo(name = "platform_info")
     val platformInfo: String, // 平台JSON
 

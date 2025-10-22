@@ -692,4 +692,10 @@ class AnalysisViewModel(
             appSettingsRepository.updateEpisodeListMode(it)
         }
     }
+
+    fun updateDownloadDanmaku(it: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(downloadDanmaku = it)
+        )
+    }
 }

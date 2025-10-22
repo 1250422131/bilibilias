@@ -82,6 +82,9 @@ object API {
         val WEB_HISTORY_CURSOR_URL = WEB_API_BASE_URL + "x/web-interface/history/cursor"
 
         val WEB_LOGOUT_URL = LOGIN_BASE_URL + "login/exit/v2"
+
+        val WEB_DANMAKU_URL = WEB_API_BASE_URL + "x/v2/dm/wbi/web/seg.so"
+
     }
 
     object App {

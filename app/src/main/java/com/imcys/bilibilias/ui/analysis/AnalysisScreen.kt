@@ -389,6 +389,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         donghuaPlayerInfo.data?.dash,
                         onCheckCoverDownload = {
                             viewModel.updateDownloadCover(it)
+                        },
+                        onCheckDownloadDanmaku = {
+                            viewModel.updateDownloadDanmaku(it)
                         }
                     ) {
                         viewModel.updateDownloadMode(it)
@@ -404,6 +407,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         videoPlayerInfo.data?.dash,
                         onCheckCoverDownload = {
                             viewModel.updateDownloadCover(it)
+                        },
+                        onCheckDownloadDanmaku = {
+                            viewModel.updateDownloadDanmaku(it)
                         },
                         onSelectCCId = { id, type ->
                             viewModel.updateSelectCCIdList(id, type)
@@ -458,6 +464,7 @@ fun AdvancedSetting(
     playerInfo: NetWorkResult<Any?>,
     dash: BILIVideoDash?,
     onCheckCoverDownload: (Boolean) -> Unit,
+    onCheckDownloadDanmaku: (Boolean) -> Unit,
     onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
     onCleanCCId: () -> Unit = {},
     onSelectDownloadMode: (DownloadMode) -> Unit,
@@ -568,6 +575,7 @@ fun AdvancedSetting(
                         downloadInfo,
                         downloadInfo?.videoPlayerInfoV2,
                         onCheckCoverDownload = onCheckCoverDownload,
+                        onCheckDownloadDanmaku = onCheckDownloadDanmaku,
                         onSelectCCId = onSelectCCId,
                         onCleanCCId = onCleanCCId
                     )
@@ -584,8 +592,9 @@ fun ExtraCache(
     downloadInfo: DownloadViewInfo?,
     playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
     onCheckCoverDownload: (Boolean) -> Unit,
+    onCheckDownloadDanmaku: (Boolean) -> Unit,
     onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
-    onCleanCCId: () -> Unit = {}
+    onCleanCCId: () -> Unit = {},
 ) {
 
     var selectACCDownload by rememberSaveable { mutableStateOf(false) }
@@ -635,6 +644,26 @@ fun ExtraCache(
                 },
             )
         }
+
+
+        FilterChip(
+            label = {
+                Text("弹幕下载", fontSize = 12.sp)
+            },
+            selected = downloadInfo?.downloadDanmaku == true,
+            leadingIcon = {
+                if (downloadInfo?.downloadDanmaku == true) {
+                    Icon(
+                        Icons.Outlined.Check,
+                        contentDescription = "已选中图标",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            },
+            onClick = {
+                onCheckDownloadDanmaku(!(downloadInfo?.downloadDanmaku ?: false))
+            },
+        )
     }
 
     if (selectACCDownload) {

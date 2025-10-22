@@ -22,7 +22,9 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.sse.SSE
+import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.kotlinx.protobuf.protobuf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -34,6 +36,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
 
+@OptIn(ExperimentalSerializationApi::class)
 val netWorkModule = module {
     single {
         Json {
@@ -88,6 +91,7 @@ val netWorkModule = module {
             install(RiskControlPlugin)
             install(ContentNegotiation) {
                 json(get())
+                protobuf(contentType = ContentType.Application.OctetStream)
             }
             install(HttpRequestRetry) {
                 retryOnServerErrors(maxRetries = 3)

@@ -7,11 +7,13 @@ import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.SPACE_BASE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_BANGUMI_FOLLOW_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_COIN_LIST_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_DANMAKU_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_FAV_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_FOLDER_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_HISTORY_CURSOR_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LIKE_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGOUT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PLAY_INFO_V2_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
@@ -49,6 +51,8 @@ import com.imcys.bilibilias.network.model.BiliApiResponse
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.network.model.QRCodePollInfo
 import com.imcys.bilibilias.network.model.WebSpiInfo
+import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
+import com.imcys.bilibilias.network.model.danmuku.DmSegMobileReply
 import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
 import com.imcys.bilibilias.network.model.user.BILIUserBangumiFollowInfo
 import com.imcys.bilibilias.network.model.user.BILIUserFolderDetailInfo
@@ -76,7 +80,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
 import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -415,11 +421,31 @@ class BILIBILIWebAPIService(
     }
 
     suspend fun logout(biliJct: String): FlowNetWorkResult<String> = httpClient.httpRequest {
-        post(WEB_LOGIN_INFO_URL) {
+        post(WEB_LOGOUT_URL) {
             formData {
                 append("bili_jct", biliJct)
             }
         }
+    }
+
+    suspend fun getDanmaku(
+        pid: Long? = null,
+        oid: Long,
+        segmentIndex: Int = 1,
+        type: Int = 1
+    ): Result<DmSegMobileReply> = runCatching {
+        val newMap = mutableMapOf(
+            "oid" to oid.toString(),
+            "type" to type.toString(),
+            "segment_index" to segmentIndex.toString(),
+        ).apply {
+            pid?.let { put("pid", it.toString()) }
+        } + BROWSER_FINGERPRINT
+        httpClient.get(WEB_DANMAKU_URL) {
+            encWbi(newMap).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }.body()
     }
 
 
