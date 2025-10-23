@@ -150,7 +150,8 @@ dependencies {
     implementation(libs.shizuku.provider)
 
     // xposed
-    compileOnly(libs.xposed.api)
+    //    compileOnly(libs.xposed.api)
+
     //UI
     implementation(libs.androidx.window)
     implementation(libs.androidx.adaptive)
