@@ -183,4 +183,7 @@ data class DownloadSegment(
     @Ignore
     var tempDuration: Long = 0
 
+    @Ignore
+    var namingConventionInfo: NamingConventionInfo? = null
+
 }

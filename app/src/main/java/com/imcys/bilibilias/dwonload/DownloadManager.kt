@@ -26,6 +26,7 @@ import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.database.entity.download.DownloadMode
@@ -35,6 +36,10 @@ import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskType
+import com.imcys.bilibilias.database.entity.download.FileNamePlaceholder
+import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
+import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
+import com.imcys.bilibilias.database.entity.download.videoNamingRules
 import com.imcys.bilibilias.dwonload.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
@@ -78,6 +83,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.yield
 import java.io.RandomAccessFile
 
@@ -96,7 +102,8 @@ class DownloadManager(
     private val videoInfoRepository: VideoInfoRepository,
     private val json: Json,
     private val okHttpClient: OkHttpClient,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val appSettingsRepository: AppSettingsRepository
 ) {
 
     companion object {
@@ -617,7 +624,14 @@ class DownloadManager(
         val result = downloadSubTask(subTask, task, progressCallback)
 
         if (result) {
-            val fileName = "${task.downloadSegment.title}${getFileExtension(subTask.subTaskType)}"
+            val videoNamingRule = if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
+                appSettingsRepository.appSettingsFlow.first().videoNamingRule
+            } else {
+                appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
+            }
+            val conventionInfo = task.downloadSegment.namingConventionInfo
+            val fileExtension = getFileExtension(subTask.subTaskType).removePrefix(".")
+            val fileName = buildFileNameWithConvention(videoNamingRule, conventionInfo, fileExtension)
             val mimeType = getMimeType(subTask.subTaskType)
             val file = File(subTask.savePath)
 
@@ -789,17 +803,65 @@ class DownloadManager(
     }
 
     /**
+     * 通用命名规则方法，支持所有类型变量替换并自动加后缀
+     */
+    private fun buildFileNameWithConvention(
+        namingRule: String,
+        conventionInfo: NamingConventionInfo?,
+        fileSuffix: String
+    ): String {
+        var filePath = namingRule
+        when (conventionInfo) {
+            is NamingConventionInfo.Video -> {
+                videoNamingRules.forEach { rule ->
+                    val value = when (rule) {
+                        FileNamePlaceholder.Video.Aid -> conventionInfo.aid ?: ""
+                        FileNamePlaceholder.Video.Author -> conventionInfo.author ?: ""
+                        FileNamePlaceholder.Video.BvId -> conventionInfo.bvId ?: ""
+                        FileNamePlaceholder.Video.Cid -> conventionInfo.cid ?: ""
+                        FileNamePlaceholder.Video.P -> conventionInfo.p ?: ""
+                        FileNamePlaceholder.Video.PTitle -> conventionInfo.pTitle ?: ""
+                        FileNamePlaceholder.Video.Title -> conventionInfo.title ?: ""
+                    }
+                    filePath = filePath.replace(rule.placeholder, value)
+                }
+            }
+            is NamingConventionInfo.Donghua -> {
+                donghuaNamingRules.forEach {
+                    rule ->
+                    val value = when (rule) {
+                        FileNamePlaceholder.Donghua.Cid -> conventionInfo.cid ?: ""
+                        FileNamePlaceholder.Donghua.EpisodeNumber -> conventionInfo.episodeNumber ?: ""
+                        FileNamePlaceholder.Donghua.EpisodeTitle -> conventionInfo.episodeTitle ?: ""
+                        FileNamePlaceholder.Donghua.Title -> conventionInfo.title ?: ""
+                    }
+                    filePath = filePath.replace(rule.placeholder, value)
+                }
+            }
+            else -> {
+                // 不支持的命名规则类型，返回原始命名规则
+            }
+        }
+        // 自动加后缀
+        if (!filePath.endsWith(".$fileSuffix")) filePath += ".${fileSuffix}"
+        return filePath
+    }
+
+    /**
      * 处理合并成功
      */
     private suspend fun handleMergeSuccess(task: AppDownloadTask) {
-        val fileName = "${task.downloadSegment.title}.mp4"
+        val videoNamingRule = if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
+            appSettingsRepository.appSettingsFlow.first().videoNamingRule
+        } else {
+            appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
+        }
+        val conventionInfo = task.downloadSegment.namingConventionInfo
+        val finalPath = buildFileNameWithConvention(videoNamingRule, conventionInfo, "mp4")
         val mergedFile = File("${task.downloadSubTasks[0].savePath}_merged.mp4")
-        val uriStr = moveToDownloadAndRegister(mergedFile, fileName, "video/mp4")
-
-        // 清理临时文件
+        val uriStr = moveToDownloadAndRegister(mergedFile, finalPath, "video/mp4")
         File(task.downloadSubTasks[0].savePath).delete()
         File(task.downloadSubTasks[1].savePath).delete()
-
         if (uriStr != null) {
             val newTask = task.copy(
                 downloadSegment = task.downloadSegment.copy(
@@ -952,42 +1014,40 @@ class DownloadManager(
 
 
     /**
-     * 将文件移动到下载目录并注册到媒体库
+     * 将文件移动到下载目录并注册到媒体库，支持多级文件夹
      */
     private suspend fun moveToDownloadAndRegister(
         file: File,
-        fileName: String,
+        videoNamingRule: String,
         mimeType: String
     ): String? = withContext(Dispatchers.IO) {
         val resolver = context.contentResolver
+        val parts = videoNamingRule.split("/")
+        val fileName = parts.last()
+        val folderPath = if (parts.size > 1) parts.dropLast(1).joinToString("/") else ""
+        val relativePath = if (folderPath.isNotEmpty())
+            Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS/" + folderPath
+        else
+            Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
                 put(MediaStore.Downloads.MIME_TYPE, mimeType)
-                put(
-                    MediaStore.Downloads.RELATIVE_PATH,
-                    Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
-                )
+                put(MediaStore.Downloads.RELATIVE_PATH, relativePath)
             }
-
             // 检查是否已存在同名文件，存在则先删除
             val query = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-            val selection =
-                "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
-            val selectionArgs = arrayOf(fileName, Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS")
+            val selection = "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
+            val selectionArgs = arrayOf(fileName, relativePath)
             resolver.query(query, arrayOf(MediaStore.Downloads._ID), selection, selectionArgs, null)
                 ?.use { cursor ->
                     if (cursor.moveToFirst()) {
-                        val id =
-                            cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
-                        val existUri = ContentUris.withAppendedId(
-                            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                            id
-                        )
+                        val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
+                        val existUri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
                         resolver.delete(existUri, null, null)
                     }
                 }
-
             val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
             if (uri != null) {
                 try {
@@ -1004,11 +1064,16 @@ class DownloadManager(
             }
             return@withContext null
         } else {
-            // Android Q以下代码不变
-            val downloadsDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val targetDir = File(downloadsDir, "BILIBILIAS")
+            // Android Q以下，逐级创建文件夹
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            var targetDir = File(downloadsDir, "BILIBILIAS")
             if (!targetDir.exists()) targetDir.mkdirs()
+            if (folderPath.isNotEmpty()) {
+                folderPath.split("/").forEach { part ->
+                    targetDir = File(targetDir, part)
+                    if (!targetDir.exists()) targetDir.mkdirs()
+                }
+            }
             val targetFile = File(targetDir, fileName)
             return@withContext try {
                 file.inputStream().use { inputStream ->

@@ -18,12 +18,29 @@ val Context.userAppSettingsStore: DataStore<AppSettings> by dataStore(
  * 序列化
  */
 object AppSettingsSerializer : Serializer<AppSettings> {
-    override val defaultValue: AppSettings = AppSettings.getDefaultInstance()
+
+    val appSettingsDefault = AppSettings.getDefaultInstance().toBuilder()
+        .setVideoNamingRule("{p_title}")
+        .setBangumiNamingRule("{episode_title}")
+        .build()
+
+
+    override val defaultValue: AppSettings = appSettingsDefault
+
     override suspend fun readFrom(input: InputStream): AppSettings {
         try {
-            return AppSettings.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
+            val parsed = AppSettings.parseFrom(input)
+            return when {
+                parsed.bangumiNamingRule.isBlank() -> parsed.toBuilder()
+                    .setBangumiNamingRule(defaultValue.bangumiNamingRule).build()
+
+                parsed.videoNamingRule.isBlank() -> parsed.toBuilder()
+                    .setVideoNamingRule(defaultValue.videoNamingRule).build()
+
+                else -> parsed
+            }
+        } catch (e: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", e)
         }
     }
 

@@ -50,6 +50,8 @@ import com.imcys.bilibilias.ui.setting.about.AboutRouter
 import com.imcys.bilibilias.ui.setting.about.AboutScreen
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintRoute
 import com.imcys.bilibilias.ui.setting.complaint.ComplaintScreen
+import com.imcys.bilibilias.ui.setting.contract.NamingConventionRoute
+import com.imcys.bilibilias.ui.setting.contract.NamingConventionScreen
 import com.imcys.bilibilias.ui.setting.expand.SystemExpandRoute
 import com.imcys.bilibilias.ui.setting.expand.SystemExpandScreen
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
@@ -276,6 +278,7 @@ fun BILIBILAISNavDisplay() {
                         onToVersionInfo = { backStack.addWithReuse(AppVersionInfoRoute) },
                         onToSystemExpand = { backStack.addWithReuse(SystemExpandRoute) },
                         onToStorageManagement = { backStack.addWithReuse(StorageManagementRoute) },
+                        onToNamingConvention = { backStack.addWithReuse(NamingConventionRoute) },
                         onLogoutFinish = {
                             backStack.firstOrNull {
                                 it is UserRoute && !it.isAnalysisUser
@@ -409,6 +412,14 @@ fun BILIBILAISNavDisplay() {
                         onToDownloadList = {
                             backStack.add(DownloadRoute(1))
                         }
+                    )
+                }
+                entry<NamingConventionRoute> (
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
+                    NamingConventionScreen(
+                        namingConventionRoute = it,
+                        onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
             }

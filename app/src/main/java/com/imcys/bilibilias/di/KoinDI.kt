@@ -11,6 +11,7 @@ import com.imcys.bilibilias.ui.home.HomeViewModel
 import com.imcys.bilibilias.ui.login.CookieLoginViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.SettingViewModel
+import com.imcys.bilibilias.ui.setting.contract.NamingConventionViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementViewModel
@@ -50,6 +51,7 @@ val appModule = module {
     viewModel { CookieLoginViewModel(get(), get(), get(),get()) }
     viewModel { DonateViewModel(get()) }
     viewModel { StorageManagementViewModel(get()) }
+    viewModel { NamingConventionViewModel(get()) }
     factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(
@@ -58,7 +60,8 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = named("DownloadHttpClient"))
+            get(qualifier = named("DownloadHttpClient")),
+            get(),
         )
     }
 }

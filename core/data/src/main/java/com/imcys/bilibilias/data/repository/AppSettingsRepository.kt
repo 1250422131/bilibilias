@@ -117,7 +117,7 @@ class AppSettingsRepository(
 
 
     suspend fun updateLastBulletinContent(content: String) {
-        dataStore.updateData{ currentSettings ->
+        dataStore.updateData { currentSettings ->
             currentSettings.toBuilder()
                 .setLastBulletinContent(content)
                 .build()
@@ -136,6 +136,22 @@ class AppSettingsRepository(
         dataStore.updateData { currentSettings ->
             currentSettings.copy {
                 episodeListMode = it
+            }
+        }
+    }
+
+    suspend fun updateVideoNamingRule(rule: String) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                videoNamingRule = rule
+            }
+        }
+    }
+
+    suspend fun updateBangumiNamingRule(rule: String) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                bangumiNamingRule = rule
             }
         }
     }

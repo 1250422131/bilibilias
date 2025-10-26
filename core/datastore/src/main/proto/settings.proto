@@ -30,6 +30,11 @@ message AppSettings {
 
   EpisodeListMode episode_list_mode = 10;
 
+  // 视频命名规则
+  string video_naming_rule = 11;
+  // 番剧命名规则
+  string bangumi_naming_rule = 12;
+
   enum EpisodeListMode{
     EpisodeListMode_Grid = 0;
     EpisodeListMode_List = 1;

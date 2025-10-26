@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
@@ -87,6 +88,7 @@ fun SettingScreen(
     onToVersionInfo: () -> Unit = {},
     onToSystemExpand: () -> Unit = {},
     onToStorageManagement: () -> Unit = {},
+    onToNamingConvention : () -> Unit = {},
     onLogoutFinish: (Long) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -164,6 +166,18 @@ fun SettingScreen(
                     }
                 )
             }
+
+
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Edit),
+                    text = "命名规则",
+                    descriptionText = "自定义下载文件名称",
+                    onClick = onToNamingConvention
+                )
+            }
+
 
             item {
                 CategorySettingsItem(
