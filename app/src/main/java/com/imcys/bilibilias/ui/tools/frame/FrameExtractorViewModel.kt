@@ -144,18 +144,27 @@ class FrameExtractorViewModel(
         deleteCacheDir(context)
         viewModelScope.launch(Dispatchers.IO) {
             downloadTaskRepository.getSegmentAll().collect {
-                _allDownloadSegment.emit(it.filter { segment ->
-                    segment.downloadState == DownloadState.COMPLETED &&
-                            (segment.downloadMode == DownloadMode.VIDEO_ONLY || segment.downloadMode == DownloadMode.AUDIO_VIDEO)
-                }.map { segment ->
-                    val retriever = MediaMetadataRetriever()
-                    retriever.setDataSource(context, segment.savePath.toUri())
-                    val durationStr =
-                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                    val durationMs = durationStr?.toLongOrNull() ?: 0L
-                    retriever.release()
-                    segment.apply { tempDuration = durationMs }
-                })
+                _allDownloadSegment.emit(
+                    it.filter { segment ->
+                        segment.downloadState == DownloadState.COMPLETED &&
+                                (segment.downloadMode == DownloadMode.VIDEO_ONLY || segment.downloadMode == DownloadMode.AUDIO_VIDEO)
+                    }.mapNotNull { segment ->
+                        // 安卓10及以上用DocumentFile判断文件是否存在
+                        val fileUri = segment.savePath.toUri()
+                        val docFile = DocumentFile.fromSingleUri(context, fileUri)
+                        if (docFile == null || !docFile.exists()) {
+                            // 文件不存在，跳过
+                            null
+                        } else {
+                            val retriever = MediaMetadataRetriever()
+                            retriever.setDataSource(context, fileUri)
+                            val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                            val durationMs = durationStr?.toLongOrNull() ?: 0L
+                            retriever.release()
+                            segment.apply { tempDuration = durationMs }
+                        }
+                    }
+                )
             }
         }
     }

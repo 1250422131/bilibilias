@@ -53,7 +53,7 @@ interface DownloadTaskDao {
     suspend fun getSegmentByNodeIdAndPlatformId(nodeId: Long, platformId: String): DownloadSegment?
 
 
-    @Query("SELECT * FROM download_segment")
+    @Query("SELECT * FROM download_segment ORDER BY segment_id DESC")
     fun getSegmentAll(): Flow<List<DownloadSegment>>
 
 
