@@ -30,15 +30,17 @@ object AppSettingsSerializer : Serializer<AppSettings> {
     override suspend fun readFrom(input: InputStream): AppSettings {
         try {
             val parsed = AppSettings.parseFrom(input)
-            return when {
-                parsed.bangumiNamingRule.isBlank() -> parsed.toBuilder()
-                    .setBangumiNamingRule(defaultValue.bangumiNamingRule).build()
-
-                parsed.videoNamingRule.isBlank() -> parsed.toBuilder()
-                    .setVideoNamingRule(defaultValue.videoNamingRule).build()
-
-                else -> parsed
+            val builder = parsed.toBuilder()
+            var modified = false
+            if (parsed.bangumiNamingRule.isBlank()) {
+                builder.setBangumiNamingRule(defaultValue.bangumiNamingRule)
+                modified = true
             }
+            if (parsed.videoNamingRule.isBlank()) {
+                builder.setVideoNamingRule(defaultValue.videoNamingRule)
+                modified = true
+            }
+            return if (modified) builder.build() else parsed
         } catch (e: InvalidProtocolBufferException) {
             throw CorruptionException("Cannot read proto.", e)
         }

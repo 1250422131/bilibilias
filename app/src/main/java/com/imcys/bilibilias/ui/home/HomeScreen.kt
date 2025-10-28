@@ -308,7 +308,9 @@ fun HomeContent(
         }
     }
 
-    vm.initOldAppInfo(context)
+    LaunchedEffect(Unit) {
+        vm.initOldAppInfo(context)
+    }
 
     LazyColumn(
         Modifier

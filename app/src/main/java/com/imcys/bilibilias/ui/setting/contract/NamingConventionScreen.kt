@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.setting.contract
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -138,12 +138,23 @@ fun NamingConventionContent(
 ) {
     val vm = koinInject<NamingConventionViewModel>()
     val appSettings by vm.appSettings.collectAsState(initial = AppSettingsSerializer.appSettingsDefault)
-    var videoNamingRule by remember(appSettings.videoNamingRule) {
+    var videoNamingRule by remember {
         mutableStateOf(appSettings.videoNamingRule)
     }
-    var donghuaNamingRule by remember(appSettings.bangumiNamingRule) {
+    var donghuaNamingRule by remember {
         mutableStateOf(appSettings.bangumiNamingRule)
     }
+
+    LaunchedEffect(Unit) {
+        if (videoNamingRule.isEmpty()) {
+            videoNamingRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule
+            vm.updateVideoNamingRule(videoNamingRule)
+        }
+        if (donghuaNamingRule.isEmpty()) {
+            donghuaNamingRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule
+            vm.updateDonghuaNamingRule(donghuaNamingRule)
+        }
+   }
 
     LazyColumn(
         modifier = modifier

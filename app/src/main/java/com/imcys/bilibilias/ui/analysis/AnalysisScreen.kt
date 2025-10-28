@@ -569,7 +569,7 @@ fun AdvancedSetting(
                 }
 
                 Column {
-                    Text("缓存加配")
+                    Text("额外下载")
                     ExtraCache(
                         isSelectSingleModel,
                         downloadInfo,
@@ -598,6 +598,10 @@ fun ExtraCache(
 ) {
 
     var selectACCDownload by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isSelectSingleModel) {
+        selectACCDownload = false
+    }
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -666,7 +670,7 @@ fun ExtraCache(
         )
     }
 
-    if (selectACCDownload) {
+    if (selectACCDownload && isSelectSingleModel) {
         Text("字幕下载")
         Spacer(Modifier.height(5.dp))
         SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)

@@ -23,6 +23,4 @@ class NamingConventionViewModel(
             appSettingsRepository.updateBangumiNamingRule(rule)
         }
     }
-
-
 }

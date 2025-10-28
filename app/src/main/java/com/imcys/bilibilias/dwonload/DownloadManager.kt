@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
@@ -66,7 +65,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -233,12 +231,14 @@ class DownloadManager(
                             ccUrlInfo.subtitleUrl ?: ""
                         }
 
+                        val languageName = ccUrlInfo?.lan ?: "未知语言"
+
                         // 协议头
                         val finalUrl = if (!url.contains("https")) "https:" else ""
                         runCatching {
                             videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
                         }.onSuccess { cCInfo ->
-                            saveCCFile(asLinkResultType.viewInfo.data, ccFileType, cCInfo)
+                            saveCCFile(asLinkResultType.viewInfo.data, ccFileType, cCInfo,languageName)
                         }
                     }
                 }
@@ -251,7 +251,8 @@ class DownloadManager(
     private fun saveCCFile(
         videoInfo: BILIVideoViewInfo?,
         ccFileType: CCFileType,
-        biliVideoCCInfo: BILIVideoCCInfo
+        biliVideoCCInfo: BILIVideoCCInfo,
+        languageName: String
     ) {
         val fileContentStr = when (ccFileType) {
             CCFileType.ASS -> {
@@ -268,7 +269,7 @@ class DownloadManager(
             }
         }
 
-        val title = videoInfo?.title ?: "字幕"
+        val title = " ${videoInfo?.title}_${languageName}"
         val fileName = when (ccFileType) {
             CCFileType.ASS -> "$title.ass"
             CCFileType.SRT -> "$title.srt"
