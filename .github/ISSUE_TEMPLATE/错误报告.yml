@@ -8,7 +8,7 @@ body:
       value: |
         感谢您花时间填写这份 Bug 报告！请尽可能详细地填写以下信息，这将帮助我们更快地定位和解决问题。
 
-  - type: input
+  - type: textarea
     id: version
     attributes:
       label: 版本信息

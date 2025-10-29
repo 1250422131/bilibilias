@@ -2,9 +2,9 @@ name: Build and Upload Compose APK (Alpha)
 
 on:
   push:
-    branches: [compose]
+    branches: [main]
   pull_request:
-    branches: [compose]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
