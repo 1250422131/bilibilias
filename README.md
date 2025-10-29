@@ -11,7 +11,7 @@
 ---
 
 > [!NOTE]
-> BILIBILIAS 3.x 重构版本正在进行最后的测试，正式版将在最近推出，敬请期待！
+> 请前往 [main](https://github.com/1250422131/bilibilias/) 分支进行开发，Compose分支已完成大部分功能开发，现在将工作迁移至main分支。
 
 ## 简介
 
