@@ -13,6 +13,8 @@
 
 ---
 
+> ⚠️ 当前分支已停止维护和使用，请直接向 main 分支提交代码。
+
 > [!NOTE]  
 > 你当前正在观看BILIBILIAS v2.x 的分支代码，v3.x 重构版本正在进行，v2.x会继续更新和维护，直到未来V3.x完全替代。
 > 可通过 [Compose](https://github.com/1250422131/bilibilias/tree/compose) 分支查看开发进展。

@@ -13,6 +13,8 @@
 
 ---
 
+> ⚠️ 當前分支已停止維護和使用，請直接向 main 分支提交程式碼。
+
 **Languages:**
 - [English (United States)](./README-en_US.md)
 - [简体中文](./README.md)

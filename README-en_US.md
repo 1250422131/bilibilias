@@ -14,6 +14,8 @@
 
 ---
 
+> ⚠️ This branch is no longer maintained or in use. Please submit your code directly to the main branch.
+
 **Languages:**
 - English (United States)
 - [简体中文](./README.md)
