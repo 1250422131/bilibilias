@@ -25,7 +25,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -83,6 +85,7 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.utils.rememberHeightSizeClass
@@ -151,10 +154,6 @@ internal fun HomeScreen(
     val windowHeightSizeClass = rememberHeightSizeClass()
 
     val downloadListState by vm.downloadListState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        vm.updateWebSpi()
-    }
 
     LaunchedEffect(homeRoute.isFormLogin) {
         if (homeRoute.isFormLogin && !uiState.fromLoginEventConsumed) {
@@ -296,6 +295,7 @@ fun HomeContent(
     val appSettings by vm.appSettingsState.collectAsState()
     val appUpdateInfo by vm.appUpdateInfo.collectAsState()
     val context = LocalContext.current
+    val uiState by vm.uiState.collectAsState()
 
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
     var bulletinDialogShow by remember { mutableStateOf(false) }
@@ -490,6 +490,14 @@ fun HomeContent(
     }
 
     /**
+     * 更新提示对话框
+     */
+
+    UpdateAppDialog(appUpdateInfo,uiState.shownAppUpdate, onAppUpdateDialogShown = {
+        vm.onAppUpdateDialogShown()
+    })
+
+    /**
      * 关闭公告对话框
      */
     CloseBulletinDialog(closeBulletinDialogShow, onClickConfirm = {
@@ -505,6 +513,53 @@ fun HomeContent(
         bulletinDialogShow = false
     })
 
+}
+
+@Composable
+fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean,onAppUpdateDialogShown:()->Unit) {
+    var show by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    if (BuildConfig.ENABLE_PLAY_APP_MODE) return
+    if (appUpdateInfo == null) return
+
+    LaunchedEffect(Unit) {
+        if (appUpdateInfo.version != getVersion(context).second && !shownAppUpdate) {
+            show = true
+            onAppUpdateDialogShown()
+        }
+    }
+    ASAlertDialog(
+        showState = show,
+        title = { Text("更新提示") },
+        text = {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text("检测到有新版本 ${appUpdateInfo.version} 可用。")
+                Spacer(Modifier.height(8.dp))
+                Text("更新内容：")
+                Spacer(Modifier.height(4.dp))
+                Text(appUpdateInfo.feat)
+            }
+        },
+        confirmButton = {
+            ASTextButton(onClick = {
+                context.openLink(appUpdateInfo.version)
+            }) {
+                Text(text = "前往下载")
+            }
+        }, dismissButton = {
+            ASTextButton(onClick = {
+                show = false
+            }) {
+                Text(text = "取消")
+            }
+        }, onDismiss = {
+            show = false
+        })
 }
 
 @Composable

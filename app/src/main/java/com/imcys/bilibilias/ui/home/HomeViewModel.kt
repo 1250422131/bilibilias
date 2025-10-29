@@ -51,7 +51,9 @@ class HomeViewModel(
 ) : ViewModel() {
 
     data class UIState(
-        val fromLoginEventConsumed: Boolean = false
+        val fromLoginEventConsumed: Boolean = false,
+        val shownAppUpdate: Boolean = false,
+        val fetchedAppUpdateInfo: Boolean = false
     )
 
     val appSettings = appSettingsRepository.appSettingsFlow
@@ -93,8 +95,9 @@ class HomeViewModel(
     init {
         initLayoutTypeset()
         initDownloadList()
-        requestSSEEvent()
+        // requestSSEEvent()
         monitorUserState()
+        updateWebSpi()
     }
 
     /**
@@ -114,6 +117,8 @@ class HomeViewModel(
     }
 
     fun initOldAppInfo(context: Context) {
+        if (_uiState.value.fetchedAppUpdateInfo) return
+        _uiState.value = uiState.value.copy(fetchedAppUpdateInfo = true)
         viewModelScope.launch(Dispatchers.IO) {
             // 旧版捐助信息
             val bannerInfo = async {
@@ -305,6 +310,13 @@ class HomeViewModel(
             }
 
 
+    }
+
+    // 更新已经显示过
+    fun onAppUpdateDialogShown() {
+        viewModelScope.launch {
+            _uiState.emit(uiState.value.copy(shownAppUpdate = true))
+        }
     }
 
 
