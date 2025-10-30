@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.home
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.DrawableRes
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -60,6 +61,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -102,6 +104,7 @@ import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.DownloadTaskCard
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.security.MessageDigest
 import kotlin.math.min
@@ -164,6 +167,13 @@ internal fun HomeScreen(
 
     val homeLayoutTypesetList by vm.homeLayoutTypesetList.collectAsState()
     val pagerState = rememberPagerState(pageCount = { 2 })
+    // Intercept system back: if we're not on the first page, move pager one page back.
+    val _pagerScope = rememberCoroutineScope()
+    BackHandler(enabled = pagerState.currentPage > 0) {
+        _pagerScope.launch {
+            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+        }
+    }
     HomeScaffold(
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
