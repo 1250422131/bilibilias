@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.network
 
 import com.imcys.bilibilias.common.event.sendLoginErrorEvent
+import com.imcys.bilibilias.common.event.sendRequestFrequentEvent
 import com.imcys.bilibilias.network.config.APP_KEY
 import com.imcys.bilibilias.network.model.BiliApiResponse
 import com.imcys.bilibilias.network.utils.BiliAppSigner
@@ -9,6 +10,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -81,23 +83,30 @@ suspend inline fun <reified Data> HttpClient.httpRequest(
             runCatching {
                 emit(NetWorkResult.Loading(true))
                 val response = request(this@httpRequest)
-                response.body<BiliApiResponse<Data?>>().apply {
+                val body = response.body<BiliApiResponse<Data?>>().apply {
                     // 请求参数补充
                     responseHeader = response.headers.entries()
                 }
+                Pair(response, body)
             }.onSuccess {
+                val body = it.second
+                val response = it.first
                 // 异形JSON
-                val mData = it.data ?: it.result
-                when (it.code) {
+                val mData = body.data ?: body.result
+                when (body.code) {
                     0 -> {
-                        emit(NetWorkResult.Success(mData, it))
+                        emit(NetWorkResult.Success(mData, body))
                     }
                     -101 -> {
                         sendLoginErrorEvent()
-                        emit(NetWorkResult.Error(mData, it, exception = it.message ?: ""))
+                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
+                    }
+                    -509 -> {
+                        sendRequestFrequentEvent(url = response.request.url.toString())
+                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: "请求过于频繁，请稍后再试"))
                     }
                     else -> {
-                        emit(NetWorkResult.Error(mData, it, exception = it.message ?: ""))
+                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
                     }
                 }
             }.onFailure {

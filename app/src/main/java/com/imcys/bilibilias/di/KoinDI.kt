@@ -7,6 +7,7 @@ import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel
 import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorViewModel
+import com.imcys.bilibilias.ui.event.requestFrequent.RequestFrequentViewModel
 import com.imcys.bilibilias.ui.home.HomeViewModel
 import com.imcys.bilibilias.ui.login.CookieLoginViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
@@ -52,6 +53,7 @@ val appModule = module {
     viewModel { DonateViewModel(get()) }
     viewModel { StorageManagementViewModel(get()) }
     viewModel { NamingConventionViewModel(get()) }
+    viewModel { RequestFrequentViewModel(get()) }
     factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(

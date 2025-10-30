@@ -37,9 +37,23 @@ fun sendAnalysisEvent(analysisEvent: AnalysisEvent) {
 
 
 object PlayVoucherError
+
 // 播放接口风控异常
 private val _playVoucherErrorChannel = Channel<PlayVoucherError>(Channel.UNLIMITED)
 val playVoucherErrorChannel = _playVoucherErrorChannel.receiveAsFlow()
 fun sendPlayVoucherErrorEvent() {
     _playVoucherErrorChannel.trySend(PlayVoucherError)
+}
+
+
+// 请求频繁事件
+data class RequestFrequentEvent(
+    val url: String,
+)
+
+// 请求频繁事件处理
+private val _requestFrequentHandleChannel = Channel<RequestFrequentEvent>(Channel.UNLIMITED)
+val requestFrequentHandleChannel = _requestFrequentHandleChannel.receiveAsFlow()
+fun sendRequestFrequentEvent(url: String) {
+    _requestFrequentHandleChannel.trySend(RequestFrequentEvent(url))
 }

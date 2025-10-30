@@ -167,13 +167,13 @@ internal fun HomeScreen(
 
     val homeLayoutTypesetList by vm.homeLayoutTypesetList.collectAsState()
     val pagerState = rememberPagerState(pageCount = { 2 })
-    // Intercept system back: if we're not on the first page, move pager one page back.
-    val _pagerScope = rememberCoroutineScope()
+    val pagerScope = rememberCoroutineScope()
     BackHandler(enabled = pagerState.currentPage > 0) {
-        _pagerScope.launch {
+        pagerScope.launch {
             pagerState.animateScrollToPage(pagerState.currentPage - 1)
         }
     }
+
     HomeScaffold(
         snackbarHostState = snackbarHostState,
         loginUserInfoState,

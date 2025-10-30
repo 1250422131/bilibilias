@@ -28,6 +28,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.imcys.bilibilias.common.event.analysisHandleChannel
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
+import com.imcys.bilibilias.common.event.requestFrequentHandleChannel
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -37,6 +38,8 @@ import com.imcys.bilibilias.ui.download.DownloadScreen
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
 import com.imcys.bilibilias.ui.event.playvoucher.PlayVoucherErrorPage
 import com.imcys.bilibilias.ui.event.playvoucher.navigation.PlayVoucherErrorRoute
+import com.imcys.bilibilias.ui.event.requestFrequent.RequestFrequentRoute
+import com.imcys.bilibilias.ui.event.requestFrequent.RequestFrequentScreen
 import com.imcys.bilibilias.ui.home.HomeScreen
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.login.CookeLoginRoute
@@ -103,6 +106,12 @@ fun BILIBILAISNavDisplay() {
         playVoucherErrorChannel.collect {
             backStack.removeLastOrNullSafe()
             backStack.addWithReuse(PlayVoucherErrorRoute)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        requestFrequentHandleChannel.collect {
+            backStack.addWithReuse(RequestFrequentRoute(it.url))
         }
     }
 
@@ -419,6 +428,12 @@ fun BILIBILAISNavDisplay() {
                 ) {
                     NamingConventionScreen(
                         namingConventionRoute = it,
+                        onToBack = { backStack.removeLastOrNullSafe() }
+                    )
+                }
+                entry<RequestFrequentRoute> {
+                    RequestFrequentScreen (
+                        requestFrequentRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
