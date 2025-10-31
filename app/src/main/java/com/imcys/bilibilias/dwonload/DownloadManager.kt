@@ -413,7 +413,23 @@ class DownloadManager(
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
 
-                resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+               val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                uri?.let {
+                    try {
+                        resolver.openOutputStream(it)?.use { out ->
+                            inputStream.copyTo(out)
+                            out.flush()
+                        }
+                    } catch (e: Exception) {
+                        // 写入失败：尝试删除刚创建的占位记录
+                        try { resolver.delete(it, null, null) } catch (_: Exception) {}
+                        return@withContext
+                    } finally {
+                        // 解除 pending 状态
+                        val update = ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) }
+                        try { resolver.update(it, update, null, null) } catch (_: Exception) {}
+                    }
+                }
 
             } else {
                 // Android 9 及以下：写入公共目录 + 扫描
