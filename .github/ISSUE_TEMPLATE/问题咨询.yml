@@ -19,11 +19,10 @@ body:
     validations:
       required: true
 
-  - type: input
-    id: version
+  - type: textarea
+    id: system_info
     attributes:
-      label: 版本信息
-      description: 您正在使用的 BILIBILIAS 版本 (可长按桌面图标，选择“信息”页面查看版本号)
-      placeholder: 例如：v3.0.0
+      label: 系统信息
+      description: 如果是3.0.0的版本可以在APP的设置页面查看系统信息，那里提供了一键复制粘贴功能。如果是2.x及以下版本请描述你的安卓系统版本和机型及正在使用的版本。
     validations:
       required: true
