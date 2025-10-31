@@ -9,19 +9,10 @@ body:
         感谢您花时间填写这份 Bug 报告！请尽可能详细地填写以下信息，这将帮助我们更快地定位和解决问题。
 
   - type: textarea
-    id: version
-    attributes:
-      label: 版本信息
-      description: 您正在使用的 BILIBILIAS 版本 (可长按桌面图标，选择“信息”页面查看版本号)
-      placeholder: 例如：v3.0.0
-    validations:
-      required: true
-
-  - type: textarea
     id: system_info
     attributes:
       label: 系统信息
-      description: 如果是3.0.0的版本可以在APP的设置页面查看系统信息，那里提供了一键复制粘贴功能。如果是2.x及以下版本请描述你的安卓系统版本和机型。
+      description: 如果是3.0.0的版本可以在APP的设置页面查看系统信息，那里提供了一键复制粘贴功能。如果是2.x及以下版本请描述你的安卓系统版本和机型及正在使用的版本。
     validations:
       required: true
 
@@ -29,7 +20,7 @@ body:
     id: what-happened
     attributes:
       label: 遇到了什么问题？
-      description: 请详细描述您遇到的问题
+      description: 请详细描述您遇到的问题，包括如何复现这个问题。
     validations:
       required: true
 
