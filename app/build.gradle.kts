@@ -115,7 +115,6 @@ dependencies {
     implementation(libs.firebase.inappmessaging.display) {
         exclude(group = "com.google.firebase", module = "protolite-well-known-types")
     }
-    implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.perf) {
         exclude(group = "com.google.protobuf", module = "protobuf-javalite")
@@ -152,11 +151,6 @@ dependencies {
     // xposed
     //    compileOnly(libs.xposed.api)
 
-    //UI
-    implementation(libs.androidx.window)
-    implementation(libs.androidx.adaptive)
-    implementation(libs.androidx.adaptive.layout)
-    implementation(libs.androidx.adaptive.navigation)
 
     // 预览工具
     androidTestImplementation(platform(libs.androidx.compose.bom))
