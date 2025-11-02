@@ -20,6 +20,7 @@ data class DownloadViewInfo(
     val downloadMode: DownloadMode = DownloadMode.AUDIO_VIDEO,
     val selectedCid: List<Long> = listOf(),
     val selectedEpId: List<Long> = listOf(),
+    val downloadMedia : Boolean = true,
     val downloadCover: Boolean = false,
     val downloadDanmaku: Boolean = false,
     val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表

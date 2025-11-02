@@ -2,6 +2,7 @@ package com.imcys.bilibilias.network.service
 
 import com.imcys.bilibilias.network.config.API.App.OLD_APP_FUNCTION_URL
 import com.imcys.bilibilias.network.config.API.App.OLD_APP_INFO_URL
+import com.imcys.bilibilias.network.config.API.App.OLD_VIDEO_DATA_POST_URL
 import com.imcys.bilibilias.network.model.app.AppOldDonateBean
 import com.imcys.bilibilias.network.model.app.AppOldHomeBannerDataBean
 import com.imcys.bilibilias.network.model.app.AppOldUpdateDataBean
@@ -39,6 +40,35 @@ class AppAPIService(
             parameter("version", version)
         }.body()
     }
+
+
+    suspend fun submitASDownloadData(
+        aid: Long,
+        bvid: String,
+        mid: Long,
+        upName: String,
+        tName: String,
+        copy: Int,
+        userName: String?,
+        userId: Long?
+    ) = runCatching {
+        httpClient.get(OLD_VIDEO_DATA_POST_URL) {
+            parameter("Aid", aid)
+            parameter("Bvid", bvid)
+            parameter("Mid", mid)
+            parameter("Upname", upName)
+            parameter("Tname", tName)
+            parameter("Copyright", copy)
+            userName?.let {
+                parameter("UserName", it)
+            }
+            userId?.let {
+                parameter("UserId", it)
+            }
+
+        }
+    }
+
 
 
 }

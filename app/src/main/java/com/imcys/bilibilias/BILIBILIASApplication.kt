@@ -1,6 +1,7 @@
 package com.imcys.bilibilias
 
 import android.app.Application
+import com.imcys.bilibilias.common.data.CommonBuildConfig
 import com.imcys.bilibilias.data.di.repositoryModule
 import com.imcys.bilibilias.database.di.databaseModule
 import com.imcys.bilibilias.datastore.di.dataStoreModule
@@ -15,6 +16,7 @@ class BILIBILIASApplication : Application() {
         // 全局异常捕获
         // AppCrashHandler.instance.init(this)
         // Koin依赖注入
+        initBuildConfig()
         startKoin {
             androidContext(this@BILIBILIASApplication)
             modules(
@@ -25,5 +27,9 @@ class BILIBILIASApplication : Application() {
                 appModule,
             )
         }
+    }
+
+    private fun initBuildConfig() {
+        CommonBuildConfig.enabledAnalytics = BuildConfig.ENABLED_ANALYTICS
     }
 }

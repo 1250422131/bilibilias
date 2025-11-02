@@ -10,7 +10,8 @@ plugins {
     alias { libs.plugins.kotlin.parcelize }
 
 }
-val enablePlayAppMode: String by project
+val enabledPlayAppMode: String by project
+val enabledAnalytics: String by project
 
 android {
     namespace = "com.imcys.bilibilias"
@@ -35,7 +36,7 @@ android {
 
         create("official") {
             dimension = "version"
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
             signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
         }
 
@@ -43,7 +44,7 @@ android {
             dimension = "version"
             applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", "false")
+            buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", "false")
             // 动态签名配置
             val runnerTemp = System.getenv("RUNNER_TEMP")
             signingConfig = if (runnerTemp != null && file("$runnerTemp/mxjs-debug.jks").exists()) {
@@ -68,7 +69,7 @@ android {
             dimension = "version"
             applicationIdSuffix = BILIBILIASBuildType.BETA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
             signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
         }
     }
@@ -82,11 +83,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
+            buildConfigField("boolean", "ENABLED_ANALYTICS", enabledAnalytics)
         }
 
         debug {
-            buildConfigField("boolean", "ENABLE_PLAY_APP_MODE", enablePlayAppMode)
+            buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
+            buildConfigField("boolean", "ENABLED_ANALYTICS", enabledAnalytics)
         }
 
     }
@@ -107,19 +110,8 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:ffmpeg"))
 
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.config)
-    implementation(libs.firebase.inappmessaging.display) {
-        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
-    }
-    implementation(libs.firebase.messaging)
-    implementation(libs.firebase.perf) {
-        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
-    }
+    // Firebase 选配
+    firebaseDependencies(enabledAnalytics.toBoolean())
 
     // 彩带
     implementation(libs.konfetti.compose)
@@ -137,7 +129,7 @@ dependencies {
         libs.palay.app.review.kts
     )
     googlePlayLibs.forEach {
-        if (enablePlayAppMode.toBoolean()) {
+        if (enabledPlayAppMode.toBoolean()) {
             implementation(it)
         } else {
             compileOnly(it)
@@ -158,4 +150,32 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+}
+
+// Firebase 依赖配置
+fun DependencyHandlerScope.firebaseDependencies(enabled: Boolean) {
+    if (enabled) {
+        implementation(platform(libs.firebase.bom))
+        implementation(libs.firebase.crashlytics)
+        implementation(libs.firebase.crashlytics.ndk)
+        implementation(libs.firebase.analytics)
+        implementation(libs.firebase.config)
+        implementation(libs.firebase.messaging)
+        implementation(libs.firebase.inappmessaging.display) {
+            exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+        }
+        implementation(libs.firebase.perf) {
+            exclude(group = "com.google.protobuf", module = "protobuf-javalite")
+            exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+        }
+    } else {
+        compileOnly(platform(libs.firebase.bom))
+        compileOnly(libs.firebase.crashlytics)
+        compileOnly(libs.firebase.crashlytics.ndk)
+        compileOnly(libs.firebase.analytics)
+        compileOnly(libs.firebase.config)
+        compileOnly(libs.firebase.messaging)
+        compileOnly(libs.firebase.inappmessaging.display)
+        compileOnly(libs.firebase.perf)
+    }
 }

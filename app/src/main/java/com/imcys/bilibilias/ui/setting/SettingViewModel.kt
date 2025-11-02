@@ -59,7 +59,6 @@ class SettingViewModel(
                     usersDataSource.setUserId(0L)
                     biliUserCookiesDao.deleteBILICookiesByUid(user.id)
                     biliUsersDao.deleteBILIUserByUid(user.id)
-                    asCookiesStorage.syncDataBaseCookies()
                 } ?: return
 
             _uiState.value = _uiState.value.copy(
@@ -68,6 +67,8 @@ class SettingViewModel(
             )
 
             userInfoRepository.logout(biliJct).last()
+            asCookiesStorage.clearCookies()
+            asCookiesStorage.syncDataBaseCookies()
         }
     }
 

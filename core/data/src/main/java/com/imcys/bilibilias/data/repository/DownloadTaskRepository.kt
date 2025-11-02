@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.data.repository
 
+import com.imcys.bilibilias.common.data.commonAnalyticsSafe
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
+import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadPlatform
@@ -13,10 +15,12 @@ import com.imcys.bilibilias.database.entity.download.DownloadTaskNode
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskType
 import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
+import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.filterWithSinglePage
+import com.imcys.bilibilias.network.service.AppAPIService
 import kotlinx.coroutines.flow.last
 import kotlinx.serialization.json.Json
 import java.util.Date
@@ -25,7 +29,11 @@ import kotlin.text.ifEmpty
 class DownloadTaskRepository(
     private val json: Json,
     private val downloadTaskDao: DownloadTaskDao,
-    private val videoInfoRepository: VideoInfoRepository
+    private val videoInfoRepository: VideoInfoRepository,
+    private val appAPIService: AppAPIService,
+    private val appSettingsRepository: AppSettingsRepository,
+    private val usersDataSource: UsersDataSource,
+    private val biliUsersDao: BILIUsersDao
 ) {
 
     /**
@@ -57,6 +65,41 @@ class DownloadTaskRepository(
     }
 
     /**
+     * 提交下载数据到后台备份，统一处理隐私协议和用户信息
+     */
+    private suspend fun submitDownloadAnalytics(
+        aid: Long,
+        bvid: String,
+        copyright: Int,
+        tName: String,
+        upName: String,
+        mid: Long
+    ) {
+        commonAnalyticsSafe {
+            if (!appSettingsRepository.hasAgreedPrivacyPolicy()) return@commonAnalyticsSafe
+
+            var userName: String? = null
+            var userId: Long? = null
+            if (usersDataSource.isLogin()) {
+                val userInfo = biliUsersDao.getBILIUserByUid(usersDataSource.getUserId())
+                userName = userInfo?.name
+                userId = userInfo?.mid
+            }
+
+            appAPIService.submitASDownloadData(
+                aid = aid,
+                bvid = bvid,
+                copy = copyright,
+                tName = tName,
+                upName = upName,
+                mid = mid,
+                userName = userName,
+                userId = userId
+            )
+        }
+    }
+
+    /**
      * 创建番剧下载任务
      */
     private suspend fun createDonghuaDownloadTask(
@@ -81,6 +124,28 @@ class DownloadTaskRepository(
         )
         val roots =
             buildDonghuaTree(task.taskId, data, selectedEpId, downloadMode, namingConventionInfo)
+
+
+        // 提交下载数据到后台备份
+        if (data.episodes.firstOrNull()?.aid != null) {
+            runCatching {
+                val videoInfo =
+                    videoInfoRepository.getVideoView(aid = data.episodes.firstOrNull().toString())
+                        .last()
+                if (videoInfo.status == ApiStatus.SUCCESS) {
+                    val videoData = videoInfo.data!!
+                    submitDownloadAnalytics(
+                        aid = videoData.aid,
+                        bvid = videoData.bvid,
+                        copyright = videoData.copyright.toInt(),
+                        tName = videoData.tname,
+                        upName = videoData.owner.name,
+                        mid = videoData.owner.mid
+                    )
+                }
+            }
+        }
+
         DownloadTaskTree(task = task, roots = roots)
     }
 
@@ -98,7 +163,6 @@ class DownloadTaskRepository(
 
         // 判断是否为合集
         val isUgcSeason = !data.ugcSeason?.sections.isNullOrEmpty()
-
         val isSteinGate = data.rights?.isSteinGate != 0L
 
         val (task, taskType) = when {
@@ -183,7 +247,15 @@ class DownloadTaskRepository(
             }
         }
 
-
+        // 提交下载数据到后台备份
+        submitDownloadAnalytics(
+            aid = data.aid,
+            bvid = data.bvid,
+            copyright = data.copyright.toInt(),
+            tName = data.tname,
+            upName = data.owner.name,
+            mid = data.owner.mid
+        )
 
         DownloadTaskTree(task, roots)
     }

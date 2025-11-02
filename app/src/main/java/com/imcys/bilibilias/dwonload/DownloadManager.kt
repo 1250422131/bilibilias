@@ -51,6 +51,7 @@ import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.network.service.AppAPIService
 import io.ktor.client.HttpClient
 import io.ktor.client.request.head
 import io.ktor.client.request.header
@@ -98,6 +99,7 @@ class DownloadManager(
     private val context: BILIBILIASApplication,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val videoInfoRepository: VideoInfoRepository,
+    private val appAPIService: AppAPIService,
     private val json: Json,
     private val okHttpClient: OkHttpClient,
     private val httpClient: HttpClient,
@@ -1154,6 +1156,12 @@ class DownloadManager(
         }
 
         taskTree.roots.forEach { processNode(it) }
+
+        // 仅在下载媒体时更新任务列表
+        if (!downloadViewInfo.downloadMedia){
+            return
+        }
+
         _downloadTasks.value = currentTasks
     }
 

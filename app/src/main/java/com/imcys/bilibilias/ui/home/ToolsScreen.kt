@@ -95,7 +95,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
             onClick = { showFeedbackDialog = true }
         )
     ).apply {
-        if (!BuildConfig.ENABLE_PLAY_APP_MODE) {
+        if (!BuildConfig.ENABLED_PLAY_APP_MODE) {
             add(
                 ToolInfo(
                     name = "捐助我们",
@@ -187,7 +187,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                     }
                 }
 
-                if (!BuildConfig.ENABLE_PLAY_APP_MODE) {
+                if (!BuildConfig.ENABLED_PLAY_APP_MODE) {
                     Surface(
                         shape = CardDefaults.shape,
                         onClick = {

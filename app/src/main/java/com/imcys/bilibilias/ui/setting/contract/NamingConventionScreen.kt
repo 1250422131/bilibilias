@@ -95,7 +95,11 @@ fun LazyItemScope.NamingRuleEditor(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 placeholderList.forEach { item ->
                     AssistChip(onClick = {
-                        onRuleChange(ruleValue + item.placeholder)
+                        onRuleChange(if (ruleValue.isEmpty()) {
+                            ruleValue + item.placeholder
+                        } else {
+                            ruleValue + "_" + item.placeholder
+                        })
                     }, label = {
                         Text("${item.placeholder.replace("{", "").replace("}", "")}：${item.description}")
                     })
@@ -111,7 +115,7 @@ fun LazyItemScope.NamingRuleEditor(
                 onValueChange = {
                     onRuleChange(it)
                 },
-                label = { Text("视频命名规则") },
+                label = { Text("命名规则") },
                 modifier = Modifier.fillMaxWidth()
                     .onFocusChanged {
                         if (!it.isFocused && ruleValue.isEmpty()){

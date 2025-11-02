@@ -11,13 +11,11 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.google.android.play.core.install.model.InstallStatus
 import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.imcys.bilibilias.common.event.AnalysisEvent
@@ -46,7 +43,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import androidx.compose.runtime.collectAsState
-import com.imcys.bilibilias.ffmpeg.FFmpegManger
+import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.ui.weight.ASTextButton
 
 class MainActivity : ComponentActivity() {
@@ -195,12 +192,14 @@ class MainActivity : ComponentActivity() {
      * 初始化Firebase
      */
     private fun initFirebase(state: AppSettings.AgreePrivacyPolicyState) {
-        if (BuildConfig.DEBUG) {
-            Firebase.app.isDataCollectionDefaultEnabled = false
-            return
+        analyticsSafe {
+            if (BuildConfig.DEBUG) {
+                Firebase.app.isDataCollectionDefaultEnabled = false
+                return@analyticsSafe
+            }
+            Firebase.app.isDataCollectionDefaultEnabled =
+                state == AppSettings.AgreePrivacyPolicyState.Agreed
         }
-        Firebase.app.isDataCollectionDefaultEnabled =
-            state == AppSettings.AgreePrivacyPolicyState.Agreed
     }
 
 
@@ -215,7 +214,7 @@ class MainActivity : ComponentActivity() {
      */
     private fun initUpdateCheck() {
         // 暂时留个技术债，因为接口问题，无法直接使用多态，后续再优化
-        if (BuildConfig.ENABLE_PLAY_APP_MODE) {
+        if (BuildConfig.ENABLED_PLAY_APP_MODE) {
             with(GooglePlayAppUpdateManage(this, appSettingsRepository)) {
                 // 跳过版本号监听
                 googlePlaySkipVersionListener = {

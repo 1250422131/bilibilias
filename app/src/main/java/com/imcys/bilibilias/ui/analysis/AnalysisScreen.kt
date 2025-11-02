@@ -392,6 +392,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onCheckDownloadDanmaku = {
                             viewModel.updateDownloadDanmaku(it)
+                        },
+                        onCheckMediaDownload = {
+                            viewModel.updateDownloadMedia(it)
                         }
                     ) {
                         viewModel.updateDownloadMode(it)
@@ -410,6 +413,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onCheckDownloadDanmaku = {
                             viewModel.updateDownloadDanmaku(it)
+                        },
+                        onCheckMediaDownload = {
+                            viewModel.updateDownloadMedia(it)
                         },
                         onSelectCCId = { id, type ->
                             viewModel.updateSelectCCIdList(id, type)
@@ -465,6 +471,7 @@ fun AdvancedSetting(
     dash: BILIVideoDash?,
     onCheckCoverDownload: (Boolean) -> Unit,
     onCheckDownloadDanmaku: (Boolean) -> Unit,
+    onCheckMediaDownload: (Boolean) -> Unit,
     onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
     onCleanCCId: () -> Unit = {},
     onSelectDownloadMode: (DownloadMode) -> Unit,
@@ -569,15 +576,16 @@ fun AdvancedSetting(
                 }
 
                 Column {
-                    Text("额外下载")
+                    Text("下载内容")
                     ExtraCache(
                         isSelectSingleModel,
                         downloadInfo,
                         downloadInfo?.videoPlayerInfoV2,
                         onCheckCoverDownload = onCheckCoverDownload,
                         onCheckDownloadDanmaku = onCheckDownloadDanmaku,
+                        onCheckMediaDownload = onCheckMediaDownload,
                         onSelectCCId = onSelectCCId,
-                        onCleanCCId = onCleanCCId
+                        onCleanCCId = onCleanCCId,
                     )
                 }
 
@@ -593,6 +601,7 @@ fun ExtraCache(
     playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
     onCheckCoverDownload: (Boolean) -> Unit,
     onCheckDownloadDanmaku: (Boolean) -> Unit,
+    onCheckMediaDownload: (Boolean) -> Unit,
     onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
     onCleanCCId: () -> Unit = {},
 ) {
@@ -606,6 +615,28 @@ fun ExtraCache(
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+
+        FilterChip(
+            label = {
+                Text("流媒体下载", fontSize = 12.sp)
+            },
+            selected = downloadInfo?.downloadMedia == true,
+            leadingIcon = {
+                if (downloadInfo?.downloadMedia == true) {
+                    Icon(
+                        Icons.Outlined.Check,
+                        contentDescription = "已选中图标",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            },
+            onClick = {
+                onCheckMediaDownload(!(downloadInfo?.downloadMedia ?: false))
+            },
+        )
+
+
+
         FilterChip(
             label = {
                 Text("封面下载", fontSize = 12.sp)

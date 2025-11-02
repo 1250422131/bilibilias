@@ -26,6 +26,13 @@ class AppSettingsRepository(
         }
 
 
+    // 同意了隐私政策
+    suspend fun hasAgreedPrivacyPolicy(): Boolean {
+        val currentSettings = dataStore.data.first()
+        return currentSettings.agreePrivacyPolicy == AppSettings.AgreePrivacyPolicyState.Agreed
+    }
+
+
     // 添加更新隐私政策同意状态的方法
     suspend fun updatePrivacyPolicyAgreement(agreed: AppSettings.AgreePrivacyPolicyState) {
         dataStore.updateData { currentSettings ->

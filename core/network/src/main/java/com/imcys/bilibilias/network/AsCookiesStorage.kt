@@ -113,6 +113,12 @@ class AsCookiesStorage(
         }
     }
 
+    suspend fun clearCookies() {
+        cookieMutex.withLock {
+            cookies.clear()
+        }
+    }
+
     override fun close() {
     }
 

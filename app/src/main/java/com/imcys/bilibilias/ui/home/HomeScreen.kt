@@ -348,7 +348,7 @@ fun HomeContent(
 
         homeLayoutTypesetList.forEach { layout ->
             when (layout.type) {
-                AppSettings.HomeLayoutType.Banner if (!layout.isHidden && !BuildConfig.ENABLE_PLAY_APP_MODE) -> {
+                AppSettings.HomeLayoutType.Banner if (!layout.isHidden && !BuildConfig.ENABLED_PLAY_APP_MODE) -> {
                     item {
                         ASHorizontalMultiBrowseCarousel(
                             autoScroll = true,
@@ -411,7 +411,7 @@ fun HomeContent(
                 AppSettings.HomeLayoutType.UpdateInfo if !layout.isHidden -> {
 
                     // Google Play 应用商店版本不展示更新内容
-                    if (BuildConfig.ENABLE_PLAY_APP_MODE) return@forEach
+                    if (BuildConfig.ENABLED_PLAY_APP_MODE) return@forEach
 
                     if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
                         // 版本相同，不展示
@@ -478,7 +478,7 @@ fun HomeContent(
 
         item {
             Text(
-                if (BuildConfig.ENABLE_PLAY_APP_MODE) {
+                if (BuildConfig.ENABLED_PLAY_APP_MODE) {
                     """
                             请在Download/BILIBILIAS目录下查看下载内容
                             请不要忘记在Google Play填写意见评价
@@ -530,7 +530,7 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
     var show by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    if (BuildConfig.ENABLE_PLAY_APP_MODE) return
+    if (BuildConfig.ENABLED_PLAY_APP_MODE) return
     if (appUpdateInfo == null) return
 
     LaunchedEffect(Unit) {

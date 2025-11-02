@@ -81,9 +81,21 @@ class AnalysisViewModel(
     init {
 
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = _uiState.value.copy(
-                isBILILogin = usersDataSource.isLogin()
-            )
+            usersDataSource.users.collect {
+                val oldLoginState = _uiState.value.isBILILogin
+                _uiState.value = _uiState.value.copy(
+                    isBILILogin = it.currentUserId != 0L
+                )
+                if (oldLoginState != _uiState.value.isBILILogin ) {
+                    // 登录状态变化，刷新解析
+                    _uiState.value.inputAsText.let { inputAsText ->
+                        if (inputAsText.isNotEmpty()) {
+                            analysisInputText(inputAsText)
+                        }
+                    }
+                }
+
+            }
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -696,6 +708,12 @@ class AnalysisViewModel(
     fun updateDownloadDanmaku(it: Boolean) {
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(downloadDanmaku = it)
+        )
+    }
+
+    fun updateDownloadMedia(state:Boolean){
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(downloadMedia = state)
         )
     }
 }

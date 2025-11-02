@@ -5,13 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.core.net.toUri
-import io.ktor.content.TextContent
-import kotlin.text.ifEmpty
+import com.imcys.bilibilias.BuildConfig
 
 fun Context.openLink(url: String) {
     val intent = Intent().apply {
@@ -27,4 +22,14 @@ fun String.copyText(context: Context, title: String) {
     val clip = ClipData.newPlainText(title, this)
     clipboard.setPrimaryClip(clip)
     Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+}
+
+inline fun analyticsSafe(action: () -> Unit) {
+    if (BuildConfig.ENABLED_ANALYTICS){
+        action()
+    }
+}
+
+fun isEnabledAnalytics(): Boolean {
+    return BuildConfig.ENABLED_ANALYTICS
 }
