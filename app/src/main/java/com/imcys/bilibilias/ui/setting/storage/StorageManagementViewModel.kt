@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.setting.storage
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -43,7 +46,7 @@ class StorageManagementViewModel(
                     )
                 )
             } catch (e: Exception) {
-                _uiState.emit(StorageManagementUIState.Error(e.message ?: "未知错误"))
+                _uiState.emit(StorageManagementUIState.Error(e.message ?: stringResource(R.string.app_未知错)))
             }
         }
     }

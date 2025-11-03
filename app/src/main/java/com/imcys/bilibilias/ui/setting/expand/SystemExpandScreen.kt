@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.setting.expand
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -53,7 +55,7 @@ private fun SystemExpandContent(
     ) {
         item {
             CategorySettingsItem(
-                text = "权限扩展"
+                text = stringResource(R.string.app_权限扩)
             )
         }
 
@@ -61,7 +63,7 @@ private fun SystemExpandContent(
             SwitchSettingsItem(
                 painter = painterResource(R.drawable.ic_shizuku_logo_512px),
                 text = "Shizuku",
-                description = "使用Shizuku提供ADB权限，解锁更多功能。",
+                description = stringResource(R.string.app_使用_提供),
                 checked = false,
                 isImage = true
             ) { check ->
@@ -88,7 +90,7 @@ private fun SystemExpandScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "扩展能力") },
+                title = { Text(text = stringResource(R.string.app_扩展能)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

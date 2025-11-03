@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -57,7 +60,7 @@ fun SwitchSelectModelTabRow(isSelectSingleModel: Boolean = true, onSelectSingle:
             }, modifier = Modifier.zIndex(2f)
         ) {
             Text(
-                "单选",
+                stringResource(R.string.app_单选),
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 10.dp),
                 fontSize = 14.sp
@@ -76,7 +79,7 @@ fun SwitchSelectModelTabRow(isSelectSingleModel: Boolean = true, onSelectSingle:
             }, modifier = Modifier.zIndex(2f)
         ) {
             Text(
-                "多选",
+                stringResource(R.string.app_多选),
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 10.dp),
                 fontSize = 14.sp

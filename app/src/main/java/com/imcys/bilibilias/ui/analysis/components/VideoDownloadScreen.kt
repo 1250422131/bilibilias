@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -129,21 +132,21 @@ fun VideoDownloadScreen(
                 ) {
                     Icon(
                         Icons.Outlined.Info,
-                        contentDescription = "警告",
+                        contentDescription = stringResource(R.string.common_warning),
                     )
                     Spacer(Modifier.width(2.dp))
                     Text(
-                        "未经作者允许禁止转载",
+                        stringResource(R.string.download_未经作),
                         fontSize = 14.sp,
                     )
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("缓存倾向")
+                Text(stringResource(R.string.download_缓存倾))
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = "说明",
+                    contentDescription = stringResource(R.string.download_说明),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {
@@ -187,7 +190,7 @@ fun VideoDownloadScreen(
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
 
-                        ASEpisodeTitle("选择缓存合集",
+                        ASEpisodeTitle(stringResource(R.string.download_选择缓),
                             episodeListMode = episodeListMode,
                             onUpdateEpisodeListMode = onUpdateEpisodeListMode
                         )
@@ -225,7 +228,7 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        ASEpisodeTitle("选择缓存子集",episodeListMode,onUpdateEpisodeListMode)
+                        ASEpisodeTitle(stringResource(R.string.download_选择缓_1),episodeListMode,onUpdateEpisodeListMode)
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
@@ -270,8 +273,8 @@ fun InteractiveVideoPageScreen(
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
-        Text("选择互动视频")
-        ASEpisodeTitle("选择互动视频",episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
+        Text(stringResource(R.string.download_选择互))
+        ASEpisodeTitle(stringResource(R.string.download_选择互),episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
         ASEpisodeSelection(
             episodeList = steinEdgeInfo?.storyList,
             episodeListMode = episodeListMode,
@@ -365,7 +368,7 @@ fun UgcSeasonPageScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择分P视频", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.download_选择分_视频), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,

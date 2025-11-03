@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.download
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
@@ -70,7 +73,7 @@ class DownloadViewModel(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_无法打_可能没), Toast.LENGTH_SHORT)
                     .show()
             }
             return
@@ -78,7 +81,7 @@ class DownloadViewModel(
             // 普通文件路径
             val file = File(savePath)
             if (!file.exists()) {
-                Toast.makeText(context, "文件不存在，可能已被删除", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.download_文件不_可能已), Toast.LENGTH_SHORT).show()
                 return
             }
             val intent = Intent(Intent.ACTION_VIEW)
@@ -89,7 +92,7 @@ class DownloadViewModel(
                 null
             }
             if (fileUri == null) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_无法打_可能没), Toast.LENGTH_SHORT)
                     .show()
                 return
             }
@@ -99,7 +102,7 @@ class DownloadViewModel(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_无法打_可能没), Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -150,9 +153,9 @@ class DownloadViewModel(
             downloadTaskRepository.deleteSegment(segment.segmentId)
 
             val message = when {
-                fileNotExist -> "文件不存在"
-                deleteSuccess -> "删除成功"
-                else -> "删除失败，文件可能已经被删除或不存在"
+                fileNotExist -> stringResource(R.string.download_文件不)
+                deleteSuccess -> stringResource(R.string.download_删除成)
+                else -> stringResource(R.string.download_删除失_文件可)
             }
 
             launch(Dispatchers.Main) {

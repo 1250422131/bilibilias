@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.weight
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
@@ -86,7 +89,7 @@ fun <T> AsAutoError(
 @Composable
 @Preview
 private fun PreviewCommonError() {
-    CommonError("接口异常") { }
+    CommonError(stringResource(R.string.error_接口异)) { }
 }
 
 @Composable
@@ -113,7 +116,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text("Error：${errorMsg}")
+                    Text(stringResource(R.string.error_text))
                 }
                 AsErrorCopyIconButton(errorMsg)
             }
@@ -138,7 +141,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         onRetry.invoke()
                     },
                 ) {
-                    Text("点击重试")
+                    Text(stringResource(R.string.error_点击重))
                 }
 
             }
@@ -161,7 +164,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     )
     ASIconButton(onClick = {
         haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-        val clipData = ClipData.newPlainText("BILIBILAIS异常", errorMsg)
+        val clipData = ClipData.newPlainText(stringResource(R.string.error_异常), errorMsg)
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch(Dispatchers.IO) {
             copyFinish = true
@@ -172,7 +175,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     }) {
         Icon(
             imageVector = if (copyFinish) Icons.Outlined.Check else Icons.Outlined.ContentCopy,
-            contentDescription = "复制报错",
+            contentDescription = stringResource(R.string.error_复制报),
             modifier = Modifier.rotate(rotation)
         )
     }

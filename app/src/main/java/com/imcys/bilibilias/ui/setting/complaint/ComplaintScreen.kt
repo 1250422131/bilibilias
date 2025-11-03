@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.setting.complaint
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -50,31 +53,31 @@ fun ComplaintScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
             Text(
-                text = "UP主权益保护计划将继续实行，UP主或者其他主体可以按照类型投诉。",
+                text = stringResource(R.string.complaint_主权益_主或者),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(24.dp))
 
             ComplaintOptionCard(
-                title = "方案一：禁止缓存",
-                description = "不能让其他用户在BILIBILIAS内缓存该视频。\n限制：只能是自己的视频。",
-                buttonText = "查看详情",
+                title = stringResource(R.string.complaint_方案一_禁止缓),
+                description = stringResource(R.string.complaint_不能让_内缓存),
+                buttonText = stringResource(R.string.complaint_查看详),
                 onClick = { }
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             ComplaintOptionCard(
-                title = "方案二：追回已缓存视频",
-                description = "追回已缓存视频，向已缓存的用户发布邮件，要求在24小时内删除缓存的视频和副本。\n限制：只能是自己的视频或需要主体的身份认证。",
-                buttonText = "查看详情",
+                title = stringResource(R.string.complaint_方案二_追回已),
+                description = stringResource(R.string.complaint_追回已_向已缓),
+                buttonText = stringResource(R.string.complaint_查看详),
                 onClick = {  }
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             ComplaintOptionCard(
-                title = "方案三：紧急下架与全网追回",
-                description = "立即停止BILIBILIAS的一切活动，有必要时向所有用户发送追回邮件，要求42小时内删除缓存的视频和副本。\n限制：只能主体且需要可以代表主体的必要资料，BILIBILIAS所有渠道下架（Github和APP官网），APP所有版本阻止用户继续使用，并发布公告表明问题。",
-                buttonText = "查看详情",
+                title = stringResource(R.string.complaint_方案三_紧急下),
+                description = stringResource(R.string.complaint_立即停_的一切),
+                buttonText = stringResource(R.string.complaint_查看详),
                 onClick = {  }
             )
 
@@ -101,7 +104,7 @@ private fun ComplaintScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "投诉")
+                    Text(text = stringResource(R.string.complaint_投诉))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

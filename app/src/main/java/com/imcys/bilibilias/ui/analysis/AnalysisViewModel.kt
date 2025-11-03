@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.analysis
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -129,7 +132,7 @@ class AnalysisViewModel(
         saveDirName: String
     ) = withContext(Dispatchers.IO) {
         if (imageUrl.isNullOrEmpty()) {
-            Toast.makeText(context, "图片链接不能为空", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, stringResource(R.string.analysis_图片链), Toast.LENGTH_SHORT).show()
             return@withContext
         }
         val type = imageUrl.substringAfterLast(".")
@@ -141,7 +144,7 @@ class AnalysisViewModel(
             }, saveDirName
         )
         launch(Dispatchers.Main) {
-            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, stringResource(R.string.login_保存成), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -414,13 +417,13 @@ class AnalysisViewModel(
                             // 如果epId为null或0，则默认选择第一个非会员的epId
                             val defaultEpId = if (epId == null || epId == 0L) {
                                 if (currentUser?.isVip() != true) {
-                                    viewInfo?.episodes?.firstOrNull { ep -> ep.badge != "会员" }?.epId
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.badge != stringResource(R.string.analysis_会员) }?.epId
                                         ?: 0L
                                 } else viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
                             } else {
                                 // 如果当前用户不是会员，则选择第一个非会员的epId，否则选择传入的epId
                                 if (currentUser?.isVip() != true) {
-                                    viewInfo?.episodes?.firstOrNull { ep -> ep.epId == epId && ep.badge != "会员" }?.epId
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.epId == epId && ep.badge != stringResource(R.string.analysis_会员) }?.epId
                                         ?: 0L
                                 } else {
                                     epId
@@ -641,10 +644,10 @@ class AnalysisViewModel(
      */
     val AnalysisUIState.contentTypeDescription: String
         get() = when {
-            isVideoType -> "视频"
-            isDonghuaType -> "动画"
-            isUserType -> "用户"
-            else -> "未知"
+            isVideoType -> stringResource(R.string.analysis_视频)
+            isDonghuaType -> stringResource(R.string.analysis_动画)
+            isUserType -> stringResource(R.string.analysis_用户)
+            else -> stringResource(R.string.analysis_未知)
         }
 
     fun updateSelectSingleModel(isSelectSingleModel: Boolean) {

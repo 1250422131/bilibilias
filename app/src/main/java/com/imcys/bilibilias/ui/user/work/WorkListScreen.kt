@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.user.work
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -132,7 +135,7 @@ private fun WorkList(
             span = { GridItemSpan(2) }
         ) {
             ASCardTextField(
-                hint = "搜索投稿",
+                hint = stringResource(R.string.app_搜索投),
                 autoFocus = false, value = uiState.query, onValueChange = onUpdateKeyword,
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), modifier = Modifier.animateItem())
         }
@@ -198,7 +201,7 @@ private fun WorkListScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "投稿")
+                    Text(text = stringResource(R.string.app_投稿))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

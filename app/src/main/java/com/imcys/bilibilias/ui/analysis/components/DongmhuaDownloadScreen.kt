@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -110,11 +113,11 @@ fun DongmhuaDownloadScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("缓存倾向")
+                Text(stringResource(R.string.download_缓存倾))
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = "说明",
+                    contentDescription = stringResource(R.string.download_说明),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {
@@ -168,7 +171,7 @@ fun DongmhuaDownloadScreen(
                         ) {
                             Column {
                                 ASEpisodeTitle(
-                                    "选择缓存剧集",
+                                    stringResource(R.string.download_选择缓_2),
                                     episodeListMode = episodeListMode,
                                     onUpdateEpisodeListMode = onUpdateEpisodeListMode
                                 )
@@ -184,7 +187,7 @@ fun DongmhuaDownloadScreen(
                                     episodeTitle = { it.longTitle.ifBlank { it.title } },
                                     episodeListMode = episodeListMode,
                                     sectionTitle = { it.seasonTitle },
-                                    episodeEnabled = { !(!isVip && it.badge == "会员") },
+                                    episodeEnabled = { !(!isVip && it.badge == stringResource(R.string.analysis_会员)) },
                                     episodeContentContainer = { it, content ->
                                         Box {
                                             content()
@@ -235,7 +238,7 @@ fun DongmhuaDownloadScreen(
                                     .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
                             ) {
                                 ASEpisodeTitle(
-                                    "选择缓存预告",
+                                    stringResource(R.string.download_选择缓_3),
                                     episodeListMode,
                                     onUpdateEpisodeListMode = onUpdateEpisodeListMode
                                 )

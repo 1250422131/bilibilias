@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.download
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.combinedClickable
@@ -181,8 +184,8 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("批量删除任务") },
-                text = { Text("确定要删除选中的任务记录和文件吗？") },
+                title = { Text(stringResource(R.string.download_批量删)) },
+                text = { Text(stringResource(R.string.download_确定要)) },
                 confirmButton = {
                     ASTextButton(
                         onClick = {
@@ -190,14 +193,14 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                             showDeleteDialog = false
                         }
                     ) {
-                        Text("删除")
+                        Text(stringResource(R.string.common_delete))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text("取消")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )
@@ -225,7 +228,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text("正在下载")
+            Text(stringResource(R.string.download_正在下))
         }
         Spacer(Modifier.width(10.dp))
         ToggleButton(
@@ -237,7 +240,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text("已完成下载")
+            Text(stringResource(R.string.download_已完成_1))
         }
     }
 }
@@ -268,7 +271,7 @@ private fun EditTopTools(
             },
             border = CardDefaults.outlinedCardBorder()
         ) {
-            Text("反选")
+            Text(stringResource(R.string.download_反选))
         }
 
         OutlinedButton(
@@ -278,7 +281,7 @@ private fun EditTopTools(
                 selectDeleteList.addAll(completedSegments)
             },
         ) {
-            Text("全选")
+            Text(stringResource(R.string.download_全选))
         }
 
         Button(
@@ -291,7 +294,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
             )
         ) {
-            Text("取消")
+            Text(stringResource(R.string.common_cancel))
         }
 
         Button(
@@ -305,7 +308,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
             )
         ) {
-            Text("删除")
+            Text(stringResource(R.string.common_delete))
         }
 
 
@@ -321,7 +324,7 @@ fun DownloadScaffold(onToBack: () -> Unit = {}, content: @Composable (PaddingVal
             Column {
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
-                    title = { Text(text = "下载管理") },
+                    title = { Text(text = stringResource(R.string.download_下载管)) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),

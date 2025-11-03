@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.weight
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -46,9 +49,9 @@ fun ASAgreePrivacyPolicy(agreePrivacyPolicy: Boolean, onClick: () -> Unit) {
                 .scale(0.75f)
                 .size(20.dp)
         )
-        Text("我已阅读并同意", fontSize = 14.sp)
+        Text(stringResource(R.string.app_我已阅), fontSize = 14.sp)
         Text(
-            text = "《BILIBILIAS 隐私政策》",
+            text = stringResource(R.string.app_隐私政),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 14.sp,
             modifier = Modifier

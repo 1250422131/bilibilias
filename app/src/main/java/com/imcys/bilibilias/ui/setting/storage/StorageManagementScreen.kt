@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.setting.storage
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -164,7 +167,7 @@ fun StorageManagementSuccessScreen(
             ASWarringTip {
                 Row {
                     Text(
-                        "应用存储权限未完全获取，可能导致存储数据不准确，点击授权后重新计算。",
+                        stringResource(R.string.storage_应用存_可能导),
                         Modifier.weight(1f)
                     )
                     ASIconButton(onClick = {
@@ -182,16 +185,16 @@ fun StorageManagementSuccessScreen(
                         )
                         downloadLauncher.launch(downloadUri)
                     }) {
-                        Icon(Icons.Outlined.NorthEast, contentDescription = "去授权")
+                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.storage_去授权))
                     }
                 }
             }
         }
 
         StorageContent(
-            title = "音视频文件",
+            title = stringResource(R.string.storage_音视频),
             dataNumStr = StorageUtil.formatSize(data.downloadBytes),
-            description = "已下载的音视频文件大小",
+            description = stringResource(R.string.storage_已下载),
             onClick = {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     val targetDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BILIBILIAS")
@@ -213,25 +216,25 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "未找到文件管理器", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, stringResource(R.string.storage_未找到), Toast.LENGTH_SHORT).show()
                 }
             },
         )
 
 
         StorageContent(
-            title = "临时文件",
+            title = stringResource(R.string.storage_临时文),
             dataNumStr = "${StorageUtil.formatSize(data.cacheTotalBytes)}",
-            description = "临时文件，可放心清理",
-            buttonText = "清理",
+            description = stringResource(R.string.storage_临时文_可放心),
+            buttonText = stringResource(R.string.storage_清理),
             buttonColor = MaterialTheme.colorScheme.primary,
             onClick = onCleanCache
         )
 
         StorageContent(
-            title = "核心文件",
+            title = stringResource(R.string.storage_核心文),
             dataNumStr = "${StorageUtil.formatSize(data.appBytes - data.cacheTotalBytes)}",
-            description = "运行时必要文件，不可清除。",
+            description = stringResource(R.string.storage_运行时_不可清),
             showButton = false,
             buttonColor = MaterialTheme.colorScheme.primary,
         )
@@ -247,7 +250,7 @@ fun StorageContent(
     dataNumStr: String = "",
     description: String = "",
     showButton: Boolean = true,
-    buttonText: String = "管理",
+    buttonText: String = stringResource(R.string.storage_管理),
     buttonColor: Color = MaterialTheme.colorScheme.surface,
     onClick: () -> Unit = {}
 ) {
@@ -310,7 +313,7 @@ private fun StorageManagementLoadingScreen() {
     ) {
         // 加载中
         CircularWavyProgressIndicator()
-        Text(text = "加载中...")
+        Text(text = stringResource(R.string.storage_加载中))
     }
 }
 
@@ -327,7 +330,7 @@ private fun StorageManagementScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(text = "存储管理")
+                        Text(text = stringResource(R.string.setting_存储管))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,

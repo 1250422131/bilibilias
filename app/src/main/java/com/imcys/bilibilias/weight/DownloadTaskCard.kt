@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.weight
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -95,7 +98,7 @@ fun DownloadTaskCard(
                     modifier = Modifier
                         .fillMaxSize(),
                     shape = CardDefaults.shape,
-                    contentDescription = "封面图片"
+                    contentDescription = stringResource(R.string.download_封面图)
                 )
             }
 
@@ -155,13 +158,13 @@ fun DownloadTaskCard(
 
                     Text(
                         when (task.downloadState) {
-                            DownloadState.WAITING -> "等待中"
-                            DownloadState.PAUSE -> "已暂停"
-                            DownloadState.DOWNLOADING -> "下载中:${ceil(animatedProgress * 100).toInt()}%"
-                            DownloadState.MERGING -> "合并中:${ceil(animatedProgress * 100).toInt()}%"
-                            DownloadState.COMPLETED -> "已完成"
-                            DownloadState.ERROR -> "错误"
-                            DownloadState.CANCELLED -> "已取消"
+                            DownloadState.WAITING -> stringResource(R.string.download_等待中)
+                            DownloadState.PAUSE -> stringResource(R.string.download_已暂停)
+                            DownloadState.DOWNLOADING -> stringResource(R.string.download_下载中)
+                            DownloadState.MERGING -> stringResource(R.string.download_合并中)
+                            DownloadState.COMPLETED -> stringResource(R.string.download_已完成)
+                            DownloadState.ERROR -> stringResource(R.string.common_error)
+                            DownloadState.CANCELLED -> stringResource(R.string.download_已取消)
                         },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400
@@ -193,7 +196,7 @@ fun DownloadTaskCard(
                         Spacer(Modifier.width(10.dp))
                         Icon(
                             Icons.Outlined.Close,
-                            contentDescription = "取消下载",
+                            contentDescription = stringResource(R.string.download_取消下),
                             modifier = Modifier.clickable {
                                 onCancel()
                             }
@@ -210,9 +213,9 @@ fun DownloadTaskCard(
                                 Icons.Outlined.PlayArrow
                             },
                             contentDescription = if (task.downloadState == DownloadState.DOWNLOADING) {
-                                "暂停下载"
+                                stringResource(R.string.download_暂停下)
                             } else {
-                                "继续下载"
+                                stringResource(R.string.download_继续下)
                             },
                             modifier = Modifier.clickable {
                                 if (task.downloadState == DownloadState.DOWNLOADING) {
@@ -266,7 +269,7 @@ fun DownloadFinishTaskCard(
                     modifier = Modifier
                         .fillMaxSize(),
                     shape = CardDefaults.shape,
-                    contentDescription = "封面图片"
+                    contentDescription = stringResource(R.string.download_封面图)
                 )
             }
 
@@ -323,7 +326,7 @@ fun DownloadFinishTaskCard(
                         ASIconButton(onClick = {
                             showDeleteDialog = true
                         }) {
-                            Icon(Icons.Outlined.Delete, contentDescription = "删除下载任务")
+                            Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.download_删除下))
                         }
                     } else {
                         Checkbox(
@@ -341,8 +344,8 @@ fun DownloadFinishTaskCard(
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("删除下载任务") },
-                text = { Text("是否删除该下载任务及其文件？") },
+                title = { Text(stringResource(R.string.download_删除下)) },
+                text = { Text(stringResource(R.string.download_是否删)) },
                 confirmButton = {
                     ASTextButton(
                         onClick = {
@@ -350,14 +353,14 @@ fun DownloadFinishTaskCard(
                             showDeleteDialog = false
                         }
                     ) {
-                        Text("删除")
+                        Text(stringResource(R.string.common_delete))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text("取消")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )

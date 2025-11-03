@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.dwonload.service
 
+
+import androidx.compose.ui.res.stringResource
 import android.Manifest.*
 import android.app.PendingIntent
 import android.app.Service
@@ -75,8 +77,8 @@ class DownloadService : Service() {
                 this,
                 DOWNLOAD_NOTIFICATION_CHANNEL_ID
             ).apply {
-                setContentTitle("缓存通知")
-                setContentText("AS视频缓存中...")
+                setContentTitle(stringResource(R.string.download_缓存通))
+                setContentText(stringResource(R.string.download_视频缓))
                     .setProgress(100, 0, false)
                 setContentIntent(pIntent)
                 setSmallIcon(R.drawable.ic_logo_mini)

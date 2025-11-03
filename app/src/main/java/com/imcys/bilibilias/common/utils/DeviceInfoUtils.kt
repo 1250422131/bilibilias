@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.common.utils
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.os.Build
 import com.hjq.device.compat.DeviceBrand.*
@@ -68,26 +71,26 @@ object DeviceInfoUtils {
         } catch (e: Exception) {
             null
         }
-        val appVersion = packageInfo?.versionName ?: "未知"
-        val systemVersion = Build.VERSION.RELEASE ?: "未知"
-        val model = Build.MODEL ?: "未知"
-        val marketModel = DeviceMarketName.getMarketName(context) ?: "未知"
-        val manufacturer = Build.BRAND ?: "未知"
-        val brand = Build.BRAND ?: "未知"
+        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_未知)
+        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_未知)
+        val model = Build.MODEL ?: stringResource(R.string.analysis_未知)
+        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_未知)
+        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_未知)
+        val brand = Build.BRAND ?: stringResource(R.string.analysis_未知)
         val brandName = try {
             getBrandName() ?: Build.DEVICE
         } catch (_: Throwable) {
             Build.DEVICE
         }
         val osName = try {
-            getOsName() ?: "未知"
+            getOsName() ?: stringResource(R.string.analysis_未知)
         } catch (_: Throwable) {
-            "未知"
+            stringResource(R.string.analysis_未知)
         }
         val osVersionName = try {
-            getOsVersionName() ?: "未知"
+            getOsVersionName() ?: stringResource(R.string.analysis_未知)
         } catch (_: Throwable) {
-            "未知"
+            stringResource(R.string.analysis_未知)
         }
         return DeviceInfo(
             appVersion = appVersion,

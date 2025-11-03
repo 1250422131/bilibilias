@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.setting.version
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -88,27 +91,27 @@ fun VersionInfoContent(modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        InfoRow(label = "APP版本", value = deviceInfo.appVersion)
-        InfoRow(label = "系统版本", value = deviceInfo.systemVersion)
-        InfoRow(label = "设备型号", value = deviceInfo.model)
-        InfoRow(label = "市场型号", value = deviceInfo.marketModel)
-        InfoRow(label = "厂商", value = deviceInfo.manufacturer)
-        InfoRow(label = "品牌", value = deviceInfo.brandName)
-        InfoRow(label = "厂商系统名称", value = deviceInfo.osName)
-        InfoRow(label = "厂商系统版本名称", value = deviceInfo.osVersionName)
+        InfoRow(label = stringResource(R.string.version_版本), value = deviceInfo.appVersion)
+        InfoRow(label = stringResource(R.string.version_系统版), value = deviceInfo.systemVersion)
+        InfoRow(label = stringResource(R.string.version_设备型), value = deviceInfo.model)
+        InfoRow(label = stringResource(R.string.version_市场型), value = deviceInfo.marketModel)
+        InfoRow(label = stringResource(R.string.version_厂商), value = deviceInfo.manufacturer)
+        InfoRow(label = stringResource(R.string.version_品牌), value = deviceInfo.brandName)
+        InfoRow(label = stringResource(R.string.version_厂商系), value = deviceInfo.osName)
+        InfoRow(label = stringResource(R.string.version_厂商系_1), value = deviceInfo.osVersionName)
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 val clipboard =
                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("版本信息", copyText)
+                val clip = ClipData.newPlainText(stringResource(R.string.tools_版本信), copyText)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.tools_已复制), Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("复制全部信息")
+            Text(stringResource(R.string.version_复制全))
         }
     }
 }
@@ -120,7 +123,7 @@ private fun InfoRow(label: String, value: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$label：",
+            text = stringResource(R.string.version_text),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f),
             fontSize = 16.sp
@@ -151,7 +154,7 @@ private fun VersionInfoScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "版本信息") },
+                title = { Text(text = stringResource(R.string.tools_版本信)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

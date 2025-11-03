@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.setting
 
+
+import androidx.compose.ui.res.stringResource
 import android.Manifest.permission
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -120,7 +122,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "缓存配置"
+                    text = stringResource(R.string.setting_缓存配)
                 )
             }
 //            item {
@@ -147,7 +149,7 @@ fun SettingScreen(
 //            item {
 //                BaseSettingsItem(
 //                    painter = rememberVectorPainter(Icons.Outlined.DriveFileRenameOutline),
-//                    text = "命名规则",
+//                    text = stringResource(R.string.setting_命名规),
 //                    descriptionText = "使用自定义规则进行视频命名",
 //                    onClick = {
 //                    }
@@ -157,8 +159,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_save_24px),
-                    text = "存储管理",
-                    descriptionText = "管理APP内存占用",
+                    text = stringResource(R.string.setting_存储管),
+                    descriptionText = stringResource(R.string.setting_管理_内存占),
                     onClick = onToStorageManagement
                 )
             }
@@ -167,7 +169,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Save),
-                    text = "缓存目录",
+                    text = stringResource(R.string.setting_缓存目),
                     descriptionText = "Download/BILIBILIAS",
                     onClick = {
                     }
@@ -180,7 +182,7 @@ fun SettingScreen(
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Edit),
                     text = "命名规则",
-                    descriptionText = "自定义下载文件名称",
+                    descriptionText = stringResource(R.string.setting_自定义),
                     onClick = onToNamingConvention
                 )
             }
@@ -188,14 +190,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "主题设置"
+                    text = stringResource(R.string.setting_主题设)
                 )
             }
             item {
                 SwitchSettingsItem(
                     imageVector = Icons.Outlined.Palette,
-                    text = "动态主题",
-                    description = "使用桌面壁纸颜色作为主题",
+                    text = stringResource(R.string.setting_动态主),
+                    description = stringResource(R.string.setting_使用桌),
                     checked = appSettings.enabledDynamicColor,
                 ) { check ->
                     haptics.switchHapticFeedback(check)
@@ -206,7 +208,7 @@ fun SettingScreen(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 item {
                     CategorySettingsItem(
-                        text = "权限设置"
+                        text = stringResource(R.string.setting_权限设)
                     )
                 }
             }
@@ -218,14 +220,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "布局配置"
+                    text = stringResource(R.string.setting_布局配)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ListAlt),
-                    text = "首页排版",
+                    text = stringResource(R.string.setting_首页排),
                     description = {},
                     onClick = onToLayoutTypeset
                 )
@@ -235,15 +237,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "解析配置"
+                    text = stringResource(R.string.setting_解析配)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.AirplaneTicket),
-                    text = "漫游服务",
-                    descriptionText = "可使视频解析流量出国",
+                    text = stringResource(R.string.setting_漫游服),
+                    descriptionText = stringResource(R.string.setting_可使视),
                     onClick = onToRoam
                 )
             }
@@ -252,7 +254,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "关于程序"
+                    text = stringResource(R.string.setting_关于程)
                 )
             }
 
@@ -260,8 +262,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Group),
-                    text = "关于",
-                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展！",
+                    text = stringResource(R.string.setting_关于),
+                    descriptionText = stringResource(R.string.setting_作为依_我们有),
                     onClick = onToAbout
                 )
 
@@ -271,7 +273,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_github_24px),
-                    text = "Github仓库",
+                    text = stringResource(R.string.setting_仓库),
                     description = {},
                     onClick = {
                         val intent = Intent().apply {
@@ -312,15 +314,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "账户"
+                    text = stringResource(R.string.setting_账户)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Android),
-                    text = "设备信息",
-                    descriptionText = "提交反馈时记得带上这个！",
+                    text = stringResource(R.string.setting_设备信),
+                    descriptionText = stringResource(R.string.setting_提交反),
                     onClick = onToVersionInfo
                 )
 
@@ -329,12 +331,12 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Policy),
-                    text = "隐私政策",
+                    text = stringResource(R.string.setting_隐私政),
                     descriptionText = "当前状态：${
                         when (appSettings.agreePrivacyPolicy) {
-                            Agreed -> "已同意"
-                            Refuse -> "已拒绝"
-                            else -> "未选择"
+                            Agreed -> stringResource(R.string.setting_已同意)
+                            Refuse -> stringResource(R.string.setting_已拒绝)
+                            else -> stringResource(R.string.setting_未选择)
                         }
                     }，可在这里拒绝或同意我们的隐私政策。",
                     onClick = { showPrivacyPolicy = true }
@@ -345,8 +347,8 @@ fun SettingScreen(
                 item {
                     BaseSettingsItem(
                         painter = rememberVectorPainter(Icons.AutoMirrored.Default.Logout),
-                        text = "退出登录",
-                        descriptionText = "清空登录信息，解除登录占用。",
+                        text = stringResource(R.string.setting_退出登),
+                        descriptionText = stringResource(R.string.setting_清空登_解除登),
                         onClick = { showLogoutDialog = true }
                     )
                 }
@@ -391,7 +393,7 @@ fun SettingScreen(
         // 退出登录对话框
         ASAlertDialog(
             showState = showLogoutDialog,
-            title = { Text("退出登录") },
+            title = { Text(stringResource(R.string.setting_退出登)) },
             text = {
                 Column(
                     Modifier
@@ -401,9 +403,9 @@ fun SettingScreen(
                 ) {
                     if (showLogoutLoading) {
                         ContainedLoadingIndicator()
-                        Text("退出中....")
+                        Text(stringResource(R.string.setting_退出中))
                     } else {
-                        Text("是否退出登录？退出登录将清除登录信息，解除登录占用。")
+                        Text(stringResource(R.string.setting_是否退_退出登))
                     }
                 }
             },
@@ -420,14 +422,14 @@ fun SettingScreen(
                         onLogoutFinish(uiState.currentMid)
                     }
                 }) {
-                    Text("退出登录")
+                    Text(stringResource(R.string.setting_退出登))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
                 }) {
-                    Text("取消")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
 
@@ -459,8 +461,8 @@ fun DownloadPostNotifications() {
 
         SwitchSettingsItem(
             imageVector = Icons.Outlined.Notifications,
-            text = "前台通知",
-            description = "开启后可以使得在后台的下载任务不会被系统回收",
+            text = stringResource(R.string.setting_前台通),
+            description = stringResource(R.string.setting_开启后),
             checked = hasForegroundServicePermission,
         ) {
             haptics.switchHapticFeedback(it)
@@ -538,7 +540,7 @@ fun DownloadServicePermissionRequestTipDialog(
     }
     PermissionRequestTipDialog(
         show = true,
-        message = "为了我们可以在后台缓存较长视频，接下来将向您申请通知服务权限。",
+        message = stringResource(R.string.setting_为了我_接下来),
         onConfirm = {
             launcher.launch(permission.POST_NOTIFICATIONS)
         },
@@ -563,7 +565,7 @@ fun SettingScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "设置") },
+                title = { Text(text = stringResource(R.string.common_settings)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

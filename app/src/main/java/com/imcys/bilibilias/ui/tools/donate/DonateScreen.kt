@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.tools.donate
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -108,12 +110,12 @@ fun DonateContent(paddingValues: PaddingValues) {
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("推")
+                                Text(stringResource(R.string.donate_推))
                             }
                         }
                     ) {
                         Text(
-                            "支付宝小荷包",
+                            stringResource(R.string.donate_支付宝),
                             fontSize = 18.sp,
                             modifier = Modifier.padding(end = 5.dp)
                         )
@@ -145,7 +147,7 @@ fun DonateContent(paddingValues: PaddingValues) {
                             .size(30.dp),
                     )
                     Spacer(Modifier.width(5.dp))
-                    Text("微信捐款", fontSize = 18.sp)
+                    Text(stringResource(R.string.donate_微信捐), fontSize = 18.sp)
                 }
             }
         }
@@ -159,7 +161,7 @@ fun DonateContent(paddingValues: PaddingValues) {
         ) {
             Column(Modifier.padding(10.dp)) {
                 Text(
-                    "本月进展（${uiState.oldDonateInfo?.surplus}/${uiState.oldDonateInfo?.total}）:",
+                    stringResource(R.string.donate_本月进),
                     fontSize = 18.sp
                 )
                 Spacer(Modifier.height(5.dp))
@@ -216,7 +218,7 @@ fun PayBottomDialog(showPayDialog: Boolean, payUrl: String, onDismissRequest: ()
             ) {
 
                 ASAsyncImage(
-                    payUrl, contentDescription = "捐款二维码", shape = CardDefaults.shape,
+                    payUrl, contentDescription = stringResource(R.string.donate_捐款二), shape = CardDefaults.shape,
                     modifier = Modifier.fillMaxWidth(0.8f),
                     contentScale = ContentScale.FillWidth,
                 )
@@ -246,7 +248,7 @@ fun DonateScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "捐助我们")
+                    Text(text = stringResource(R.string.tools_捐助我))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

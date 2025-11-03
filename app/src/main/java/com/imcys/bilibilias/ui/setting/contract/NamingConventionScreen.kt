@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.setting.contract
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -130,7 +133,7 @@ fun LazyItemScope.NamingRuleEditor(
             }
             AnimatedVisibility(ruleValue != defaultRule) {
                 ASWarringTip {
-                    Text("如果您不了解命名规则的使用方法，请谨慎修改，也可前往文档查看使用方法。")
+                    Text(stringResource(R.string.app_如果您_请谨慎))
                 }
             }
             OutlinedTextField(
@@ -139,7 +142,7 @@ fun LazyItemScope.NamingRuleEditor(
                     textFieldValue = it
                     onRuleChange(it.text)
                 },
-                label = { Text("命名规则") },
+                label = { Text(stringResource(R.string.setting_命名规)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged {
@@ -154,7 +157,7 @@ fun LazyItemScope.NamingRuleEditor(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onRestoreDefault
                 ) {
-                    Text("恢复默认命名规则")
+                    Text(stringResource(R.string.app_恢复默))
                 }
             }
         }
@@ -219,7 +222,7 @@ fun NamingConventionContent(
         }
         item {
             NamingRuleEditor(
-                title = "视频命名规则占位符",
+                title = stringResource(R.string.app_视频命),
                 placeholderList = videoNamingRules,
                 ruleValue = videoNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule,
@@ -233,7 +236,7 @@ fun NamingConventionContent(
         }
         item {
             NamingRuleEditor(
-                title = "番剧命名规则占位符",
+                title = stringResource(R.string.app_番剧命),
                 placeholderList = donghuaNamingRules,
                 ruleValue = donghuaNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule,
@@ -276,7 +279,7 @@ fun NamingConventionScaffold(
                             }
                         }
                     ) {
-                        Text(text = "命名规则")
+                        Text(text = stringResource(R.string.setting_命名规))
                     }
                 },
                 navigationIcon = {

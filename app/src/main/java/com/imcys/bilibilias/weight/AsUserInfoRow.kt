@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.weight
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,7 +52,7 @@ fun AsUserInfoRow(
         ) {
             ASAsyncImage(
                 pageInfoState.data?.face ?: "",
-                contentDescription = "头像",
+                contentDescription = stringResource(R.string.user_头像),
                 modifier = Modifier.size(64.dp)
             )
         }
@@ -59,7 +62,7 @@ fun AsUserInfoRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    pageInfoState.data?.name ?: "用户名",
+                    pageInfoState.data?.name ?: stringResource(R.string.user_用户名),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     maxLines = 1,
@@ -88,7 +91,7 @@ fun AsUserInfoRow(
             }
             Spacer(Modifier.height(4.dp))
             Text(
-                pageInfoState.data?.sign ?: "个性签名",
+                pageInfoState.data?.sign ?: stringResource(R.string.user_个性签),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontSize = 14.sp,
                 maxLines = 2,

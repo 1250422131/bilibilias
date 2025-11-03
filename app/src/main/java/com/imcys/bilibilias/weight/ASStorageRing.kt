@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.weight
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -126,7 +129,7 @@ fun AnimatedStorageRing(
                 )
                 // APP占用设备内存百分比
                 Text(
-                    "占用设备内存${"%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
+                    stringResource(R.string.storage_占用设)%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -143,7 +146,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = totalColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text("可用空间", Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_可用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -153,7 +156,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = usedColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text("已用空间", Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_已用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -162,7 +165,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = appColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text("APP占用空间", Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_占用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
 

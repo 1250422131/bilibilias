@@ -170,7 +170,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
                 title = {
-                    Text("使用须知")
+                    Text(stringResource(R.string.app_使用须))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -179,7 +179,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = "返回"
+                            contentDescription = stringResource(R.string.common_back)
                         )
                     }
                 },
@@ -269,16 +269,16 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             ) {
 
-                Text("不，我找的是哔哩哔哩")
+                Text(stringResource(R.string.app_不_我找的))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = "前往哔哩哔哩",
+                    contentDescription = stringResource(R.string.app_前往哔),
                 )
 
             }
             Button(onClick = onClickKnowAbout, Modifier.fillMaxWidth()) {
-                Text("我知晓且同意")
+                Text(stringResource(R.string.app_我知晓))
             }
         }
     }
@@ -297,10 +297,10 @@ fun AccountCheckPage(targetUiState: UIState.AccountCheck) {
         if (targetUiState.isCheckLoading) {
             ContainedLoadingIndicator()
             Spacer(Modifier.height(5.dp))
-            Text("登录状态失效，正在为你检查剩余可用登录。")
+            Text(stringResource(R.string.app_登录状_正在为))
         } else {
             if (targetUiState.newCurrentUser == null) {
-                Text("所有账户已失效，请重新登录。")
+                Text(stringResource(R.string.app_所有账_请重新))
             }
         }
     }
@@ -391,7 +391,7 @@ fun PrivacyPolicyRefuseDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = "我已知晓")
+                Text(text = stringResource(R.string.app_我已知))
             }
         },
     )

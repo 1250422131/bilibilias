@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.login
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,7 +72,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     style = BILIBILIASTopAppBarStyle.Small,
                     scrollBehavior = scrollBehavior,
                     title = {
-                        Text("登录")
+                        Text(stringResource(R.string.common_login))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -101,7 +104,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text("登录后你可以：", fontSize = 14.sp)
+                                Text(stringResource(R.string.login_登录后), fontSize = 14.sp)
                                 Text(
                                     """
                                 ·支持更高清、更高码率的视频
@@ -126,13 +129,13 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text("登录即代表你同意：", fontSize = 14.sp)
+                                Text(stringResource(R.string.login_登录即), fontSize = 14.sp)
                                 Text(
-                                    "·哔哩哔哩账户和社区相关协议", fontSize = 14.sp,
+                                    stringResource(R.string.login_哔哩哔), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    "·《BILIBILIAS 隐私协议》",
+                                    stringResource(R.string.login_隐私协),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.clickable {
@@ -140,7 +143,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     }
                                 )
                                 Text(
-                                    "·使用造成的一切后果 BILIBILIAS 概不负责", fontSize = 14.sp,
+                                    stringResource(R.string.login_使用造_概不负), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -161,7 +164,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
                                 Text(
-                                    "特别的：\n本程序未得到哔哩哔哩授权，使用造成的一切后果哔哩哔哩概不负责",
+                                    stringResource(R.string.login_特别的_本程序),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onTertiaryContainer
                                 )
@@ -178,7 +181,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     onClick = { goToQRCodeLogin.invoke() }
                 ) {
                     Text(
-                        "B站 扫码登录",
+                        stringResource(R.string.login_站_扫码登),
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         fontSize = 16.sp
                     )

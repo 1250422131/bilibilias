@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.ui.error
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -40,7 +43,7 @@ class AppCrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val appErrorMsg = intent.getStringExtra("appErrorMsg") ?: "未知错误"
+        val appErrorMsg = intent.getStringExtra("appErrorMsg") ?: stringResource(R.string.app_未知错)
         setContent {
             BILIBILIASTheme {
                 Scaffold {
@@ -70,7 +73,7 @@ class AppCrashActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "发生错误：${appErrorMsg}",
+                text = stringResource(R.string.app_发生错),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.weight(1f)
@@ -82,18 +85,18 @@ class AppCrashActivity : ComponentActivity() {
                 Button(onClick = {
                     exitProcess(0)
                 }) {
-                    Text("退出软件")
+                    Text(stringResource(R.string.app_退出软))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(onClick = {
-                    val clipData = ClipData.newPlainText("BILIBILAIS异常", appErrorMsg)
+                    val clipData = ClipData.newPlainText(stringResource(R.string.error_异常), appErrorMsg)
                     val clipEntry = ClipEntry(clipData)
                     coroutineScope.launch(Dispatchers.IO) {
                         clipboardManager.setClipEntry(clipEntry)
                         delay(2000)
                     }
                 }) {
-                    Text("复制异常")
+                    Text(stringResource(R.string.app_复制异))
                 }
 
 

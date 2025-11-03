@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.dwonload
 
+
+import com.imcys.bilibilias.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.app.ActivityManager
 import android.content.ComponentName
@@ -233,7 +236,7 @@ class DownloadManager(
                             ccUrlInfo.subtitleUrl ?: ""
                         }
 
-                        val languageName = ccUrlInfo?.lan ?: "未知语言"
+                        val languageName = ccUrlInfo?.lan ?: stringResource(R.string.download_未知语)
 
                         // 协议头
                         val finalUrl = if (!url.contains("https")) "https:" else ""
@@ -260,7 +263,7 @@ class DownloadManager(
             CCFileType.ASS -> {
                 CCJsonToAss.jsonToAss(
                     biliVideoCCInfo,
-                    title = videoInfo?.title ?: "字幕",
+                    title = videoInfo?.title ?: stringResource(R.string.download_字幕),
                     playResX = videoInfo?.dimension?.width?.toString() ?: "1920",
                     playResY = videoInfo?.dimension?.height?.toString() ?: "1080"
                 )
@@ -593,7 +596,7 @@ class DownloadManager(
     ): Boolean {
         if (task.downloadSubTasks.isEmpty()) return false
 
-        val progressCallback = createProgressCallback(task, downloadService, "下载阶段")
+        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_下载阶))
 
         return if (task.downloadSubTasks.size >= 2) {
             downloadMultipleSubTasks(task, progressCallback)
@@ -784,7 +787,7 @@ class DownloadManager(
         downloadService: DownloadService,
     ) {
         updateTaskStage(task, DownloadStage.MERGE)
-        val progressCallback = createProgressCallback(task, downloadService, "合并阶段")
+        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_合并阶))
 
         val mergeResult = FFmpegManger.mergeVideoAndAudioSuspend(
             task.downloadSubTasks[0].savePath,
@@ -909,7 +912,7 @@ class DownloadManager(
             stage,
             (progress * 100).toInt()
         )
-        val state = if (stage == "合并阶段") DownloadState.MERGING else DownloadState.DOWNLOADING
+        val state = if (stage == stringResource(R.string.download_合并阶)) DownloadState.MERGING else DownloadState.DOWNLOADING
         updateTaskState(task.copy(progress = progress), state)
     }
 
@@ -967,7 +970,7 @@ class DownloadManager(
                 "https://www.bilibili.com/video/${realTask?.platformId}"
             }
 
-            DownloadTaskType.BILI_VIDEO_SECTION -> error("构造Referer URL失败，任务类型不支持")
+            DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_构造_失败))
         }
     }
 
@@ -1249,7 +1252,7 @@ class DownloadManager(
                     "${realTask?.platformId}_pic.${type}"
                 }
 
-                DownloadTaskType.BILI_VIDEO_SECTION -> error("封面所属任务类型异常")
+                DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_封面所))
             }
             downloadImageToAlbum(task.cover?.toHttps() ?: "", fileName, "BILIBILIAS")
         }
@@ -1296,7 +1299,7 @@ class DownloadManager(
                 ).last()
             }
 
-            else -> throw IllegalStateException("缓存类型不支持: ${nodeType.name}")
+            else -> throw IllegalStateException(stringResource(R.string.download_缓存类))
         }
 
         if (videoInfo.status != ApiStatus.SUCCESS) {
@@ -1375,7 +1378,7 @@ class DownloadManager(
                 )
             }
 
-            else -> throw IllegalStateException("不支持的下载数据类型")
+            else -> throw IllegalStateException(stringResource(R.string.download_不支持))
         }
 
         delay(500L) // 避免请求过快
@@ -1431,7 +1434,7 @@ class DownloadManager(
             it.id == downloadViewInfo.selectVideoQualityId
         }.firstOrNull {
             it.codecs.contains(downloadViewInfo.selectVideoCode)
-        } ?: videos.firstOrNull() ?: throw IllegalStateException("无可用视频流")
+        } ?: videos.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_无可用))
     }
 
     /**
@@ -1447,7 +1450,7 @@ class DownloadManager(
             it.id == downloadViewInfo.selectAudioQualityId
         } ?: dash.flac?.audio?.takeIf {
             it.id == downloadViewInfo.selectAudioQualityId
-        } ?: dash.audio.firstOrNull() ?: throw IllegalStateException("无可用音频流")
+        } ?: dash.audio.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_无可用_1))
     }
 
     private fun createSubTask(
