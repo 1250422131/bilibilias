@@ -204,7 +204,7 @@ class QRCodeLoginViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val imageUrl = qrCodeInfoState.value.data?.url
             if (imageUrl == null) {
-                Toast.makeText(context, stringResource(R.string.login_下载失_请刷新), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.login_xia_zai_shi_bai__qing_shu), Toast.LENGTH_SHORT).show()
                 return@launch
             }
             runCatching {
@@ -225,7 +225,7 @@ class QRCodeLoginViewModel(
             }.onSuccess {
                 saveImageWithMediaStore(it, context)
             }.onFailure {
-                Toast.makeText(context, stringResource(R.string.login_下载失_请重新), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.login_xia_zai_shi_bai__qing_cho), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -273,7 +273,7 @@ class QRCodeLoginViewModel(
                 null
             }
         }
-        Toast.makeText(context, stringResource(R.string.login_保存成), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, stringResource(R.string.login_bao_cun_cheng_gong), Toast.LENGTH_SHORT).show()
     }
 
     fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {
@@ -310,7 +310,7 @@ class QRCodeLoginViewModel(
         }.onFailure {
             Toast.makeText(
                 context,
-                stringResource(R.string.login_你还没),
+                stringResource(R.string.login_ni_hai_mei_you_an_zhuang),
                 Toast.LENGTH_SHORT,
             ).show()
         }

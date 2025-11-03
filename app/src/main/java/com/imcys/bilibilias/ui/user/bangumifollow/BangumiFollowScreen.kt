@@ -132,7 +132,7 @@ fun BangumiFollowContent(
         when (val state = itemList.loadState.refresh) {
             is LoadState.Error -> {
                 item {
-                    CommonError(errorMsg = stringResource(R.string.user_加载失), onRetry = {
+                    CommonError(errorMsg = stringResource(R.string.user_jia_zai_shi_bai_nstateerr), onRetry = {
                         itemList.refresh()
                     })
                 }
@@ -158,7 +158,7 @@ fun BangumiFollowContent(
             }
 
             is LoadState.Error -> item(span = { GridItemSpan(1) }) {
-                CommonError(stringResource(R.string.user_加载失_1), onRetry = {
+                CommonError(stringResource(R.string.user_jia_zai_shi_bai_nappender), onRetry = {
                     itemList.retry()
                 })
             }
@@ -174,10 +174,10 @@ fun LazyGridScope.bangumiCardListLoading() {
     items(10) {
         BangumiCard(
             modifier = Modifier.shimmer(true),
-            title = stringResource(R.string.app_标题),
+            title = stringResource(R.string.app_biao_ti),
             intro = "",
-            updateInfo = stringResource(R.string.app_更新至_话),
-            seenInfo = stringResource(R.string.app_看到),
+            updateInfo = stringResource(R.string.app_geng_xin_zhi_x_hua),
+            seenInfo = stringResource(R.string.app_kan_dao),
             pic = "",
         )
     }
@@ -188,10 +188,10 @@ fun LazyGridScope.bangumiCardListLoading() {
 fun BangumiCard(
     modifier: Modifier = Modifier,
     seasonId: Long = 0L,
-    title: String = stringResource(R.string.app_标题),
-    intro: String = stringResource(R.string.app_介绍),
-    updateInfo: String = stringResource(R.string.app_更新至_话),
-    seenInfo: String = stringResource(R.string.app_看到),
+    title: String = stringResource(R.string.app_biao_ti),
+    intro: String = stringResource(R.string.app_jie_shao),
+    updateInfo: String = stringResource(R.string.app_geng_xin_zhi_x_hua),
+    seenInfo: String = stringResource(R.string.app_kan_dao),
     pic: String = "",
 ) {
     Surface(
@@ -216,7 +216,7 @@ fun BangumiCard(
                 ASAsyncImage(
                     model = pic.toHttps(),
                     shape = CardDefaults.shape,
-                    contentDescription = stringResource(R.string.app_番剧封),
+                    contentDescription = stringResource(R.string.app_fan_ju_feng_mian),
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -259,7 +259,7 @@ private fun BangumiFollowScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.user_追番))
+                    Text(text = stringResource(R.string.user_zhui_fan))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

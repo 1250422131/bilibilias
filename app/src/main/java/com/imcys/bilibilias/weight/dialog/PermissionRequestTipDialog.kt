@@ -17,13 +17,13 @@ fun PermissionRequestTipDialog(
     icon: @Composable (() -> Unit)? = {
         Icon(
             Icons.Outlined.WarningAmber,
-            contentDescription = stringResource(R.string.common_warning)
+            contentDescription = stringResource(R.string.common_jing_gao)
         )
     },
-    title: String = stringResource(R.string.app_权限请),
+    title: String = stringResource(R.string.app_quan_xian_qing_qiu),
     message: String,
-    confirmText: String = stringResource(R.string.common_continue),
-    dismissText: String = stringResource(R.string.common_cancel),
+    confirmText: String = stringResource(R.string.common_ji_xu),
+    dismissText: String = stringResource(R.string.common_qu_xiao),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {

@@ -34,7 +34,7 @@ object VideoCodingInfoRoute : NavKey
 
 private val keywordColorMap = mapOf(
     "CodecTag" to Color(0xFF1976D2),
-    stringResource(R.string.app_编码格) to Color(0xFF388E3C),
+    stringResource(R.string.app_bian_ma_ge_shi) to Color(0xFF388E3C),
     "AV1" to Color(0xFFD32F2F),
     "HEVC" to Color(0xFF7B1FA2),
     "AVC" to Color(0xFF0288D1),
@@ -98,7 +98,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
 
             item {
                 Text(
-                    text = stringResource(R.string.app_感谢明),
+                    text = stringResource(R.string.app_tips_gan_xie_ming_zhi_xia),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(Modifier.height(10.dp))
@@ -107,7 +107,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             item {
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_编码选_后者则),
+                        stringResource(R.string.app__bian_ma_xuan_ze_zhong_de),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -117,7 +117,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             item {
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_视频的_同时效),
+                        stringResource(R.string.app__shi_pin_de_bian_ma_hui_y),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -125,7 +125,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_根据_站的实),
+                        stringResource(R.string.app__gen_ju_b_zhan_de_shi_ji),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -135,7 +135,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             item {
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_而_则是各),
+                        stringResource(R.string.app__er_codectag_ze_shi_ge_zh),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -143,16 +143,16 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_根据我_站的),
+                        stringResource(R.string.app__gen_ju_wo_men_de_ce_shi),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 )
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_用于_站的) +
-                        stringResource(R.string.app_用于_站的_1) +
-                        stringResource(R.string.app_用于_站的杜),
+                        stringResource(R.string.app_hev1_yong_yu_b_zhan_de_sd) +
+                        stringResource(R.string.app_hvc1_yong_yu_b_zhan_de_hd) +
+                        stringResource(R.string.app_dvh1_yong_yu_b_zhan_de_du),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
@@ -162,7 +162,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             item {
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_拓展阅),
+                        stringResource(R.string.app__tuo_zhan_yue_du),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Bold,
@@ -172,7 +172,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_不同的_有什么),
+                        stringResource(R.string.app__bu_tong_de_codectag_you),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Medium,
@@ -180,7 +180,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 )
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_拿_和),
+                        stringResource(R.string.app__na_hev1_he_hvc1_ju_li__t),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
@@ -188,7 +188,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_真彩_杜比视),
+                        stringResource(R.string.app_hdr_zhen_cai_hdrvivid_du),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Medium,
@@ -196,11 +196,11 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 )
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_真彩就_最基础) +
-                        stringResource(R.string.app_是国产_标准) +
-                        stringResource(R.string.app_杜比视_格式) +
-                        stringResource(R.string.app_基于_曲线) +
-                        stringResource(R.string.app_基于_曲线_1),
+                        stringResource(R.string.app_hdr_zhen_cai_jiu_shi_hdr1) +
+                        stringResource(R.string.app_hdrvivid_shi_guo_chan_de) +
+                        stringResource(R.string.app__du_bi_shi_jie_shi_biao_z) +
+                        stringResource(R.string.app_profile84_ji_yu_hlg_qu_xi) +
+                        stringResource(R.string.app_profile5_ji_yu_pq_qu_xian),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
@@ -208,7 +208,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_所以_站杜比),
+                        stringResource(R.string.app__suo_yi_b_zhan_du_bi_shi),
                         keywordColorMap
                     ),
                     color = MaterialTheme.colorScheme.tertiary,
@@ -219,7 +219,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             }
             item {
                 Text(
-                    text = stringResource(R.string.app_以上内_劳烦各),
+                    text = stringResource(R.string.app__yi_shang_nei_rong_ru_you),
                     color = MaterialTheme.colorScheme.outline,
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -249,7 +249,7 @@ private fun VideoCodingInfoScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.app_视频编))
+                    Text(text = stringResource(R.string.app_shi_pin_bian_ma_jie_shi))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

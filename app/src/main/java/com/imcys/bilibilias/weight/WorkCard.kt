@@ -43,7 +43,7 @@ import com.imcys.bilibilias.ui.weight.ASAsyncImage
 fun WorkCard(
     modifier: Modifier = Modifier,
     bvId: String = "",
-    title: String = stringResource(R.string.app_标题),
+    title: String = stringResource(R.string.app_biao_ti),
     pic: String = "",
     view: Long = 1000,
     danmu: Long = 1000
@@ -60,7 +60,7 @@ fun WorkCard(
             ASAsyncImage(
                 model = pic,
                 shape = CardDefaults.shape,
-                contentDescription = stringResource(R.string.app_视频封),
+                contentDescription = stringResource(R.string.app_shi_pin_feng_mian),
                 modifier = Modifier.aspectRatio(16f / 9f)
             )
 
@@ -77,9 +77,9 @@ fun WorkCard(
             Spacer(Modifier.height(4.dp))
 
             Row {
-                Text(stringResource(R.string.app_播放), fontSize = 12.sp)
+                Text(stringResource(R.string.app_numberutilsformatlargenum_1), fontSize = 12.sp)
                 Spacer(Modifier.weight(1f))
-                Text(stringResource(R.string.app_弹幕), fontSize = 12.sp)
+                Text(stringResource(R.string.app_numberutilsformatlargenum), fontSize = 12.sp)
             }
         }
     }
@@ -91,9 +91,9 @@ fun WorkCard(
 fun UserWorkCard(
     modifier: Modifier = Modifier,
     bvId: String = "",
-    title: String = stringResource(R.string.app_标题),
+    title: String = stringResource(R.string.app_biao_ti),
     pic: String = "",
-    upName: String = stringResource(R.string.app_主),
+    upName: String = stringResource(R.string.app_up_zhu),
     mid: Long = 0,
     view: Long = 1000,
     danmu: Long = 1000
@@ -110,7 +110,7 @@ fun UserWorkCard(
             ASAsyncImage(
                 model = pic,
                 shape = CardDefaults.shape,
-                contentDescription = stringResource(R.string.app_视频封),
+                contentDescription = stringResource(R.string.app_shi_pin_feng_mian),
                 modifier = Modifier.aspectRatio(16f / 9f)
             )
 
@@ -168,9 +168,9 @@ fun UserWorkCard(
 fun HistoryPlayVideoCard(
     modifier: Modifier = Modifier,
     bvId: String = "",
-    title: String = stringResource(R.string.app_标题),
+    title: String = stringResource(R.string.app_biao_ti),
     pic: String = "",
-    upName: String = stringResource(R.string.app_主),
+    upName: String = stringResource(R.string.app_up_zhu),
     mid: Long = 0,
     duration: Long = 0,
     progress: Long = 0,
@@ -189,11 +189,11 @@ fun HistoryPlayVideoCard(
                 ASAsyncImage(
                     model = pic,
                     shape = CardDefaults.shape,
-                    contentDescription = stringResource(R.string.app_视频封),
+                    contentDescription = stringResource(R.string.app_shi_pin_feng_mian),
                     modifier = Modifier.fillMaxSize()
                 )
                 Text(
-                    if (progress == -1L) stringResource(R.string.app_已看完) else
+                    if (progress == -1L) stringResource(R.string.app_yi_kan_wan) else
                         "%02d:%02d/%02d:%02d".format(
                             progress / 60, progress % 60,
                             duration / 60, duration % 60

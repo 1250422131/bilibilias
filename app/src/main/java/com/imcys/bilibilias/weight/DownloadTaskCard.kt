@@ -98,7 +98,7 @@ fun DownloadTaskCard(
                     modifier = Modifier
                         .fillMaxSize(),
                     shape = CardDefaults.shape,
-                    contentDescription = stringResource(R.string.download_封面图)
+                    contentDescription = stringResource(R.string.download_feng_mian_tu_pian)
                 )
             }
 
@@ -158,13 +158,13 @@ fun DownloadTaskCard(
 
                     Text(
                         when (task.downloadState) {
-                            DownloadState.WAITING -> stringResource(R.string.download_等待中)
-                            DownloadState.PAUSE -> stringResource(R.string.download_已暂停)
-                            DownloadState.DOWNLOADING -> stringResource(R.string.download_下载中)
-                            DownloadState.MERGING -> stringResource(R.string.download_合并中)
-                            DownloadState.COMPLETED -> stringResource(R.string.download_已完成)
-                            DownloadState.ERROR -> stringResource(R.string.common_error)
-                            DownloadState.CANCELLED -> stringResource(R.string.download_已取消)
+                            DownloadState.WAITING -> stringResource(R.string.download_deng_dai_zhong)
+                            DownloadState.PAUSE -> stringResource(R.string.download_yi_zan_ting)
+                            DownloadState.DOWNLOADING -> stringResource(R.string.download_xia_zai_zhong_ceilanimate)
+                            DownloadState.MERGING -> stringResource(R.string.download_he_bing_zhong_ceilanimate)
+                            DownloadState.COMPLETED -> stringResource(R.string.download_yi_wan_cheng)
+                            DownloadState.ERROR -> stringResource(R.string.common_cuo_wu)
+                            DownloadState.CANCELLED -> stringResource(R.string.download_yi_qu_xiao)
                         },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400
@@ -196,7 +196,7 @@ fun DownloadTaskCard(
                         Spacer(Modifier.width(10.dp))
                         Icon(
                             Icons.Outlined.Close,
-                            contentDescription = stringResource(R.string.download_取消下),
+                            contentDescription = stringResource(R.string.download_qu_xiao_xia_zai),
                             modifier = Modifier.clickable {
                                 onCancel()
                             }
@@ -213,9 +213,9 @@ fun DownloadTaskCard(
                                 Icons.Outlined.PlayArrow
                             },
                             contentDescription = if (task.downloadState == DownloadState.DOWNLOADING) {
-                                stringResource(R.string.download_暂停下)
+                                stringResource(R.string.download_zan_ting_xia_zai)
                             } else {
-                                stringResource(R.string.download_继续下)
+                                stringResource(R.string.download_ji_xu_xia_zai)
                             },
                             modifier = Modifier.clickable {
                                 if (task.downloadState == DownloadState.DOWNLOADING) {
@@ -269,7 +269,7 @@ fun DownloadFinishTaskCard(
                     modifier = Modifier
                         .fillMaxSize(),
                     shape = CardDefaults.shape,
-                    contentDescription = stringResource(R.string.download_封面图)
+                    contentDescription = stringResource(R.string.download_feng_mian_tu_pian)
                 )
             }
 
@@ -326,7 +326,7 @@ fun DownloadFinishTaskCard(
                         ASIconButton(onClick = {
                             showDeleteDialog = true
                         }) {
-                            Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.download_删除下))
+                            Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.download_shan_chu_xia_zai_ren_wu))
                         }
                     } else {
                         Checkbox(
@@ -344,8 +344,8 @@ fun DownloadFinishTaskCard(
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text(stringResource(R.string.download_删除下)) },
-                text = { Text(stringResource(R.string.download_是否删)) },
+                title = { Text(stringResource(R.string.download_shan_chu_xia_zai_ren_wu)) },
+                text = { Text(stringResource(R.string.download_shi_fou_shan_chu_gai_xia)) },
                 confirmButton = {
                     ASTextButton(
                         onClick = {
@@ -353,14 +353,14 @@ fun DownloadFinishTaskCard(
                             showDeleteDialog = false
                         }
                     ) {
-                        Text(stringResource(R.string.common_delete))
+                        Text(stringResource(R.string.common_shan_chu))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text(stringResource(R.string.common_cancel))
+                        Text(stringResource(R.string.common_qu_xiao))
                     }
                 }
             )

@@ -110,12 +110,12 @@ fun DonateContent(paddingValues: PaddingValues) {
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text(stringResource(R.string.donate_推))
+                                Text(stringResource(R.string.donate_tui))
                             }
                         }
                     ) {
                         Text(
-                            stringResource(R.string.donate_支付宝),
+                            stringResource(R.string.donate_zhi_fu_bao_xiao_he_bao),
                             fontSize = 18.sp,
                             modifier = Modifier.padding(end = 5.dp)
                         )
@@ -147,7 +147,7 @@ fun DonateContent(paddingValues: PaddingValues) {
                             .size(30.dp),
                     )
                     Spacer(Modifier.width(5.dp))
-                    Text(stringResource(R.string.donate_微信捐), fontSize = 18.sp)
+                    Text(stringResource(R.string.donate_wei_xin_juan_kuan), fontSize = 18.sp)
                 }
             }
         }
@@ -161,7 +161,7 @@ fun DonateContent(paddingValues: PaddingValues) {
         ) {
             Column(Modifier.padding(10.dp)) {
                 Text(
-                    stringResource(R.string.donate_本月进),
+                    stringResource(R.string.donate_ben_yue_jin_zhan_uistateo),
                     fontSize = 18.sp
                 )
                 Spacer(Modifier.height(5.dp))
@@ -218,7 +218,7 @@ fun PayBottomDialog(showPayDialog: Boolean, payUrl: String, onDismissRequest: ()
             ) {
 
                 ASAsyncImage(
-                    payUrl, contentDescription = stringResource(R.string.donate_捐款二), shape = CardDefaults.shape,
+                    payUrl, contentDescription = stringResource(R.string.donate_juan_kuan_er_wei_ma), shape = CardDefaults.shape,
                     modifier = Modifier.fillMaxWidth(0.8f),
                     contentScale = ContentScale.FillWidth,
                 )
@@ -248,7 +248,7 @@ fun DonateScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.tools_捐助我))
+                    Text(text = stringResource(R.string.tools_juan_zhu_wo_men))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

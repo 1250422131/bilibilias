@@ -58,7 +58,7 @@ fun ASFramePlayer(modifier: Modifier, list: List<Bitmap>, fps: Int) {
     Box(modifier = modifier) {
         Image(
             bitmap = list[currentFrame].asImageBitmap(),
-            contentDescription = stringResource(R.string.frame_帧图片),
+            contentDescription = stringResource(R.string.frame_zhen_tu_pian),
             modifier = Modifier.fillMaxSize()
         )
         Text(

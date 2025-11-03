@@ -78,7 +78,7 @@ fun AudioQualitySelectScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text(stringResource(R.string.download_选择优), fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.download_xuan_ze_you_xian_yin_pin), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = modelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -204,7 +204,7 @@ fun VideoSupportFormatsSelectScreen(
                 },
                 readOnly = true,
                 singleLine = false,
-                label = { Text(stringResource(R.string.download_选择优_1), fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.download_xuan_ze_you_xian_fen_bian), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -261,7 +261,7 @@ fun VideoSupportFormatsSelectScreen(
                     },
                     readOnly = true,
                     singleLine = false,
-                    label = { Text(stringResource(R.string.download_选择优_2), fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.download_xuan_ze_you_xian_bian_ma), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,

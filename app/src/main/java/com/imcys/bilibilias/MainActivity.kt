@@ -78,8 +78,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = stringResource(R.string.app_新版本_可随时),
-                    actionLabel = stringResource(R.string.common_update),
+                    message = stringResource(R.string.app_xin_ban_ben_yi_jing_xia_z),
+                    actionLabel = stringResource(R.string.common_geng_xin),
                     duration = SnackbarDuration.Short
                 )
                 when (result) {
@@ -128,17 +128,17 @@ class MainActivity : ComponentActivity() {
         if (value) {
             AlertDialog(
                 onDismissRequest = {},
-                title = { Text(stringResource(R.string.app_跳过更)) },
-                text = { Text(stringResource(R.string.app_如果您_可以跳)) },
+                title = { Text(stringResource(R.string.app_tiao_guo_geng_xin)) },
+                text = { Text(stringResource(R.string.app_ru_guo_nin_zan_shi_bu_xia)) },
                 confirmButton = {
                     ASTextButton(onClick = onConfirm) {
-                        Text(stringResource(R.string.app_跳过此))
+                        Text(stringResource(R.string.app_tiao_guo_ci_ban_ben))
                     }
 
                 },
                 dismissButton = {
                     ASTextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.app_下次再))
+                        Text(stringResource(R.string.app_xia_ci_zai_shuo))
                     }
                 }
             )

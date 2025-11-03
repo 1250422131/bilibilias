@@ -175,7 +175,7 @@ fun QRCodeLoginScreen(
                 .padding(bottom = 24.dp)
         ) {
             SharedTransitionLayout {
-                AnimatedContent(windowWidthSizeClass,label = stringResource(R.string.login_扫码登)) { size ->
+                AnimatedContent(windowWidthSizeClass,label = stringResource(R.string.login_sao_ma_deng_lu_nei_rong_q)) { size ->
                     when (size) {
                         WindowWidthSizeClass.Compact -> {
                             QRCodeLoginContentWidthCompact(
@@ -343,7 +343,7 @@ private fun QRLoginScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(stringResource(R.string.login_站扫码))
+                        Text(stringResource(R.string.login_b_zhan_sao_ma_deng_lu))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -354,7 +354,7 @@ private fun QRLoginScaffold(
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = stringResource(R.string.common_back)
+                                contentDescription = stringResource(R.string.common_fan_hui)
                             )
                         }
                     },
@@ -364,7 +364,7 @@ private fun QRLoginScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = stringResource(R.string.login_操作)
+                                contentDescription = stringResource(R.string.login_cao_zuo)
                             )
                         }
                         DropdownMenu(
@@ -373,7 +373,7 @@ private fun QRLoginScaffold(
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.login_使用_登录)) },
+                                text = { Text(stringResource(R.string.login_shi_yong_cookie_deng_lu)) },
                                 onClick = {
                                     expandedMenu = false
                                     onToCookieLogin.invoke()
@@ -421,12 +421,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.Outlined.Download,
-                                contentDescription = stringResource(R.string.login_下载二),
+                                contentDescription = stringResource(R.string.login_xia_zai_er_wei_ma),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                stringResource(R.string.login_下载二),
+                                stringResource(R.string.login_xia_zai_er_wei_ma),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -447,12 +447,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.OpenInNew,
-                                contentDescription = stringResource(R.string.login_去扫描),
+                                contentDescription = stringResource(R.string.login_qu_sao_miao),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                stringResource(R.string.login_去扫描),
+                                stringResource(R.string.login_qu_sao_miao),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -476,12 +476,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.Outlined.Download,
-                                contentDescription = stringResource(R.string.login_下载二),
+                                contentDescription = stringResource(R.string.login_xia_zai_er_wei_ma),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                stringResource(R.string.login_下载二),
+                                stringResource(R.string.login_xia_zai_er_wei_ma),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -501,12 +501,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.OpenInNew,
-                                contentDescription = stringResource(R.string.login_去扫描),
+                                contentDescription = stringResource(R.string.login_qu_sao_miao),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                stringResource(R.string.login_去扫描),
+                                stringResource(R.string.login_qu_sao_miao),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -539,7 +539,7 @@ private fun PlatformToggleButton(
     ) {
         Icon(
             imageVector = Icons.Outlined.WebAsset,
-            contentDescription = stringResource(R.string.login_扫码),
+            contentDescription = stringResource(R.string.login_web_sao_ma),
             modifier = Modifier.size(FilterChipDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -549,7 +549,7 @@ private fun PlatformToggleButton(
     BadgedBox(
         badge = {
             Badge {
-                Text(stringResource(R.string.login_申请))
+                Text(stringResource(R.string.login_shen_qing))
             }
         }
     ) {
@@ -566,7 +566,7 @@ private fun PlatformToggleButton(
         ) {
             Icon(
                 imageVector = Icons.Outlined.WebAsset,
-                contentDescription = stringResource(R.string.login_扫码_1),
+                contentDescription = stringResource(R.string.login_tv_sao_ma),
                 modifier = Modifier.size(FilterChipDefaults.IconSize)
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -625,9 +625,9 @@ private fun QRCodeContent(
                                     ASIconButton(onClick = {
                                         updateQrCode()
                                     }) {
-                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.login_重试))
+                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.login_zhong_shi))
                                     }
-                                    Text(stringResource(R.string.login_网络异_点击按))
+                                    Text(stringResource(R.string.login_wang_luo_yi_chang__dian_j))
                                 }
 
                                 ApiStatus.DEFAULT,
@@ -641,7 +641,7 @@ private fun QRCodeContent(
                                             qrCodeInfoState.data?.url,
                                             "UTF-8"
                                         ),
-                                        contentDescription = stringResource(R.string.login_登录二),
+                                        contentDescription = stringResource(R.string.login_deng_lu_er_wei_ma),
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .clickable {
@@ -655,10 +655,10 @@ private fun QRCodeContent(
                             ) {
                                 Icon(
                                     Icons.Outlined.Warning,
-                                    contentDescription = stringResource(R.string.login_未勾选)
+                                    contentDescription = stringResource(R.string.login_wei_gou_xuan_tong_yi_yin)
                                 )
                                 Spacer(Modifier.height(4.dp))
-                                Text(stringResource(R.string.login_请勾选))
+                                Text(stringResource(R.string.login_qing_gou_xuan_xia_fang_yi))
                             }
                         }
                     }

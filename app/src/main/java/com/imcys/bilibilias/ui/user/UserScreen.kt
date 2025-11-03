@@ -175,7 +175,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {
             ASAsyncImage(
                 "${item?.pic?.toHttps()}@672w_378h_1c",
                 modifier = Modifier.fillMaxSize(),
-                contentDescription = stringResource(R.string.app_视频封)
+                contentDescription = stringResource(R.string.app_shi_pin_feng_mian)
             )
         }
 
@@ -198,7 +198,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {
             )
             Row {
                 Text(
-                    stringResource(R.string.user_次播放),
+                    stringResource(R.string.user_numberutilsformatlargenum),
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.shimmer(item == null),
@@ -225,17 +225,17 @@ private fun VideoHeader(
             ) {
                 Icon(
                     Icons.Outlined.Movie,
-                    contentDescription = stringResource(R.string.user_投稿视),
+                    contentDescription = stringResource(R.string.user_tou_gao_shi_pin),
                     tint = MaterialTheme.colorScheme.outline
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.user_投稿视), color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_tou_gao_shi_pin), color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
                 ASIconButton(onClick = { onToWorkList.invoke() }) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = stringResource(R.string.user_更多投),
+                        contentDescription = stringResource(R.string.user_geng_duo_tou_gao),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
@@ -307,9 +307,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.ThumbUp, contentDescription = stringResource(R.string.user_最近点))
+                Icon(Icons.Outlined.ThumbUp, contentDescription = stringResource(R.string.user_zui_jin_dian_zan))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_点赞), fontSize = 14.sp)
+                Text(stringResource(R.string.user_dian_zan), fontSize = 14.sp)
             }
         }
 
@@ -326,9 +326,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.History, contentDescription = stringResource(R.string.user_最近播))
+                Icon(Icons.Outlined.History, contentDescription = stringResource(R.string.user_zui_jin_bo_fang_tu_biao))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.home_最近), fontSize = 14.sp)
+                Text(stringResource(R.string.home_zui_jin), fontSize = 14.sp)
             }
         }
 
@@ -345,9 +345,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.user_收藏))
+                Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.user_shou_cang))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_收藏), fontSize = 14.sp)
+                Text(stringResource(R.string.user_shou_cang), fontSize = 14.sp)
             }
         }
 
@@ -364,9 +364,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Subscriptions, contentDescription = stringResource(R.string.user_追番))
+                Icon(Icons.Outlined.Subscriptions, contentDescription = stringResource(R.string.user_zhui_fan))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_追番), fontSize = 14.sp)
+                Text(stringResource(R.string.user_zhui_fan), fontSize = 14.sp)
             }
         }
 
@@ -393,10 +393,10 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     Icon(
                         Icons.Outlined.Link,
                         tint = MaterialTheme.colorScheme.outline,
-                        contentDescription = stringResource(R.string.user_关联平)
+                        contentDescription = stringResource(R.string.user_guan_lian_ping_tai)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.user_已关联), color = MaterialTheme.colorScheme.outline)
+                    Text(stringResource(R.string.user_yi_guan_lian_zhang_hu), color = MaterialTheme.colorScheme.outline)
 
                 }
                 Spacer(Modifier.height(24.dp))
@@ -406,7 +406,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_mini_bili_logo_24px),
-                        contentDescription = stringResource(R.string.user_站),
+                        contentDescription = stringResource(R.string.user_b_zhan_logo),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.weight(1f))
@@ -425,7 +425,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                         AsyncImage(
                             "${biliUsersEntity?.face}",
                             modifier = Modifier.size(24.dp),
-                            contentDescription = stringResource(R.string.user_关联账),
+                            contentDescription = stringResource(R.string.user_guan_lian_zhang_hu_tou_xi),
                         )
                     }
                 }
@@ -447,7 +447,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                        )
                        Spacer(Modifier.weight(1f))
                        Text(
-                           stringResource(R.string.user_暂未开),
+                           stringResource(R.string.user_zan_wei_kai_fang),
                            fontSize = 16.sp,
                            color = MaterialTheme.colorScheme.outline
                        )
@@ -455,7 +455,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                        Icon(
                            Icons.Outlined.Build,
                            modifier = Modifier.size(20.dp),
-                           contentDescription = stringResource(R.string.user_维护图),
+                           contentDescription = stringResource(R.string.user_wei_hu_tu_biao),
                            tint = MaterialTheme.colorScheme.outline
                        )
                    }
@@ -487,7 +487,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_关注), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_guan_zhu), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -506,7 +506,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_粉丝), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_fen_si), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -525,7 +525,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_获赞), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_huo_zan), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
         item {
@@ -543,7 +543,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.common_play), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.common_bo_fang), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
     }
@@ -572,7 +572,7 @@ fun TopUserInfo(
                     ) {
                         ASAsyncImage(
                             pageInfoState.data?.face ?: "",
-                            contentDescription = stringResource(R.string.user_头像),
+                            contentDescription = stringResource(R.string.user_tou_xiang),
                             modifier = Modifier.size(64.dp)
                         )
                     }
@@ -582,7 +582,7 @@ fun TopUserInfo(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                pageInfoState.data?.name ?: stringResource(R.string.user_用户名),
+                                pageInfoState.data?.name ?: stringResource(R.string.user_yong_hu_ming),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 20.sp,
                                 maxLines = 1,
@@ -611,7 +611,7 @@ fun TopUserInfo(
                         }
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            pageInfoState.data?.sign ?: stringResource(R.string.user_个性签),
+                            pageInfoState.data?.sign ?: stringResource(R.string.user_ge_xing_qian_ming),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 14.sp,
                             maxLines = 2,
@@ -660,7 +660,7 @@ private fun UserScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.Settings,
-                                contentDescription = stringResource(R.string.common_settings)
+                                contentDescription = stringResource(R.string.common_she_zhi)
                             )
                         }
                     }

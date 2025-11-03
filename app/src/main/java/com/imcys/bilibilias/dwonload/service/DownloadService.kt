@@ -77,8 +77,8 @@ class DownloadService : Service() {
                 this,
                 DOWNLOAD_NOTIFICATION_CHANNEL_ID
             ).apply {
-                setContentTitle(stringResource(R.string.download_缓存通))
-                setContentText(stringResource(R.string.download_视频缓))
+                setContentTitle(stringResource(R.string.download_huan_cun_tong_zhi))
+                setContentText(stringResource(R.string.download_as_shi_pin_huan_cun_zhong))
                     .setProgress(100, 0, false)
                 setContentIntent(pIntent)
                 setSmallIcon(R.drawable.ic_logo_mini)

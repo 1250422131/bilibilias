@@ -89,7 +89,7 @@ fun <T> AsAutoError(
 @Composable
 @Preview
 private fun PreviewCommonError() {
-    CommonError(stringResource(R.string.error_接口异)) { }
+    CommonError(stringResource(R.string.error_jie_kou_yi_chang)) { }
 }
 
 @Composable
@@ -116,7 +116,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text(stringResource(R.string.error_text))
+                    Text(stringResource(R.string.error_errorerrormsg))
                 }
                 AsErrorCopyIconButton(errorMsg)
             }
@@ -141,7 +141,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         onRetry.invoke()
                     },
                 ) {
-                    Text(stringResource(R.string.error_点击重))
+                    Text(stringResource(R.string.error_dian_ji_zhong_shi))
                 }
 
             }
@@ -164,7 +164,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     )
     ASIconButton(onClick = {
         haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-        val clipData = ClipData.newPlainText(stringResource(R.string.error_异常), errorMsg)
+        val clipData = ClipData.newPlainText(stringResource(R.string.error_bilibilais_yi_chang), errorMsg)
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch(Dispatchers.IO) {
             copyFinish = true
@@ -175,7 +175,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     }) {
         Icon(
             imageVector = if (copyFinish) Icons.Outlined.Check else Icons.Outlined.ContentCopy,
-            contentDescription = stringResource(R.string.error_复制报),
+            contentDescription = stringResource(R.string.error_fu_zhi_bao_cuo),
             modifier = Modifier.rotate(rotation)
         )
     }

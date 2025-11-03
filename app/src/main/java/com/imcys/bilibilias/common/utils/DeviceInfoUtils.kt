@@ -71,26 +71,26 @@ object DeviceInfoUtils {
         } catch (e: Exception) {
             null
         }
-        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_未知)
-        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_未知)
-        val model = Build.MODEL ?: stringResource(R.string.analysis_未知)
-        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_未知)
-        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_未知)
-        val brand = Build.BRAND ?: stringResource(R.string.analysis_未知)
+        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_wei_zhi)
+        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_wei_zhi)
+        val model = Build.MODEL ?: stringResource(R.string.analysis_wei_zhi)
+        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_wei_zhi)
+        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_wei_zhi)
+        val brand = Build.BRAND ?: stringResource(R.string.analysis_wei_zhi)
         val brandName = try {
             getBrandName() ?: Build.DEVICE
         } catch (_: Throwable) {
             Build.DEVICE
         }
         val osName = try {
-            getOsName() ?: stringResource(R.string.analysis_未知)
+            getOsName() ?: stringResource(R.string.analysis_wei_zhi)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_未知)
+            stringResource(R.string.analysis_wei_zhi)
         }
         val osVersionName = try {
-            getOsVersionName() ?: stringResource(R.string.analysis_未知)
+            getOsVersionName() ?: stringResource(R.string.analysis_wei_zhi)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_未知)
+            stringResource(R.string.analysis_wei_zhi)
         }
         return DeviceInfo(
             appVersion = appVersion,

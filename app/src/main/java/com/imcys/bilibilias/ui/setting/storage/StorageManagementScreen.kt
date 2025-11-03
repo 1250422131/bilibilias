@@ -167,7 +167,7 @@ fun StorageManagementSuccessScreen(
             ASWarringTip {
                 Row {
                     Text(
-                        stringResource(R.string.storage_应用存_可能导),
+                        stringResource(R.string.storage_ying_yong_cun_chu_quan_xi),
                         Modifier.weight(1f)
                     )
                     ASIconButton(onClick = {
@@ -185,16 +185,16 @@ fun StorageManagementSuccessScreen(
                         )
                         downloadLauncher.launch(downloadUri)
                     }) {
-                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.storage_去授权))
+                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.storage_qu_shou_quan))
                     }
                 }
             }
         }
 
         StorageContent(
-            title = stringResource(R.string.storage_音视频),
+            title = stringResource(R.string.storage_yin_shi_pin_wen_jian),
             dataNumStr = StorageUtil.formatSize(data.downloadBytes),
-            description = stringResource(R.string.storage_已下载),
+            description = stringResource(R.string.storage_yi_xia_zai_de_yin_shi_pin),
             onClick = {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     val targetDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BILIBILIAS")
@@ -216,25 +216,25 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, stringResource(R.string.storage_未找到), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, stringResource(R.string.storage_wei_zhao_dao_wen_jian_gua), Toast.LENGTH_SHORT).show()
                 }
             },
         )
 
 
         StorageContent(
-            title = stringResource(R.string.storage_临时文),
+            title = stringResource(R.string.storage_lin_shi_wen_jian),
             dataNumStr = "${StorageUtil.formatSize(data.cacheTotalBytes)}",
-            description = stringResource(R.string.storage_临时文_可放心),
-            buttonText = stringResource(R.string.storage_清理),
+            description = stringResource(R.string.storage_lin_shi_wen_jian__ke_fang),
+            buttonText = stringResource(R.string.storage_qing_li),
             buttonColor = MaterialTheme.colorScheme.primary,
             onClick = onCleanCache
         )
 
         StorageContent(
-            title = stringResource(R.string.storage_核心文),
+            title = stringResource(R.string.storage_he_xin_wen_jian),
             dataNumStr = "${StorageUtil.formatSize(data.appBytes - data.cacheTotalBytes)}",
-            description = stringResource(R.string.storage_运行时_不可清),
+            description = stringResource(R.string.storage_yun_xing_shi_bi_yao_wen_j),
             showButton = false,
             buttonColor = MaterialTheme.colorScheme.primary,
         )
@@ -250,7 +250,7 @@ fun StorageContent(
     dataNumStr: String = "",
     description: String = "",
     showButton: Boolean = true,
-    buttonText: String = stringResource(R.string.storage_管理),
+    buttonText: String = stringResource(R.string.storage_guan_li),
     buttonColor: Color = MaterialTheme.colorScheme.surface,
     onClick: () -> Unit = {}
 ) {
@@ -313,7 +313,7 @@ private fun StorageManagementLoadingScreen() {
     ) {
         // 加载中
         CircularWavyProgressIndicator()
-        Text(text = stringResource(R.string.storage_加载中))
+        Text(text = stringResource(R.string.storage_jia_zai_zhong))
     }
 }
 
@@ -330,7 +330,7 @@ private fun StorageManagementScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(text = stringResource(R.string.setting_存储管))
+                        Text(text = stringResource(R.string.setting_cun_chu_guan_li))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,

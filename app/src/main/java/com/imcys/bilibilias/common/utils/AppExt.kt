@@ -24,7 +24,7 @@ fun String.copyText(context: Context, title: String) {
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText(title, this)
     clipboard.setPrimaryClip(clip)
-    Toast.makeText(context, stringResource(R.string.tools_已复制), Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, stringResource(R.string.tools_yi_fu_zhi_dao_jian_tie_ba), Toast.LENGTH_SHORT).show()
 }
 
 inline fun analyticsSafe(action: () -> Unit) {

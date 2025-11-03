@@ -45,12 +45,12 @@ fun VideoCopyrightApplyScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_视频缓)) },
+                title = { Text(stringResource(R.string.app_shi_pin_huan_cun_shi_yong)) },
                 navigationIcon = {
                     ASIconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.common_back)
+                            contentDescription = stringResource(R.string.common_fan_hui)
                         )
                     }
                 }
@@ -77,20 +77,20 @@ fun VideoCopyrightApplyScreen(
 //                        description = "您需要提供有效的邮箱地址以接收重要通知。为确保您能持续收到通知，我们将每隔一个月对您的邮箱进行验证，一个月后缓存将提示您重新验证邮箱。"
 //                    )
                     InfoItem(
-                        title = stringResource(R.string.app_重要通),
-                        description = stringResource(R.string.app_我们可_内通知)
+                        title = stringResource(R.string.app_zhong_yao_tong_zhi),
+                        description = stringResource(R.string.app_wo_men_ke_neng_hui_zai_ap)
                     )
                     InfoItem(
-                        title = stringResource(R.string.app_配合删),
-                        description = stringResource(R.string.app_收到删_请您在)
+                        title = stringResource(R.string.app_pei_he_shan_chu),
+                        description = stringResource(R.string.app_shou_dao_shan_chu_tong_zh)
                     )
                     InfoItem(
-                        title = stringResource(R.string.app_操作确),
-                        description = stringResource(R.string.app_删除操_您需要)
+                        title = stringResource(R.string.app_cao_zuo_que_ren),
+                        description = stringResource(R.string.app_shan_chu_cao_zuo_wan_chen)
                     )
                     InfoItem(
-                        title = stringResource(R.string.app_账户冻),
-                        description = stringResource(R.string.app_若您在_天内未)
+                        title = stringResource(R.string.app_zhang_hu_dong_jie),
+                        description = stringResource(R.string.app_ruo_nin_zai_15_tian_nei_w)
                     )
                 }
             }
@@ -100,7 +100,7 @@ fun VideoCopyrightApplyScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
             ) {
-                Text(stringResource(R.string.app_我已阅_1))
+                Text(stringResource(R.string.app_wo_yi_yue_du_bing_tong_yi_1))
             }
         }
     }

@@ -116,7 +116,7 @@ fun RoamSettingContent(
                     Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.roam_启用漫), fontSize = 18.sp)
+                    Text(stringResource(R.string.roam_qi_yong_man_you), fontSize = 18.sp)
                     Spacer(Modifier.weight(1f))
                     ASCheckThumbSwitch(
                         enabled = uiState.isLoginTV || appSettings.enabledRoam,
@@ -144,7 +144,7 @@ fun RoamSettingContent(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                stringResource(R.string.roam_你当前_点击登),
+                                stringResource(R.string.roam_ni_dang_qian_hai_wei_deng),
                                 fontSize = 14.sp,
                                 modifier = Modifier.weight(1f)
                             )
@@ -157,7 +157,7 @@ fun RoamSettingContent(
                                     onGoToQRCodeLogin.invoke(LoginPlatform.TV)
                                 }
                             }) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_去登录))
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_qu_deng_lu))
                             }
                         }
                     }
@@ -205,7 +205,7 @@ fun RoamSettingScaffold(
                             }
                         }
                     ) {
-                        Text(text = stringResource(R.string.setting_漫游服))
+                        Text(text = stringResource(R.string.setting_man_you_fu_wu))
                     }
                 },
                 navigationIcon = {

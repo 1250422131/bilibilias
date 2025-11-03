@@ -101,7 +101,7 @@ fun UserPlayHistoryContent(vm: UserPlayHistoryViewModel, paddingValues: PaddingV
         when (val state = itemList.loadState.refresh) {
             is LoadState.Error -> {
                 item(span = { GridItemSpan(2) }) {
-                    CommonError(errorMsg = stringResource(R.string.user_加载失), onRetry = {
+                    CommonError(errorMsg = stringResource(R.string.user_jia_zai_shi_bai_nstateerr), onRetry = {
                         itemList.refresh()
                     })
                 }
@@ -127,7 +127,7 @@ fun UserPlayHistoryContent(vm: UserPlayHistoryViewModel, paddingValues: PaddingV
             }
 
             is LoadState.Error -> item(span = { GridItemSpan(2) }) {
-                CommonError(stringResource(R.string.user_加载失_1), onRetry = {
+                CommonError(stringResource(R.string.user_jia_zai_shi_bai_nappender), onRetry = {
                     itemList.retry()
                 })
             }
@@ -159,7 +159,7 @@ private fun UserPlayHistoryScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.user_最近播_1))
+                    Text(text = stringResource(R.string.user_zui_jin_bo_fang))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

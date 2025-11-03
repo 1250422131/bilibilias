@@ -273,7 +273,7 @@ fun BILIBILAISNavDisplay() {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    stringResource(R.string.app_请选择),
+                                    stringResource(R.string.app_qing_xuan_ze_you_ce_xuan),
                                 )
                             }
                         }

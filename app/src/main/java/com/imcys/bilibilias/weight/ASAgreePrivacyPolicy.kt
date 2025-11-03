@@ -49,9 +49,9 @@ fun ASAgreePrivacyPolicy(agreePrivacyPolicy: Boolean, onClick: () -> Unit) {
                 .scale(0.75f)
                 .size(20.dp)
         )
-        Text(stringResource(R.string.app_我已阅), fontSize = 14.sp)
+        Text(stringResource(R.string.app_wo_yi_yue_du_bing_tong_yi), fontSize = 14.sp)
         Text(
-            text = stringResource(R.string.app_隐私政),
+            text = stringResource(R.string.app_bilibilias_yin_si_zheng_c),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 14.sp,
             modifier = Modifier

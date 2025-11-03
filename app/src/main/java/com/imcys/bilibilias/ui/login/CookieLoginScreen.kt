@@ -99,7 +99,7 @@ fun CookeLoginContent(
                 cookiesString = it
                 vm.checkCookies(it)
             },
-            label = {Text(stringResource(R.string.login_浏览器_无需解))},
+            label = {Text(stringResource(R.string.login_cookie_liu_lan_qi_zhi_jie))},
             maxLines = 4,
             minLines = 4
         )
@@ -136,7 +136,7 @@ fun CookeLoginContent(
                                 onFinish()
                             }
                         }) {
-                        Text(stringResource(R.string.login_确认_这是我))
+                        Text(stringResource(R.string.login_que_ren__zhe_shi_wo_yao_d))
                     }
                     Spacer(Modifier.height(10.dp))
                 }
@@ -145,7 +145,7 @@ fun CookeLoginContent(
 
         // 提示
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-            Text(stringResource(R.string.login_请妥善_避免产))
+            Text(stringResource(R.string.login_qing_tuo_shan_bao_guan_ni))
         }
 
         SavingDialog(showSavingDialog)
@@ -159,7 +159,7 @@ fun CookeLoginContent(
 @Composable
 fun SavingDialog(show: Boolean) {
     ASAlertDialog(showState = show, title = {
-        Text(stringResource(R.string.login_存储身))
+        Text(stringResource(R.string.login_cun_chu_shen_fen_xin_xi))
     }, text = {
         Column(
             Modifier
@@ -169,7 +169,7 @@ fun SavingDialog(show: Boolean) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ContainedLoadingIndicator()
-            Text(text = stringResource(R.string.login_正在保_请不要))
+            Text(text = stringResource(R.string.login_zheng_zai_bao_cun__qing_b))
         }
     }, confirmButton = {})
 }
@@ -188,7 +188,7 @@ fun UserCard(modifier: Modifier = Modifier, mid: Long, name: String, level: Int,
                 ASAsyncImage(
                     model = face,
                     shape = MaterialShapes.Cookie12Sided.toShape(),
-                    contentDescription = stringResource(R.string.user_头像),
+                    contentDescription = stringResource(R.string.user_tou_xiang),
                     modifier = Modifier
                         .aspectRatio(1f)
                 )
@@ -219,7 +219,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(stringResource(R.string.login_站_登录))
+                        Text(stringResource(R.string.login_b_zhan_cookie_deng_lu))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -230,7 +230,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = stringResource(R.string.common_back)
+                                contentDescription = stringResource(R.string.common_fan_hui)
                             )
                         }
                     }

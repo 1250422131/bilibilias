@@ -184,8 +184,8 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text(stringResource(R.string.download_批量删)) },
-                text = { Text(stringResource(R.string.download_确定要)) },
+                title = { Text(stringResource(R.string.download_pi_liang_shan_chu_ren_wu)) },
+                text = { Text(stringResource(R.string.download_que_ding_yao_shan_chu_xua)) },
                 confirmButton = {
                     ASTextButton(
                         onClick = {
@@ -193,14 +193,14 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                             showDeleteDialog = false
                         }
                     ) {
-                        Text(stringResource(R.string.common_delete))
+                        Text(stringResource(R.string.common_shan_chu))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text(stringResource(R.string.common_cancel))
+                        Text(stringResource(R.string.common_qu_xiao))
                     }
                 }
             )
@@ -228,7 +228,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text(stringResource(R.string.download_正在下))
+            Text(stringResource(R.string.download_zheng_zai_xia_zai))
         }
         Spacer(Modifier.width(10.dp))
         ToggleButton(
@@ -240,7 +240,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text(stringResource(R.string.download_已完成_1))
+            Text(stringResource(R.string.download_yi_wan_cheng_xia_zai))
         }
     }
 }
@@ -271,7 +271,7 @@ private fun EditTopTools(
             },
             border = CardDefaults.outlinedCardBorder()
         ) {
-            Text(stringResource(R.string.download_反选))
+            Text(stringResource(R.string.download_fan_xuan))
         }
 
         OutlinedButton(
@@ -281,7 +281,7 @@ private fun EditTopTools(
                 selectDeleteList.addAll(completedSegments)
             },
         ) {
-            Text(stringResource(R.string.download_全选))
+            Text(stringResource(R.string.download_quan_xuan))
         }
 
         Button(
@@ -294,7 +294,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
             )
         ) {
-            Text(stringResource(R.string.common_cancel))
+            Text(stringResource(R.string.common_qu_xiao))
         }
 
         Button(
@@ -308,7 +308,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
             )
         ) {
-            Text(stringResource(R.string.common_delete))
+            Text(stringResource(R.string.common_shan_chu))
         }
 
 
@@ -324,7 +324,7 @@ fun DownloadScaffold(onToBack: () -> Unit = {}, content: @Composable (PaddingVal
             Column {
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
-                    title = { Text(text = stringResource(R.string.download_下载管)) },
+                    title = { Text(text = stringResource(R.string.download_xia_zai_guan_li)) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),

@@ -39,7 +39,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
         topBar = {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
-                title = { Text(stringResource(R.string.error_风控须)) },
+                title = { Text(stringResource(R.string.error_feng_kong_xu_zhi)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
@@ -47,7 +47,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.common_back)
+                            contentDescription = stringResource(R.string.common_fan_hui)
                         )
                     }
                 },
@@ -69,19 +69,19 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
             ) {
                 item {
                     Text(
-                        text = stringResource(R.string.error_账户风),
+                        text = stringResource(R.string.error_zhang_hu_feng_xian_ti_shi),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 val points = listOf(
-                    stringResource(R.string.error_您的账_可能与),
-                    stringResource(R.string.error_检测到_端身份),
-                    stringResource(R.string.error_该功能_可能随),
-                    stringResource(R.string.error_继续使_可能加),
-                    stringResource(R.string.error_我们可_必要时),
-                    stringResource(R.string.error_请在操_所有后)
+                    stringResource(R.string.error_nin_de_zhang_hao_ke_neng),
+                    stringResource(R.string.error_jian_ce_dao_nin_de_tv_dua),
+                    stringResource(R.string.error_gai_gong_neng_wei_lin_shi),
+                    stringResource(R.string.error_ji_xu_shi_yong_ju_you_wei),
+                    stringResource(R.string.error_wo_men_ke_neng_dui_yi_cha),
+                    stringResource(R.string.error_qing_zai_cao_zuo_qian_cho)
                 )
                 items(points.size) { index ->
                     Text(
@@ -91,7 +91,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                 }
                 item {
                     Text(
-                        text = stringResource(R.string.error_点击下),
+                        text = stringResource(R.string.error_dian_ji_xia_fang_an_niu_j),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -106,7 +106,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
-                Text(stringResource(R.string.app_我已知))
+                Text(stringResource(R.string.app_wo_yi_zhi_xiao))
             }
         }
     }

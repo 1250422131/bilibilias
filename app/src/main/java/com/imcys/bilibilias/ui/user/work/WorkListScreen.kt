@@ -135,7 +135,7 @@ private fun WorkList(
             span = { GridItemSpan(2) }
         ) {
             ASCardTextField(
-                hint = stringResource(R.string.app_搜索投),
+                hint = stringResource(R.string.app_sou_suo_tou_gao),
                 autoFocus = false, value = uiState.query, onValueChange = onUpdateKeyword,
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), modifier = Modifier.animateItem())
         }
@@ -201,7 +201,7 @@ private fun WorkListScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.app_投稿))
+                    Text(text = stringResource(R.string.app_tou_gao))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

@@ -43,7 +43,7 @@ class AppCrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val appErrorMsg = intent.getStringExtra("appErrorMsg") ?: stringResource(R.string.app_未知错)
+        val appErrorMsg = intent.getStringExtra("appErrorMsg") ?: stringResource(R.string.app_wei_zhi_cuo_wu)
         setContent {
             BILIBILIASTheme {
                 Scaffold {
@@ -73,7 +73,7 @@ class AppCrashActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.app_发生错),
+                text = stringResource(R.string.app_fa_sheng_cuo_wu_apperrorm),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.weight(1f)
@@ -85,18 +85,18 @@ class AppCrashActivity : ComponentActivity() {
                 Button(onClick = {
                     exitProcess(0)
                 }) {
-                    Text(stringResource(R.string.app_退出软))
+                    Text(stringResource(R.string.app_tui_chu_ruan_jian))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(onClick = {
-                    val clipData = ClipData.newPlainText(stringResource(R.string.error_异常), appErrorMsg)
+                    val clipData = ClipData.newPlainText(stringResource(R.string.error_bilibilais_yi_chang), appErrorMsg)
                     val clipEntry = ClipEntry(clipData)
                     coroutineScope.launch(Dispatchers.IO) {
                         clipboardManager.setClipEntry(clipEntry)
                         delay(2000)
                     }
                 }) {
-                    Text(stringResource(R.string.app_复制异))
+                    Text(stringResource(R.string.app_fu_zhi_yi_chang))
                 }
 
 

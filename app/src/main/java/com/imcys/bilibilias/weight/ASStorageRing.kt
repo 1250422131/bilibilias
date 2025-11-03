@@ -129,7 +129,7 @@ fun AnimatedStorageRing(
                 )
                 // APP占用设备内存百分比
                 Text(
-                    stringResource(R.string.storage_占用设)%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
+                    stringResource(R.string.storage_zhan_yong_she_bei_nei_cun)%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -146,7 +146,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = totalColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_可用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_ke_yong_kong_jian), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -156,7 +156,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = usedColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_已用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_yi_yong_kong_jian), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -165,7 +165,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = appColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_占用空), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_app_zhan_yong_kong_jian), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
 

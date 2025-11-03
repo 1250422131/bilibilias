@@ -55,7 +55,7 @@ private fun SystemExpandContent(
     ) {
         item {
             CategorySettingsItem(
-                text = stringResource(R.string.app_权限扩)
+                text = stringResource(R.string.app_quan_xian_kuo_zhan)
             )
         }
 
@@ -63,7 +63,7 @@ private fun SystemExpandContent(
             SwitchSettingsItem(
                 painter = painterResource(R.drawable.ic_shizuku_logo_512px),
                 text = "Shizuku",
-                description = stringResource(R.string.app_使用_提供),
+                description = stringResource(R.string.app_shi_yong_shizuku_ti_gong),
                 checked = false,
                 isImage = true
             ) { check ->
@@ -90,7 +90,7 @@ private fun SystemExpandScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.app_扩展能)) },
+                title = { Text(text = stringResource(R.string.app_kuo_zhan_neng_li)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

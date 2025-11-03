@@ -98,16 +98,16 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 
     val videoTools = listOf(
         ToolInfo(
-            name = stringResource(R.string.tools_逐帧提),
-            desc = stringResource(R.string.tools_从视频_画手书),
+            name = stringResource(R.string.tools_zhu_zhen_ti_qu),
+            desc = stringResource(R.string.tools_cong_shi_pin_zhong_zhu_zh),
             icon = Icons.Outlined.VideoCameraBack,
             navKey = FrameExtractorRoute
         )
     )
     val otherTools = mutableListOf(
         ToolInfo(
-            name = stringResource(R.string.tools_反馈问),
-            desc = stringResource(R.string.tools_帮助我_这对本),
+            name = stringResource(R.string.tools_fan_kui_wen_ti),
+            desc = stringResource(R.string.tools__bang_zhu_wo_men_gai_jin),
             icon = Icons.Outlined.BugReport,
             onClick = { showFeedbackDialog = true }
         )
@@ -115,8 +115,8 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         if (!BuildConfig.ENABLED_PLAY_APP_MODE) {
             add(
                 ToolInfo(
-                    name = stringResource(R.string.tools_捐助我),
-                    desc = stringResource(R.string.tools_请我们),
+                    name = stringResource(R.string.tools_juan_zhu_wo_men),
+                    desc = stringResource(R.string.tools__qing_wo_men_he_yi_bei_na),
                     iconRes = R.drawable.ic_credit_card_heart_24px,
                     navKey = DonateRoute
                 )
@@ -133,7 +133,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         item(
             span = { GridItemSpan(maxLineSpan) }
         ) {
-            Text(stringResource(R.string.tools_视频处))
+            Text(stringResource(R.string.tools_shi_pin_chu_li))
         }
         items(videoTools) {
             ToolCard(it, onClick = {
@@ -142,7 +142,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(stringResource(R.string.tools_其他))
+            Text(stringResource(R.string.tools_qi_ta))
         }
 
         items(otherTools) {
@@ -169,7 +169,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
     ASAlertDialog(
         showState = showFeedbackDialog,
         title = {
-            Text(stringResource(R.string.tools_问题反))
+            Text(stringResource(R.string.tools_wen_ti_fan_kui))
         },
         text = {
             Column(
@@ -187,7 +187,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            stringResource(R.string.tools_反馈时_点击可),
+                            stringResource(R.string.tools_fan_kui_shi_xu_yao_dai_sh),
                             fontSize = 14.sp,
                             modifier = Modifier.weight(1f)
                         )
@@ -197,18 +197,18 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                                 val clipboard =
                                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(stringResource(R.string.tools_版本信), copyText)
+                                val clip = ClipData.newPlainText(stringResource(R.string.tools_ban_ben_xin_xi), copyText)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, stringResource(R.string.tools_已复制), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, stringResource(R.string.tools_yi_fu_zhi_dao_jian_tie_ba), Toast.LENGTH_SHORT).show()
                             }
                         }) {
-                            Icon(Icons.Outlined.CopyAll, contentDescription = stringResource(R.string.tools_复制按))
+                            Icon(Icons.Outlined.CopyAll, contentDescription = stringResource(R.string.tools_fu_zhi_an_niu))
                         }
                     }
                 }
 
                 BadgedBox(badge = {
-                    Badge { Text(stringResource(R.string.tools_推荐)) }
+                    Badge { Text(stringResource(R.string.tools_tui_jian)) }
                 }) {
                     Surface(
                         shape = CardDefaults.shape,
@@ -222,11 +222,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_github_24px),
-                                contentDescription = stringResource(R.string.tools_图标),
+                                contentDescription = stringResource(R.string.tools_tu_biao),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                stringResource(R.string.tools_前往_反馈),
+                                stringResource(R.string.tools_qian_wang_github_fan_kui),
                             )
                         }
                     }
@@ -245,11 +245,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_qq_channel_2px),
-                                contentDescription = stringResource(R.string.tools_图标),
+                                contentDescription = stringResource(R.string.tools_tu_biao),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                stringResource(R.string.tools_前往_频道反),
+                                stringResource(R.string.tools_qian_wang_qq_pin_dao_fan),
                             )
                         }
                     }
@@ -267,11 +267,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_qq_24px),
-                                contentDescription = stringResource(R.string.tools_图标),
+                                contentDescription = stringResource(R.string.tools_tu_biao),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                stringResource(R.string.tools_二次元_欢迎加),
+                                stringResource(R.string.tools_er_ci_yuan_ai_hao_zhe_jia),
                             )
                         }
                     }
@@ -285,7 +285,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
             ASTextButton(onClick = {
                 onDismiss.invoke()
             }) {
-                Text(stringResource(R.string.tools_好的))
+                Text(stringResource(R.string.tools_hao_de))
             }
         }
 
@@ -297,8 +297,8 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
 @Composable
 private fun ToolCard(
     toolInfo: ToolInfo = ToolInfo(
-        name = stringResource(R.string.tools_逐帧提),
-        desc = stringResource(R.string.tools_从视频_画手书),
+        name = stringResource(R.string.tools_zhu_zhen_ti_qu),
+        desc = stringResource(R.string.tools_cong_shi_pin_zhong_zhu_zh),
         icon = Icons.Outlined.VideoCameraBack,
         navKey = FrameExtractorRoute
     ),
@@ -318,7 +318,7 @@ private fun ToolCard(
                 toolInfo.icon?.let {
                     Icon(
                         it,
-                        contentDescription = stringResource(R.string.tools_图标),
+                        contentDescription = stringResource(R.string.tools_tu_biao),
                         modifier = Modifier
                             .padding(8.dp)
                             .size(22.dp)
@@ -326,7 +326,7 @@ private fun ToolCard(
                 } ?: run {
                     Icon(
                         painter = painterResource(toolInfo.iconRes!!),
-                        contentDescription = stringResource(R.string.tools_图标),
+                        contentDescription = stringResource(R.string.tools_tu_biao),
                         modifier = Modifier
                             .padding(8.dp)
                             .size(22.dp)

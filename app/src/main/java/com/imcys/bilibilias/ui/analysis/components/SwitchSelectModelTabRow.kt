@@ -60,7 +60,7 @@ fun SwitchSelectModelTabRow(isSelectSingleModel: Boolean = true, onSelectSingle:
             }, modifier = Modifier.zIndex(2f)
         ) {
             Text(
-                stringResource(R.string.app_单选),
+                stringResource(R.string.app_dan_xuan),
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 10.dp),
                 fontSize = 14.sp
@@ -79,7 +79,7 @@ fun SwitchSelectModelTabRow(isSelectSingleModel: Boolean = true, onSelectSingle:
             }, modifier = Modifier.zIndex(2f)
         ) {
             Text(
-                stringResource(R.string.app_多选),
+                stringResource(R.string.app_duo_xuan),
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 10.dp),
                 fontSize = 14.sp

@@ -46,7 +46,7 @@ class StorageManagementViewModel(
                     )
                 )
             } catch (e: Exception) {
-                _uiState.emit(StorageManagementUIState.Error(e.message ?: stringResource(R.string.app_未知错)))
+                _uiState.emit(StorageManagementUIState.Error(e.message ?: stringResource(R.string.app_wei_zhi_cuo_wu)))
             }
         }
     }

@@ -143,11 +143,11 @@ fun LayoutTypesetContent(
                         }) {
                             Icon(
                                 if (item.isHidden) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                                contentDescription = if (item.isHidden) stringResource(R.string.app_显示) else stringResource(R.string.app_隐藏),
+                                contentDescription = if (item.isHidden) stringResource(R.string.app_xian_shi) else stringResource(R.string.app_yin_cang),
                             )
                         }
                         ASIconButton(onClick = {}) {
-                            Icon(Icons.Outlined.Menu, contentDescription = stringResource(R.string.app_长按拖))
+                            Icon(Icons.Outlined.Menu, contentDescription = stringResource(R.string.app_zhang_an_tuo_zhuai))
                         }
                     }
 
@@ -176,7 +176,7 @@ fun LayoutTypesetScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.app_首页布)) },
+                title = { Text(text = stringResource(R.string.app_shou_ye_bu_ju_pai_ban)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

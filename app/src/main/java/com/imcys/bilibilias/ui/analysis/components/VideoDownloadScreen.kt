@@ -132,21 +132,21 @@ fun VideoDownloadScreen(
                 ) {
                     Icon(
                         Icons.Outlined.Info,
-                        contentDescription = stringResource(R.string.common_warning),
+                        contentDescription = stringResource(R.string.common_jing_gao),
                     )
                     Spacer(Modifier.width(2.dp))
                     Text(
-                        stringResource(R.string.download_未经作),
+                        stringResource(R.string.download_wei_jing_zuo_zhe_yun_xu_j),
                         fontSize = 14.sp,
                     )
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.download_缓存倾))
+                Text(stringResource(R.string.download_huan_cun_qing_xiang))
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.download_说明),
+                    contentDescription = stringResource(R.string.download_shuo_ming),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {
@@ -190,7 +190,7 @@ fun VideoDownloadScreen(
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
 
-                        ASEpisodeTitle(stringResource(R.string.download_选择缓),
+                        ASEpisodeTitle(stringResource(R.string.download_xuan_ze_huan_cun_he_ji),
                             episodeListMode = episodeListMode,
                             onUpdateEpisodeListMode = onUpdateEpisodeListMode
                         )
@@ -228,7 +228,7 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        ASEpisodeTitle(stringResource(R.string.download_选择缓_1),episodeListMode,onUpdateEpisodeListMode)
+                        ASEpisodeTitle(stringResource(R.string.download_xuan_ze_huan_cun_zi_ji),episodeListMode,onUpdateEpisodeListMode)
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
@@ -273,8 +273,8 @@ fun InteractiveVideoPageScreen(
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
-        Text(stringResource(R.string.download_选择互))
-        ASEpisodeTitle(stringResource(R.string.download_选择互),episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
+        Text(stringResource(R.string.download_xuan_ze_hu_dong_shi_pin))
+        ASEpisodeTitle(stringResource(R.string.download_xuan_ze_hu_dong_shi_pin),episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
         ASEpisodeSelection(
             episodeList = steinEdgeInfo?.storyList,
             episodeListMode = episodeListMode,
@@ -368,7 +368,7 @@ fun UgcSeasonPageScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text(stringResource(R.string.download_选择分_视频), fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.download_xuan_ze_fen_p_shi_pin), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,

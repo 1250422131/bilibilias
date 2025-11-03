@@ -337,9 +337,9 @@ fun HomeContent(
                 ) {
                     Text(
                         if (BuildConfig.DEBUG) {
-                            stringResource(R.string.home_当前_处于)
+                            stringResource(R.string.home_dang_qian_app_chu_yu_debu)
                         } else {
-                            stringResource(R.string.home_当前应_请谨慎)
+                            stringResource(R.string.home_dang_qian_ying_yong_qian)
                         }
                     )
                 }
@@ -395,8 +395,8 @@ fun HomeContent(
                     item {
                         CommonInfoCard(
                             R.drawable.ic_brand_awareness_24px,
-                            stringResource(R.string.home_公告),
-                            bulletinInfo?.content ?: stringResource(R.string.home_暂无最),
+                            stringResource(R.string.home_gong_gao),
+                            bulletinInfo?.content ?: stringResource(R.string.home_zan_wu_zui_xin_gong_gao),
                             onClickClose = {
                                 closeBulletinDialogShow = true
                             },
@@ -440,11 +440,11 @@ fun HomeContent(
                             }
 
                             ASBuildType.ALPHA -> appUpdateInfo?.feat
-                                ?: stringResource(R.string.home_版本请_构建)
+                                ?: stringResource(R.string.home_alpha_ban_ben_qing_guan_z)
                         }
                         CommonInfoCard(
                             R.drawable.ic_info_24px,
-                            stringResource(R.string.home_更新内),
+                            stringResource(R.string.home_geng_xin_nei_rong),
                             content,
                             onClick = {
                                 context.openLink(appUpdateInfo?.url ?: "")
@@ -541,16 +541,16 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
     }
     ASAlertDialog(
         showState = show,
-        title = { Text(stringResource(R.string.home_更新提)) },
+        title = { Text(stringResource(R.string.home_geng_xin_ti_shi)) },
         text = {
             Column(
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text(stringResource(R.string.home_检测到_可用))
+                Text(stringResource(R.string.home_jian_ce_dao_you_xin_ban_b))
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.home_更新内_1))
+                Text(stringResource(R.string.home_geng_xin_nei_rong_1))
                 Spacer(Modifier.height(4.dp))
                 Text(appUpdateInfo.feat)
             }
@@ -559,13 +559,13 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
             ASTextButton(onClick = {
                 context.openLink(appUpdateInfo.version)
             }) {
-                Text(text = stringResource(R.string.home_前往下))
+                Text(text = stringResource(R.string.home_qian_wang_xia_zai))
             }
         }, dismissButton = {
             ASTextButton(onClick = {
                 show = false
             }) {
-                Text(text = stringResource(R.string.common_cancel))
+                Text(text = stringResource(R.string.common_qu_xiao))
             }
         }, onDismiss = {
             show = false
@@ -578,18 +578,18 @@ fun CloseBulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text(stringResource(R.string.home_关闭公)) },
+        title = { Text(stringResource(R.string.home_guan_bi_gong_gao)) },
         text = {
-            Text(stringResource(R.string.home_关闭后_直到有))
+            Text(stringResource(R.string.home_guan_bi_hou_jiang_bu_zai))
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.home_确认))
+                Text(text = stringResource(R.string.home_que_ren))
             }
         },
         dismissButton = {
             ASTextButton(onClick = onClickDismiss) {
-                Text(text = stringResource(R.string.common_cancel))
+                Text(text = stringResource(R.string.common_qu_xiao))
             }
         }
     )
@@ -603,7 +603,7 @@ fun BulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text(stringResource(R.string.home_公告)) },
+        title = { Text(stringResource(R.string.home_gong_gao)) },
         text = {
             Column(
                 modifier = Modifier
@@ -614,7 +614,7 @@ fun BulletinDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.home_确认))
+                Text(text = stringResource(R.string.home_que_ren))
             }
         },
     )
@@ -638,7 +638,7 @@ fun DownloadListCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Outlined.Download,
-                    contentDescription = stringResource(R.string.home_下载列),
+                    contentDescription = stringResource(R.string.home_xia_zai_lie_biao_tu_biao),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
@@ -646,7 +646,7 @@ fun DownloadListCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    stringResource(R.string.home_下载列_1),
+                    stringResource(R.string.home_xia_zai_lie_biao),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     modifier = Modifier.alpha(0.72f),
@@ -657,7 +657,7 @@ fun DownloadListCard(
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = stringResource(R.string.home_下载详)
+                        contentDescription = stringResource(R.string.home_xia_zai_xiang_qing_lie_bi)
                     )
                 }
             }
@@ -683,7 +683,7 @@ fun DownloadListCard(
                         }
                 } else {
                     Text(
-                        stringResource(R.string.home_暂无缓),
+                        stringResource(R.string.home_zan_wu_huan_cun_ren_wu),
                         modifier = Modifier.alpha(0.72f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(330),
@@ -754,7 +754,7 @@ private fun HomeScaffold(
                                     modifier = Modifier
                                         .size(40.dp),
                                     shape = CircleShape,
-                                    contentDescription = stringResource(R.string.user_头像),
+                                    contentDescription = stringResource(R.string.user_tou_xiang),
                                     onClick = {
                                         haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                         goToUserPage()
@@ -772,12 +772,12 @@ private fun HomeScaffold(
                                     }) {
                                         Icon(
                                             Icons.Outlined.AccountCircle,
-                                            contentDescription = stringResource(R.string.common_login)
+                                            contentDescription = stringResource(R.string.common_deng_lu)
                                         )
                                     }
                                     Spacer(Modifier.width(2.dp))
                                     ASIconButton(onClick = goToSetting) {
-                                        Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.common_settings))
+                                        Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.common_she_zhi))
                                     }
                                 }
                             },
@@ -788,7 +788,7 @@ private fun HomeScaffold(
                                 }) {
                                     Icon(
                                         Icons.Outlined.AccountCircle,
-                                        contentDescription = stringResource(R.string.common_login)
+                                        contentDescription = stringResource(R.string.common_deng_lu)
                                     )
                                 }
                             })
@@ -820,7 +820,7 @@ private fun HomeScaffold(
                                         animatedVisibilityScope = animatedContentScope
                                     ),
                                     imageVector = Icons.Outlined.Search,
-                                    contentDescription = stringResource(R.string.home_视频解),
+                                    contentDescription = stringResource(R.string.home_shi_pin_jie_xi),
                                 )
                             }
                         }
@@ -875,7 +875,7 @@ private fun CommonInfoCard(
                         ASIconButton(onClick = onClickClose, modifier = Modifier.size(30.dp)) {
                             Icon(
                                 Icons.Outlined.Close,
-                                contentDescription = stringResource(R.string.common_close)
+                                contentDescription = stringResource(R.string.common_guan_bi)
                             )
                         }
                     }
@@ -922,7 +922,7 @@ private fun LoginInfoBottomDialog(
                     ) {
                         ASAsyncImage(
                             model = loginUserInfoState.data?.face,
-                            contentDescription = stringResource(R.string.user_头像),
+                            contentDescription = stringResource(R.string.user_tou_xiang),
                             modifier = Modifier.size(100.dp),
                             shape = MaterialShapes.Square.toShape()
                         )
@@ -938,7 +938,7 @@ private fun LoginInfoBottomDialog(
                         verticalArrangement = Arrangement.Center
                     ) {
                         ContainedLoadingIndicator(Modifier.size(100.dp))
-                        Text(stringResource(R.string.home_正在加))
+                        Text(stringResource(R.string.home_zheng_zai_jia_zai))
                     }
                 })
             }
