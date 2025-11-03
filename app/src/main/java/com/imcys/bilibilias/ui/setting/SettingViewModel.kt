@@ -2,10 +2,13 @@ package com.imcys.bilibilias.ui.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.app
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.AsCookiesStorage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +43,14 @@ class SettingViewModel(
                     currentMid = mid
                 )
             }
+        }
+    }
+
+    fun updatePrivacyPolicyAgreement(agreed: AppSettings.AgreePrivacyPolicyState) {
+        viewModelScope.launch {
+            appSettingsRepository.updatePrivacyPolicyAgreement(agreed)
+            Firebase.app.isDataCollectionDefaultEnabled =
+                agreed == AppSettings.AgreePrivacyPolicyState.Agreed
         }
     }
 

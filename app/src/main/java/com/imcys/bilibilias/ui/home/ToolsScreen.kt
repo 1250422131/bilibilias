@@ -185,7 +185,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "反馈时需要带上你的设备信息，点击可一键复制设备信息。",
+                            "反馈时需要带上你的设备信息，点击可一键复制。",
                             fontSize = 14.sp,
                             modifier = Modifier.weight(1f)
                         )

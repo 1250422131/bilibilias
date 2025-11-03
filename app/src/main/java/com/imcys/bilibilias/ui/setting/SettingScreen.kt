@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +53,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
+import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
+import com.imcys.bilibilias.ui.PrivacyPolicyDialog
+import com.imcys.bilibilias.ui.PrivacyPolicyRefuseDialog
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTextButton
@@ -88,7 +93,7 @@ fun SettingScreen(
     onToVersionInfo: () -> Unit = {},
     onToSystemExpand: () -> Unit = {},
     onToStorageManagement: () -> Unit = {},
-    onToNamingConvention : () -> Unit = {},
+    onToNamingConvention: () -> Unit = {},
     onLogoutFinish: (Long) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -100,6 +105,8 @@ fun SettingScreen(
     val uiState by vm.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     var showLogoutLoading by remember { mutableStateOf(false) }
+    var showPrivacyPolicy by remember { mutableStateOf(false) }
+    var showPrivacyPolicyRefuseTip by remember { mutableStateOf(false) }
 
 
     SettingScaffold(scrollBehavior, onToBack) {
@@ -303,24 +310,38 @@ fun SettingScreen(
 //            }
 
 
+            item {
+                CategorySettingsItem(
+                    text = "账户"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Android),
+                    text = "设备信息",
+                    descriptionText = "提交反馈时记得带上这个！",
+                    onClick = onToVersionInfo
+                )
+
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Policy),
+                    text = "隐私政策",
+                    descriptionText = "当前状态：${
+                        when (appSettings.agreePrivacyPolicy) {
+                            Agreed -> "已同意"
+                            Refuse -> "已拒绝"
+                            else -> "未选择"
+                        }
+                    }，可在这里拒绝或同意我们的隐私政策。",
+                    onClick = { showPrivacyPolicy = true }
+                )
+            }
+
             if (uiState.isLogin) {
-
-                item {
-                    CategorySettingsItem(
-                        text = "账户"
-                    )
-                }
-
-                item {
-                    BaseSettingsItem(
-                        painter = rememberVectorPainter(Icons.Outlined.Android),
-                        text = "设备信息",
-                        descriptionText = "提交反馈时记得带上这个！",
-                        onClick = onToVersionInfo
-                    )
-
-                }
-
                 item {
                     BaseSettingsItem(
                         painter = rememberVectorPainter(Icons.AutoMirrored.Default.Logout),
@@ -330,6 +351,7 @@ fun SettingScreen(
                     )
                 }
             }
+
 
 //            item {
 //                BaseSettingsItem(
@@ -342,13 +364,39 @@ fun SettingScreen(
 
         }
 
+        // Dialog注册区域
+        PrivacyPolicyDialog(
+            showState = showPrivacyPolicy,
+            onClickConfirm = {
+                showPrivacyPolicy = false
+                vm.updatePrivacyPolicyAgreement(Agreed)
+            },
+            onClickDismiss = {
+                showPrivacyPolicy = false
+                showPrivacyPolicyRefuseTip = true
+                vm.updatePrivacyPolicyAgreement(Refuse)
+            }
+        )
+
+        /**
+         * 拒绝隐私政策后提示弹窗
+         */
+        PrivacyPolicyRefuseDialog(
+            showState = showPrivacyPolicyRefuseTip,
+            onClickConfirm = {
+                showPrivacyPolicyRefuseTip = false
+            }
+        )
+
         // 退出登录对话框
         ASAlertDialog(
             showState = showLogoutDialog,
             title = { Text("退出登录") },
             text = {
                 Column(
-                    Modifier.animateContentSize().fillMaxWidth(),
+                    Modifier
+                        .animateContentSize()
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (showLogoutLoading) {

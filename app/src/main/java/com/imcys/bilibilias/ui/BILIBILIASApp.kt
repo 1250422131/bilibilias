@@ -41,6 +41,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -81,6 +84,7 @@ private fun MainScaffold() {
     val vm = koinViewModel<BILIBILIASAppViewModel>()
     val appSettings by vm.appSettings.collectAsState()
     val uiState by vm.uiState.collectAsState()
+    var showPrivacyPolicyRefuseTip by remember { mutableStateOf(false) }
 
     // 监听注册区域
     LaunchedEffect(Unit) {
@@ -126,6 +130,7 @@ private fun MainScaffold() {
                         },
                         onClickDismiss = {
                             // 拒绝
+                            showPrivacyPolicyRefuseTip = true
                             vm.updatePrivacyPolicyAgreement(Refuse)
                         }
                     )
@@ -142,6 +147,16 @@ private fun MainScaffold() {
         }
         Konfetti(konfettiState)
     }
+
+    /**
+     * 拒绝隐私政策后提示弹窗
+     */
+    PrivacyPolicyRefuseDialog(
+        showState = showPrivacyPolicyRefuseTip,
+        onClickConfirm = {
+            showPrivacyPolicyRefuseTip = false
+        }
+    )
 }
 
 
@@ -333,5 +348,51 @@ fun PrivacyPolicyDialog(
                 Text(text = stringResource(R.string.common_refuse))
             }
         }
+    )
+}
+
+
+/**
+ * 隐私政策拒绝后提示弹窗
+ */
+@Composable
+fun PrivacyPolicyRefuseDialog(
+    showState: Boolean,
+    onClickConfirm: () -> Unit,
+) {
+    ASAlertDialog(
+        showState = showState,
+        title = { Text(text = stringResource(R.string.common_privacy_policy)) },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.PrivacyTip,
+                contentDescription = stringResource(R.string.common_privacy_policy)
+            )
+        },
+        text = {
+            val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
+            AndroidView(
+                factory = { TextView(it) },
+                update = {
+                    val tip = """
+                        尽管您拒绝了BILIBILIAS的隐私政策，但本APP是第三方的B站（哔哩哔哩）视频缓存工具，只要您继续使用本软件，仍需要您遵守哔哩哔哩平台相关政策。
+                        这是因为您在使用本APP过程中仍然在间接的使用哔哩哔哩，您可能还会需要通过登录哔哩哔哩的账号并获取视频内容，这是无法避免的，除非您卸载本软件。
+                        不过此时本软件不会收集您的任何个人隐私数据，您可以放心使用。<br>
+                        具体协议详见：
+                        <a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">哔哩哔哩协议汇总</a>。
+                    """.trimIndent()
+                    it.apply {
+                        it.setTextColor(textColor)
+                        text = HtmlCompat.fromHtml(tip, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                        movementMethod = LinkMovementMethod.getInstance()
+                    }
+                }
+            )
+        },
+        confirmButton = {
+            ASTextButton(onClick = onClickConfirm) {
+                Text(text = "我已知晓")
+            }
+        },
     )
 }
