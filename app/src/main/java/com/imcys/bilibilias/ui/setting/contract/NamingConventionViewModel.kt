@@ -3,6 +3,8 @@ package com.imcys.bilibilias.ui.setting.contract
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
+import com.imcys.bilibilias.datastore.AppSettingsSerializer
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 

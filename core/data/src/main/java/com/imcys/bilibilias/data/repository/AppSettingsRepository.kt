@@ -16,14 +16,6 @@ class AppSettingsRepository(
     private val TAG: String = "AppSettingsRepository"
 
     val appSettingsFlow: Flow<AppSettings> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                Log.e(TAG, "Error reading sort order preferences.", exception)
-                emit(AppSettings.getDefaultInstance())
-            } else {
-                throw exception
-            }
-        }
 
 
     // 同意了隐私政策

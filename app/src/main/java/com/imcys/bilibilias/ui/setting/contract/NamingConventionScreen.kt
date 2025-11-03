@@ -47,6 +47,8 @@ import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.maybeNestedScroll
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 
 @Serializable
 data object NamingConventionRoute : NavKey
@@ -66,6 +68,7 @@ fun NamingConventionScreen(
             modifier = Modifier
                 .maybeNestedScroll(scrollBehavior)
                 .padding(paddingValues),
+            onToBack = onToBack
         )
     }
 }
@@ -80,6 +83,13 @@ fun LazyItemScope.NamingRuleEditor(
     onRestoreDefault: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(ruleValue, selection = TextRange(ruleValue.length))) }
+    LaunchedEffect(ruleValue) {
+        if (ruleValue != textFieldValue.text) {
+            textFieldValue = textFieldValue.copy(text = ruleValue)
+        }
+    }
+
     Surface(
         shape = CardDefaults.shape,
         modifier = modifier
@@ -95,13 +105,26 @@ fun LazyItemScope.NamingRuleEditor(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 placeholderList.forEach { item ->
                     AssistChip(onClick = {
-                        onRuleChange(if (ruleValue.isEmpty()) {
+                        onRuleChange(
+                            if (ruleValue.isEmpty()) {
+                                ruleValue + item.placeholder
+                            } else {
+                                ruleValue + "_" + item.placeholder
+                            }
+                        )
+                        val newText = if (ruleValue.isEmpty()) {
                             ruleValue + item.placeholder
                         } else {
                             ruleValue + "_" + item.placeholder
-                        })
+                        }
+                        // Move the cursor to the end after inserting a placeholder.
+                        textFieldValue = TextFieldValue(newText, selection = TextRange(newText.length))
                     }, label = {
-                        Text("${item.placeholder.replace("{", "").replace("}", "")}：${item.description}")
+                        Text(
+                            "${
+                                item.placeholder.replace("{", "").replace("}", "")
+                            }：${item.description}"
+                        )
                     })
                 }
             }
@@ -111,14 +134,16 @@ fun LazyItemScope.NamingRuleEditor(
                 }
             }
             OutlinedTextField(
-                value = ruleValue,
+                value = textFieldValue,
                 onValueChange = {
-                    onRuleChange(it)
+                    textFieldValue = it
+                    onRuleChange(it.text)
                 },
                 label = { Text("命名规则") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .onFocusChanged {
-                        if (!it.isFocused && ruleValue.isEmpty()){
+                        if (!it.isFocused && ruleValue.isEmpty()) {
                             onRestoreDefault()
                         }
                     }
@@ -139,26 +164,32 @@ fun LazyItemScope.NamingRuleEditor(
 @Composable
 fun NamingConventionContent(
     modifier: Modifier = Modifier,
+    onToBack: () -> Unit = {},
 ) {
     val vm = koinInject<NamingConventionViewModel>()
-    val appSettings by vm.appSettings.collectAsState(initial = AppSettingsSerializer.appSettingsDefault)
     var videoNamingRule by remember {
-        mutableStateOf(appSettings.videoNamingRule)
+        mutableStateOf(AppSettingsSerializer.appSettingsDefault.videoNamingRule)
     }
     var donghuaNamingRule by remember {
-        mutableStateOf(appSettings.bangumiNamingRule)
+        mutableStateOf(AppSettingsSerializer.appSettingsDefault.bangumiNamingRule)
     }
 
     LaunchedEffect(Unit) {
-        if (videoNamingRule.isEmpty()) {
-            videoNamingRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule
-            vm.updateVideoNamingRule(videoNamingRule)
+        vm.appSettings.collect {
+            videoNamingRule = it.videoNamingRule
+            donghuaNamingRule = it.bangumiNamingRule
+
+            if (videoNamingRule.isEmpty()) {
+                videoNamingRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule
+                vm.updateVideoNamingRule(videoNamingRule)
+            }
+            if (donghuaNamingRule.isEmpty()) {
+                donghuaNamingRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule
+                vm.updateDonghuaNamingRule(donghuaNamingRule)
+            }
+
         }
-        if (donghuaNamingRule.isEmpty()) {
-            donghuaNamingRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule
-            vm.updateDonghuaNamingRule(donghuaNamingRule)
-        }
-   }
+    }
 
     LazyColumn(
         modifier = modifier
@@ -193,11 +224,9 @@ fun NamingConventionContent(
                 ruleValue = videoNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule,
                 onRuleChange = {
-                    videoNamingRule = it
                     vm.updateVideoNamingRule(it)
                 },
                 onRestoreDefault = {
-                    videoNamingRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule
                     vm.updateVideoNamingRule(AppSettingsSerializer.appSettingsDefault.videoNamingRule)
                 }
             )
@@ -209,11 +238,9 @@ fun NamingConventionContent(
                 ruleValue = donghuaNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule,
                 onRuleChange = {
-                    donghuaNamingRule = it
                     vm.updateDonghuaNamingRule(it)
                 },
                 onRestoreDefault = {
-                    donghuaNamingRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule
                     vm.updateDonghuaNamingRule(AppSettingsSerializer.appSettingsDefault.bangumiNamingRule)
                 },
                 modifier = Modifier.fillMaxWidth()
