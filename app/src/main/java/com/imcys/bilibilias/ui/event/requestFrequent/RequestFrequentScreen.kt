@@ -80,7 +80,7 @@ fun RequestFrequentContent(url: String, paddingValues: PaddingValues, onToBack: 
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CircularProgressIndicator()
-                    Text(stringResource(R.string.app_qing_qiu_ce_shi_zhong), modifier = Modifier.padding(top = 16.dp))
+                    Text(stringResource(R.string.app_text_11), modifier = Modifier.padding(top = 16.dp))
                 }
             }
 
@@ -90,9 +90,9 @@ fun RequestFrequentContent(url: String, paddingValues: PaddingValues, onToBack: 
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.app_qing_qiu_cheng_gong__ke_y), modifier = Modifier.padding(top = 16.dp))
+                    Text(stringResource(R.string.app_success), modifier = Modifier.padding(top = 16.dp))
                     Button(onClick = onToBack) {
-                        Text(stringResource(R.string.app_fan_hui_ji_xu_shi_yong))
+                        Text(stringResource(R.string.app_back))
                     }
                 }
             }
@@ -117,24 +117,24 @@ private fun DefaultScreen(
         Spacer(Modifier.height(40.dp))
         Icon(
             painter = painterResource(R.drawable.ic_cloud_alert_24px),
-            contentDescription = stringResource(R.string.app_fu_wu_qi_yi_chang_tu_biao),
+            contentDescription = stringResource(R.string.app_icon),
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary
         )
 
         Text(
-            text = stringResource(R.string.app_tu_fa_shi_jian),
+            text = stringResource(R.string.app_text_16),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(top = 20.dp),
         )
         Text(
-            text = stringResource(R.string.app_b_zhan_dang_qian_fu_wu_qi),
+            text = stringResource(R.string.app_continue),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 20.dp),
             textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(R.string.app_dan_qing_zhu_yi__ru_guo_j),
+            text = stringResource(R.string.app_yes_4),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 20.dp),
             textAlign = TextAlign.Center
@@ -147,7 +147,7 @@ private fun DefaultScreen(
                 .fillMaxWidth(),
             shape = CardDefaults.shape,
         ) {
-            Text(text = stringResource(R.string.login_zhong_shi))
+            Text(text = stringResource(R.string.login_text_7))
         }
 
         // 退出APP的按钮
@@ -160,7 +160,7 @@ private fun DefaultScreen(
                 .fillMaxWidth(),
             shape = CardDefaults.shape,
         ) {
-            Text(text = stringResource(R.string.app_tui_chu_ying_yong))
+            Text(text = stringResource(R.string.app_exit_1))
         }
 
     }

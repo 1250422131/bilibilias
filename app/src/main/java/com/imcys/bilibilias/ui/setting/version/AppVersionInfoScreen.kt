@@ -91,27 +91,27 @@ fun VersionInfoContent(modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        InfoRow(label = stringResource(R.string.version_app_ban_ben), value = deviceInfo.appVersion)
-        InfoRow(label = stringResource(R.string.version_xi_tong_ban_ben), value = deviceInfo.systemVersion)
-        InfoRow(label = stringResource(R.string.version_she_bei_xing_hao), value = deviceInfo.model)
-        InfoRow(label = stringResource(R.string.version_shi_chang_xing_hao), value = deviceInfo.marketModel)
-        InfoRow(label = stringResource(R.string.version_chang_shang), value = deviceInfo.manufacturer)
-        InfoRow(label = stringResource(R.string.version_pin_pai), value = deviceInfo.brandName)
-        InfoRow(label = stringResource(R.string.version_chang_shang_xi_tong_ming), value = deviceInfo.osName)
-        InfoRow(label = stringResource(R.string.version_chang_shang_xi_tong_ban_b), value = deviceInfo.osVersionName)
+        InfoRow(label = stringResource(R.string.version_version), value = deviceInfo.appVersion)
+        InfoRow(label = stringResource(R.string.version_system_2), value = deviceInfo.systemVersion)
+        InfoRow(label = stringResource(R.string.version_text_3), value = deviceInfo.model)
+        InfoRow(label = stringResource(R.string.version_text_4), value = deviceInfo.marketModel)
+        InfoRow(label = stringResource(R.string.version_text), value = deviceInfo.manufacturer)
+        InfoRow(label = stringResource(R.string.version_text_2), value = deviceInfo.brandName)
+        InfoRow(label = stringResource(R.string.version_system_1), value = deviceInfo.osName)
+        InfoRow(label = stringResource(R.string.version_system), value = deviceInfo.osVersionName)
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 val clipboard =
                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(stringResource(R.string.tools_ban_ben_xin_xi), copyText)
+                val clip = ClipData.newPlainText(stringResource(R.string.tools_version_info), copyText)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, stringResource(R.string.tools_yi_fu_zhi_dao_jian_tie_ba), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.tools_copied_to_clipboard), Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.version_fu_zhi_quan_bu_xin_xi))
+            Text(stringResource(R.string.version_copy))
         }
     }
 }
@@ -123,7 +123,7 @@ private fun InfoRow(label: String, value: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.version_label),
+            text = stringResource(R.string.version_text_1),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f),
             fontSize = 16.sp
@@ -154,7 +154,7 @@ private fun VersionInfoScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.tools_ban_ben_xin_xi)) },
+                title = { Text(text = stringResource(R.string.tools_version_info)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

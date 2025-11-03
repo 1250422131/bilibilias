@@ -146,7 +146,7 @@ fun SelectVideoListDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text(stringResource(R.string.frame_xuan_ze_dao_ru_shi_pin)) },
+        title = { Text(stringResource(R.string.frame_select_3)) },
         text = {
             LazyColumn(
                 modifier = Modifier.sizeIn(maxHeight = 600.dp),
@@ -179,7 +179,7 @@ fun SelectVideoListDialog(
                                     modifier = Modifier
                                         .fillMaxSize(),
                                     shape = CardDefaults.shape,
-                                    contentDescription = stringResource(R.string.download_feng_mian_tu_pian)
+                                    contentDescription = stringResource(R.string.download_cover_image)
                                 )
                             }
 
@@ -213,7 +213,7 @@ fun SelectVideoListDialog(
                 }
             }
         }, confirmButton = {
-            Text(stringResource(R.string.common_qu_xiao), Modifier.clickable {
+            Text(stringResource(R.string.common_cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -228,7 +228,7 @@ fun SelectVideoModelDialog(
     val haptics = LocalHapticFeedback.current
     ASAlertDialog(
         showState = showSelectVideoModel, clickBlankDismiss = true,
-        title = { Text(stringResource(R.string.frame_xuan_ze_dao_ru_shi_pin_fa)) },
+        title = { Text(stringResource(R.string.frame_select_4)) },
         text = {
             Column {
                 Surface(
@@ -249,7 +249,7 @@ fun SelectVideoModelDialog(
                     ) {
                         Icon(Icons.Outlined.DownloadDone, contentDescription = null)
                         Spacer(Modifier.width(10.dp))
-                        Text(stringResource(R.string.frame_cong_yi_xia_zai_dao_ru))
+                        Text(stringResource(R.string.frame_download))
                     }
                 }
 //                Spacer(Modifier.height(5.dp))
@@ -275,7 +275,7 @@ fun SelectVideoModelDialog(
 
             }
         }, confirmButton = {
-            Text(stringResource(R.string.common_qu_xiao), Modifier.clickable {
+            Text(stringResource(R.string.common_cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -298,7 +298,7 @@ private fun FrameExtractorContent(
 
         when (val state = uiState) {
             UIState.Default -> ASWarringTip {
-                Text(stringResource(R.string.frame_qing_zai_you_shang_jiao_x))
+                Text(stringResource(R.string.frame_select_1))
             }
 
             is UIState.ImportSuccess -> ImportSuccessScreen(state, vm)
@@ -314,7 +314,7 @@ private fun FrameExtractorContent(
                     )
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        stringResource(R.string.frame_zheng_zai_dao_ru_shi_pin),
+                        stringResource(R.string.frame_please_wait),
                         fontSize = 16.sp
                     )
                 }
@@ -332,7 +332,7 @@ private fun FrameExtractorContent(
                     )
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        stringResource(R.string.frame_zheng_zai_dao_chu_zhong),
+                        stringResource(R.string.frame_exit),
                         fontSize = 16.sp
                     )
                 }
@@ -402,7 +402,7 @@ fun ExportFpsButton(onExport: (String) -> Unit = {}) {
             onClick = { showExportDialog = true }
         ) {
             Text(
-                stringResource(R.string.frame_dao_chu_zhu_zhen_tu_pian),
+                stringResource(R.string.frame_image),
                 fontSize = 16.sp
             )
         }
@@ -436,19 +436,19 @@ fun ExportDialog(
 
     ASAlertDialog(
         showState = showExportDialog,
-        title = { Text(stringResource(R.string.frame_xuan_ze_dao_chu_wei_zhi)) },
+        title = { Text(stringResource(R.string.frame_select_2)) },
         text = {
-            Text(stringResource(R.string.frame_qing_xuan_ze_dao_chu_zhu))
+            Text(stringResource(R.string.frame_select))
         },
         confirmButton = {
             ASTextButton(onClick = { launcher.launch(null) }) {
-                Text(stringResource(R.string.frame_xuan_ze_wei_zhi))
+                Text(stringResource(R.string.frame_select_5))
             }
         },
         onDismiss = onDismiss,
         dismissButton = {
             ASTextButton(onClick = { onDismiss?.invoke() }) {
-                Text(stringResource(R.string.common_qu_xiao))
+                Text(stringResource(R.string.common_cancel))
             }
         }
     )
@@ -471,7 +471,7 @@ fun SelectFpsItem(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(stringResource(R.string.frame_zui_da_totalfps_zhen__mia))
+        Text(stringResource(R.string.frame_text_1))
         Spacer(Modifier.height(10.dp))
         Surface(shape = CardDefaults.shape) {
             Row(
@@ -530,7 +530,7 @@ fun SelectFpsItem(
                         ) {
                             innerTextField()
                         }
-                        Text(stringResource(R.string.frame_zhen__miao), modifier = Modifier.padding(horizontal = 6.dp))
+                        Text(stringResource(R.string.frame_text), modifier = Modifier.padding(horizontal = 6.dp))
                     }
                 }
 
@@ -571,7 +571,7 @@ private fun FrameExtractorScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(text = stringResource(R.string.tools_zhu_zhen_ti_qu))
+                        Text(text = stringResource(R.string.tools_frame_extraction))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -587,7 +587,7 @@ private fun FrameExtractorScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = stringResource(R.string.login_cao_zuo)
+                                contentDescription = stringResource(R.string.login_text_2)
                             )
                         }
                         DropdownMenu(
@@ -595,7 +595,7 @@ private fun FrameExtractorScaffold(
                             onDismissRequest = { expandedMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.frame_da_kai_shi_pin)) },
+                                text = { Text(stringResource(R.string.frame_video)) },
                                 onClick = {
                                     expandedMenu = false
                                     onShowInputVideo.invoke()

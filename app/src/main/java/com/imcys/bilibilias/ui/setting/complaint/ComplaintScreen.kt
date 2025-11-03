@@ -53,31 +53,31 @@ fun ComplaintScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
             Text(
-                text = stringResource(R.string.complaint_up_zhu_quan_yi_bao_hu_ji),
+                text = stringResource(R.string.complaint_continue),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(24.dp))
 
             ComplaintOptionCard(
-                title = stringResource(R.string.complaint_fang_an_yi__jin_zhi_huan),
-                description = stringResource(R.string.complaint_bu_neng_rang_qi_ta_yong_h),
-                buttonText = stringResource(R.string.complaint_cha_kan_xiang_qing),
+                title = stringResource(R.string.complaint_cache),
+                description = stringResource(R.string.complaint_yes),
+                buttonText = stringResource(R.string.complaint_view_details),
                 onClick = { }
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             ComplaintOptionCard(
-                title = stringResource(R.string.complaint_fang_an_er__zhui_hui_yi_h),
-                description = stringResource(R.string.complaint_zhui_hui_yi_huan_cun_shi),
-                buttonText = stringResource(R.string.complaint_cha_kan_xiang_qing),
+                title = stringResource(R.string.complaint_video),
+                description = stringResource(R.string.complaint_delete_1),
+                buttonText = stringResource(R.string.complaint_view_details),
                 onClick = {  }
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             ComplaintOptionCard(
-                title = stringResource(R.string.complaint_fang_an_san__jin_ji_xia_j),
-                description = stringResource(R.string.complaint_li_ji_ting_zhi_bilibilias),
-                buttonText = stringResource(R.string.complaint_cha_kan_xiang_qing),
+                title = stringResource(R.string.complaint_text),
+                description = stringResource(R.string.complaint_delete),
+                buttonText = stringResource(R.string.complaint_view_details),
                 onClick = {  }
             )
 
@@ -104,7 +104,7 @@ private fun ComplaintScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.complaint_tou_su))
+                    Text(text = stringResource(R.string.complaint_text_1))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

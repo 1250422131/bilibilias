@@ -49,14 +49,14 @@ fun ASEpisodeTitle(
                 AppSettings.EpisodeListMode.EpisodeListMode_Grid -> {
                     Icon(
                         Icons.Outlined.Apps,
-                        contentDescription = stringResource(R.string.app_biao_ge_xian_shi),
+                        contentDescription = stringResource(R.string.app_text_3),
                     )
                 }
 
                 AppSettings.EpisodeListMode.EpisodeListMode_List -> {
                     Icon(
                         Icons.AutoMirrored.Outlined.List,
-                        contentDescription = stringResource(R.string.app_lie_biao_xian_shi),
+                        contentDescription = stringResource(R.string.app_list_display),
                     )
                 }
             }

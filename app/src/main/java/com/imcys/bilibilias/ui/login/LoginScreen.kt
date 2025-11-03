@@ -72,7 +72,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     style = BILIBILIASTopAppBarStyle.Small,
                     scrollBehavior = scrollBehavior,
                     title = {
-                        Text(stringResource(R.string.common_deng_lu))
+                        Text(stringResource(R.string.common_login))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -104,7 +104,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text(stringResource(R.string.login_deng_lu_hou_ni_ke_yi), fontSize = 14.sp)
+                                Text(stringResource(R.string.login_login_benefits), fontSize = 14.sp)
                                 Text(
                                     """
                                 ·支持更高清、更高码率的视频
@@ -129,13 +129,13 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text(stringResource(R.string.login_deng_lu_ji_dai_biao_ni_to), fontSize = 14.sp)
+                                Text(stringResource(R.string.login_login_agreement), fontSize = 14.sp)
                                 Text(
-                                    stringResource(R.string.login__bi_li_bi_li_zhang_hu_he), fontSize = 14.sp,
+                                    stringResource(R.string.login_text), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    stringResource(R.string.login_bilibilias_yin_si_xie_yi),
+                                    stringResource(R.string.login_privacy_agreement),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.clickable {
@@ -143,7 +143,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     }
                                 )
                                 Text(
-                                    stringResource(R.string.login__shi_yong_zao_cheng_de_yi), fontSize = 14.sp,
+                                    stringResource(R.string.login_text_1), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -164,7 +164,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
                                 Text(
-                                    stringResource(R.string.login_te_bie_de_n_ben_cheng_xu),
+                                    stringResource(R.string.login_unauthorized_disclaimer),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onTertiaryContainer
                                 )
@@ -181,7 +181,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     onClick = { goToQRCodeLogin.invoke() }
                 ) {
                     Text(
-                        stringResource(R.string.login_b_zhan__sao_ma_deng_lu),
+                        stringResource(R.string.login_bilibili_qr_login),
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         fontSize = 16.sp
                     )

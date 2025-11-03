@@ -64,7 +64,7 @@ fun AboutScreen(aboutRouter: AboutRouter = AboutRouter, onToBack: () -> Unit = {
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.setting_guan_yu)) },
+                title = { Text(text = stringResource(R.string.setting_about)) },
                 navigationIcon = {
                     AsBackIconButton { onToBack.invoke() }
                 },
@@ -126,7 +126,7 @@ fun ButtonArea(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_qq_channel_2px),
-                contentDescription = stringResource(R.string.about_qq_pin_dao),
+                contentDescription = stringResource(R.string.about_qq_channel),
                 modifier = Modifier
                     .padding(12.dp)
                     .size(28.dp),
@@ -143,7 +143,7 @@ fun ButtonArea(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_qq_24px),
-                contentDescription = stringResource(R.string.about_qq_qun),
+                contentDescription = stringResource(R.string.about_qq_group),
                 modifier = Modifier
                     .padding(12.dp)
                     .size(28.dp),
@@ -170,7 +170,7 @@ fun TitleArea(
         )
 
         Text(
-            text = stringResource(R.string.about_yi_kuan_jian_dan_de_shi_p),
+            text = stringResource(R.string.about_simple_video_cache_tool),
             textAlign = TextAlign.Center,
             fontSize = 17.sp
         )

@@ -149,13 +149,13 @@ class HomeViewModel(
                             fix = it.gxnotice,
                             remark = "",
                             forcedUpdate = true,
-                            publishDateTime = stringResource(R.string.home_zui_jin)
+                            publishDateTime = stringResource(R.string.home_recent)
                         )
 
                         _bulletinInfo.value = BulletinConfigInfo(
                             id = 20,
                             content = it.notice,
-                            publishDateTime = stringResource(R.string.home_zui_jin)
+                            publishDateTime = stringResource(R.string.home_recent)
                         )
                     }
             }

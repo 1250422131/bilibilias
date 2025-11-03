@@ -181,7 +181,7 @@ fun AnalysisScreen(
                                     animatedVisibilityScope = animatedContentScope
                                 ),
                                 imageVector = Icons.Outlined.Search,
-                                contentDescription = stringResource(R.string.home_shi_pin_jie_xi),
+                                contentDescription = stringResource(R.string.home_video),
                             )
                         }
                     )
@@ -218,7 +218,7 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
     if (show) {
         AlertDialog(
             onDismissRequest = { },
-            title = { Text(text = stringResource(R.string.analysis_chuang_jian_xia_zai_ren_w)) },
+            title = { Text(text = stringResource(R.string.analysis_create_download_task)) },
             text = {
                 Column(
                     Modifier
@@ -228,7 +228,7 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ContainedLoadingIndicator()
-                    Text(text = stringResource(R.string.analysis_zheng_zai_chuang_jian_ren))
+                    Text(text = stringResource(R.string.analysis_creating_task_notice))
                 }
             },
             confirmButton = {},
@@ -454,7 +454,7 @@ fun CheckInputASTextTip() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                stringResource(R.string.analysis_shu_ru_de_shi_pin_bu_cun),
+                stringResource(R.string.analysis_video_not_found),
                 fontSize = 14.sp,
             )
         }
@@ -502,7 +502,7 @@ fun AdvancedSetting(
                     .animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.setting_huan_cun_pei_zhi))
+                Text(stringResource(R.string.setting_cache_1))
                 Column {
                     ExposedDropdownMenuBox(
                         expanded = downloadModeExpanded,
@@ -524,7 +524,7 @@ fun AdvancedSetting(
                             },
                             readOnly = true,
                             singleLine = false,
-                            label = { Text(stringResource(R.string.analysis_xuan_ze_huan_cun_mo_shi), fontSize = 12.sp) },
+                            label = { Text(stringResource(R.string.analysis_select_cache_mode), fontSize = 12.sp) },
                             trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -571,7 +571,7 @@ fun AdvancedSetting(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                stringResource(R.string.analysis_zhu_yi__ru_guo_xuan_zhong),
+                                stringResource(R.string.analysis_separate_av_notice),
                                 fontSize = 14.sp,
                             )
                         }
@@ -579,7 +579,7 @@ fun AdvancedSetting(
                 }
 
                 Column {
-                    Text(stringResource(R.string.analysis_xia_zai_nei_rong))
+                    Text(stringResource(R.string.analysis_download_content))
                     ExtraCache(
                         isSelectSingleModel,
                         downloadInfo,
@@ -621,14 +621,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text(stringResource(R.string.analysis_liu_mei_ti_xia_zai), fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_stream_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadMedia == true,
             leadingIcon = {
                 if (downloadInfo?.downloadMedia == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = stringResource(R.string.analysis_yi_xuan_zhong_tu_biao),
+                        contentDescription = stringResource(R.string.analysis_selected_icon),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -642,14 +642,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text(stringResource(R.string.analysis_feng_mian_xia_zai), fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_cover_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadCover == true,
             leadingIcon = {
                 if (downloadInfo?.downloadCover == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = stringResource(R.string.analysis_yi_xuan_zhong_tu_biao),
+                        contentDescription = stringResource(R.string.analysis_selected_icon),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -662,14 +662,14 @@ fun ExtraCache(
         if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty() && isSelectSingleModel) {
             FilterChip(
                 label = {
-                    Text(stringResource(R.string.analysis_zi_mu_xia_zai), fontSize = 12.sp)
+                    Text(stringResource(R.string.analysis_subtitle_download), fontSize = 12.sp)
                 },
                 selected = selectACCDownload,
                 leadingIcon = {
                     if (selectACCDownload) {
                         Icon(
                             Icons.Outlined.Check,
-                            contentDescription = stringResource(R.string.analysis_yi_xuan_zhong_tu_biao),
+                            contentDescription = stringResource(R.string.analysis_selected_icon),
                             modifier = Modifier.size(15.dp)
                         )
                     }
@@ -686,14 +686,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text(stringResource(R.string.analysis_dan_mu_xia_zai), fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_danmaku_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadDanmaku == true,
             leadingIcon = {
                 if (downloadInfo?.downloadDanmaku == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = stringResource(R.string.analysis_yi_xuan_zhong_tu_biao),
+                        contentDescription = stringResource(R.string.analysis_selected_icon),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -705,7 +705,7 @@ fun ExtraCache(
     }
 
     if (selectACCDownload && isSelectSingleModel) {
-        Text(stringResource(R.string.analysis_zi_mu_xia_zai))
+        Text(stringResource(R.string.analysis_subtitle_download))
         Spacer(Modifier.height(5.dp))
         SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)
     }
@@ -743,7 +743,7 @@ fun SelectACCCard(
                     onValueChange = {},
                     readOnly = true,
                     singleLine = false,
-                    label = { Text(stringResource(R.string.analysis_xuan_ze_zi_mu_wen_jian_le), fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.analysis_select_subtitle_type), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
@@ -912,7 +912,7 @@ fun BILIDonghuaCard(
                                     "${episodeInfo?.cover?.toHttps()}",
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                contentDescription = stringResource(R.string.app_shi_pin_feng_mian),
+                                contentDescription = stringResource(R.string.app_video_cover),
                                 shape = CardDefaults.shape
                             )
 
@@ -924,7 +924,7 @@ fun BILIDonghuaCard(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = CardDefaults.shape
                             ) {
-                                Text(stringResource(R.string.analysis_fan_ju), Modifier.padding(5.dp))
+                                Text(stringResource(R.string.analysis_bangumi), Modifier.padding(5.dp))
                             }
 
 
@@ -954,16 +954,16 @@ fun BILIDonghuaCard(
                                 if (picSaving) {
                                     CircularWavyProgressIndicator()
                                 } else {
-                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.analysis_xia_zai_feng_mian))
+                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.analysis_download))
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text(stringResource(R.string.analysis_xia_zai_feng_mian))
+                                    Text(stringResource(R.string.analysis_download))
                                 }
                             }
                         }
                         Spacer(Modifier.height(16.dp))
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: stringResource(R.string.analysis_shi_pin_biao_ti)
+                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: stringResource(R.string.analysis_video_title)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -973,7 +973,7 @@ fun BILIDonghuaCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, stringResource(R.string.analysis_shi_pin_biao_ti))
+                                        title.copyText(context, stringResource(R.string.analysis_video_title))
                                     }
                                 ),
                         )
@@ -991,12 +991,12 @@ fun BILIDonghuaCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                stringResource(R.string.analysis_ni_dang_qian_hai_wei_bang),
+                                stringResource(R.string.analysis_account_not_bound),
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
                             ASIconButton(onClick = onToLogin) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_qu_deng_lu))
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_go_login))
                             }
                         }
                     }
@@ -1069,7 +1069,7 @@ fun BILIVideoCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .shimmer(videoInfo.status == ApiStatus.LOADING),
-                                contentDescription = stringResource(R.string.app_shi_pin_feng_mian),
+                                contentDescription = stringResource(R.string.app_video_cover),
                                 shape = CardDefaults.shape
                             )
 
@@ -1081,7 +1081,7 @@ fun BILIVideoCard(
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shape = CardDefaults.shape
                                 ) {
-                                    Text(stringResource(R.string.analysis_chong_dian_shi_pin), Modifier.padding(5.dp))
+                                    Text(stringResource(R.string.analysis_charged_video), Modifier.padding(5.dp))
                                 }
                             }
 
@@ -1111,9 +1111,9 @@ fun BILIVideoCard(
                                 if (picSaving) {
                                     CircularWavyProgressIndicator()
                                 } else {
-                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.analysis_xia_zai_feng_mian))
+                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.analysis_download))
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text(stringResource(R.string.analysis_xia_zai_feng_mian))
+                                    Text(stringResource(R.string.analysis_download))
                                 }
                             }
                         }
@@ -1122,7 +1122,7 @@ fun BILIVideoCard(
 
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                videoInfo.data?.title ?: stringResource(R.string.analysis_shi_pin_biao_ti)
+                                videoInfo.data?.title ?: stringResource(R.string.analysis_video_title)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -1131,7 +1131,7 @@ fun BILIVideoCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, stringResource(R.string.analysis_shi_pin_biao_ti))
+                                        title.copyText(context, stringResource(R.string.analysis_video_title))
                                     }
                                 ),
                         )
@@ -1151,7 +1151,7 @@ fun BILIVideoCard(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                stringResource(R.string.analysis_dang_qian_shi_pin_shu_cho),
+                                stringResource(R.string.analysis_charged_video_tip),
                                 fontSize = 14.sp,
                             )
                         }
@@ -1171,12 +1171,12 @@ fun BILIVideoCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                stringResource(R.string.analysis_ni_dang_qian_hai_wei_bang),
+                                stringResource(R.string.analysis_account_not_bound),
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
                             ASIconButton(onClick = onToLogin) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_qu_deng_lu))
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.analysis_go_login))
                             }
                         }
                     }
@@ -1214,7 +1214,7 @@ fun AuthorInfoContent(
                 ) {
                     ASAsyncImage(
                         model = user.face,
-                        contentDescription = stringResource(R.string.analysis_up_tou_xiang),
+                        contentDescription = stringResource(R.string.analysis_uploader_avatar),
                         shape = CircleShape,
                         modifier = Modifier
                             .size(22.dp)
@@ -1269,7 +1269,7 @@ fun AnalysisScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(stringResource(R.string.analysis_jie_xi_shi_pin))
+                        Text(stringResource(R.string.analysis_parse_video))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -1285,7 +1285,7 @@ fun AnalysisScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.Info,
-                                contentDescription = stringResource(R.string.analysis_wen_ti_ti_shi)
+                                contentDescription = stringResource(R.string.analysis_problem_tip)
                             )
                         }
                     }
@@ -1318,7 +1318,7 @@ fun AnalysisScaffold(
                         }
                     },
                 ) {
-                    Icon(Icons.Outlined.Download, stringResource(R.string.analysis_xia_zai_shi_pin))
+                    Icon(Icons.Outlined.Download, stringResource(R.string.analysis_download_video))
                 }
             }
         }
@@ -1366,12 +1366,12 @@ fun WritePermissionRequestTipDialog(
         if (allGranted) {
             onRequest()
         } else {
-            Toast.makeText(context, stringResource(R.string.analysis_quan_xian_wei_bei_shou_yu), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, stringResource(R.string.analysis_permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
     PermissionRequestTipDialog(
         show = true,
-        message = stringResource(R.string.analysis_xu_yao_cun_chu_quan_xian),
+        message = stringResource(R.string.analysis_storage_permission_needed),
         onConfirm = {
             launcher.launch(permissionsToRequest)
             onRequest()
@@ -1386,7 +1386,7 @@ fun WritePermissionRequestTipDialog(
 fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.analysis_xia_zai_ti_shi)) },
+        title = { Text(stringResource(R.string.analysis_download_tip)) },
         text = {
             Text(
                 """
@@ -1397,7 +1397,7 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
         },
         confirmButton = {
             ASTextButton(onClick = onDownload) {
-                Text(stringResource(R.string.analysis_liao_jie))
+                Text(stringResource(R.string.analysis_learn_more))
             }
         },
     )

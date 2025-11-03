@@ -236,7 +236,7 @@ class DownloadManager(
                             ccUrlInfo.subtitleUrl ?: ""
                         }
 
-                        val languageName = ccUrlInfo?.lan ?: stringResource(R.string.download_wei_zhi_yu_yan)
+                        val languageName = ccUrlInfo?.lan ?: stringResource(R.string.download_unknown)
 
                         // 协议头
                         val finalUrl = if (!url.contains("https")) "https:" else ""
@@ -263,7 +263,7 @@ class DownloadManager(
             CCFileType.ASS -> {
                 CCJsonToAss.jsonToAss(
                     biliVideoCCInfo,
-                    title = videoInfo?.title ?: stringResource(R.string.download_zi_mu),
+                    title = videoInfo?.title ?: stringResource(R.string.download_subtitle),
                     playResX = videoInfo?.dimension?.width?.toString() ?: "1920",
                     playResY = videoInfo?.dimension?.height?.toString() ?: "1080"
                 )
@@ -596,7 +596,7 @@ class DownloadManager(
     ): Boolean {
         if (task.downloadSubTasks.isEmpty()) return false
 
-        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_xia_zai_jie_duan))
+        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_download_phase))
 
         return if (task.downloadSubTasks.size >= 2) {
             downloadMultipleSubTasks(task, progressCallback)
@@ -787,7 +787,7 @@ class DownloadManager(
         downloadService: DownloadService,
     ) {
         updateTaskStage(task, DownloadStage.MERGE)
-        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_he_bing_jie_duan))
+        val progressCallback = createProgressCallback(task, downloadService, stringResource(R.string.download_merge_phase))
 
         val mergeResult = FFmpegManger.mergeVideoAndAudioSuspend(
             task.downloadSubTasks[0].savePath,
@@ -912,7 +912,7 @@ class DownloadManager(
             stage,
             (progress * 100).toInt()
         )
-        val state = if (stage == stringResource(R.string.download_he_bing_jie_duan)) DownloadState.MERGING else DownloadState.DOWNLOADING
+        val state = if (stage == stringResource(R.string.download_merge_phase)) DownloadState.MERGING else DownloadState.DOWNLOADING
         updateTaskState(task.copy(progress = progress), state)
     }
 
@@ -970,7 +970,7 @@ class DownloadManager(
                 "https://www.bilibili.com/video/${realTask?.platformId}"
             }
 
-            DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_gou_zao_refererurl_shi_ba))
+            DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_failure))
         }
     }
 
@@ -1252,7 +1252,7 @@ class DownloadManager(
                     "${realTask?.platformId}_pic.${type}"
                 }
 
-                DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_feng_mian_suo_shu_ren_wu))
+                DownloadTaskType.BILI_VIDEO_SECTION -> error(stringResource(R.string.download_cover))
             }
             downloadImageToAlbum(task.cover?.toHttps() ?: "", fileName, "BILIBILIAS")
         }
@@ -1299,7 +1299,7 @@ class DownloadManager(
                 ).last()
             }
 
-            else -> throw IllegalStateException(stringResource(R.string.download_huan_cun_lei_xing_bu_zhi))
+            else -> throw IllegalStateException(stringResource(R.string.download_type))
         }
 
         if (videoInfo.status != ApiStatus.SUCCESS) {
@@ -1378,7 +1378,7 @@ class DownloadManager(
                 )
             }
 
-            else -> throw IllegalStateException(stringResource(R.string.download_bu_zhi_chi_de_xia_zai_shu))
+            else -> throw IllegalStateException(stringResource(R.string.download_download))
         }
 
         delay(500L) // 避免请求过快
@@ -1434,7 +1434,7 @@ class DownloadManager(
             it.id == downloadViewInfo.selectVideoQualityId
         }.firstOrNull {
             it.codecs.contains(downloadViewInfo.selectVideoCode)
-        } ?: videos.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_wu_ke_yong_shi_pin_liu))
+        } ?: videos.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_none_1))
     }
 
     /**
@@ -1450,7 +1450,7 @@ class DownloadManager(
             it.id == downloadViewInfo.selectAudioQualityId
         } ?: dash.flac?.audio?.takeIf {
             it.id == downloadViewInfo.selectAudioQualityId
-        } ?: dash.audio.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_wu_ke_yong_yin_pin_liu))
+        } ?: dash.audio.firstOrNull() ?: throw IllegalStateException(stringResource(R.string.download_none_2))
     }
 
     private fun createSubTask(

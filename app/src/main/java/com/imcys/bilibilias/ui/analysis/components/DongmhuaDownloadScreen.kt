@@ -113,11 +113,11 @@ fun DongmhuaDownloadScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.download_huan_cun_qing_xiang))
+                Text(stringResource(R.string.download_cache))
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.download_shuo_ming),
+                    contentDescription = stringResource(R.string.download_text_4),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {
@@ -171,7 +171,7 @@ fun DongmhuaDownloadScreen(
                         ) {
                             Column {
                                 ASEpisodeTitle(
-                                    stringResource(R.string.download_xuan_ze_huan_cun_ju_ji),
+                                    stringResource(R.string.download_select_3),
                                     episodeListMode = episodeListMode,
                                     onUpdateEpisodeListMode = onUpdateEpisodeListMode
                                 )
@@ -187,7 +187,7 @@ fun DongmhuaDownloadScreen(
                                     episodeTitle = { it.longTitle.ifBlank { it.title } },
                                     episodeListMode = episodeListMode,
                                     sectionTitle = { it.seasonTitle },
-                                    episodeEnabled = { !(!isVip && it.badge == stringResource(R.string.analysis_hui_yuan)) },
+                                    episodeEnabled = { !(!isVip && it.badge == stringResource(R.string.analysis_vip)) },
                                     episodeContentContainer = { it, content ->
                                         Box {
                                             content()
@@ -238,7 +238,7 @@ fun DongmhuaDownloadScreen(
                                     .shimmer(donghuaViewInfo.status != ApiStatus.SUCCESS)
                             ) {
                                 ASEpisodeTitle(
-                                    stringResource(R.string.download_xuan_ze_huan_cun_yu_gao),
+                                    stringResource(R.string.download_select_4),
                                     episodeListMode,
                                     onUpdateEpisodeListMode = onUpdateEpisodeListMode
                                 )

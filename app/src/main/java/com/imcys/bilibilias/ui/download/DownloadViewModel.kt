@@ -73,7 +73,7 @@ class DownloadViewModel(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, stringResource(R.string.download_wu_fa_da_kai_ci_wen_jian), Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_none), Toast.LENGTH_SHORT)
                     .show()
             }
             return
@@ -81,7 +81,7 @@ class DownloadViewModel(
             // 普通文件路径
             val file = File(savePath)
             if (!file.exists()) {
-                Toast.makeText(context, stringResource(R.string.download_wen_jian_bu_cun_zai__ke_n), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.download_delete_5), Toast.LENGTH_SHORT).show()
                 return
             }
             val intent = Intent(Intent.ACTION_VIEW)
@@ -92,7 +92,7 @@ class DownloadViewModel(
                 null
             }
             if (fileUri == null) {
-                Toast.makeText(context, stringResource(R.string.download_wu_fa_da_kai_ci_wen_jian), Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_none), Toast.LENGTH_SHORT)
                     .show()
                 return
             }
@@ -102,7 +102,7 @@ class DownloadViewModel(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, stringResource(R.string.download_wu_fa_da_kai_ci_wen_jian), Toast.LENGTH_SHORT)
+                Toast.makeText(context, stringResource(R.string.download_none), Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -153,9 +153,9 @@ class DownloadViewModel(
             downloadTaskRepository.deleteSegment(segment.segmentId)
 
             val message = when {
-                fileNotExist -> stringResource(R.string.download_wen_jian_bu_cun_zai)
-                deleteSuccess -> stringResource(R.string.download_shan_chu_cheng_gong)
-                else -> stringResource(R.string.download_shan_chu_shi_bai__wen_jia)
+                fileNotExist -> stringResource(R.string.download_text_6)
+                deleteSuccess -> stringResource(R.string.download_delete_1)
+                else -> stringResource(R.string.download_delete_2)
             }
 
             launch(Dispatchers.Main) {

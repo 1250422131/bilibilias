@@ -78,8 +78,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = stringResource(R.string.app_xin_ban_ben_yi_jing_xia_z),
-                    actionLabel = stringResource(R.string.common_geng_xin),
+                    message = stringResource(R.string.app_new_version_downloaded),
+                    actionLabel = stringResource(R.string.common_update),
                     duration = SnackbarDuration.Short
                 )
                 when (result) {
@@ -128,17 +128,17 @@ class MainActivity : ComponentActivity() {
         if (value) {
             AlertDialog(
                 onDismissRequest = {},
-                title = { Text(stringResource(R.string.app_tiao_guo_geng_xin)) },
-                text = { Text(stringResource(R.string.app_ru_guo_nin_zan_shi_bu_xia)) },
+                title = { Text(stringResource(R.string.app_skip_update)) },
+                text = { Text(stringResource(R.string.app_update_1)) },
                 confirmButton = {
                     ASTextButton(onClick = onConfirm) {
-                        Text(stringResource(R.string.app_tiao_guo_ci_ban_ben))
+                        Text(stringResource(R.string.app_skip_this_version))
                     }
 
                 },
                 dismissButton = {
                     ASTextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.app_xia_ci_zai_shuo))
+                        Text(stringResource(R.string.app_remind_later))
                     }
                 }
             )

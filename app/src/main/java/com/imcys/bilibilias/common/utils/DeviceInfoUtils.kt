@@ -71,26 +71,26 @@ object DeviceInfoUtils {
         } catch (e: Exception) {
             null
         }
-        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_wei_zhi)
-        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_wei_zhi)
-        val model = Build.MODEL ?: stringResource(R.string.analysis_wei_zhi)
-        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_wei_zhi)
-        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_wei_zhi)
-        val brand = Build.BRAND ?: stringResource(R.string.analysis_wei_zhi)
+        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_unknown)
+        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_unknown)
+        val model = Build.MODEL ?: stringResource(R.string.analysis_unknown)
+        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_unknown)
+        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_unknown)
+        val brand = Build.BRAND ?: stringResource(R.string.analysis_unknown)
         val brandName = try {
             getBrandName() ?: Build.DEVICE
         } catch (_: Throwable) {
             Build.DEVICE
         }
         val osName = try {
-            getOsName() ?: stringResource(R.string.analysis_wei_zhi)
+            getOsName() ?: stringResource(R.string.analysis_unknown)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_wei_zhi)
+            stringResource(R.string.analysis_unknown)
         }
         val osVersionName = try {
-            getOsVersionName() ?: stringResource(R.string.analysis_wei_zhi)
+            getOsVersionName() ?: stringResource(R.string.analysis_unknown)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_wei_zhi)
+            stringResource(R.string.analysis_unknown)
         }
         return DeviceInfo(
             appVersion = appVersion,

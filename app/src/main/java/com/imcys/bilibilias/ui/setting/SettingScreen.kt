@@ -122,7 +122,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_huan_cun_pei_zhi)
+                    text = stringResource(R.string.setting_cache_1)
                 )
             }
 //            item {
@@ -149,7 +149,7 @@ fun SettingScreen(
 //            item {
 //                BaseSettingsItem(
 //                    painter = rememberVectorPainter(Icons.Outlined.DriveFileRenameOutline),
-//                    text = stringResource(R.string.setting_ming_ming_gui_ze),
+//                    text = stringResource(R.string.setting_text_3),
 //                    descriptionText = "使用自定义规则进行视频命名",
 //                    onClick = {
 //                    }
@@ -159,8 +159,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_save_24px),
-                    text = stringResource(R.string.setting_cun_chu_guan_li),
-                    descriptionText = stringResource(R.string.setting_guan_li_app_nei_cun_zhan),
+                    text = stringResource(R.string.setting_storage_management),
+                    descriptionText = stringResource(R.string.setting_text_2),
                     onClick = onToStorageManagement
                 )
             }
@@ -169,7 +169,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Save),
-                    text = stringResource(R.string.setting_huan_cun_mu_lu),
+                    text = stringResource(R.string.setting_cache),
                     descriptionText = "Download/BILIBILIAS",
                     onClick = {
                     }
@@ -182,7 +182,7 @@ fun SettingScreen(
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Edit),
                     text = "命名规则",
-                    descriptionText = stringResource(R.string.setting_zi_ding_yi_xia_zai_wen_ji),
+                    descriptionText = stringResource(R.string.setting_download_1),
                     onClick = onToNamingConvention
                 )
             }
@@ -190,14 +190,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_zhu_ti_she_zhi)
+                    text = stringResource(R.string.setting_settings_1)
                 )
             }
             item {
                 SwitchSettingsItem(
                     imageVector = Icons.Outlined.Palette,
-                    text = stringResource(R.string.setting_dong_tai_zhu_ti),
-                    description = stringResource(R.string.setting_shi_yong_zhuo_mian_bi_zhi),
+                    text = stringResource(R.string.setting_uploader),
+                    description = stringResource(R.string.setting_uploader_1),
                     checked = appSettings.enabledDynamicColor,
                 ) { check ->
                     haptics.switchHapticFeedback(check)
@@ -208,7 +208,7 @@ fun SettingScreen(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 item {
                     CategorySettingsItem(
-                        text = stringResource(R.string.setting_quan_xian_she_zhi)
+                        text = stringResource(R.string.setting_settings)
                     )
                 }
             }
@@ -220,14 +220,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_bu_ju_pei_zhi)
+                    text = stringResource(R.string.setting_text)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ListAlt),
-                    text = stringResource(R.string.setting_shou_ye_pai_ban),
+                    text = stringResource(R.string.setting_page),
                     description = {},
                     onClick = onToLayoutTypeset
                 )
@@ -237,15 +237,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_jie_xi_pei_zhi)
+                    text = stringResource(R.string.setting_parse)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.AirplaneTicket),
-                    text = stringResource(R.string.setting_man_you_fu_wu),
-                    descriptionText = stringResource(R.string.setting_ke_shi_shi_pin_jie_xi_liu),
+                    text = stringResource(R.string.setting_roaming_service),
+                    descriptionText = stringResource(R.string.setting_video),
                     onClick = onToRoam
                 )
             }
@@ -254,7 +254,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_guan_yu_cheng_xu)
+                    text = stringResource(R.string.setting_about_1)
                 )
             }
 
@@ -262,8 +262,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Group),
-                    text = stringResource(R.string.setting_guan_yu),
-                    descriptionText = stringResource(R.string.setting_zuo_wei_yi_lai_ping_tai_d),
+                    text = stringResource(R.string.setting_about),
+                    descriptionText = stringResource(R.string.setting_text_5),
                     onClick = onToAbout
                 )
 
@@ -273,7 +273,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_github_24px),
-                    text = stringResource(R.string.setting_github_cang_ku),
+                    text = stringResource(R.string.setting_text_1),
                     description = {},
                     onClick = {
                         val intent = Intent().apply {
@@ -314,15 +314,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_zhang_hu)
+                    text = stringResource(R.string.setting_text_4)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Android),
-                    text = stringResource(R.string.setting_she_bei_xin_xi),
-                    descriptionText = stringResource(R.string.setting_ti_jiao_fan_kui_shi_ji_de),
+                    text = stringResource(R.string.setting_info),
+                    descriptionText = stringResource(R.string.setting_feedback),
                     onClick = onToVersionInfo
                 )
 
@@ -331,12 +331,12 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Policy),
-                    text = stringResource(R.string.setting_yin_si_zheng_ce),
+                    text = stringResource(R.string.setting_privacy_policy),
                     descriptionText = "当前状态：${
                         when (appSettings.agreePrivacyPolicy) {
-                            Agreed -> stringResource(R.string.setting_yi_tong_yi)
-                            Refuse -> stringResource(R.string.setting_yi_ju_jue)
-                            else -> stringResource(R.string.setting_wei_xuan_ze)
+                            Agreed -> stringResource(R.string.setting_agree)
+                            Refuse -> stringResource(R.string.setting_refuse)
+                            else -> stringResource(R.string.setting_select)
                         }
                     }，可在这里拒绝或同意我们的隐私政策。",
                     onClick = { showPrivacyPolicy = true }
@@ -347,8 +347,8 @@ fun SettingScreen(
                 item {
                     BaseSettingsItem(
                         painter = rememberVectorPainter(Icons.AutoMirrored.Default.Logout),
-                        text = stringResource(R.string.setting_tui_chu_deng_lu),
-                        descriptionText = stringResource(R.string.setting_qing_kong_deng_lu_xin_xi),
+                        text = stringResource(R.string.setting_logout),
+                        descriptionText = stringResource(R.string.setting_login),
                         onClick = { showLogoutDialog = true }
                     )
                 }
@@ -393,7 +393,7 @@ fun SettingScreen(
         // 退出登录对话框
         ASAlertDialog(
             showState = showLogoutDialog,
-            title = { Text(stringResource(R.string.setting_tui_chu_deng_lu)) },
+            title = { Text(stringResource(R.string.setting_logout)) },
             text = {
                 Column(
                     Modifier
@@ -403,9 +403,9 @@ fun SettingScreen(
                 ) {
                     if (showLogoutLoading) {
                         ContainedLoadingIndicator()
-                        Text(stringResource(R.string.setting_tui_chu_zhong))
+                        Text(stringResource(R.string.setting_exit))
                     } else {
-                        Text(stringResource(R.string.setting_shi_fou_tui_chu_deng_lu))
+                        Text(stringResource(R.string.setting_login_1))
                     }
                 }
             },
@@ -422,14 +422,14 @@ fun SettingScreen(
                         onLogoutFinish(uiState.currentMid)
                     }
                 }) {
-                    Text(stringResource(R.string.setting_tui_chu_deng_lu))
+                    Text(stringResource(R.string.setting_logout))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
                 }) {
-                    Text(stringResource(R.string.common_qu_xiao))
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
 
@@ -461,8 +461,8 @@ fun DownloadPostNotifications() {
 
         SwitchSettingsItem(
             imageVector = Icons.Outlined.Notifications,
-            text = stringResource(R.string.setting_qian_tai_tong_zhi),
-            description = stringResource(R.string.setting_kai_qi_hou_ke_yi_shi_de_z),
+            text = stringResource(R.string.setting_notification),
+            description = stringResource(R.string.setting_download),
             checked = hasForegroundServicePermission,
         ) {
             haptics.switchHapticFeedback(it)
@@ -540,7 +540,7 @@ fun DownloadServicePermissionRequestTipDialog(
     }
     PermissionRequestTipDialog(
         show = true,
-        message = stringResource(R.string.setting_wei_le_wo_men_ke_yi_zai_h),
+        message = stringResource(R.string.setting_video_1),
         onConfirm = {
             launcher.launch(permission.POST_NOTIFICATIONS)
         },
@@ -565,7 +565,7 @@ fun SettingScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.common_she_zhi)) },
+                title = { Text(text = stringResource(R.string.common_settings)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

@@ -133,7 +133,7 @@ fun LazyItemScope.NamingRuleEditor(
             }
             AnimatedVisibility(ruleValue != defaultRule) {
                 ASWarringTip {
-                    Text(stringResource(R.string.app_ru_guo_nin_bu_liao_jie_mi))
+                    Text(stringResource(R.string.app_view))
                 }
             }
             OutlinedTextField(
@@ -142,7 +142,7 @@ fun LazyItemScope.NamingRuleEditor(
                     textFieldValue = it
                     onRuleChange(it.text)
                 },
-                label = { Text(stringResource(R.string.setting_ming_ming_gui_ze)) },
+                label = { Text(stringResource(R.string.setting_text_3)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged {
@@ -157,7 +157,7 @@ fun LazyItemScope.NamingRuleEditor(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onRestoreDefault
                 ) {
-                    Text(stringResource(R.string.app_hui_fu_mo_ren_ming_ming_g))
+                    Text(stringResource(R.string.app_text_6))
                 }
             }
         }
@@ -222,7 +222,7 @@ fun NamingConventionContent(
         }
         item {
             NamingRuleEditor(
-                title = stringResource(R.string.app_shi_pin_ming_ming_gui_ze),
+                title = stringResource(R.string.app_video_5),
                 placeholderList = videoNamingRules,
                 ruleValue = videoNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.videoNamingRule,
@@ -236,7 +236,7 @@ fun NamingConventionContent(
         }
         item {
             NamingRuleEditor(
-                title = stringResource(R.string.app_fan_ju_ming_ming_gui_ze_z),
+                title = stringResource(R.string.app_bangumi),
                 placeholderList = donghuaNamingRules,
                 ruleValue = donghuaNamingRule,
                 defaultRule = AppSettingsSerializer.appSettingsDefault.bangumiNamingRule,
@@ -279,7 +279,7 @@ fun NamingConventionScaffold(
                             }
                         }
                     ) {
-                        Text(text = stringResource(R.string.setting_ming_ming_gui_ze))
+                        Text(text = stringResource(R.string.setting_text_3))
                     }
                 },
                 navigationIcon = {

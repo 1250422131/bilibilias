@@ -127,8 +127,8 @@ private fun LikeVideoScaffold(
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
                     Text(text = when(pageType){
-                        LikePageType.LIKE -> stringResource(R.string.user_dian_zan)
-                        LikePageType.COIN -> stringResource(R.string.app_tou_bi)
+                        LikePageType.LIKE -> stringResource(R.string.user_text_1)
+                        LikePageType.COIN -> stringResource(R.string.app_text_14)
                     })
                 },
                 navigationIcon = {

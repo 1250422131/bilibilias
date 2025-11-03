@@ -170,7 +170,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
                 title = {
-                    Text(stringResource(R.string.app_shi_yong_xu_zhi))
+                    Text(stringResource(R.string.app_usage_notice))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -179,7 +179,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.common_fan_hui)
+                            contentDescription = stringResource(R.string.common_back)
                         )
                     }
                 },
@@ -269,16 +269,16 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             ) {
 
-                Text(stringResource(R.string.app_bu__wo_zhao_de_shi_bi_li))
+                Text(stringResource(R.string.app_not_this_app))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = stringResource(R.string.app_qian_wang_bi_li_bi_li),
+                    contentDescription = stringResource(R.string.app_go_to_bilibili),
                 )
 
             }
             Button(onClick = onClickKnowAbout, Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.app_wo_zhi_xiao_qie_tong_yi))
+                Text(stringResource(R.string.app_agree_2))
             }
         }
     }
@@ -297,10 +297,10 @@ fun AccountCheckPage(targetUiState: UIState.AccountCheck) {
         if (targetUiState.isCheckLoading) {
             ContainedLoadingIndicator()
             Spacer(Modifier.height(5.dp))
-            Text(stringResource(R.string.app_deng_lu_zhuang_tai_shi_xi))
+            Text(stringResource(R.string.app_login))
         } else {
             if (targetUiState.newCurrentUser == null) {
-                Text(stringResource(R.string.app_suo_you_zhang_hu_yi_shi_x))
+                Text(stringResource(R.string.app_login_1))
             }
         }
     }
@@ -391,7 +391,7 @@ fun PrivacyPolicyRefuseDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.app_wo_yi_zhi_xiao))
+                Text(text = stringResource(R.string.app_text_17))
             }
         },
     )

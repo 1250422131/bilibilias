@@ -145,7 +145,7 @@ fun UserFolderContent(
         when (val state = itemList.loadState.refresh) {
             is LoadState.Error -> {
                 item(span = { GridItemSpan(2) }) {
-                    CommonError(errorMsg = stringResource(R.string.user_jia_zai_shi_bai_nstateerr), onRetry = {
+                    CommonError(errorMsg = stringResource(R.string.user_failure_1), onRetry = {
                         itemList.refresh()
                     })
                 }
@@ -171,7 +171,7 @@ fun UserFolderContent(
             }
 
             is LoadState.Error -> item(span = { GridItemSpan(2) }) {
-                CommonError(stringResource(R.string.user_jia_zai_shi_bai_nappender), onRetry = {
+                CommonError(stringResource(R.string.user_failure), onRetry = {
                     itemList.retry()
                 })
             }
@@ -203,7 +203,7 @@ private fun UserFolderScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.user_shou_cang))
+                    Text(text = stringResource(R.string.user_text_8))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

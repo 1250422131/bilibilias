@@ -52,7 +52,7 @@ fun AsUserInfoRow(
         ) {
             ASAsyncImage(
                 pageInfoState.data?.face ?: "",
-                contentDescription = stringResource(R.string.user_tou_xiang),
+                contentDescription = stringResource(R.string.user_avatar_1),
                 modifier = Modifier.size(64.dp)
             )
         }
@@ -62,7 +62,7 @@ fun AsUserInfoRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    pageInfoState.data?.name ?: stringResource(R.string.user_yong_hu_ming),
+                    pageInfoState.data?.name ?: stringResource(R.string.user_user),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     maxLines = 1,
@@ -91,7 +91,7 @@ fun AsUserInfoRow(
             }
             Spacer(Modifier.height(4.dp))
             Text(
-                pageInfoState.data?.sign ?: stringResource(R.string.user_ge_xing_qian_ming),
+                pageInfoState.data?.sign ?: stringResource(R.string.user_text_3),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontSize = 14.sp,
                 maxLines = 2,
