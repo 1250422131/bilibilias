@@ -240,7 +240,8 @@ class DownloadTaskRepository(
                             data,
                             pages,
                             downloadMode,
-                            namingConventionInfo = namingConventionInfo
+                            namingConventionInfo = namingConventionInfo,
+                            allPages = data.pages ?: emptyList()
                         )
                     )
                 }
@@ -315,7 +316,8 @@ class DownloadTaskRepository(
                     season,
                     filteredEpisodes,
                     downloadMode,
-                    namingConventionInfo
+                    namingConventionInfo,
+                    episodes,
                 )
             }
         }
@@ -404,7 +406,7 @@ class DownloadTaskRepository(
         val nodeList = mutableListOf<DownloadTreeNode>()
 
         steinGateInfo.data?.storyList?.filter { it.cid in selectedCid }
-            ?.forEachIndexed { index, story ->
+            ?.forEach {  story ->
                 val node = getOrCreateNode(
                     taskId = taskId,
                     platformId = story.nodeId.toString(),
@@ -415,7 +417,7 @@ class DownloadTaskRepository(
 
                 val mNamingConvention = namingConventionInfo.copy(
                     pTitle = story.title,
-                    p = (index + 1).toString(),
+                    p = ((steinGateInfo.data?.storyList?.indexOf(story) ?: 1)).toString(),
                     cid = story.cid.toString(),
                 )
 
@@ -457,7 +459,8 @@ class DownloadTaskRepository(
         downloadMode: DownloadMode,
         parentNodeId: Long? = null,
         childTaskId: Long? = null,
-        namingConventionInfo: NamingConventionInfo.Video
+        namingConventionInfo: NamingConventionInfo.Video,
+        allPages: List<BILIVideoViewInfo.Page>
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -467,11 +470,11 @@ class DownloadTaskRepository(
             pic = data.pic,
             parentNodeId = parentNodeId
         )
-        val segments = pages.mapIndexed { index, page ->
+        val segments = pages.map { page ->
 
             val mNamingConvention = namingConventionInfo.copy(
                 pTitle = page.part,
-                p = (index + 1).toString(),
+                p = (allPages.indexOf(page) + 1).toString(),
                 cid = page.cid.toString(),
             )
 
@@ -502,6 +505,7 @@ class DownloadTaskRepository(
         episodes: List<BILIDonghuaSeasonInfo.Episode>,
         downloadMode: DownloadMode,
         namingConventionInfo: NamingConventionInfo.Donghua,
+        allEpisodes: List<BILIDonghuaSeasonInfo.Episode>,
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -510,12 +514,12 @@ class DownloadTaskRepository(
             nodeType = DownloadTaskNodeType.BILI_DONGHUA_SEASON
         )
 
-        val segments = episodes.mapIndexed { index, episode ->
+        val segments = episodes.map {episode ->
 
             val mNamingConvention = namingConventionInfo.copy(
                 episodeTitle = episode.longTitle.ifEmpty { episode.title },
                 cid = episode.cid.toString(),
-                episodeNumber = (index + 1).toString()
+                episodeNumber = (allEpisodes.indexOf(episode) + 1).toString()
             )
 
             createSegment(
@@ -552,10 +556,9 @@ class DownloadTaskRepository(
             title = section.title,
             nodeType = DownloadTaskNodeType.BILI_DONGHUA_SECTION
         )
-
-        val segments = episodes.mapIndexed { index, episode ->
+        val segments = episodes.map { episode ->
             val mNamingConvention = namingConventionInfo.copy(
-                episodeNumber = (index + 1).toString(),
+                episodeNumber = (section.episodes.indexOf(episode) + 1).toString(),
                 episodeTitle = episode.longTitle.ifEmpty { episode.title },
                 cid = episode.cid.toString(),
             )
@@ -596,9 +599,9 @@ class DownloadTaskRepository(
             nodeType = DownloadTaskNodeType.BILI_DONGHUA_EPISOD
         )
 
-        val segments = episodes.mapIndexed { index, episode ->
+        val segments = episodes.map { episode ->
             val mNamingConvention = namingConventionInfo.copy(
-                episodeNumber = (index + 1).toString(),
+                episodeNumber = (data.episodes.indexOf(episode) + 1).toString(),
                 episodeTitle = episode.longTitle.ifEmpty { episode.title },
                 cid = episode.cid.toString(),
             )
@@ -661,13 +664,14 @@ class DownloadTaskRepository(
                     downloadMode,
                     parentNodeId = node.nodeId,
                     childTaskId = newTask.taskId,  // 关联子任务ID
-                    namingConventionInfo
+                    namingConventionInfo,
+                    episode.pages,
                 ).segments
 
             } else null
         }
 
-        val segments = episodes.filterWithSinglePage().mapIndexed { index, episode ->
+        val segments = episodes.filterWithSinglePage().map{  episode ->
 
             // 为每个子视频创建独立的下载任务
             val childTask = getOrCreateTask(
@@ -680,7 +684,7 @@ class DownloadTaskRepository(
 
             val mNamingConvention = namingConventionInfo.copy(
                 pTitle = episode.title,
-                p = (index + 1).toString(),
+                p = (section.episodes.indexOf(episode) + 1).toString(),
                 cid = episode.cid.toString(),
             )
 

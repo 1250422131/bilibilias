@@ -1,5 +1,9 @@
 package com.imcys.bilibilias.ui.home
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.CopyAll
+import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material.icons.outlined.VideoCameraBack
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -32,11 +38,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,12 +55,18 @@ import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.ASConstant.QQ_CHANNEL_URL
 import com.imcys.bilibilias.common.utils.ASConstant.QQ_GROUP_URL
+import com.imcys.bilibilias.common.utils.DeviceInfoUtils
 import com.imcys.bilibilias.common.utils.openLink
+import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.tools.donate.DonateRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
+import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTextButton
+import com.imcys.bilibilias.ui.weight.tip.ASInfoTip
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToolsScreen(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
@@ -146,6 +161,8 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val haptics = LocalHapticFeedback.current
 
     ASAlertDialog(
         showState = showFeedbackDialog,
@@ -161,6 +178,32 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
             ) {
 
                 Spacer(Modifier)
+
+                ASInfoTip {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "反馈时需要带上你的设备信息，点击可一键复制设备信息。",
+                            fontSize = 14.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        ASIconButton(onClick = {
+                            scope.launch {
+                                val copyText = DeviceInfoUtils.getDeviceInfoCopyString(context)
+                                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                                val clipboard =
+                                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("版本信息", copyText)
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                            }
+                        }) {
+                            Icon(Icons.Outlined.CopyAll, contentDescription = "复制按钮")
+                        }
+                    }
+                }
 
                 BadgedBox(badge = {
                     Badge { Text("推荐") }
