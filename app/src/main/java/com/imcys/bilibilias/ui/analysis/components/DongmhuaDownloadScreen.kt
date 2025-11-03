@@ -117,7 +117,7 @@ fun DongmhuaDownloadScreen(
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.download_text_4),
+                    contentDescription = stringResource(R.string.download_description),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {

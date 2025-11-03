@@ -149,7 +149,7 @@ fun SettingScreen(
 //            item {
 //                BaseSettingsItem(
 //                    painter = rememberVectorPainter(Icons.Outlined.DriveFileRenameOutline),
-//                    text = stringResource(R.string.setting_text_3),
+//                    text = stringResource(R.string.setting_naming_rules),
 //                    descriptionText = "使用自定义规则进行视频命名",
 //                    onClick = {
 //                    }
@@ -160,7 +160,7 @@ fun SettingScreen(
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_save_24px),
                     text = stringResource(R.string.setting_storage_management),
-                    descriptionText = stringResource(R.string.setting_text_2),
+                    descriptionText = stringResource(R.string.setting_manage_memory),
                     onClick = onToStorageManagement
                 )
             }
@@ -220,7 +220,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_text)
+                    text = stringResource(R.string.setting_layout_config)
                 )
             }
 
@@ -263,7 +263,7 @@ fun SettingScreen(
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Group),
                     text = stringResource(R.string.setting_about),
-                    descriptionText = stringResource(R.string.setting_text_5),
+                    descriptionText = stringResource(R.string.setting_platform_responsibility),
                     onClick = onToAbout
                 )
 
@@ -273,7 +273,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_github_24px),
-                    text = stringResource(R.string.setting_text_1),
+                    text = stringResource(R.string.setting_github_repo),
                     description = {},
                     onClick = {
                         val intent = Intent().apply {
@@ -314,7 +314,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = stringResource(R.string.setting_text_4)
+                    text = stringResource(R.string.setting_account)
                 )
             }
 

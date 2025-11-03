@@ -107,7 +107,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
     val otherTools = mutableListOf(
         ToolInfo(
             name = stringResource(R.string.tools_feedback),
-            desc = stringResource(R.string.tools_text),
+            desc = stringResource(R.string.tools_help_improve),
             icon = Icons.Outlined.BugReport,
             onClick = { showFeedbackDialog = true }
         )
@@ -116,7 +116,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
             add(
                 ToolInfo(
                     name = stringResource(R.string.tools_donate),
-                    desc = stringResource(R.string.tools_text_1),
+                    desc = stringResource(R.string.tools_buy_us_coffee),
                     iconRes = R.drawable.ic_credit_card_heart_24px,
                     navKey = DonateRoute
                 )
@@ -142,7 +142,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(stringResource(R.string.tools_text_3))
+            Text(stringResource(R.string.tools_other))
         }
 
         items(otherTools) {
@@ -285,7 +285,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
             ASTextButton(onClick = {
                 onDismiss.invoke()
             }) {
-                Text(stringResource(R.string.tools_text_2))
+                Text(stringResource(R.string.tools_ok))
             }
         }
 

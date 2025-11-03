@@ -471,7 +471,7 @@ fun SelectFpsItem(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(stringResource(R.string.frame_text_1))
+        Text(stringResource(R.string.frame_max_fps))
         Spacer(Modifier.height(10.dp))
         Surface(shape = CardDefaults.shape) {
             Row(
@@ -530,7 +530,7 @@ fun SelectFpsItem(
                         ) {
                             innerTextField()
                         }
-                        Text(stringResource(R.string.frame_text), modifier = Modifier.padding(horizontal = 6.dp))
+                        Text(stringResource(R.string.frame_fps_unit), modifier = Modifier.padding(horizontal = 6.dp))
                     }
                 }
 
@@ -587,7 +587,7 @@ private fun FrameExtractorScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = stringResource(R.string.login_text_2)
+                                contentDescription = stringResource(R.string.login_operation)
                             )
                         }
                         DropdownMenu(

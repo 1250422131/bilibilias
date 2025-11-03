@@ -39,7 +39,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
         topBar = {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
-                title = { Text(stringResource(R.string.error_text_2)) },
+                title = { Text(stringResource(R.string.error_risk_control_notice)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
@@ -81,7 +81,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     stringResource(R.string.error_cancel),
                     stringResource(R.string.error_continue),
                     stringResource(R.string.error_exception_3),
-                    stringResource(R.string.error_text_3)
+                    stringResource(R.string.error_understand_risks)
                 )
                 items(points.size) { index ->
                     Text(
@@ -106,7 +106,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
-                Text(stringResource(R.string.app_text_17))
+                Text(stringResource(R.string.app_acknowledged))
             }
         }
     }

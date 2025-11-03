@@ -158,10 +158,10 @@ fun DownloadTaskCard(
 
                     Text(
                         when (task.downloadState) {
-                            DownloadState.WAITING -> stringResource(R.string.download_text)
+                            DownloadState.WAITING -> stringResource(R.string.download_waiting)
                             DownloadState.PAUSE -> stringResource(R.string.download_pause)
                             DownloadState.DOWNLOADING -> stringResource(R.string.download_download_3)
-                            DownloadState.MERGING -> stringResource(R.string.download_text_2)
+                            DownloadState.MERGING -> stringResource(R.string.download_merging_progress)
                             DownloadState.COMPLETED -> stringResource(R.string.download_done)
                             DownloadState.ERROR -> stringResource(R.string.common_error)
                             DownloadState.CANCELLED -> stringResource(R.string.download_cancelled)

@@ -185,7 +185,7 @@ fun StorageManagementSuccessScreen(
                         )
                         downloadLauncher.launch(downloadUri)
                     }) {
-                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.storage_text_7))
+                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.storage_authorize))
                     }
                 }
             }
@@ -216,25 +216,25 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, stringResource(R.string.storage_text_8), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, stringResource(R.string.storage_no_file_manager), Toast.LENGTH_SHORT).show()
                 }
             },
         )
 
 
         StorageContent(
-            title = stringResource(R.string.storage_text_4),
+            title = stringResource(R.string.storage_temp_files),
             dataNumStr = "${StorageUtil.formatSize(data.cacheTotalBytes)}",
-            description = stringResource(R.string.storage_text_5),
-            buttonText = stringResource(R.string.storage_text_6),
+            description = stringResource(R.string.storage_temp_files_description),
+            buttonText = stringResource(R.string.storage_clean),
             buttonColor = MaterialTheme.colorScheme.primary,
             onClick = onCleanCache
         )
 
         StorageContent(
-            title = stringResource(R.string.storage_text_2),
+            title = stringResource(R.string.storage_core_files),
             dataNumStr = "${StorageUtil.formatSize(data.appBytes - data.cacheTotalBytes)}",
-            description = stringResource(R.string.storage_text_10),
+            description = stringResource(R.string.storage_runtime_files_description),
             showButton = false,
             buttonColor = MaterialTheme.colorScheme.primary,
         )
@@ -250,7 +250,7 @@ fun StorageContent(
     dataNumStr: String = "",
     description: String = "",
     showButton: Boolean = true,
-    buttonText: String = stringResource(R.string.storage_text_1),
+    buttonText: String = stringResource(R.string.storage_manage),
     buttonColor: Color = MaterialTheme.colorScheme.surface,
     onClick: () -> Unit = {}
 ) {

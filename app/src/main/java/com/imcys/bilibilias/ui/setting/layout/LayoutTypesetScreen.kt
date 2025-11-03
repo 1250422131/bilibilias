@@ -143,11 +143,11 @@ fun LayoutTypesetContent(
                         }) {
                             Icon(
                                 if (item.isHidden) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                                contentDescription = if (item.isHidden) stringResource(R.string.app_text_18) else stringResource(R.string.app_text_20),
+                                contentDescription = if (item.isHidden) stringResource(R.string.app_show) else stringResource(R.string.app_hide),
                             )
                         }
                         ASIconButton(onClick = {}) {
-                            Icon(Icons.Outlined.Menu, contentDescription = stringResource(R.string.app_text_21))
+                            Icon(Icons.Outlined.Menu, contentDescription = stringResource(R.string.app_long_press_drag))
                         }
                     }
 

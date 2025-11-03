@@ -235,7 +235,7 @@ private fun VideoHeader(
                 ASIconButton(onClick = { onToWorkList.invoke() }) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = stringResource(R.string.user_text_4),
+                        contentDescription = stringResource(R.string.user_more_submissions),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
@@ -309,7 +309,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.ThumbUp, contentDescription = stringResource(R.string.user_recent))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_text_1), fontSize = 14.sp)
+                Text(stringResource(R.string.user_likes), fontSize = 14.sp)
             }
         }
 
@@ -345,9 +345,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.user_text_8))
+                Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.user_favorites))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_text_8), fontSize = 14.sp)
+                Text(stringResource(R.string.user_favorites), fontSize = 14.sp)
             }
         }
 
@@ -393,10 +393,10 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     Icon(
                         Icons.Outlined.Link,
                         tint = MaterialTheme.colorScheme.outline,
-                        contentDescription = stringResource(R.string.user_text_5)
+                        contentDescription = stringResource(R.string.user_linked_platforms)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.user_text_9), color = MaterialTheme.colorScheme.outline)
+                    Text(stringResource(R.string.user_linked_accounts), color = MaterialTheme.colorScheme.outline)
 
                 }
                 Spacer(Modifier.height(24.dp))
@@ -406,7 +406,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_mini_bili_logo_24px),
-                        contentDescription = stringResource(R.string.user_text),
+                        contentDescription = stringResource(R.string.user_bilibili_logo),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.weight(1f))
@@ -447,7 +447,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                        )
                        Spacer(Modifier.weight(1f))
                        Text(
-                           stringResource(R.string.user_text_10),
+                           stringResource(R.string.user_not_yet_available),
                            fontSize = 16.sp,
                            color = MaterialTheme.colorScheme.outline
                        )
@@ -487,7 +487,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_text_6), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_following), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -506,7 +506,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_text_2), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_fans), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -525,7 +525,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.user_text_7), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_likes_received), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
         item {
@@ -611,7 +611,7 @@ fun TopUserInfo(
                         }
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            pageInfoState.data?.sign ?: stringResource(R.string.user_text_3),
+                            pageInfoState.data?.sign ?: stringResource(R.string.user_signature),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 14.sp,
                             maxLines = 2,

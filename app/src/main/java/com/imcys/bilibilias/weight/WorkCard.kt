@@ -79,7 +79,7 @@ fun WorkCard(
             Row {
                 Text(stringResource(R.string.app_play), fontSize = 12.sp)
                 Spacer(Modifier.weight(1f))
-                Text(stringResource(R.string.app_text_9), fontSize = 12.sp)
+                Text(stringResource(R.string.app_danmaku_count), fontSize = 12.sp)
             }
         }
     }
@@ -193,7 +193,7 @@ fun HistoryPlayVideoCard(
                     modifier = Modifier.fillMaxSize()
                 )
                 Text(
-                    if (progress == -1L) stringResource(R.string.app_text_19) else
+                    if (progress == -1L) stringResource(R.string.app_finished_watching) else
                         "%02d:%02d/%02d:%02d".format(
                             progress / 60, progress % 60,
                             duration / 60, duration % 60

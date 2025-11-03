@@ -584,7 +584,7 @@ fun CloseBulletinDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.home_text))
+                Text(text = stringResource(R.string.home_confirm))
             }
         },
         dismissButton = {
@@ -614,7 +614,7 @@ fun BulletinDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.home_text))
+                Text(text = stringResource(R.string.home_confirm))
             }
         },
     )
@@ -938,7 +938,7 @@ private fun LoginInfoBottomDialog(
                         verticalArrangement = Arrangement.Center
                     ) {
                         ContainedLoadingIndicator(Modifier.size(100.dp))
-                        Text(stringResource(R.string.home_text_1))
+                        Text(stringResource(R.string.home_loading))
                     }
                 })
             }

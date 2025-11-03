@@ -131,7 +131,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                             ) {
                                 Text(stringResource(R.string.login_login_agreement), fontSize = 14.sp)
                                 Text(
-                                    stringResource(R.string.login_text), fontSize = 14.sp,
+                                    stringResource(R.string.login_bilibili_terms), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
@@ -143,7 +143,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     }
                                 )
                                 Text(
-                                    stringResource(R.string.login_text_1), fontSize = 14.sp,
+                                    stringResource(R.string.login_disclaimer), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }

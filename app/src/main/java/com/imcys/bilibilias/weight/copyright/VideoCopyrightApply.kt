@@ -85,11 +85,11 @@ fun VideoCopyrightApplyScreen(
                         description = stringResource(R.string.app_delete_1)
                     )
                     InfoItem(
-                        title = stringResource(R.string.app_text_4),
+                        title = stringResource(R.string.app_operation_confirmation),
                         description = stringResource(R.string.app_delete_confirmation_notice)
                     )
                     InfoItem(
-                        title = stringResource(R.string.app_text_22),
+                        title = stringResource(R.string.app_account_frozen),
                         description = stringResource(R.string.app_done)
                     )
                 }

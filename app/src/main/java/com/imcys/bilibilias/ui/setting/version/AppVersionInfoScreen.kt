@@ -93,10 +93,10 @@ fun VersionInfoContent(modifier: Modifier = Modifier) {
     ) {
         InfoRow(label = stringResource(R.string.version_version), value = deviceInfo.appVersion)
         InfoRow(label = stringResource(R.string.version_system_2), value = deviceInfo.systemVersion)
-        InfoRow(label = stringResource(R.string.version_text_3), value = deviceInfo.model)
-        InfoRow(label = stringResource(R.string.version_text_4), value = deviceInfo.marketModel)
-        InfoRow(label = stringResource(R.string.version_text), value = deviceInfo.manufacturer)
-        InfoRow(label = stringResource(R.string.version_text_2), value = deviceInfo.brandName)
+        InfoRow(label = stringResource(R.string.version_device_model), value = deviceInfo.model)
+        InfoRow(label = stringResource(R.string.version_market_model), value = deviceInfo.marketModel)
+        InfoRow(label = stringResource(R.string.version_manufacturer), value = deviceInfo.manufacturer)
+        InfoRow(label = stringResource(R.string.version_brand), value = deviceInfo.brandName)
         InfoRow(label = stringResource(R.string.version_system_1), value = deviceInfo.osName)
         InfoRow(label = stringResource(R.string.version_system), value = deviceInfo.osVersionName)
         Spacer(modifier = Modifier.height(24.dp))
@@ -123,7 +123,7 @@ private fun InfoRow(label: String, value: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.version_text_1),
+            text = stringResource(R.string.version_label_format),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f),
             fontSize = 16.sp

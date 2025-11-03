@@ -145,7 +145,7 @@ fun CookeLoginContent(
 
         // 提示
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-            Text(stringResource(R.string.login_text_3))
+            Text(stringResource(R.string.login_cookie_warning))
         }
 
         SavingDialog(showSavingDialog)

@@ -177,7 +177,7 @@ fun LazyGridScope.bangumiCardListLoading() {
             title = stringResource(R.string.app_title),
             intro = "",
             updateInfo = stringResource(R.string.app_update),
-            seenInfo = stringResource(R.string.app_text_7),
+            seenInfo = stringResource(R.string.app_seen),
             pic = "",
         )
     }
@@ -191,7 +191,7 @@ fun BangumiCard(
     title: String = stringResource(R.string.app_title),
     intro: String = stringResource(R.string.app_intro),
     updateInfo: String = stringResource(R.string.app_update),
-    seenInfo: String = stringResource(R.string.app_text_7),
+    seenInfo: String = stringResource(R.string.app_seen),
     pic: String = "",
 ) {
     Surface(

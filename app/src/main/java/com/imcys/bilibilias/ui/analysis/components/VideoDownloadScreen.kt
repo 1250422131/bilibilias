@@ -136,7 +136,7 @@ fun VideoDownloadScreen(
                     )
                     Spacer(Modifier.width(2.dp))
                     Text(
-                        stringResource(R.string.download_text_5),
+                        stringResource(R.string.download_no_repost_without_permission),
                         fontSize = 14.sp,
                     )
                 }
@@ -146,7 +146,7 @@ fun VideoDownloadScreen(
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.download_text_4),
+                    contentDescription = stringResource(R.string.download_description),
                     modifier = Modifier
                         .size(18.dp)
                         .clickable {

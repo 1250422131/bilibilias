@@ -129,7 +129,7 @@ fun AnimatedStorageRing(
                 )
                 // APP占用设备内存百分比
                 Text(
-                    stringResource(R.string.storage_text_11)%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
+                    stringResource(R.string.storage_device_memory_usage)%.2f".format(((storageInfoData.appBytes + storageInfoData.downloadBytes) / total) * 100)}%",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -146,7 +146,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = totalColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_text_3), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_available_space), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -156,7 +156,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = usedColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_text_9), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_used_space), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
             Row(
@@ -165,7 +165,7 @@ fun AnimatedStorageRing(
                 Surface(shape = CircleShape, color = appColor, modifier = Modifier.size(12.dp)) {
 
                 }
-                Text(stringResource(R.string.storage_text), Modifier.padding(start = 5.dp), fontSize = 14.sp)
+                Text(stringResource(R.string.storage_app_space), Modifier.padding(start = 5.dp), fontSize = 14.sp)
             }
 
 

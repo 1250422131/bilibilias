@@ -20,7 +20,7 @@ fun PermissionRequestTipDialog(
             contentDescription = stringResource(R.string.common_warning)
         )
     },
-    title: String = stringResource(R.string.app_text_13),
+    title: String = stringResource(R.string.app_permission_request),
     message: String,
     confirmText: String = stringResource(R.string.common_continue),
     dismissText: String = stringResource(R.string.common_cancel),

@@ -75,7 +75,7 @@ fun ComplaintScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             ComplaintOptionCard(
-                title = stringResource(R.string.complaint_text),
+                title = stringResource(R.string.complaint_emergency_removal),
                 description = stringResource(R.string.complaint_delete),
                 buttonText = stringResource(R.string.complaint_view_details),
                 onClick = {  }
@@ -104,7 +104,7 @@ private fun ComplaintScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.complaint_text_1))
+                    Text(text = stringResource(R.string.complaint_report))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

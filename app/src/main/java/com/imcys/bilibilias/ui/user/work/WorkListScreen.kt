@@ -201,7 +201,7 @@ private fun WorkListScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.app_text_15))
+                    Text(text = stringResource(R.string.app_submission))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

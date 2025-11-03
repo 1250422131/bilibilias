@@ -116,7 +116,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text(stringResource(R.string.error_text_1))
+                    Text(stringResource(R.string.error_message))
                 }
                 AsErrorCopyIconButton(errorMsg)
             }
@@ -141,7 +141,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         onRetry.invoke()
                     },
                 ) {
-                    Text(stringResource(R.string.error_text))
+                    Text(stringResource(R.string.error_click_to_retry))
                 }
 
             }

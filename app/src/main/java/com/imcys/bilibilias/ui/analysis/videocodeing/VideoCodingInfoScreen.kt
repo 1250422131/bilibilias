@@ -143,7 +143,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_text_1),
+                        stringResource(R.string.app_hevc_codectag_types),
                         keywordColorMap
                     ),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -162,7 +162,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
             item {
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_text_2),
+                        stringResource(R.string.app_extended_reading),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Bold,
@@ -172,7 +172,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_text),
+                        stringResource(R.string.app_codec_tag_question),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Medium,
@@ -188,7 +188,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
                     text = highlightKeywords(
-                        stringResource(R.string.app_text_5),
+                        stringResource(R.string.app_hdr_formats_question),
                         keywordColorMap
                     ),
                     fontWeight = FontWeight.Medium,
@@ -199,7 +199,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
                         stringResource(R.string.app_yes_5) +
                         stringResource(R.string.app_yes_6) +
                         stringResource(R.string.app_yes_1) +
-                        stringResource(R.string.app_text_10) +
+                        stringResource(R.string.app_profile84_hlg_description) +
                         stringResource(R.string.app_error_1),
                         keywordColorMap
                     ),

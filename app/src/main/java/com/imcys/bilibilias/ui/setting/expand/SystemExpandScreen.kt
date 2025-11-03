@@ -55,7 +55,7 @@ private fun SystemExpandContent(
     ) {
         item {
             CategorySettingsItem(
-                text = stringResource(R.string.app_text_12)
+                text = stringResource(R.string.app_permission_extension)
             )
         }
 
@@ -90,7 +90,7 @@ private fun SystemExpandScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = stringResource(R.string.app_text_8)) },
+                title = { Text(text = stringResource(R.string.app_extended_capabilities)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

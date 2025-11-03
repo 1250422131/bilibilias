@@ -49,7 +49,7 @@ fun ASEpisodeTitle(
                 AppSettings.EpisodeListMode.EpisodeListMode_Grid -> {
                     Icon(
                         Icons.Outlined.Apps,
-                        contentDescription = stringResource(R.string.app_text_3),
+                        contentDescription = stringResource(R.string.app_table_display),
                     )
                 }
 

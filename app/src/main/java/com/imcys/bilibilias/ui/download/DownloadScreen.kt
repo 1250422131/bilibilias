@@ -271,7 +271,7 @@ private fun EditTopTools(
             },
             border = CardDefaults.outlinedCardBorder()
         ) {
-            Text(stringResource(R.string.download_text_1))
+            Text(stringResource(R.string.download_deselect))
         }
 
         OutlinedButton(
@@ -281,7 +281,7 @@ private fun EditTopTools(
                 selectDeleteList.addAll(completedSegments)
             },
         ) {
-            Text(stringResource(R.string.download_text_3))
+            Text(stringResource(R.string.download_select_all))
         }
 
         Button(

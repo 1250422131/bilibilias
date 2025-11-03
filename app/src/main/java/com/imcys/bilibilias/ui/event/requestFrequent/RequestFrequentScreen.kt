@@ -80,7 +80,7 @@ fun RequestFrequentContent(url: String, paddingValues: PaddingValues, onToBack: 
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CircularProgressIndicator()
-                    Text(stringResource(R.string.app_text_11), modifier = Modifier.padding(top = 16.dp))
+                    Text(stringResource(R.string.app_testing_request), modifier = Modifier.padding(top = 16.dp))
                 }
             }
 
@@ -123,7 +123,7 @@ private fun DefaultScreen(
         )
 
         Text(
-            text = stringResource(R.string.app_text_16),
+            text = stringResource(R.string.app_emergency_event),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(top = 20.dp),
         )
@@ -147,7 +147,7 @@ private fun DefaultScreen(
                 .fillMaxWidth(),
             shape = CardDefaults.shape,
         ) {
-            Text(text = stringResource(R.string.login_text_7))
+            Text(text = stringResource(R.string.login_retry))
         }
 
         // 退出APP的按钮

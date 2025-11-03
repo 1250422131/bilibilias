@@ -91,7 +91,7 @@ fun AsUserInfoRow(
             }
             Spacer(Modifier.height(4.dp))
             Text(
-                pageInfoState.data?.sign ?: stringResource(R.string.user_text_3),
+                pageInfoState.data?.sign ?: stringResource(R.string.user_signature),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontSize = 14.sp,
                 maxLines = 2,

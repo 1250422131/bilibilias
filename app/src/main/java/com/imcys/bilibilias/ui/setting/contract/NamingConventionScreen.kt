@@ -142,7 +142,7 @@ fun LazyItemScope.NamingRuleEditor(
                     textFieldValue = it
                     onRuleChange(it.text)
                 },
-                label = { Text(stringResource(R.string.setting_text_3)) },
+                label = { Text(stringResource(R.string.setting_naming_rules)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged {
@@ -157,7 +157,7 @@ fun LazyItemScope.NamingRuleEditor(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onRestoreDefault
                 ) {
-                    Text(stringResource(R.string.app_text_6))
+                    Text(stringResource(R.string.app_restore_default_naming))
                 }
             }
         }
@@ -279,7 +279,7 @@ fun NamingConventionScaffold(
                             }
                         }
                     ) {
-                        Text(text = stringResource(R.string.setting_text_3))
+                        Text(text = stringResource(R.string.setting_naming_rules))
                     }
                 },
                 navigationIcon = {

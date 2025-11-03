@@ -153,7 +153,7 @@ class DownloadViewModel(
             downloadTaskRepository.deleteSegment(segment.segmentId)
 
             val message = when {
-                fileNotExist -> stringResource(R.string.download_text_6)
+                fileNotExist -> stringResource(R.string.download_file_not_found)
                 deleteSuccess -> stringResource(R.string.download_delete_1)
                 else -> stringResource(R.string.download_delete_2)
             }

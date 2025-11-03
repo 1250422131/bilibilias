@@ -203,7 +203,7 @@ private fun UserFolderScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.user_text_8))
+                    Text(text = stringResource(R.string.user_favorites))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

@@ -364,7 +364,7 @@ private fun QRLoginScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = stringResource(R.string.login_text_2)
+                                contentDescription = stringResource(R.string.login_operation)
                             )
                         }
                         DropdownMenu(
@@ -539,7 +539,7 @@ private fun PlatformToggleButton(
     ) {
         Icon(
             imageVector = Icons.Outlined.WebAsset,
-            contentDescription = stringResource(R.string.login_text_6),
+            contentDescription = stringResource(R.string.login_web_qr),
             modifier = Modifier.size(FilterChipDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -549,7 +549,7 @@ private fun PlatformToggleButton(
     BadgedBox(
         badge = {
             Badge {
-                Text(stringResource(R.string.login_text_4))
+                Text(stringResource(R.string.login_apply))
             }
         }
     ) {
@@ -566,7 +566,7 @@ private fun PlatformToggleButton(
         ) {
             Icon(
                 imageVector = Icons.Outlined.WebAsset,
-                contentDescription = stringResource(R.string.login_text_5),
+                contentDescription = stringResource(R.string.login_tv_qr),
                 modifier = Modifier.size(FilterChipDefaults.IconSize)
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -625,7 +625,7 @@ private fun QRCodeContent(
                                     ASIconButton(onClick = {
                                         updateQrCode()
                                     }) {
-                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.login_text_7))
+                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.login_retry))
                                     }
                                     Text(stringResource(R.string.login_exception))
                                 }

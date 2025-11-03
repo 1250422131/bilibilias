@@ -391,7 +391,7 @@ fun PrivacyPolicyRefuseDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = stringResource(R.string.app_text_17))
+                Text(text = stringResource(R.string.app_acknowledged))
             }
         },
     )
