@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.utils
 
 
 import com.imcys.bilibilias.R
-import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -24,7 +23,7 @@ fun String.copyText(context: Context, title: String) {
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText(title, this)
     clipboard.setPrimaryClip(clip)
-    Toast.makeText(context, stringResource(R.string.tools_copied_to_clipboard), Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context.getString(R.string.tools_copied_to_clipboard), Toast.LENGTH_SHORT).show()
 }
 
 inline fun analyticsSafe(action: () -> Unit) {

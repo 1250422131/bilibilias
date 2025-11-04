@@ -75,11 +75,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val newVersionDownloadedMessage = stringResource(R.string.app_new_version_downloaded)
+            val updateLabel = stringResource(R.string.common_update)
+
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = stringResource(R.string.app_new_version_downloaded),
-                    actionLabel = stringResource(R.string.common_update),
+                    message = newVersionDownloadedMessage,
+                    actionLabel = updateLabel,
                     duration = SnackbarDuration.Short
                 )
                 when (result) {

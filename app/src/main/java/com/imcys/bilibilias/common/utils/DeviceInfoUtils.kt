@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.utils
 
 
 import com.imcys.bilibilias.R
-import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.os.Build
 import com.hjq.device.compat.DeviceBrand.*
@@ -71,26 +70,26 @@ object DeviceInfoUtils {
         } catch (e: Exception) {
             null
         }
-        val appVersion = packageInfo?.versionName ?: stringResource(R.string.analysis_unknown)
-        val systemVersion = Build.VERSION.RELEASE ?: stringResource(R.string.analysis_unknown)
-        val model = Build.MODEL ?: stringResource(R.string.analysis_unknown)
-        val marketModel = DeviceMarketName.getMarketName(context) ?: stringResource(R.string.analysis_unknown)
-        val manufacturer = Build.BRAND ?: stringResource(R.string.analysis_unknown)
-        val brand = Build.BRAND ?: stringResource(R.string.analysis_unknown)
+        val appVersion = packageInfo?.versionName ?: context.getString(R.string.analysis_unknown)
+        val systemVersion = Build.VERSION.RELEASE ?: context.getString(R.string.analysis_unknown)
+        val model = Build.MODEL ?: context.getString(R.string.analysis_unknown)
+        val marketModel = DeviceMarketName.getMarketName(context) ?: context.getString(R.string.analysis_unknown)
+        val manufacturer = Build.BRAND ?: context.getString(R.string.analysis_unknown)
+        val brand = Build.BRAND ?: context.getString(R.string.analysis_unknown)
         val brandName = try {
             getBrandName() ?: Build.DEVICE
         } catch (_: Throwable) {
             Build.DEVICE
         }
         val osName = try {
-            getOsName() ?: stringResource(R.string.analysis_unknown)
+            getOsName() ?: context.getString(R.string.analysis_unknown)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_unknown)
+            context.getString(R.string.analysis_unknown)
         }
         val osVersionName = try {
-            getOsVersionName() ?: stringResource(R.string.analysis_unknown)
+            getOsVersionName() ?: context.getString(R.string.analysis_unknown)
         } catch (_: Throwable) {
-            stringResource(R.string.analysis_unknown)
+            context.getString(R.string.analysis_unknown)
         }
         return DeviceInfo(
             appVersion = appVersion,
