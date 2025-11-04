@@ -97,7 +97,7 @@ fun CookeLoginContent(
                 cookiesString = it
                 vm.checkCookies(it)
             },
-            label = {Text(stringResource(R.string.login_text_9160))},
+            label = {Text(stringResource(R.string.cookie_input_hint))},
             maxLines = 4,
             minLines = 4
         )

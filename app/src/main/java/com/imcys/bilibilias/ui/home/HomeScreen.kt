@@ -550,7 +550,7 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
             ) {
                 Text("检测到有新版本 ${appUpdateInfo.version} 可用。")
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.update_content_1))
+                Text(stringResource(R.string.update_content_label))
                 Spacer(Modifier.height(4.dp))
                 Text(appUpdateInfo.feat)
             }

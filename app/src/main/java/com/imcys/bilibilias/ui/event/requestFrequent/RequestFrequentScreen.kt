@@ -133,7 +133,7 @@ private fun DefaultScreen(
             textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(R.string.home_risk_control_risk),
+            text = stringResource(R.string.personal_risk_control_warning),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 20.dp),
             textAlign = TextAlign.Center

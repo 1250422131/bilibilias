@@ -74,12 +74,12 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     )
                 }
                 val points = listOf(
-                    stringResource(R.string.home_risk_control_violation_third_party),
-                    stringResource(R.string.home_verification_abnormal_identity),
-                    stringResource(R.string.home_temporary_auxiliary),
-                    stringResource(R.string.home_violation_third_party_tool),
-                    stringResource(R.string.home_abnormal_freeze_mark),
-                    stringResource(R.string.home_risk_consequence_bear)
+                    stringResource(R.string.account_risk_reason),
+                    stringResource(R.string.tv_auth_abnormal_notice),
+                    stringResource(R.string.temporary_feature_notice),
+                    stringResource(R.string.third_party_risk_warning),
+                    stringResource(R.string.account_freeze_warning),
+                    stringResource(R.string.risk_acknowledgement_notice)
                 )
                 items(points.size) { index ->
                     Text(
