@@ -638,7 +638,7 @@ fun DownloadListCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Outlined.Download,
-                    contentDescription = stringResource(R.string.download_list),
+                    contentDescription = stringResource(R.string.download_list_icon),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
@@ -646,7 +646,7 @@ fun DownloadListCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    stringResource(R.string.download_list_1),
+                    stringResource(R.string.download_list),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     modifier = Modifier.alpha(0.72f),
