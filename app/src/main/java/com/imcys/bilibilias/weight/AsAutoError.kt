@@ -89,7 +89,7 @@ fun <T> AsAutoError(
 @Composable
 @Preview
 private fun PreviewCommonError() {
-    CommonError(stringResource(R.string.error_exception_1)) { }
+    CommonError("接口异常") { }
 }
 
 @Composable
