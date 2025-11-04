@@ -356,7 +356,7 @@
     <string name="user_avatar_1">头像</string>
     <string name="user_failure">加载失败 \n ${append.error}</string>
     <string name="user_failure_1">加载失败 \n ${state.error}</string>
-    <string name="user_following">追番</string>
+    <string name="user_following_bangumi">追番</string>
     <string name="user_icon">维护图标</string>
     <string name="user_play">${NumberUtils.formatLargeNumber(item?.play)}次播放</string>
     <string name="user_play_1">最近播放</string>

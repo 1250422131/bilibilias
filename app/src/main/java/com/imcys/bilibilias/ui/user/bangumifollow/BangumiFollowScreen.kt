@@ -259,7 +259,7 @@ private fun BangumiFollowScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = stringResource(R.string.user_following))
+                    Text(text = stringResource(R.string.user_following_bangumi))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
