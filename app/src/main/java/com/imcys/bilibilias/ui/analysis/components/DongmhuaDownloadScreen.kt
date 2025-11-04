@@ -84,6 +84,7 @@ fun DongmhuaDownloadScreen(
 
     val isVip = currentUserInfo?.isVip() == true
     val haptics = LocalHapticFeedback.current
+    val vipBadgeText = stringResource(R.string.analysis_vip)
 
     LaunchedEffect(donghuaViewInfo.data?.seasonId, donghuaViewInfo.data?.seasons) {
         selectSeasonsId = donghuaViewInfo.data?.seasons
@@ -187,7 +188,7 @@ fun DongmhuaDownloadScreen(
                                     episodeTitle = { it.longTitle.ifBlank { it.title } },
                                     episodeListMode = episodeListMode,
                                     sectionTitle = { it.seasonTitle },
-                                    episodeEnabled = { !(!isVip && it.badge == stringResource(R.string.analysis_vip)) },
+                                    episodeEnabled = { !(!isVip && it.badge == vipBadgeText) },
                                     episodeContentContainer = { it, content ->
                                         Box {
                                             content()

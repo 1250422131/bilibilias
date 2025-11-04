@@ -416,13 +416,13 @@ class AnalysisViewModel(
                             // 如果epId为null或0，则默认选择第一个非会员的epId
                             val defaultEpId = if (epId == null || epId == 0L) {
                                 if (currentUser?.isVip() != true) {
-                                    viewInfo?.episodes?.firstOrNull { ep -> ep.badge != stringResource(R.string.analysis_vip) }?.epId
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.badge != context.getString(R.string.analysis_vip) }?.epId
                                         ?: 0L
                                 } else viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
                             } else {
                                 // 如果当前用户不是会员，则选择第一个非会员的epId，否则选择传入的epId
                                 if (currentUser?.isVip() != true) {
-                                    viewInfo?.episodes?.firstOrNull { ep -> ep.epId == epId && ep.badge != stringResource(R.string.analysis_vip) }?.epId
+                                    viewInfo?.episodes?.firstOrNull { ep -> ep.epId == epId && ep.badge != context.getString(R.string.analysis_vip) }?.epId
                                         ?: 0L
                                 } else {
                                     epId
@@ -643,10 +643,10 @@ class AnalysisViewModel(
      */
     val AnalysisUIState.contentTypeDescription: String
         get() = when {
-            isVideoType -> stringResource(R.string.analysis_video)
-            isDonghuaType -> stringResource(R.string.analysis_animation)
-            isUserType -> stringResource(R.string.analysis_user)
-            else -> stringResource(R.string.analysis_unknown)
+            isVideoType -> context.getString(R.string.analysis_video)
+            isDonghuaType -> context.getString(R.string.analysis_animation)
+            isUserType -> context.getString(R.string.analysis_user)
+            else -> context.getString(R.string.analysis_unknown)
         }
 
     fun updateSelectSingleModel(isSelectSingleModel: Boolean) {

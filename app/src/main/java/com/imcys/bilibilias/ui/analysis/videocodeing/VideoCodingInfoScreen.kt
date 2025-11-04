@@ -34,7 +34,7 @@ object VideoCodingInfoRoute : NavKey
 
 private val keywordColorMap = mapOf(
     "CodecTag" to Color(0xFF1976D2),
-    stringResource(R.string.app_format) to Color(0xFF388E3C),
+    "格式" to Color(0xFF388E3C),
     "AV1" to Color(0xFFD32F2F),
     "HEVC" to Color(0xFF7B1FA2),
     "AVC" to Color(0xFF0288D1),

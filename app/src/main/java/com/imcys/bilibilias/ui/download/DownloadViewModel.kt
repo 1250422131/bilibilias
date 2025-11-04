@@ -73,7 +73,7 @@ class DownloadViewModel(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, stringResource(R.string.download_none), Toast.LENGTH_SHORT)
+                Toast.makeText(context, context.getString(R.string.download_none), Toast.LENGTH_SHORT)
                     .show()
             }
             return
@@ -81,7 +81,7 @@ class DownloadViewModel(
             // 普通文件路径
             val file = File(savePath)
             if (!file.exists()) {
-                Toast.makeText(context, stringResource(R.string.download_delete_5), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.download_delete_5), Toast.LENGTH_SHORT).show()
                 return
             }
             val intent = Intent(Intent.ACTION_VIEW)
