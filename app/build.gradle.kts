@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.firebase.perf)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias { libs.plugins.kotlin.parcelize }
-
 }
 val enabledPlayAppMode: String by project
 val enabledAnalytics: String by project

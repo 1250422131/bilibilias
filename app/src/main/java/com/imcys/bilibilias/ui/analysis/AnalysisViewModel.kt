@@ -28,6 +28,7 @@ import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
+import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
@@ -86,7 +87,7 @@ class AnalysisViewModel(
                 _uiState.value = _uiState.value.copy(
                     isBILILogin = it.currentUserId != 0L
                 )
-                if (oldLoginState != _uiState.value.isBILILogin ) {
+                if (oldLoginState != _uiState.value.isBILILogin) {
                     // 登录状态变化，刷新解析
                     _uiState.value.inputAsText.let { inputAsText ->
                         if (inputAsText.isNotEmpty()) {
@@ -519,6 +520,15 @@ class AnalysisViewModel(
 
                 _videoPlayerInfo.value = it
                 if (it.status == ApiStatus.SUCCESS) {
+
+                    if (it.data?.language == null) {
+                        _uiState.emit(
+                            _uiState.value.copy(
+                                downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioLanguage = null)
+                            )
+                        )
+                    }
+
                     getDefaultDownloadInfoConfig(
                         it.data?.dash?.video,
                         it.data?.dash?.audio,
@@ -711,9 +721,21 @@ class AnalysisViewModel(
         )
     }
 
-    fun updateDownloadMedia(state:Boolean){
+    fun updateDownloadMedia(state: Boolean) {
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(downloadMedia = state)
         )
+    }
+
+    fun updateAudioLanguage(language: BILIVideoLanguageItem) {
+        if (language == _uiState.value.downloadInfo?.selectAudioLanguage) {
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioLanguage = null)
+            )
+        } else {
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioLanguage = language)
+            )
+        }
     }
 }

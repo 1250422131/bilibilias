@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +44,8 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoLanguage
+import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
@@ -51,6 +54,8 @@ import com.imcys.bilibilias.network.model.video.filterWithSinglePage
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASCommonSelectGrid
 import com.imcys.bilibilias.weight.ASEpisodeSelection
 import com.imcys.bilibilias.weight.ASEpisodeTitle
 import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
@@ -59,6 +64,8 @@ import com.imcys.bilibilias.weight.OnUpdateEpisodeListMode
 
 
 typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
+
+typealias OnUpdateAudioLanguage = (BILIVideoLanguageItem) -> Unit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +83,8 @@ fun VideoDownloadScreen(
     onAudioQualityChange: (Long?) -> Unit = {},
     onSelectSingleModel: (Boolean) -> Unit = { _ -> },
     onToVideoCodingInfo: () -> Unit,
-    onUpdateEpisodeListMode: OnUpdateEpisodeListMode
+    onUpdateEpisodeListMode: OnUpdateEpisodeListMode,
+    onUpdateAudioLanguage: OnUpdateAudioLanguage
 ) {
 
     if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
@@ -150,7 +158,7 @@ fun VideoDownloadScreen(
                             onToVideoCodingInfo.invoke()
                         })
                 Spacer(Modifier.weight(1f))
-                SwitchSelectModelTabRow(isSelectSingleModel,onSelectSingle = onSelectSingleModel)
+                SwitchSelectModelTabRow(isSelectSingleModel, onSelectSingle = onSelectSingleModel)
             }
             AsAutoError(videoPlayerInfo, onSuccessContent = {
                 Column {
@@ -187,7 +195,8 @@ fun VideoDownloadScreen(
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
 
-                        ASEpisodeTitle("选择缓存合集",
+                        ASEpisodeTitle(
+                            "选择缓存合集",
                             episodeListMode = episodeListMode,
                             onUpdateEpisodeListMode = onUpdateEpisodeListMode
                         )
@@ -225,7 +234,7 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        ASEpisodeTitle("选择缓存子集",episodeListMode,onUpdateEpisodeListMode)
+                        ASEpisodeTitle("选择缓存子集", episodeListMode, onUpdateEpisodeListMode)
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
@@ -238,7 +247,7 @@ fun VideoDownloadScreen(
 
 
             // 互动视频
-            if (viewInfo.data?.rights?.isSteinGate != 0L){
+            if (viewInfo.data?.rights?.isSteinGate != 0L) {
                 AsAutoError(interactiveVideo, onSuccessContent = {
                     Column(
                         Modifier
@@ -257,7 +266,46 @@ fun VideoDownloadScreen(
             }
 
 
+
+            // AI原声翻译
+            videoPlayerInfo.data?.language?.let {
+                BILIAISimultaneousInterpretation(
+                    it,
+                    downloadInfo?.selectAudioLanguage,
+                    onUpdateAudioLanguage = onUpdateAudioLanguage
+                )
+            }
+
         }
+    }
+}
+
+@Composable
+fun BILIAISimultaneousInterpretation(
+    language: BILIVideoLanguage,
+    selectAudioLanguage: BILIVideoLanguageItem?,
+    onUpdateAudioLanguage: OnUpdateAudioLanguage
+) {
+    Column(
+        modifier = Modifier.animateContentSize()
+    ) {
+        Text("AI原声翻译")
+        AnimatedVisibility(
+            visible = selectAudioLanguage != null
+        ) {
+            Spacer(Modifier.height(6.dp))
+            ASWarringTip {
+                Text("您正在使用哔哩哔哩还在Beta的功能，本APP提供的下载产物不代表B站最终品质。")
+            }
+        }
+        Spacer(Modifier.height(6.dp))
+        ASCommonSelectGrid(
+            items = language.items,
+            title = { it.title },
+            selected = { it == selectAudioLanguage },
+            key = { it.title },
+            onClick = { onUpdateAudioLanguage(it) }
+        )
     }
 }
 
@@ -265,20 +313,24 @@ fun VideoDownloadScreen(
 fun InteractiveVideoPageScreen(
     steinEdgeInfo: BILISteinEdgeInfo?,
     downloadInfo: DownloadViewInfo?,
-    episodeListMode : AppSettings.EpisodeListMode,
+    episodeListMode: AppSettings.EpisodeListMode,
     onUpdateSelectedCid: UpdateSelectedCid,
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
         Text("选择互动视频")
-        ASEpisodeTitle("选择互动视频",episodeListMode, onUpdateEpisodeListMode = onUpdateEpisodeListMode)
+        ASEpisodeTitle(
+            "选择互动视频",
+            episodeListMode,
+            onUpdateEpisodeListMode = onUpdateEpisodeListMode
+        )
         ASEpisodeSelection(
             episodeList = steinEdgeInfo?.storyList,
             episodeListMode = episodeListMode,
             episodeSelected = {
                 downloadInfo?.selectedCid?.contains(it.cid) == true
             },
-            episodeTitle = {it.title},
+            episodeTitle = { it.title },
             onUpdateEpisodeSelected = {
                 onUpdateSelectedCid.invoke(
                     it.cid,
@@ -306,7 +358,7 @@ fun VideoPageScreen(
             downloadInfo?.selectedCid?.contains(it.cid) == true
         },
         episodeListMode = episodeListMode,
-        episodeTitle = {it.part},
+        episodeTitle = { it.part },
         onUpdateEpisodeSelected = {
             onUpdateSelectedCid.invoke(
                 it.cid,
@@ -417,7 +469,7 @@ fun UgcSeasonPageScreen(
             episodeSelected = {
                 downloadInfo?.selectedCid?.contains(it.cid) == true
             },
-            episodeTitle = {it.part},
+            episodeTitle = { it.part },
             onUpdateEpisodeSelected = {
                 onUpdateSelectedCid.invoke(
                     it.cid,
@@ -446,12 +498,12 @@ fun UgcSeasonScreen(
 ) {
     ASSectionEpisodeSelection(
         sectionList = viewInfo.data?.ugcSeason?.sections ?: emptyList(),
-        sectionTitle = { info-> info.title },
-        sectionChecked = {it.id == selectSectionId },
+        sectionTitle = { info -> info.title },
+        sectionChecked = { it.id == selectSectionId },
         episodeList = viewInfo.data?.ugcSeason?.sections?.firstOrNull {
             it.id == selectSectionId
         }?.episodes?.filterWithSinglePage(),
-        episodeSelected = {downloadInfo?.selectedCid?.contains(it.cid) == true},
+        episodeSelected = { downloadInfo?.selectedCid?.contains(it.cid) == true },
         episodeTitle = { it.title },
         episodeListMode = episodeListMode,
         onSelectSection = {

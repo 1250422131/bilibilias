@@ -260,6 +260,8 @@ class BILIBILIWebAPIService(
         aid: Long? = null,
         fnval: Int = 4048,
         qn: Int = 127,
+        curLanguage: String? = null,
+        curProductionType: Int? = null,
         tryLook: String? = null
     ): FlowNetWorkResult<BILIVideoPlayerInfo> = httpClient.httpRequest {
         val newMap = mutableMapOf<String, String>().apply {
@@ -269,6 +271,8 @@ class BILIBILIWebAPIService(
             put(QN, qn.toString())
             put(FNVAL, fnval.toString())
             put(FOURK, "1")
+            curLanguage?.let { put("cur_language", it) }
+            curProductionType?.let { put("cur_production_type", it.toString()) }
         } + BROWSER_FINGERPRINT
 
         get(WEB_VIDEO_PLAYER_URL) {

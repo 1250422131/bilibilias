@@ -1283,7 +1283,9 @@ class DownloadManager(
             DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
                 videoInfoRepository.getVideoPlayerInfo(
                     cid = segment.platformId.toLong(),
-                    bvId = getSegmentBvId(segment)
+                    bvId = getSegmentBvId(segment),
+                    curLanguage = downloadViewInfo.selectAudioLanguage?.lang,
+                    curProductionType = downloadViewInfo.selectAudioLanguage?.productionType
                 ).last()
             }
 

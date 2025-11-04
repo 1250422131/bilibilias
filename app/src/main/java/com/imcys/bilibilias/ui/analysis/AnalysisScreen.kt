@@ -97,8 +97,10 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
@@ -115,6 +117,7 @@ import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASCommonSelectGrid
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
@@ -371,6 +374,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         onToVideoCodingInfo = onToVideoCodingInfo,
                         onUpdateEpisodeListMode = {
                             viewModel.updateEpisodeListMode(it)
+                        },
+                        onUpdateAudioLanguage = {
+                            viewModel.updateAudioLanguage(it)
                         }
                     )
                 }
@@ -581,6 +587,7 @@ fun AdvancedSetting(
                         isSelectSingleModel,
                         downloadInfo,
                         downloadInfo?.videoPlayerInfoV2,
+                        playerInfo,
                         onCheckCoverDownload = onCheckCoverDownload,
                         onCheckDownloadDanmaku = onCheckDownloadDanmaku,
                         onCheckMediaDownload = onCheckMediaDownload,
@@ -599,6 +606,7 @@ fun ExtraCache(
     isSelectSingleModel: Boolean,
     downloadInfo: DownloadViewInfo?,
     playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
+    playerInfo: NetWorkResult<Any?>,
     onCheckCoverDownload: (Boolean) -> Unit,
     onCheckDownloadDanmaku: (Boolean) -> Unit,
     onCheckMediaDownload: (Boolean) -> Unit,
@@ -607,6 +615,9 @@ fun ExtraCache(
 ) {
 
     var selectACCDownload by rememberSaveable { mutableStateOf(false) }
+
+    val isDonghua = playerInfo.data is BILIDonghuaPlayerInfo
+    val isVideo = playerInfo.data is BILIVideoPlayerInfo
 
     LaunchedEffect(isSelectSingleModel) {
         selectACCDownload = false
@@ -777,43 +788,13 @@ fun SelectACCCard(
 
             Spacer(Modifier.height(5.dp))
 
-            LazyVerticalGrid(
-                GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier
-                    .sizeIn(maxHeight = (60 * 2 + 2 * 10).dp)
-                    .shimmer(downloadInfo.videoPlayerInfoV2.status != ApiStatus.SUCCESS),
-            ) {
-                downloadInfo.videoPlayerInfoV2.data?.subtitle?.subtitles?.forEach { item ->
-                    item(key = item.id) {
-                        FilterChip(
-                            selected = downloadInfo.selectedCCId.contains(item.id),
-                            onClick = {
-                                onSelectCCId.invoke(item.id, selectType)
-                            },
-                            label = {
-                                Column(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(60.dp)
-                                        .padding(8.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        item.lanDoc,
-                                        maxLines = 2,
-                                        fontSize = 14.sp,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
-                            }
-                        )
-                    }
-
-                }
-            }
+            ASCommonSelectGrid(
+                items = downloadInfo.videoPlayerInfoV2.data?.subtitle?.subtitles ?: emptyList(),
+                key = { it.id },
+                title = { it.lanDoc },
+                onClick = { onSelectCCId.invoke(it.id, selectType) },
+                selected = { downloadInfo.selectedCCId.contains(it.id) }
+            )
         }
     })
 }

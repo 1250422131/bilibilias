@@ -51,9 +51,20 @@ class VideoInfoRepository(
         aid: Long? = null,
         fnval: Int = 4048,
         qn: Int = 127,
+        curLanguage: String? = null,
+        curProductionType: Int? = null
     ): Flow<NetWorkResult<BILIVideoPlayerInfo?>> {
         val tryLook = if (usersDataSource.isLogin()) null else "1"
-        return webApiService.getVideoPlayerInfo(cid, bvId, aid, fnval, qn, tryLook).map {
+        return webApiService.getVideoPlayerInfo(
+            cid,
+            bvId,
+            aid,
+            fnval,
+            qn,
+            curLanguage,
+            curProductionType,
+            tryLook
+        ).map {
             if (it.status == ApiStatus.SUCCESS) {
                 // 杜比
                 it.data?.dash?.dolby?.audio?.let { dolbyList ->
@@ -97,6 +108,6 @@ class VideoInfoRepository(
         oid: Long,
         segmentIndex: Int,
         type: Int = 1
-    ) = webApiService.getDanmaku(pid, oid,segmentIndex, type)
+    ) = webApiService.getDanmaku(pid, oid, segmentIndex, type)
 
 }

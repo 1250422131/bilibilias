@@ -5,6 +5,8 @@ import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoLanguage
+import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import java.util.TreeSet
 
@@ -23,6 +25,7 @@ data class DownloadViewInfo(
     val downloadMedia : Boolean = true,
     val downloadCover: Boolean = false,
     val downloadDanmaku: Boolean = false,
+    val selectAudioLanguage: BILIVideoLanguageItem? = null,
     val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表
     val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型
     val videoPlayerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?> = emptyNetWorkResult()
