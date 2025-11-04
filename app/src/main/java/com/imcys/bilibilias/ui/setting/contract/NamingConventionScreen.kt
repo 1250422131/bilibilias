@@ -37,6 +37,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.database.entity.download.FileNamePlaceholder
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
 import com.imcys.bilibilias.database.entity.download.videoNamingRules
 import com.imcys.bilibilias.datastore.AppSettingsSerializer

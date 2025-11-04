@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
 import com.imcys.bilibilias.ui.weight.ASTextButton

@@ -36,6 +36,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserFolderDetailInfo
 import com.imcys.bilibilias.network.model.user.BILIUserFolderListInfo

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+import com.imcys.bilibilias.R
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.padding

@@ -22,6 +22,7 @@ import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.toBitmap
 import com.imcys.bilibilias.data.model.BILILoginUserModel
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.database.entity.BILIUserCookiesEntity
 import com.imcys.bilibilias.database.entity.BILIUsersEntity

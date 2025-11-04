@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.data.repository.getDescription
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar

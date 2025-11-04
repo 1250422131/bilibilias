@@ -28,6 +28,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.imcys.bilibilias.common.event.analysisHandleChannel
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.playVoucherErrorChannel
 import com.imcys.bilibilias.common.event.requestFrequentHandleChannel
 import com.imcys.bilibilias.ui.analysis.AnalysisScreen

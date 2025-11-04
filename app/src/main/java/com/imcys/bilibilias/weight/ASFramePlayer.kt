@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.weight
 
+import com.imcys.bilibilias.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background

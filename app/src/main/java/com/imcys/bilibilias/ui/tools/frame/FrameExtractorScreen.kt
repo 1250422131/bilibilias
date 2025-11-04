@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel.UIState
 import com.imcys.bilibilias.ui.weight.ASAlertDialog

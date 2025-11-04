@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.BuildConfig
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.ASConstant.PRIVACY_POLICY_URL
 import com.imcys.bilibilias.common.utils.openLink
 

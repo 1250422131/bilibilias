@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.utils.NumberUtils
 import com.imcys.bilibilias.ui.weight.ASAsyncImage

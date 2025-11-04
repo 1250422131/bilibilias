@@ -30,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.imcys.bilibilias.common.event.AnalysisEvent
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.sendAnalysisEvent
 import com.imcys.bilibilias.common.update.GooglePlayAppUpdateManage
 import com.imcys.bilibilias.common.utils.Manufacturers.XIAOMI
@@ -66,6 +67,10 @@ class MainActivity : ComponentActivity() {
             var enabledDynamicColor by remember { mutableStateOf(false) }
             val updateSnackBarHostState = remember { SnackbarHostState() }
             val showSkipVersionState by showSkipVersion.collectAsState()
+            
+            // Extract string resources for use in LaunchedEffect
+            val versionUpdateMessage = stringResource(R.string.version_update)
+            val updateActionLabel = stringResource(R.string.update)
 
             LaunchedEffect(Unit) {
                 appSettingsFlow.collect {
@@ -76,8 +81,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = stringResource(R.string.version_update),
-                    actionLabel = stringResource(R.string.update),
+                    message = versionUpdateMessage,
+                    actionLabel = updateActionLabel,
                     duration = SnackbarDuration.Short
                 )
                 when (result) {

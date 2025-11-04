@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.imcys.bilibilias.ui.weight.ASTextButton
+import com.imcys.bilibilias.R
 
 @Composable
 fun PermissionRequestTipDialog(
