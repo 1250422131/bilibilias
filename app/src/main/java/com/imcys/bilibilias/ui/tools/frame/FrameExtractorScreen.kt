@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -143,7 +144,7 @@ fun SelectVideoListDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("选择导入视频") },
+        title = { Text(stringResource(R.string.home_text_816)) },
         text = {
             LazyColumn(
                 modifier = Modifier.sizeIn(maxHeight = 600.dp),
@@ -176,7 +177,7 @@ fun SelectVideoListDialog(
                                     modifier = Modifier
                                         .fillMaxSize(),
                                     shape = CardDefaults.shape,
-                                    contentDescription = "封面图片"
+                                    contentDescription = stringResource(R.string.home_text_7568)
                                 )
                             }
 
@@ -210,7 +211,7 @@ fun SelectVideoListDialog(
                 }
             }
         }, confirmButton = {
-            Text("取消", Modifier.clickable {
+            Text(stringResource(R.string.cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -225,7 +226,7 @@ fun SelectVideoModelDialog(
     val haptics = LocalHapticFeedback.current
     ASAlertDialog(
         showState = showSelectVideoModel, clickBlankDismiss = true,
-        title = { Text("选择导入视频方式") },
+        title = { Text(stringResource(R.string.home_text_320)) },
         text = {
             Column {
                 Surface(
@@ -246,7 +247,7 @@ fun SelectVideoModelDialog(
                     ) {
                         Icon(Icons.Outlined.DownloadDone, contentDescription = null)
                         Spacer(Modifier.width(10.dp))
-                        Text("从已下载导入")
+                        Text(stringResource(R.string.home_text_8201))
                     }
                 }
 //                Spacer(Modifier.height(5.dp))
@@ -272,7 +273,7 @@ fun SelectVideoModelDialog(
 
             }
         }, confirmButton = {
-            Text("取消", Modifier.clickable {
+            Text(stringResource(R.string.cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -295,7 +296,7 @@ private fun FrameExtractorContent(
 
         when (val state = uiState) {
             UIState.Default -> ASWarringTip {
-                Text("请在右上角选择导入视频")
+                Text(stringResource(R.string.home_text_2359))
             }
 
             is UIState.ImportSuccess -> ImportSuccessScreen(state, vm)
@@ -399,7 +400,7 @@ fun ExportFpsButton(onExport: (String) -> Unit = {}) {
             onClick = { showExportDialog = true }
         ) {
             Text(
-                "导出逐帧图片",
+                stringResource(R.string.home_text_6101),
                 fontSize = 16.sp
             )
         }
@@ -433,19 +434,19 @@ fun ExportDialog(
 
     ASAlertDialog(
         showState = showExportDialog,
-        title = { Text("选择导出位置") },
+        title = { Text(stringResource(R.string.home_text_8102)) },
         text = {
-            Text("请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。")
+            Text(stringResource(R.string.home_text_661))
         },
         confirmButton = {
             ASTextButton(onClick = { launcher.launch(null) }) {
-                Text("选择位置")
+                Text(stringResource(R.string.home_text_9100))
             }
         },
         onDismiss = onDismiss,
         dismissButton = {
             ASTextButton(onClick = { onDismiss?.invoke() }) {
-                Text("取消")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
@@ -568,7 +569,7 @@ private fun FrameExtractorScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(text = "逐帧提取")
+                        Text(text = stringResource(R.string.frame_extraction))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -584,7 +585,7 @@ private fun FrameExtractorScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = "操作"
+                                contentDescription = stringResource(R.string.login_text_2827)
                             )
                         }
                         DropdownMenu(
@@ -592,7 +593,7 @@ private fun FrameExtractorScaffold(
                             onDismissRequest = { expandedMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("打开视频") },
+                                text = { Text(stringResource(R.string.home_text_9258)) },
                                 onClick = {
                                     expandedMenu = false
                                     onShowInputVideo.invoke()

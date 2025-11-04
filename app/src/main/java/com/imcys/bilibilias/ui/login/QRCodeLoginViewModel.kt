@@ -12,6 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
@@ -201,7 +202,7 @@ class QRCodeLoginViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val imageUrl = qrCodeInfoState.value.data?.url
             if (imageUrl == null) {
-                Toast.makeText(context, "下载失败，请刷新QR查看", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.login_text_41), Toast.LENGTH_SHORT).show()
                 return@launch
             }
             runCatching {
@@ -222,7 +223,7 @@ class QRCodeLoginViewModel(
             }.onSuccess {
                 saveImageWithMediaStore(it, context)
             }.onFailure {
-                Toast.makeText(context, "下载失败，请重新尝试。", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.login_text_7531), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -270,7 +271,7 @@ class QRCodeLoginViewModel(
                 null
             }
         }
-        Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, stringResource(R.string.login_text_6335), Toast.LENGTH_SHORT).show()
     }
 
     fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {
@@ -307,7 +308,7 @@ class QRCodeLoginViewModel(
         }.onFailure {
             Toast.makeText(
                 context,
-                "你还没有安装哔哩哔哩哦~",
+                stringResource(R.string.login_text_6596),
                 Toast.LENGTH_SHORT,
             ).show()
         }

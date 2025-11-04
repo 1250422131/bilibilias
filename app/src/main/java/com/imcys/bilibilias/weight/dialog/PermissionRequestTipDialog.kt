@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.weight.dialog
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -14,7 +15,7 @@ fun PermissionRequestTipDialog(
     icon: @Composable (() -> Unit)? = {
         Icon(
             Icons.Outlined.WarningAmber,
-            contentDescription = "警告"
+            contentDescription = stringResource(R.string.home_text_1575)
         )
     },
     title: String = "权限请求",

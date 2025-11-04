@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.user.history
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -156,7 +157,7 @@ private fun UserPlayHistoryScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "最近播放")
+                    Text(text = stringResource(R.string.home_text_5888))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

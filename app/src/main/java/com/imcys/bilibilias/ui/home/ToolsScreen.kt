@@ -47,6 +47,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,16 +97,16 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 
     val videoTools = listOf(
         ToolInfo(
-            name = "逐帧提取",
-            desc = "从视频中逐帧提取图片，画手书的好帮手！",
+            name = stringResource(R.string.frame_extraction),
+            desc = stringResource(R.string.frame_extraction_1),
             icon = Icons.Outlined.VideoCameraBack,
             navKey = FrameExtractorRoute
         )
     )
     val otherTools = mutableListOf(
         ToolInfo(
-            name = "反馈问题",
-            desc = "🐞帮助我们改进程序，这对本项目的发展有重大意义！",
+            name = stringResource(R.string.feedback),
+            desc = stringResource(R.string.feedback_desc),
             icon = Icons.Outlined.BugReport,
             onClick = { showFeedbackDialog = true }
         )
@@ -113,8 +114,8 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         if (!BuildConfig.ENABLED_PLAY_APP_MODE) {
             add(
                 ToolInfo(
-                    name = "捐助我们",
-                    desc = "☕请我们喝一杯奶茶吧！",
+                    name = stringResource(R.string.donate),
+                    desc = stringResource(R.string.donate_desc),
                     iconRes = R.drawable.ic_credit_card_heart_24px,
                     navKey = DonateRoute
                 )
@@ -131,7 +132,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         item(
             span = { GridItemSpan(maxLineSpan) }
         ) {
-            Text("视频处理")
+            Text(stringResource(R.string.video_processing))
         }
         items(videoTools) {
             ToolCard(it, onClick = {
@@ -140,7 +141,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Text("其他")
+            Text(stringResource(R.string.other))
         }
 
         items(otherTools) {
@@ -167,7 +168,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
     ASAlertDialog(
         showState = showFeedbackDialog,
         title = {
-            Text("问题反馈")
+            Text(stringResource(R.string.feedback_title))
         },
         text = {
             Column(
@@ -185,7 +186,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "反馈时需要带上你的设备信息，点击可一键复制。",
+                            stringResource(R.string.feedback_device_info_notice),
                             fontSize = 14.sp,
                             modifier = Modifier.weight(1f)
                         )
@@ -195,18 +196,18 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                                 val clipboard =
                                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText("版本信息", copyText)
+                                val clip = ClipData.newPlainText(stringResource(R.string.home_text_9709), copyText)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, stringResource(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
                             }
                         }) {
-                            Icon(Icons.Outlined.CopyAll, contentDescription = "复制按钮")
+                            Icon(Icons.Outlined.CopyAll, contentDescription = stringResource(R.string.home_text_1363))
                         }
                     }
                 }
 
                 BadgedBox(badge = {
-                    Badge { Text("推荐") }
+                    Badge { Text(stringResource(R.string.recommended)) }
                 }) {
                     Surface(
                         shape = CardDefaults.shape,
@@ -220,11 +221,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_github_24px),
-                                contentDescription = "图标",
+                                contentDescription = stringResource(R.string.home_text_7372),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                "前往Github反馈，由开发者和社区贡献者处理你的问题。",
+                                stringResource(R.string.feedback_github_desc),
                             )
                         }
                     }
@@ -243,11 +244,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_qq_channel_2px),
-                                contentDescription = "图标",
+                                contentDescription = stringResource(R.string.home_text_7372),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                "前往QQ频道反馈，由用户和开发者解答你的问题，并获得最新的通知。",
+                                stringResource(R.string.feedback_qq_channel_desc),
                             )
                         }
                     }
@@ -265,11 +266,11 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_qq_24px),
-                                contentDescription = "图标",
+                                contentDescription = stringResource(R.string.home_text_7372),
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                "二次元爱好者交流群，欢迎加入讨论与交流！",
+                                stringResource(R.string.anime_community_desc),
                             )
                         }
                     }
@@ -283,7 +284,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
             ASTextButton(onClick = {
                 onDismiss.invoke()
             }) {
-                Text("好的")
+                Text(stringResource(R.string.ok))
             }
         }
 
@@ -295,8 +296,8 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
 @Composable
 private fun ToolCard(
     toolInfo: ToolInfo = ToolInfo(
-        name = "逐帧提取",
-        desc = "从视频中逐帧提取图片，画手书的好帮手！",
+        name = stringResource(R.string.frame_extraction),
+        desc = stringResource(R.string.frame_extraction_1),
         icon = Icons.Outlined.VideoCameraBack,
         navKey = FrameExtractorRoute
     ),
@@ -316,7 +317,7 @@ private fun ToolCard(
                 toolInfo.icon?.let {
                     Icon(
                         it,
-                        contentDescription = "图标",
+                        contentDescription = stringResource(R.string.home_text_7372),
                         modifier = Modifier
                             .padding(8.dp)
                             .size(22.dp)
@@ -324,7 +325,7 @@ private fun ToolCard(
                 } ?: run {
                     Icon(
                         painter = painterResource(toolInfo.iconRes!!),
-                        contentDescription = "图标",
+                        contentDescription = stringResource(R.string.home_text_7372),
                         modifier = Modifier
                             .padding(8.dp)
                             .size(22.dp)

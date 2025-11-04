@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.login
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -96,7 +97,7 @@ fun CookeLoginContent(
                 cookiesString = it
                 vm.checkCookies(it)
             },
-            label = {Text("Cookie（浏览器直接复制，无需解码）")},
+            label = {Text(stringResource(R.string.login_text_9160))},
             maxLines = 4,
             minLines = 4
         )
@@ -133,7 +134,7 @@ fun CookeLoginContent(
                                 onFinish()
                             }
                         }) {
-                        Text("确认，这是我要登录的账户")
+                        Text(stringResource(R.string.login_text_6871))
                     }
                     Spacer(Modifier.height(10.dp))
                 }
@@ -142,7 +143,7 @@ fun CookeLoginContent(
 
         // 提示
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-            Text("请妥善保管您的Cookie，避免产生泄露风险。")
+            Text(stringResource(R.string.cookie_safekeeping_warning))
         }
 
         SavingDialog(showSavingDialog)
@@ -156,7 +157,7 @@ fun CookeLoginContent(
 @Composable
 fun SavingDialog(show: Boolean) {
     ASAlertDialog(showState = show, title = {
-        Text("存储身份信息")
+        Text(stringResource(R.string.login_text_6961))
     }, text = {
         Column(
             Modifier
@@ -185,7 +186,7 @@ fun UserCard(modifier: Modifier = Modifier, mid: Long, name: String, level: Int,
                 ASAsyncImage(
                     model = face,
                     shape = MaterialShapes.Cookie12Sided.toShape(),
-                    contentDescription = "头像",
+                    contentDescription = stringResource(R.string.avatar),
                     modifier = Modifier
                         .aspectRatio(1f)
                 )
@@ -216,7 +217,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text("B站Cookie登录")
+                        Text(stringResource(R.string.cookie_login_title_1))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -227,7 +228,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
+                                contentDescription = stringResource(R.string.back)
                             )
                         }
                     }

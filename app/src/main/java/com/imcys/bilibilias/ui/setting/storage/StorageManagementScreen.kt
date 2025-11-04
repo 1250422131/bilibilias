@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -164,7 +165,7 @@ fun StorageManagementSuccessScreen(
             ASWarringTip {
                 Row {
                     Text(
-                        "应用存储权限未完全获取，可能导致存储数据不准确，点击授权后重新计算。",
+                        stringResource(R.string.home_permission_1),
                         Modifier.weight(1f)
                     )
                     ASIconButton(onClick = {
@@ -182,16 +183,16 @@ fun StorageManagementSuccessScreen(
                         )
                         downloadLauncher.launch(downloadUri)
                     }) {
-                        Icon(Icons.Outlined.NorthEast, contentDescription = "去授权")
+                        Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.home_text_2641))
                     }
                 }
             }
         }
 
         StorageContent(
-            title = "音视频文件",
+            title = stringResource(R.string.home_text_8022),
             dataNumStr = StorageUtil.formatSize(data.downloadBytes),
-            description = "已下载的音视频文件大小",
+            description = stringResource(R.string.home_text_9380),
             onClick = {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     val targetDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BILIBILIAS")
@@ -213,25 +214,25 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "未找到文件管理器", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, stringResource(R.string.home_text_9204), Toast.LENGTH_SHORT).show()
                 }
             },
         )
 
 
         StorageContent(
-            title = "临时文件",
+            title = stringResource(R.string.home_text_1126),
             dataNumStr = "${StorageUtil.formatSize(data.cacheTotalBytes)}",
-            description = "临时文件，可放心清理",
-            buttonText = "清理",
+            description = stringResource(R.string.home_text_7506),
+            buttonText = stringResource(R.string.home_text_2387),
             buttonColor = MaterialTheme.colorScheme.primary,
             onClick = onCleanCache
         )
 
         StorageContent(
-            title = "核心文件",
+            title = stringResource(R.string.home_text_6267),
             dataNumStr = "${StorageUtil.formatSize(data.appBytes - data.cacheTotalBytes)}",
-            description = "运行时必要文件，不可清除。",
+            description = stringResource(R.string.home_text_1389),
             showButton = false,
             buttonColor = MaterialTheme.colorScheme.primary,
         )
@@ -327,7 +328,7 @@ private fun StorageManagementScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text(text = "存储管理")
+                        Text(text = stringResource(R.string.home_text_6181))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,

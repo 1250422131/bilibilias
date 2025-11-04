@@ -48,6 +48,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -120,7 +121,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "缓存配置"
+                    text = stringResource(R.string.home_text_5901)
                 )
             }
 //            item {
@@ -157,8 +158,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_save_24px),
-                    text = "存储管理",
-                    descriptionText = "管理APP内存占用",
+                    text = stringResource(R.string.home_text_6181),
+                    descriptionText = stringResource(R.string.home_text_6344),
                     onClick = onToStorageManagement
                 )
             }
@@ -167,7 +168,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Save),
-                    text = "缓存目录",
+                    text = stringResource(R.string.home_text_9045),
                     descriptionText = "Download/BILIBILIAS",
                     onClick = {
                     }
@@ -179,8 +180,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Edit),
-                    text = "命名规则",
-                    descriptionText = "自定义下载文件名称",
+                    text = stringResource(R.string.home_text_8165),
+                    descriptionText = stringResource(R.string.home_text_549),
                     onClick = onToNamingConvention
                 )
             }
@@ -188,14 +189,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "主题设置"
+                    text = stringResource(R.string.home_text_7803)
                 )
             }
             item {
                 SwitchSettingsItem(
                     imageVector = Icons.Outlined.Palette,
-                    text = "动态主题",
-                    description = "使用桌面壁纸颜色作为主题",
+                    text = stringResource(R.string.home_text_8618),
+                    description = stringResource(R.string.home_text_4868),
                     checked = appSettings.enabledDynamicColor,
                 ) { check ->
                     haptics.switchHapticFeedback(check)
@@ -206,7 +207,7 @@ fun SettingScreen(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 item {
                     CategorySettingsItem(
-                        text = "权限设置"
+                        text = stringResource(R.string.home_text_4600)
                     )
                 }
             }
@@ -218,14 +219,14 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "布局配置"
+                    text = stringResource(R.string.home_text_9493)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ListAlt),
-                    text = "首页排版",
+                    text = stringResource(R.string.home_text_8722),
                     description = {},
                     onClick = onToLayoutTypeset
                 )
@@ -235,15 +236,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "解析配置"
+                    text = stringResource(R.string.home_text_5146)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.AirplaneTicket),
-                    text = "漫游服务",
-                    descriptionText = "可使视频解析流量出国",
+                    text = stringResource(R.string.home_text_8163),
+                    descriptionText = stringResource(R.string.video_analysis_1),
                     onClick = onToRoam
                 )
             }
@@ -252,7 +253,7 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "关于程序"
+                    text = stringResource(R.string.home_text_993)
                 )
             }
 
@@ -260,8 +261,8 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Group),
-                    text = "关于",
-                    descriptionText = "作为依赖平台的程序，我们有责任和义务维护平台生态的健康发展！",
+                    text = stringResource(R.string.home_text_5679),
+                    descriptionText = stringResource(R.string.home_program),
                     onClick = onToAbout
                 )
 
@@ -271,7 +272,7 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = painterResource(R.drawable.ic_github_24px),
-                    text = "Github仓库",
+                    text = stringResource(R.string.home_text_2021),
                     description = {},
                     onClick = {
                         val intent = Intent().apply {
@@ -312,15 +313,15 @@ fun SettingScreen(
 
             item {
                 CategorySettingsItem(
-                    text = "账户"
+                    text = stringResource(R.string.home_text_3393)
                 )
             }
 
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Android),
-                    text = "设备信息",
-                    descriptionText = "提交反馈时记得带上这个！",
+                    text = stringResource(R.string.home_text_9295),
+                    descriptionText = stringResource(R.string.home_text_5900),
                     onClick = onToVersionInfo
                 )
 
@@ -329,12 +330,12 @@ fun SettingScreen(
             item {
                 BaseSettingsItem(
                     painter = rememberVectorPainter(Icons.Outlined.Policy),
-                    text = "隐私政策",
+                    text = stringResource(R.string.privacy_policy_2),
                     descriptionText = "当前状态：${
                         when (appSettings.agreePrivacyPolicy) {
-                            Agreed -> "已同意"
-                            Refuse -> "已拒绝"
-                            else -> "未选择"
+                            Agreed -> stringResource(R.string.home_text_849)
+                            Refuse -> stringResource(R.string.home_text_8202)
+                            else -> stringResource(R.string.home_text_4821)
                         }
                     }，可在这里拒绝或同意我们的隐私政策。",
                     onClick = { showPrivacyPolicy = true }
@@ -345,8 +346,8 @@ fun SettingScreen(
                 item {
                     BaseSettingsItem(
                         painter = rememberVectorPainter(Icons.AutoMirrored.Default.Logout),
-                        text = "退出登录",
-                        descriptionText = "清空登录信息，解除登录占用。",
+                        text = stringResource(R.string.home_text_3124),
+                        descriptionText = stringResource(R.string.home_text_2151),
                         onClick = { showLogoutDialog = true }
                     )
                 }
@@ -391,7 +392,7 @@ fun SettingScreen(
         // 退出登录对话框
         ASAlertDialog(
             showState = showLogoutDialog,
-            title = { Text("退出登录") },
+            title = { Text(stringResource(R.string.home_text_3124)) },
             text = {
                 Column(
                     Modifier
@@ -403,7 +404,7 @@ fun SettingScreen(
                         ContainedLoadingIndicator()
                         Text("退出中....")
                     } else {
-                        Text("是否退出登录？退出登录将清除登录信息，解除登录占用。")
+                        Text(stringResource(R.string.home_text_1519))
                     }
                 }
             },
@@ -420,14 +421,14 @@ fun SettingScreen(
                         onLogoutFinish(uiState.currentMid)
                     }
                 }) {
-                    Text("退出登录")
+                    Text(stringResource(R.string.home_text_3124))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
                 }) {
-                    Text("取消")
+                    Text(stringResource(R.string.cancel))
                 }
             }
 
@@ -459,8 +460,8 @@ fun DownloadPostNotifications() {
 
         SwitchSettingsItem(
             imageVector = Icons.Outlined.Notifications,
-            text = "前台通知",
-            description = "开启后可以使得在后台的下载任务不会被系统回收",
+            text = stringResource(R.string.home_text_9602),
+            description = stringResource(R.string.home_text_2800),
             checked = hasForegroundServicePermission,
         ) {
             haptics.switchHapticFeedback(it)
@@ -538,7 +539,7 @@ fun DownloadServicePermissionRequestTipDialog(
     }
     PermissionRequestTipDialog(
         show = true,
-        message = "为了我们可以在后台缓存较长视频，接下来将向您申请通知服务权限。",
+        message = stringResource(R.string.home_cache_permission),
         onConfirm = {
             launcher.launch(permission.POST_NOTIFICATIONS)
         },
@@ -563,7 +564,7 @@ fun SettingScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "设置") },
+                title = { Text(text = stringResource(R.string.settings)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

@@ -2,6 +2,7 @@ package com.imcys.bilibilias.ui.user.bangumifollow
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -171,10 +172,10 @@ fun LazyGridScope.bangumiCardListLoading() {
     items(10) {
         BangumiCard(
             modifier = Modifier.shimmer(true),
-            title = "标题",
+            title = stringResource(R.string.home_text_2852),
             intro = "",
-            updateInfo = "更新至X话",
-            seenInfo = "看到",
+            updateInfo = stringResource(R.string.home_text_3528),
+            seenInfo = stringResource(R.string.home_text_4558),
             pic = "",
         )
     }
@@ -213,7 +214,7 @@ fun BangumiCard(
                 ASAsyncImage(
                     model = pic.toHttps(),
                     shape = CardDefaults.shape,
-                    contentDescription = "番剧封面",
+                    contentDescription = stringResource(R.string.home_text_3025),
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -256,7 +257,7 @@ private fun BangumiFollowScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "追番")
+                    Text(text = stringResource(R.string.home_text_9485))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.navigation
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -270,7 +271,7 @@ fun BILIBILAISNavDisplay() {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    "请选择右侧选项",
+                                    stringResource(R.string.home_text_2234),
                                 )
                             }
                         }

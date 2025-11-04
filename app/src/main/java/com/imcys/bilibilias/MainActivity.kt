@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -75,8 +76,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = "新版本已经下载完成，可随时进行更新。",
-                    actionLabel = "更新",
+                    message = stringResource(R.string.version_update),
+                    actionLabel = stringResource(R.string.update),
                     duration = SnackbarDuration.Short
                 )
                 when (result) {
@@ -125,17 +126,17 @@ class MainActivity : ComponentActivity() {
         if (value) {
             AlertDialog(
                 onDismissRequest = {},
-                title = { Text("跳过更新") },
-                text = { Text("如果您暂时不想更新，可以跳过此版本，等下个版本再进行更新。") },
+                title = { Text(stringResource(R.string.home_text_1149)) },
+                text = { Text(stringResource(R.string.version_update_1)) },
                 confirmButton = {
                     ASTextButton(onClick = onConfirm) {
-                        Text("跳过此版本")
+                        Text(stringResource(R.string.skip_version))
                     }
 
                 },
                 dismissButton = {
                     ASTextButton(onClick = onDismiss) {
-                        Text("下次再说")
+                        Text(stringResource(R.string.later))
                     }
                 }
             )

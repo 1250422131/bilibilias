@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.event.playvoucher
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +37,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
         topBar = {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
-                title = { Text("风控须知") },
+                title = { Text(stringResource(R.string.home_text_570)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
@@ -44,7 +45,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = "返回"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -66,19 +67,19 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
             ) {
                 item {
                     Text(
-                        text = "账户风险提示",
+                        text = stringResource(R.string.account_risk_warning),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 val points = listOf(
-                    "您的账号可能正处于哔哩哔哩平台风控监测，可能与曾使用违规第三方程序、异常使用行为或其他违规操作有关，因此被要求进行身份验证。",
-                    "检测到您的 TV 端身份验证状态存在异常。BILIBILIAS 目前可尝试为您移除 TV 端的身份信息，以协助恢复基本使用。",
-                    "该功能为临时辅助能力，可能随时被取消或收回。",
-                    "继续使用具有违规风险的第三方工具，可能加重账号风险（功能受限、封禁等）。",
-                    "我们可能对异常账号进行标记；必要时可冻结其使用 BILIBILIAS 的权限。",
-                    "请在操作前充分理解上述风险，所有后果由您自行承担。"
+                    stringResource(R.string.home_risk_control_violation_third_party),
+                    stringResource(R.string.home_verification_abnormal_identity),
+                    stringResource(R.string.home_temporary_auxiliary),
+                    stringResource(R.string.home_violation_third_party_tool),
+                    stringResource(R.string.home_abnormal_freeze_mark),
+                    stringResource(R.string.home_risk_consequence_bear)
                 )
                 items(points.size) { index ->
                     Text(
@@ -88,7 +89,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                 }
                 item {
                     Text(
-                        text = "点击下方按钮即表示您已阅读并知晓以上内容。",
+                        text = stringResource(R.string.click_button_below_notice),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -103,7 +104,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
-                Text("我已知晓")
+                Text(stringResource(R.string.acknowledged))
             }
         }
     }

@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -173,7 +174,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?, onClick: () -> Unit = {
             ASAsyncImage(
                 "${item?.pic?.toHttps()}@672w_378h_1c",
                 modifier = Modifier.fillMaxSize(),
-                contentDescription = "视频封面"
+                contentDescription = stringResource(R.string.home_text_2468)
             )
         }
 
@@ -223,17 +224,17 @@ private fun VideoHeader(
             ) {
                 Icon(
                     Icons.Outlined.Movie,
-                    contentDescription = "投稿视频",
+                    contentDescription = stringResource(R.string.home_text_1408),
                     tint = MaterialTheme.colorScheme.outline
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("投稿视频", color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.home_text_1408), color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
                 ASIconButton(onClick = { onToWorkList.invoke() }) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = "更多投稿",
+                        contentDescription = stringResource(R.string.home_text_2286),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
@@ -305,9 +306,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.ThumbUp, contentDescription = "最近点赞")
+                Icon(Icons.Outlined.ThumbUp, contentDescription = stringResource(R.string.home_text_7690))
                 Spacer(Modifier.height(4.dp))
-                Text("点赞", fontSize = 14.sp)
+                Text(stringResource(R.string.home_text_1252), fontSize = 14.sp)
             }
         }
 
@@ -324,9 +325,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.History, contentDescription = "最近播放图标")
+                Icon(Icons.Outlined.History, contentDescription = stringResource(R.string.home_text_1427))
                 Spacer(Modifier.height(4.dp))
-                Text("最近", fontSize = 14.sp)
+                Text(stringResource(R.string.home_text_9715), fontSize = 14.sp)
             }
         }
 
@@ -343,9 +344,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Star, contentDescription = "收藏")
+                Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.favorite))
                 Spacer(Modifier.height(4.dp))
-                Text("收藏", fontSize = 14.sp)
+                Text(stringResource(R.string.favorite), fontSize = 14.sp)
             }
         }
 
@@ -362,9 +363,9 @@ fun ActionRow(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Outlined.Subscriptions, contentDescription = "追番")
+                Icon(Icons.Outlined.Subscriptions, contentDescription = stringResource(R.string.home_text_9485))
                 Spacer(Modifier.height(4.dp))
-                Text("追番", fontSize = 14.sp)
+                Text(stringResource(R.string.home_text_9485), fontSize = 14.sp)
             }
         }
 
@@ -391,10 +392,10 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     Icon(
                         Icons.Outlined.Link,
                         tint = MaterialTheme.colorScheme.outline,
-                        contentDescription = "关联平台"
+                        contentDescription = stringResource(R.string.home_text_1433)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("已关联账户", color = MaterialTheme.colorScheme.outline)
+                    Text(stringResource(R.string.home_text_5286), color = MaterialTheme.colorScheme.outline)
 
                 }
                 Spacer(Modifier.height(24.dp))
@@ -404,7 +405,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_mini_bili_logo_24px),
-                        contentDescription = "B站Logo",
+                        contentDescription = stringResource(R.string.home_text_4114),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.weight(1f))
@@ -423,7 +424,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                         AsyncImage(
                             "${biliUsersEntity?.face}",
                             modifier = Modifier.size(24.dp),
-                            contentDescription = "关联账户头像",
+                            contentDescription = stringResource(R.string.avatar_2),
                         )
                     }
                 }
@@ -445,7 +446,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                        )
                        Spacer(Modifier.weight(1f))
                        Text(
-                           "暂未开放",
+                           stringResource(R.string.home_text_6150),
                            fontSize = 16.sp,
                            color = MaterialTheme.colorScheme.outline
                        )
@@ -453,7 +454,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                        Icon(
                            Icons.Outlined.Build,
                            modifier = Modifier.size(20.dp),
-                           contentDescription = "维护图标",
+                           contentDescription = stringResource(R.string.home_text_630),
                            tint = MaterialTheme.colorScheme.outline
                        )
                    }
@@ -485,7 +486,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("关注", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.follow), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -504,7 +505,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("粉丝", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.home_text_1241), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -523,7 +524,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("获赞", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.home_text_3634), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
         item {
@@ -541,7 +542,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("播放", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.play), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
     }
@@ -570,7 +571,7 @@ fun TopUserInfo(
                     ) {
                         ASAsyncImage(
                             pageInfoState.data?.face ?: "",
-                            contentDescription = "头像",
+                            contentDescription = stringResource(R.string.avatar),
                             modifier = Modifier.size(64.dp)
                         )
                     }
@@ -580,7 +581,7 @@ fun TopUserInfo(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                pageInfoState.data?.name ?: "用户名",
+                                pageInfoState.data?.name ?: stringResource(R.string.home_text_8844),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 20.sp,
                                 maxLines = 1,
@@ -609,7 +610,7 @@ fun TopUserInfo(
                         }
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            pageInfoState.data?.sign ?: "个性签名",
+                            pageInfoState.data?.sign ?: stringResource(R.string.home_text_300),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 14.sp,
                             maxLines = 2,
@@ -658,7 +659,7 @@ private fun UserScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.Settings,
-                                contentDescription = "设置"
+                                contentDescription = stringResource(R.string.settings)
                             )
                         }
                     }

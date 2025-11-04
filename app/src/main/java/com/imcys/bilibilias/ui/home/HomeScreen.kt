@@ -337,9 +337,9 @@ fun HomeContent(
                 ) {
                     Text(
                         if (BuildConfig.DEBUG) {
-                            "当前App处于Debug模式，如果您并非开发人员，请谨慎使用，建议在Github公开的渠道进行下载。"
+                            stringResource(R.string.home_text_4105)
                         } else {
-                            "当前应用签名未知，请谨慎使用！建议在Github公开的渠道进行下载。"
+                            stringResource(R.string.home_text_9491)
                         }
                     )
                 }
@@ -395,8 +395,8 @@ fun HomeContent(
                     item {
                         CommonInfoCard(
                             R.drawable.ic_brand_awareness_24px,
-                            "公告",
-                            bulletinInfo?.content ?: "暂无最新公告",
+                            stringResource(R.string.home_text_7183),
+                            bulletinInfo?.content ?: stringResource(R.string.home_text_2728),
                             onClickClose = {
                                 closeBulletinDialogShow = true
                             },
@@ -440,11 +440,11 @@ fun HomeContent(
                             }
 
                             ASBuildType.ALPHA -> appUpdateInfo?.feat
-                                ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                                ?: stringResource(R.string.version_update_2)
                         }
                         CommonInfoCard(
                             R.drawable.ic_info_24px,
-                            "更新内容",
+                            stringResource(R.string.update_content),
                             content,
                             onClick = {
                                 context.openLink(appUpdateInfo?.url ?: "")
@@ -541,7 +541,7 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
     }
     ASAlertDialog(
         showState = show,
-        title = { Text("更新提示") },
+        title = { Text(stringResource(R.string.update_hint)) },
         text = {
             Column(
                 Modifier
@@ -550,7 +550,7 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
             ) {
                 Text("检测到有新版本 ${appUpdateInfo.version} 可用。")
                 Spacer(Modifier.height(8.dp))
-                Text("更新内容：")
+                Text(stringResource(R.string.update_content_1))
                 Spacer(Modifier.height(4.dp))
                 Text(appUpdateInfo.feat)
             }
@@ -559,13 +559,13 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
             ASTextButton(onClick = {
                 context.openLink(appUpdateInfo.version)
             }) {
-                Text(text = "前往下载")
+                Text(text = stringResource(R.string.go_to_download))
             }
         }, dismissButton = {
             ASTextButton(onClick = {
                 show = false
             }) {
-                Text(text = "取消")
+                Text(text = stringResource(R.string.cancel))
             }
         }, onDismiss = {
             show = false
@@ -578,18 +578,18 @@ fun CloseBulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("关闭公告") },
+        title = { Text(stringResource(R.string.close_announcement)) },
         text = {
-            Text("关闭后将不再显示，直到有新的公告发布")
+            Text(stringResource(R.string.close_announcement_1))
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = "确认")
+                Text(text = stringResource(R.string.confirm))
             }
         },
         dismissButton = {
             ASTextButton(onClick = onClickDismiss) {
-                Text(text = "取消")
+                Text(text = stringResource(R.string.cancel))
             }
         }
     )
@@ -603,7 +603,7 @@ fun BulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("公告") },
+        title = { Text(stringResource(R.string.home_text_7183)) },
         text = {
             Column(
                 modifier = Modifier
@@ -614,7 +614,7 @@ fun BulletinDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = "确认")
+                Text(text = stringResource(R.string.confirm))
             }
         },
     )
@@ -638,7 +638,7 @@ fun DownloadListCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Outlined.Download,
-                    contentDescription = "下载列表图标",
+                    contentDescription = stringResource(R.string.download_list),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
@@ -646,7 +646,7 @@ fun DownloadListCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "下载列表",
+                    stringResource(R.string.download_list_1),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W400,
                     modifier = Modifier.alpha(0.72f),
@@ -657,7 +657,7 @@ fun DownloadListCard(
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = "下载详情列表"
+                        contentDescription = stringResource(R.string.home_text_943)
                     )
                 }
             }
@@ -683,7 +683,7 @@ fun DownloadListCard(
                         }
                 } else {
                     Text(
-                        "暂无缓存任务",
+                        stringResource(R.string.no_cache_tasks),
                         modifier = Modifier.alpha(0.72f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(330),
@@ -754,7 +754,7 @@ private fun HomeScaffold(
                                     modifier = Modifier
                                         .size(40.dp),
                                     shape = CircleShape,
-                                    contentDescription = "头像",
+                                    contentDescription = stringResource(R.string.avatar),
                                     onClick = {
                                         haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                         goToUserPage()
@@ -772,12 +772,12 @@ private fun HomeScaffold(
                                     }) {
                                         Icon(
                                             Icons.Outlined.AccountCircle,
-                                            contentDescription = "登录"
+                                            contentDescription = stringResource(R.string.login)
                                         )
                                     }
                                     Spacer(Modifier.width(2.dp))
                                     ASIconButton(onClick = goToSetting) {
-                                        Icon(Icons.Outlined.Settings, contentDescription = "设置")
+                                        Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings))
                                     }
                                 }
                             },
@@ -788,7 +788,7 @@ private fun HomeScaffold(
                                 }) {
                                     Icon(
                                         Icons.Outlined.AccountCircle,
-                                        contentDescription = "登录"
+                                        contentDescription = stringResource(R.string.login)
                                     )
                                 }
                             })
@@ -820,7 +820,7 @@ private fun HomeScaffold(
                                         animatedVisibilityScope = animatedContentScope
                                     ),
                                     imageVector = Icons.Outlined.Search,
-                                    contentDescription = "视频解析",
+                                    contentDescription = stringResource(R.string.video_analysis),
                                 )
                             }
                         }
@@ -875,7 +875,7 @@ private fun CommonInfoCard(
                         ASIconButton(onClick = onClickClose, modifier = Modifier.size(30.dp)) {
                             Icon(
                                 Icons.Outlined.Close,
-                                contentDescription = "关闭"
+                                contentDescription = stringResource(R.string.close)
                             )
                         }
                     }
@@ -922,7 +922,7 @@ private fun LoginInfoBottomDialog(
                     ) {
                         ASAsyncImage(
                             model = loginUserInfoState.data?.face,
-                            contentDescription = "头像",
+                            contentDescription = stringResource(R.string.avatar),
                             modifier = Modifier.size(100.dp),
                             shape = MaterialShapes.Square.toShape()
                         )

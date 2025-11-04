@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -88,27 +89,27 @@ fun VersionInfoContent(modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        InfoRow(label = "APP版本", value = deviceInfo.appVersion)
-        InfoRow(label = "系统版本", value = deviceInfo.systemVersion)
-        InfoRow(label = "设备型号", value = deviceInfo.model)
-        InfoRow(label = "市场型号", value = deviceInfo.marketModel)
-        InfoRow(label = "厂商", value = deviceInfo.manufacturer)
-        InfoRow(label = "品牌", value = deviceInfo.brandName)
-        InfoRow(label = "厂商系统名称", value = deviceInfo.osName)
-        InfoRow(label = "厂商系统版本名称", value = deviceInfo.osVersionName)
+        InfoRow(label = stringResource(R.string.home_text_157), value = deviceInfo.appVersion)
+        InfoRow(label = stringResource(R.string.home_text_1280), value = deviceInfo.systemVersion)
+        InfoRow(label = stringResource(R.string.home_text_2259), value = deviceInfo.model)
+        InfoRow(label = stringResource(R.string.home_text_6132), value = deviceInfo.marketModel)
+        InfoRow(label = stringResource(R.string.home_text_3570), value = deviceInfo.manufacturer)
+        InfoRow(label = stringResource(R.string.home_text_7236), value = deviceInfo.brandName)
+        InfoRow(label = stringResource(R.string.home_text_9122), value = deviceInfo.osName)
+        InfoRow(label = stringResource(R.string.home_text_7308), value = deviceInfo.osVersionName)
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 val clipboard =
                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("版本信息", copyText)
+                val clip = ClipData.newPlainText(stringResource(R.string.home_text_9709), copyText)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("复制全部信息")
+            Text(stringResource(R.string.home_text_9606))
         }
     }
 }
@@ -151,7 +152,7 @@ private fun VersionInfoScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "版本信息") },
+                title = { Text(text = stringResource(R.string.home_text_9709)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()

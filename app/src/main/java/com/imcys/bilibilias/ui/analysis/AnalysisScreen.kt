@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -178,7 +179,7 @@ fun AnalysisScreen(
                                     animatedVisibilityScope = animatedContentScope
                                 ),
                                 imageVector = Icons.Outlined.Search,
-                                contentDescription = "视频解析",
+                                contentDescription = stringResource(R.string.video_analysis),
                             )
                         }
                     )
@@ -215,7 +216,7 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
     if (show) {
         AlertDialog(
             onDismissRequest = { },
-            title = { Text(text = "创建下载任务") },
+            title = { Text(text = stringResource(R.string.home_text_7528)) },
             text = {
                 Column(
                     Modifier
@@ -451,7 +452,7 @@ fun CheckInputASTextTip() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "输入的视频不存在哦~请检查后重新输入",
+                stringResource(R.string.home_text_4648),
                 fontSize = 14.sp,
             )
         }
@@ -499,7 +500,7 @@ fun AdvancedSetting(
                     .animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("缓存配置")
+                Text(stringResource(R.string.home_text_5901))
                 Column {
                     ExposedDropdownMenuBox(
                         expanded = downloadModeExpanded,
@@ -521,7 +522,7 @@ fun AdvancedSetting(
                             },
                             readOnly = true,
                             singleLine = false,
-                            label = { Text("选择缓存模式", fontSize = 12.sp) },
+                            label = { Text(stringResource(R.string.home_text_3139), fontSize = 12.sp) },
                             trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -568,7 +569,7 @@ fun AdvancedSetting(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "注意：如果选中的子集没有音视频分离资源，将无法单独进行下载。",
+                                stringResource(R.string.home_text_9502),
                                 fontSize = 14.sp,
                             )
                         }
@@ -576,7 +577,7 @@ fun AdvancedSetting(
                 }
 
                 Column {
-                    Text("下载内容")
+                    Text(stringResource(R.string.home_text_4467))
                     ExtraCache(
                         isSelectSingleModel,
                         downloadInfo,
@@ -618,14 +619,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("流媒体下载", fontSize = 12.sp)
+                Text(stringResource(R.string.home_text_2848), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadMedia == true,
             leadingIcon = {
                 if (downloadInfo?.downloadMedia == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = "已选中图标",
+                        contentDescription = stringResource(R.string.home_text_7030),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -639,14 +640,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("封面下载", fontSize = 12.sp)
+                Text(stringResource(R.string.home_text_9958), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadCover == true,
             leadingIcon = {
                 if (downloadInfo?.downloadCover == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = "已选中图标",
+                        contentDescription = stringResource(R.string.home_text_7030),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -659,14 +660,14 @@ fun ExtraCache(
         if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty() && isSelectSingleModel) {
             FilterChip(
                 label = {
-                    Text("字幕下载", fontSize = 12.sp)
+                    Text(stringResource(R.string.home_text_474), fontSize = 12.sp)
                 },
                 selected = selectACCDownload,
                 leadingIcon = {
                     if (selectACCDownload) {
                         Icon(
                             Icons.Outlined.Check,
-                            contentDescription = "已选中图标",
+                            contentDescription = stringResource(R.string.home_text_7030),
                             modifier = Modifier.size(15.dp)
                         )
                     }
@@ -683,14 +684,14 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("弹幕下载", fontSize = 12.sp)
+                Text(stringResource(R.string.home_text_5557), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadDanmaku == true,
             leadingIcon = {
                 if (downloadInfo?.downloadDanmaku == true) {
                     Icon(
                         Icons.Outlined.Check,
-                        contentDescription = "已选中图标",
+                        contentDescription = stringResource(R.string.home_text_7030),
                         modifier = Modifier.size(15.dp)
                     )
                 }
@@ -702,7 +703,7 @@ fun ExtraCache(
     }
 
     if (selectACCDownload && isSelectSingleModel) {
-        Text("字幕下载")
+        Text(stringResource(R.string.home_text_474))
         Spacer(Modifier.height(5.dp))
         SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)
     }
@@ -740,7 +741,7 @@ fun SelectACCCard(
                     onValueChange = {},
                     readOnly = true,
                     singleLine = false,
-                    label = { Text("选择字幕文件类型", fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.home_text_436), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
@@ -909,7 +910,7 @@ fun BILIDonghuaCard(
                                     "${episodeInfo?.cover?.toHttps()}",
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                contentDescription = "视频封面",
+                                contentDescription = stringResource(R.string.home_text_2468),
                                 shape = CardDefaults.shape
                             )
 
@@ -921,7 +922,7 @@ fun BILIDonghuaCard(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = CardDefaults.shape
                             ) {
-                                Text("番剧", Modifier.padding(5.dp))
+                                Text(stringResource(R.string.home_text_1643), Modifier.padding(5.dp))
                             }
 
 
@@ -951,16 +952,16 @@ fun BILIDonghuaCard(
                                 if (picSaving) {
                                     CircularWavyProgressIndicator()
                                 } else {
-                                    Icon(Icons.Outlined.Image, contentDescription = "下载封面")
+                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.home_text_1395))
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text("下载封面")
+                                    Text(stringResource(R.string.home_text_1395))
                                 }
                             }
                         }
                         Spacer(Modifier.height(16.dp))
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: "视频标题"
+                                episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: stringResource(R.string.home_text_4861)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -970,7 +971,7 @@ fun BILIDonghuaCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, "视频标题")
+                                        title.copyText(context, stringResource(R.string.home_text_4861))
                                     }
                                 ),
                         )
@@ -988,12 +989,12 @@ fun BILIDonghuaCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "你当前还未绑定B站账号，缓存权益受限哦。",
+                                stringResource(R.string.home_text_788),
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
                             ASIconButton(onClick = onToLogin) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.home_text_6102))
                             }
                         }
                     }
@@ -1066,7 +1067,7 @@ fun BILIVideoCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .shimmer(videoInfo.status == ApiStatus.LOADING),
-                                contentDescription = "视频封面",
+                                contentDescription = stringResource(R.string.home_text_2468),
                                 shape = CardDefaults.shape
                             )
 
@@ -1078,7 +1079,7 @@ fun BILIVideoCard(
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shape = CardDefaults.shape
                                 ) {
-                                    Text("充电视频", Modifier.padding(5.dp))
+                                    Text(stringResource(R.string.home_text_6564), Modifier.padding(5.dp))
                                 }
                             }
 
@@ -1108,9 +1109,9 @@ fun BILIVideoCard(
                                 if (picSaving) {
                                     CircularWavyProgressIndicator()
                                 } else {
-                                    Icon(Icons.Outlined.Image, contentDescription = "下载封面")
+                                    Icon(Icons.Outlined.Image, contentDescription = stringResource(R.string.home_text_1395))
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text("下载封面")
+                                    Text(stringResource(R.string.home_text_1395))
                                 }
                             }
                         }
@@ -1119,7 +1120,7 @@ fun BILIVideoCard(
 
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
-                                videoInfo.data?.title ?: "视频标题"
+                                videoInfo.data?.title ?: stringResource(R.string.home_text_4861)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -1128,7 +1129,7 @@ fun BILIVideoCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, "视频标题")
+                                        title.copyText(context, stringResource(R.string.home_text_4861))
                                     }
                                 ),
                         )
@@ -1148,7 +1149,7 @@ fun BILIVideoCard(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                "当前视频属充电视频，请充电后申请缓存。",
+                                stringResource(R.string.home_text_773),
                                 fontSize = 14.sp,
                             )
                         }
@@ -1168,12 +1169,12 @@ fun BILIVideoCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "你当前还未绑定B站账号，缓存权益受限哦。",
+                                stringResource(R.string.home_text_788),
                                 fontSize = 14.sp,
                             )
                             Spacer(Modifier.weight(1f))
                             ASIconButton(onClick = onToLogin) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.home_text_6102))
                             }
                         }
                     }
@@ -1211,7 +1212,7 @@ fun AuthorInfoContent(
                 ) {
                     ASAsyncImage(
                         model = user.face,
-                        contentDescription = "up头像",
+                        contentDescription = stringResource(R.string.avatar_1),
                         shape = CircleShape,
                         modifier = Modifier
                             .size(22.dp)
@@ -1266,7 +1267,7 @@ fun AnalysisScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text("解析视频")
+                        Text(stringResource(R.string.home_text_2534))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -1282,7 +1283,7 @@ fun AnalysisScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.Info,
-                                contentDescription = "问题提示"
+                                contentDescription = stringResource(R.string.home_text_8669)
                             )
                         }
                     }
@@ -1315,7 +1316,7 @@ fun AnalysisScaffold(
                         }
                     },
                 ) {
-                    Icon(Icons.Outlined.Download, "下载视频")
+                    Icon(Icons.Outlined.Download, stringResource(R.string.home_text_3526))
                 }
             }
         }
@@ -1363,12 +1364,12 @@ fun WritePermissionRequestTipDialog(
         if (allGranted) {
             onRequest()
         } else {
-            Toast.makeText(context, "权限未被授予", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, stringResource(R.string.home_text_3643), Toast.LENGTH_SHORT).show()
         }
     }
     PermissionRequestTipDialog(
         show = true,
-        message = "需要存储权限以保存下载内容，是否继续？",
+        message = stringResource(R.string.home_text_6329),
         onConfirm = {
             launcher.launch(permissionsToRequest)
             onRequest()
@@ -1383,7 +1384,7 @@ fun WritePermissionRequestTipDialog(
 fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("下载提示") },
+        title = { Text(stringResource(R.string.home_text_8638)) },
         text = {
             Text(
                 """
@@ -1394,7 +1395,7 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
         },
         confirmButton = {
             ASTextButton(onClick = onDownload) {
-                Text("了解")
+                Text(stringResource(R.string.home_text_7284))
             }
         },
     )

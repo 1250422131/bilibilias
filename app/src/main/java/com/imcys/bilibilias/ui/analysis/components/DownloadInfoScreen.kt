@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.analysis.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,7 +76,7 @@ fun AudioQualitySelectScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择优先音频质量", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.home_text_6073), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = modelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -201,7 +202,7 @@ fun VideoSupportFormatsSelectScreen(
                 },
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择优先分辨率", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.home_text_182), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -258,7 +259,7 @@ fun VideoSupportFormatsSelectScreen(
                     },
                     readOnly = true,
                     singleLine = false,
-                    label = { Text("选择优先编码", fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.home_text_5508), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,

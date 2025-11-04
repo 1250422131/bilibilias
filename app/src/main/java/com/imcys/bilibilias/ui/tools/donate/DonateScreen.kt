@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
@@ -108,12 +109,12 @@ fun DonateContent(paddingValues: PaddingValues) {
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("推")
+                                Text(stringResource(R.string.home_text_3753))
                             }
                         }
                     ) {
                         Text(
-                            "支付宝小荷包",
+                            stringResource(R.string.home_text_1989),
                             fontSize = 18.sp,
                             modifier = Modifier.padding(end = 5.dp)
                         )
@@ -145,7 +146,7 @@ fun DonateContent(paddingValues: PaddingValues) {
                             .size(30.dp),
                     )
                     Spacer(Modifier.width(5.dp))
-                    Text("微信捐款", fontSize = 18.sp)
+                    Text(stringResource(R.string.home_text_1774), fontSize = 18.sp)
                 }
             }
         }
@@ -216,7 +217,7 @@ fun PayBottomDialog(showPayDialog: Boolean, payUrl: String, onDismissRequest: ()
             ) {
 
                 ASAsyncImage(
-                    payUrl, contentDescription = "捐款二维码", shape = CardDefaults.shape,
+                    payUrl, contentDescription = stringResource(R.string.home_text_7194), shape = CardDefaults.shape,
                     modifier = Modifier.fillMaxWidth(0.8f),
                     contentScale = ContentScale.FillWidth,
                 )
@@ -246,7 +247,7 @@ fun DonateScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    Text(text = "捐助我们")
+                    Text(text = stringResource(R.string.donate))
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

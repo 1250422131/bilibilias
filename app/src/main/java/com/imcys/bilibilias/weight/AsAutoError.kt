@@ -2,6 +2,7 @@ package com.imcys.bilibilias.weight
 
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -86,7 +87,7 @@ fun <T> AsAutoError(
 @Composable
 @Preview
 private fun PreviewCommonError() {
-    CommonError("接口异常") { }
+    CommonError(stringResource(R.string.home_text_1156)) { }
 }
 
 @Composable
@@ -138,7 +139,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         onRetry.invoke()
                     },
                 ) {
-                    Text("点击重试")
+                    Text(stringResource(R.string.home_text_4221))
                 }
 
             }
@@ -161,7 +162,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     )
     ASIconButton(onClick = {
         haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-        val clipData = ClipData.newPlainText("BILIBILAIS异常", errorMsg)
+        val clipData = ClipData.newPlainText(stringResource(R.string.home_text_8313), errorMsg)
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch(Dispatchers.IO) {
             copyFinish = true
@@ -172,7 +173,7 @@ fun AsErrorCopyIconButton(errorMsg: String) {
     }) {
         Icon(
             imageVector = if (copyFinish) Icons.Outlined.Check else Icons.Outlined.ContentCopy,
-            contentDescription = "复制报错",
+            contentDescription = stringResource(R.string.home_text_8435),
             modifier = Modifier.rotate(rotation)
         )
     }

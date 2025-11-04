@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.weight
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -46,14 +47,14 @@ fun ASEpisodeTitle(
                 AppSettings.EpisodeListMode.EpisodeListMode_Grid -> {
                     Icon(
                         Icons.Outlined.Apps,
-                        contentDescription = "表格显示",
+                        contentDescription = stringResource(R.string.home_text_3407),
                     )
                 }
 
                 AppSettings.EpisodeListMode.EpisodeListMode_List -> {
                     Icon(
                         Icons.AutoMirrored.Outlined.List,
-                        contentDescription = "列表显示",
+                        contentDescription = stringResource(R.string.home_text_521),
                     )
                 }
             }

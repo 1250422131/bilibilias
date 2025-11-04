@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.weight
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,7 +58,7 @@ fun WorkCard(
             ASAsyncImage(
                 model = pic,
                 shape = CardDefaults.shape,
-                contentDescription = "视频封面",
+                contentDescription = stringResource(R.string.home_text_2468),
                 modifier = Modifier.aspectRatio(16f / 9f)
             )
 
@@ -107,7 +108,7 @@ fun UserWorkCard(
             ASAsyncImage(
                 model = pic,
                 shape = CardDefaults.shape,
-                contentDescription = "视频封面",
+                contentDescription = stringResource(R.string.home_text_2468),
                 modifier = Modifier.aspectRatio(16f / 9f)
             )
 
@@ -186,11 +187,11 @@ fun HistoryPlayVideoCard(
                 ASAsyncImage(
                     model = pic,
                     shape = CardDefaults.shape,
-                    contentDescription = "视频封面",
+                    contentDescription = stringResource(R.string.home_text_2468),
                     modifier = Modifier.fillMaxSize()
                 )
                 Text(
-                    if (progress == -1L) "已看完" else
+                    if (progress == -1L) stringResource(R.string.home_text_1026) else
                         "%02d:%02d/%02d:%02d".format(
                             progress / 60, progress % 60,
                             duration / 60, duration % 60

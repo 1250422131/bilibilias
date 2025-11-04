@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.setting.roam
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -113,7 +114,7 @@ fun RoamSettingContent(
                     Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("启用漫游", fontSize = 18.sp)
+                    Text(stringResource(R.string.home_text_2825), fontSize = 18.sp)
                     Spacer(Modifier.weight(1f))
                     ASCheckThumbSwitch(
                         enabled = uiState.isLoginTV || appSettings.enabledRoam,
@@ -141,7 +142,7 @@ fun RoamSettingContent(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "你当前还未登录漫游身份，点击登录后才可开启哦。",
+                                stringResource(R.string.home_roaming_identity),
                                 fontSize = 14.sp,
                                 modifier = Modifier.weight(1f)
                             )
@@ -154,7 +155,7 @@ fun RoamSettingContent(
                                     onGoToQRCodeLogin.invoke(LoginPlatform.TV)
                                 }
                             }) {
-                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
+                                Icon(Icons.Outlined.NorthEast, contentDescription = stringResource(R.string.home_text_6102))
                             }
                         }
                     }
@@ -202,7 +203,7 @@ fun RoamSettingScaffold(
                             }
                         }
                     ) {
-                        Text(text = "漫游服务")
+                        Text(text = stringResource(R.string.home_text_8163))
                     }
                 },
                 navigationIcon = {

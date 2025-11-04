@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -53,7 +54,7 @@ private fun SystemExpandContent(
     ) {
         item {
             CategorySettingsItem(
-                text = "权限扩展"
+                text = stringResource(R.string.home_text_125)
             )
         }
 
@@ -61,7 +62,7 @@ private fun SystemExpandContent(
             SwitchSettingsItem(
                 painter = painterResource(R.drawable.ic_shizuku_logo_512px),
                 text = "Shizuku",
-                description = "使用Shizuku提供ADB权限，解锁更多功能。",
+                description = stringResource(R.string.home_permission),
                 checked = false,
                 isImage = true
             ) { check ->
@@ -88,7 +89,7 @@ private fun SystemExpandScaffold(
                 ),
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
-                title = { Text(text = "扩展能力") },
+                title = { Text(text = stringResource(R.string.home_text_1966)) },
                 navigationIcon = {
                     AsBackIconButton(onClick = {
                         onToBack.invoke()
