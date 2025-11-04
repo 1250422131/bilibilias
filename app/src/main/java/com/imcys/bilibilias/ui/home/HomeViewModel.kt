@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.home
 
 
 import com.imcys.bilibilias.R
-import androidx.compose.ui.res.stringResource
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -149,13 +148,13 @@ class HomeViewModel(
                             fix = it.gxnotice,
                             remark = "",
                             forcedUpdate = true,
-                            publishDateTime = stringResource(R.string.home_recent)
+                            publishDateTime = context.getString(R.string.home_recent)
                         )
 
                         _bulletinInfo.value = BulletinConfigInfo(
                             id = 20,
                             content = it.notice,
-                            publishDateTime = stringResource(R.string.home_recent)
+                            publishDateTime = context.getString(R.string.home_recent)
                         )
                     }
             }

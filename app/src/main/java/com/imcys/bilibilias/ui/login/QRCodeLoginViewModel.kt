@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.login
 
 
 import com.imcys.bilibilias.R
-import androidx.compose.ui.res.stringResource
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -204,7 +203,7 @@ class QRCodeLoginViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val imageUrl = qrCodeInfoState.value.data?.url
             if (imageUrl == null) {
-                Toast.makeText(context, stringResource(R.string.login_download_1), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.login_download_1), Toast.LENGTH_SHORT).show()
                 return@launch
             }
             runCatching {
@@ -225,7 +224,7 @@ class QRCodeLoginViewModel(
             }.onSuccess {
                 saveImageWithMediaStore(it, context)
             }.onFailure {
-                Toast.makeText(context, stringResource(R.string.login_download), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.login_download), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -273,7 +272,7 @@ class QRCodeLoginViewModel(
                 null
             }
         }
-        Toast.makeText(context, stringResource(R.string.login_save), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.login_save), Toast.LENGTH_SHORT).show()
     }
 
     fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {
@@ -310,7 +309,7 @@ class QRCodeLoginViewModel(
         }.onFailure {
             Toast.makeText(
                 context,
-                stringResource(R.string.login_none),
+                context.getString(R.string.login_none),
                 Toast.LENGTH_SHORT,
             ).show()
         }

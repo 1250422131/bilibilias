@@ -191,6 +191,7 @@ fun StorageManagementSuccessScreen(
             }
         }
 
+        val noFileManagerMessage = stringResource(R.string.storage_no_file_manager)
         StorageContent(
             title = stringResource(R.string.storage_video),
             dataNumStr = StorageUtil.formatSize(data.downloadBytes),
@@ -216,7 +217,7 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, stringResource(R.string.storage_no_file_manager), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, noFileManagerMessage, Toast.LENGTH_SHORT).show()
                 }
             },
         )
@@ -250,7 +251,7 @@ fun StorageContent(
     dataNumStr: String = "",
     description: String = "",
     showButton: Boolean = true,
-    buttonText: String = stringResource(R.string.storage_manage),
+    buttonText: String = "管理",
     buttonColor: Color = MaterialTheme.colorScheme.surface,
     onClick: () -> Unit = {}
 ) {
