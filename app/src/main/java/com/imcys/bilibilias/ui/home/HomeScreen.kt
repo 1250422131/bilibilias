@@ -337,9 +337,9 @@ fun HomeContent(
                 ) {
                     Text(
                         if (BuildConfig.DEBUG) {
-                            stringResource(R.string.home_text_4105)
+                            stringResource(R.string.debug_mode_warning)
                         } else {
-                            stringResource(R.string.home_text_9491)
+                            stringResource(R.string.unknown_signature_warning)
                         }
                     )
                 }
@@ -395,8 +395,8 @@ fun HomeContent(
                     item {
                         CommonInfoCard(
                             R.drawable.ic_brand_awareness_24px,
-                            stringResource(R.string.home_text_7183),
-                            bulletinInfo?.content ?: stringResource(R.string.home_text_2728),
+                            stringResource(R.string.announcement),
+                            bulletinInfo?.content ?: stringResource(R.string.no_announcement),
                             onClickClose = {
                                 closeBulletinDialogShow = true
                             },
@@ -603,7 +603,7 @@ fun BulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text(stringResource(R.string.home_text_7183)) },
+        title = { Text(stringResource(R.string.announcement)) },
         text = {
             Column(
                 modifier = Modifier
@@ -657,7 +657,7 @@ fun DownloadListCard(
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
                         Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = stringResource(R.string.home_text_943)
+                        contentDescription = stringResource(R.string.download_details_list)
                     )
                 }
             }

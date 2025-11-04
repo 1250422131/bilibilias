@@ -129,11 +129,11 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                             ) {
                                 Text(stringResource(R.string.login_agreement_notice), fontSize = 14.sp)
                                 Text(
-                                    stringResource(R.string.login_text_8289), fontSize = 14.sp,
+                                    stringResource(R.string.bilibili_account_agreement), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    stringResource(R.string.login_text_5915),
+                                    stringResource(R.string.bilibilias_privacy_agreement),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.clickable {
@@ -141,7 +141,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     }
                                 )
                                 Text(
-                                    stringResource(R.string.login_consequence), fontSize = 14.sp,
+                                    stringResource(R.string.disclaimer_notice), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
