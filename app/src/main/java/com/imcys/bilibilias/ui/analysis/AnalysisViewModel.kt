@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.analysis
 
 
 import com.imcys.bilibilias.R
-import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -132,7 +131,7 @@ class AnalysisViewModel(
         saveDirName: String
     ) = withContext(Dispatchers.IO) {
         if (imageUrl.isNullOrEmpty()) {
-            Toast.makeText(context, stringResource(R.string.analysis_image_url_empty), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.analysis_image_url_empty), Toast.LENGTH_SHORT).show()
             return@withContext
         }
         val type = imageUrl.substringAfterLast(".")
@@ -144,7 +143,7 @@ class AnalysisViewModel(
             }, saveDirName
         )
         launch(Dispatchers.Main) {
-            Toast.makeText(context, stringResource(R.string.login_save), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.login_save), Toast.LENGTH_SHORT).show()
         }
     }
 

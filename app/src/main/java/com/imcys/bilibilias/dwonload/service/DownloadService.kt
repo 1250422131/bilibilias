@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.dwonload.service
 
 
-import androidx.compose.ui.res.stringResource
 import android.Manifest.*
 import android.app.PendingIntent
 import android.app.Service
@@ -77,8 +76,8 @@ class DownloadService : Service() {
                 this,
                 DOWNLOAD_NOTIFICATION_CHANNEL_ID
             ).apply {
-                setContentTitle(stringResource(R.string.download_cache_1))
-                setContentText(stringResource(R.string.download_video))
+                setContentTitle(getString(R.string.download_cache_1))
+                setContentText(getString(R.string.download_video))
                     .setProgress(100, 0, false)
                 setContentIntent(pIntent)
                 setSmallIcon(R.drawable.ic_logo_mini)

@@ -964,6 +964,7 @@ fun BILIDonghuaCard(
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
                                 episodeInfo?.longTitle?.ifEmpty { episodeInfo.title } ?: stringResource(R.string.analysis_video_title)
+                        val videoTitleLabel = stringResource(R.string.analysis_video_title)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -973,7 +974,7 @@ fun BILIDonghuaCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, stringResource(R.string.analysis_video_title))
+                                        title.copyText(context, videoTitleLabel)
                                     }
                                 ),
                         )
@@ -1123,6 +1124,7 @@ fun BILIVideoCard(
                         val title =
                             if (analysisBaseInfo.enabledSelectInfo) analysisBaseInfo.title else
                                 videoInfo.data?.title ?: stringResource(R.string.analysis_video_title)
+                        val videoTitleLabel = stringResource(R.string.analysis_video_title)
                         Text(
                             title,
                             fontSize = 22.sp,
@@ -1131,7 +1133,7 @@ fun BILIVideoCard(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        title.copyText(context, stringResource(R.string.analysis_video_title))
+                                        title.copyText(context, videoTitleLabel)
                                     }
                                 ),
                         )
@@ -1359,6 +1361,7 @@ fun WritePermissionRequestTipDialog(
     onRequest: () -> Unit
 ) {
     val context = LocalContext.current
+    val permissionDeniedMessage = stringResource(R.string.analysis_permission_denied)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
@@ -1366,7 +1369,7 @@ fun WritePermissionRequestTipDialog(
         if (allGranted) {
             onRequest()
         } else {
-            Toast.makeText(context, stringResource(R.string.analysis_permission_denied), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, permissionDeniedMessage, Toast.LENGTH_SHORT).show()
         }
     }
     PermissionRequestTipDialog(
