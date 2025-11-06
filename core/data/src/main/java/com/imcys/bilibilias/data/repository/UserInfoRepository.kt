@@ -30,6 +30,9 @@ class UserInfoRepository(
     private val usersDataSource: UsersDataSource
 ) {
 
+
+    suspend fun isLogin() = usersDataSource.getUserId() != 0L
+
     // 获取当前用户信息
     suspend fun getCurrentUser(): BILIUsersEntity? {
         return biliUsersDao.getBILIUserByUid(usersDataSource.getUserId())

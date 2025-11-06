@@ -53,6 +53,7 @@ import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASCommonLoadingScreen
 import com.imcys.bilibilias.weight.AnimatedStorageRing
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -91,7 +92,7 @@ fun StorageManagementContent(
     when (val state = uiState) {
         is StorageManagementViewModel.StorageManagementUIState.Error -> {}
         StorageManagementViewModel.StorageManagementUIState.Loading -> {
-            StorageManagementLoadingScreen()
+            ASCommonLoadingScreen()
         }
 
         is StorageManagementViewModel.StorageManagementUIState.Success -> {
@@ -300,19 +301,6 @@ fun StorageContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun StorageManagementLoadingScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // 加载中
-        CircularWavyProgressIndicator()
-        Text(text = "加载中...")
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

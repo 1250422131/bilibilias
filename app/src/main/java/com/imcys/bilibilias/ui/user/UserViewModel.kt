@@ -8,13 +8,16 @@ import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldSoFreezeBean
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
+import com.imcys.bilibilias.network.service.AppAPIService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UserViewModel(
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
+    private val appAPIService: AppAPIService,
 ) : ViewModel() {
 
     data class UIState(
@@ -75,6 +78,16 @@ class UserViewModel(
                 _spaceArchiveInfoState.emit(it)
             }
         }
+    }
+
+    suspend fun freezeUpAllVideo(): Result<AppOldSoFreezeBean> {
+        val mid = userInfoRepository.getCurrentUser()?.mid ?: 0L
+        return appAPIService.freezeUpAllVideo(mid)
+    }
+
+    suspend fun freezeSingleVideo(bvid: String): Result<AppOldSoFreezeBean> {
+        val mid = userInfoRepository.getCurrentUser()?.mid ?: 0L
+        return appAPIService.freezeUpVideo(mid, bvid)
     }
 
 }

@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.user
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,20 +26,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.LocalPolice
 import androidx.compose.material.icons.outlined.Movie
-import androidx.compose.material.icons.outlined.Paid
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Subscriptions
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -50,8 +50,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -71,15 +76,19 @@ import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
+import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardGroups
 import com.imcys.bilibilias.ui.weight.ASIconButton
+import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -93,21 +102,25 @@ internal fun UserScreen(
     onToUserFolder: (mid: Long) -> Unit,
     onToLikeVideo: (mid: Long) -> Unit,
     onToCoinVide: (mid: Long) -> Unit,
-    onToPlayHistory:()->Unit,
+    onToPlayHistory: () -> Unit,
 ) {
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()
     val userStatInfoState by vm.userStatInfoState.collectAsState()
     val spaceArchiveInfoState by vm.spaceArchiveInfoState.collectAsState()
     val uiState by vm.uiState.collectAsState()
+    var showChooseFreezeDialog by remember { mutableStateOf(false) }
+    var showFreezeAllDialog by remember { mutableStateOf(false) }
+    var showFreezeSingleDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(userRoute.mid) {
         vm.getUserPageIno(userRoute.mid)
     }
 
-
-
-    UserScaffold(onToBack, onToSettings) {
+    // 入口按钮，弹出选择对话框
+    UserScaffold(onToBack, onToSettings,userRoute, onShowFreezeVideo = {
+        showChooseFreezeDialog = true
+    }) {
         LazyVerticalGrid(
             GridCells.Fixed(2),
             Modifier
@@ -136,7 +149,8 @@ internal fun UserScreen(
                             onToLikeVideo.invoke(userRoute.mid)
                         }, onToCoinVide = {
                             onToCoinVide.invoke(userRoute.mid)
-                        }, onToPlayHistory = onToPlayHistory)
+                        }, onToPlayHistory = onToPlayHistory
+                    )
                 }
             }
             fullWidthItem {
@@ -151,6 +165,199 @@ internal fun UserScreen(
     }
 
 
+    // 选择冻结类型对话框
+    ChooseFreezeTypeDialog(
+        show = showChooseFreezeDialog,
+        onDismiss = { showChooseFreezeDialog = false },
+        onChooseAll = { showFreezeAllDialog = true },
+        onChooseSingle = { showFreezeSingleDialog = true }
+    )
+
+    // 冻结全部视频对话框
+    FreezeAllVideosDialog(showFreezeAllDialog, {
+        showFreezeAllDialog = false
+    }, vm)
+
+    // 冻结单个视频对话框
+    FreezeSingleVideoDialog(showFreezeSingleDialog, {
+        showFreezeSingleDialog = false
+    }, vm)
+}
+
+
+@Composable
+fun ChooseFreezeTypeDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onChooseAll: () -> Unit,
+    onChooseSingle: () -> Unit
+) {
+    ASAlertDialog(
+        title = { Text("请选择冻结方式") },
+        text = {
+            Column {
+                Text("注意：BILIBILIAS提供的冻结仅能限制其他用户不在BILIBILIAS缓存，并不能限制其他第三方缓存工具。")
+                Spacer(modifier = Modifier.height(8.dp))
+                Surface(
+                    shape = CardDefaults.shape,
+                    onClick = {
+                        onDismiss()
+                        onChooseAll()
+                    }
+                ) {
+                    Text(
+                        "冻结全部视频", modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    shape = CardDefaults.shape,
+                    onClick = {
+                        onDismiss()
+                        onChooseSingle()
+                    }
+                ) {
+                    Text(
+                        "冻结某一个视频", modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    )
+                }
+            }
+
+        },
+        showState = show,
+        onDismiss = onDismiss,
+        confirmButton = {
+            ASTextButton(onClick = {
+                onDismiss()
+            }) { Text("取消") }
+        }
+    )
+}
+
+/**
+ * 冻结视频对话框
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun FreezeAllVideosDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewModel) {
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    ASAlertDialog(
+        title = { Text("冻结全部视频") },
+        icon = { Icon(Icons.Outlined.LocalPolice, contentDescription = "图标") },
+        text = {
+            AnimatedContent(isLoading) {
+                if (it) {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularWavyProgressIndicator()
+                        Text("正在冻结中，请稍等...")
+                    }
+                } else {
+                    Text("这是一个为UP主提供的功能，冻结后其他用户将无法缓存您自己投稿的所有视频，确定要冻结吗？")
+                }
+            }
+        },
+        showState = show,
+        onDismiss = onDismiss,
+        confirmButton = {
+            ASTextButton(onClick = {
+                scope.launch(Dispatchers.IO) {
+                    isLoading = true
+                    val result = vm.freezeUpAllVideo()
+                    val data = result.getOrNull()
+                    isLoading = false
+                    launch(Dispatchers.Main) {
+                        if (data?.code == 0) {
+                            onDismiss.invoke()
+                            Toast.makeText(context, "冻结成功", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "冻结失败：${data?.msg}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
+                }
+            }) { Text("确定") }
+        },
+        dismissButton = {
+            ASTextButton(onClick = { onDismiss.invoke() }) { Text("取消") }
+        }
+    )
+}
+
+/**
+ * 冻结单个视频对话框
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun FreezeSingleVideoDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewModel) {
+    var bvInput by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    ASAlertDialog(
+        title = { Text("冻结某一个视频") },
+        icon = { Icon(Icons.Outlined.LocalPolice, contentDescription = "图标") },
+        text = {
+            if (isLoading) {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularWavyProgressIndicator()
+                    Text("正在冻结中，请稍等...")
+                }
+            } else {
+                Column {
+                    Text("请输入要冻结的视频BV号，冻结后其他用户将无法缓存您的视频：")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    androidx.compose.material3.OutlinedTextField(
+                        value = bvInput,
+                        onValueChange = { bvInput = it },
+                        label = { Text("BV号") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        },
+        showState = show,
+        onDismiss = onDismiss,
+        confirmButton = {
+            ASTextButton(onClick = {
+                val bv = bvInput.trim()
+                if (bv.isNotEmpty()) {
+                    scope.launch(Dispatchers.IO) {
+                        isLoading = true
+                        val result = vm.freezeSingleVideo(bv)
+                        val data = result.getOrNull()
+                        isLoading = false
+                        launch(Dispatchers.Main) {
+                            if (data?.code == 0) {
+                                onDismiss.invoke()
+                                Toast.makeText(context, "冻结成功", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "冻结失败", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(context, "请输入BV号", Toast.LENGTH_SHORT).show()
+                }
+            }) { Text("确定") }
+        },
+        dismissButton = {
+            ASTextButton(onClick = { onDismiss.invoke() }) { Text("取消") }
+        }
+    )
 }
 
 @Composable
@@ -287,8 +494,8 @@ fun ActionRow(
     onToUserFolder: () -> Unit = {},
     onToLikeVideo: () -> Unit,
     onToCoinVide: () -> Unit,
-    onToPlayHistory:()->Unit,
-    ) {
+    onToPlayHistory: () -> Unit,
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -427,38 +634,6 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                         )
                     }
                 }
-
-               if (false){
-                   HorizontalDivider(
-                       Modifier.padding(vertical = 16.dp),
-                       DividerDefaults.Thickness,
-                       MaterialTheme.colorScheme.outlineVariant
-                   )
-
-                   Row(
-                       verticalAlignment = Alignment.CenterVertically
-                   ) {
-                       Icon(
-                           painterResource(R.drawable.ic_mini_acfun_logo_24px),
-                           contentDescription = "AcFunLogo",
-                           tint = MaterialTheme.colorScheme.onSurfaceVariant
-                       )
-                       Spacer(Modifier.weight(1f))
-                       Text(
-                           "暂未开放",
-                           fontSize = 16.sp,
-                           color = MaterialTheme.colorScheme.outline
-                       )
-                       Spacer(Modifier.width(8.dp))
-                       Icon(
-                           Icons.Outlined.Build,
-                           modifier = Modifier.size(20.dp),
-                           contentDescription = "维护图标",
-                           tint = MaterialTheme.colorScheme.outline
-                       )
-                   }
-               }
-
             }
         }
     }
@@ -635,6 +810,8 @@ fun TopUserInfo(
 private fun UserScaffold(
     onToBack: () -> Unit,
     onToSettings: () -> Unit,
+    userRoute: UserRoute,
+    onShowFreezeVideo: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -653,6 +830,11 @@ private fun UserScaffold(
                         })
                     },
                     actions = {
+                        if (!userRoute.isAnalysisUser){
+                            ASIconButton(onClick = { onShowFreezeVideo.invoke() }) {
+                                Icon(Icons.Outlined.LocalPolice, contentDescription = "冻结视频")
+                            }
+                        }
                         ASIconButton(onClick = {
                             onToSettings.invoke()
                         }) {

@@ -32,6 +32,7 @@ import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
+import com.imcys.bilibilias.network.service.AppAPIService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +51,7 @@ class AnalysisViewModel(
     private val userInfoRepository: UserInfoRepository,
     private val downloadManager: DownloadManager,
     private val appSettingsRepository: AppSettingsRepository,
+    private val appAPIService: AppAPIService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AnalysisUIState())
@@ -458,6 +460,33 @@ class AnalysisViewModel(
         _uiState.value = _uiState.value.copy(isCreateDownloadLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             if (uiState.value.asLinkResultType != null && uiState.value.downloadInfo != null) {
+                var authMid = 0L
+                var currentVideo = ""
+
+                when(val result = uiState.value.asLinkResultType){
+                    is ASLinkResultType.BILI.Donghua -> {
+                        authMid = result.donghuaViewInfo.data?.upInfo?.mid ?: 0L
+                    }
+                    is ASLinkResultType.BILI.Video -> {
+                        authMid = result.viewInfo.data?.owner?.mid ?: 0L
+                        currentVideo = result.viewInfo.data?.bvid ?: ""
+                    }
+                    else -> {}
+                }
+
+                val freezeInfo = appAPIService.checkVideoSoFreeze(
+                    currentVideo,
+                    authMid,
+                )
+
+                if (freezeInfo.getOrNull()?.code != 0) {
+                    _uiState.value = _uiState.value.copy(
+                        isCreateDownloadLoading = false,
+                        appOldSoFreezeBean = freezeInfo.getOrNull()
+                    )
+                    return@launch
+                }
+
                 downloadManager.addDownloadTask(
                     uiState.value.asLinkResultType!!,
                     uiState.value.downloadInfo!!
@@ -737,5 +766,11 @@ class AnalysisViewModel(
                 downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioLanguage = language)
             )
         }
+    }
+
+    fun closeShowVideoFreezeTip() {
+        _uiState.value = _uiState.value.copy(
+            appOldSoFreezeBean = null
+        )
     }
 }

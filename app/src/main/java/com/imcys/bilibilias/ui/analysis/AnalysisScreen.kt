@@ -3,6 +3,8 @@ package com.imcys.bilibilias.ui.analysis
 import android.Manifest.permission
 import android.content.pm.PackageManager
 import android.os.Build
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,12 +29,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,13 +78,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
@@ -96,6 +98,7 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldSoFreezeBean
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
@@ -107,6 +110,7 @@ import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
+import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
 import com.imcys.bilibilias.ui.weight.ASIconButton
@@ -198,7 +202,7 @@ fun AnalysisScreen(
                     isSelectSingleModel = isSelectSingleModel,
                     episodeListMode = episodeListMode,
                     viewModel = vm,
-                    goToUser =  goToUser,
+                    goToUser = goToUser,
                     onToVideoCodingInfo = onToVideoCodingInfo,
                     onToLogin = onToLogin
                 )
@@ -210,6 +214,51 @@ fun AnalysisScreen(
     CreateDownloadTaskLoadingDialog(
         uiState.isCreateDownloadLoading,
     )
+
+    VideoFreezeTip(
+        uiState.appOldSoFreezeBean,
+        onDismiss = {
+            vm.closeShowVideoFreezeTip()
+        }
+    )
+
+}
+
+/**
+ *
+ */
+@Composable
+fun VideoFreezeTip(
+    appOldSoFreezeBean: AppOldSoFreezeBean?,
+    onDismiss: () -> Unit
+) {
+
+    if (appOldSoFreezeBean == null) return
+    ASAlertDialog(showState = true, title = {
+        Text("受保护的视频")
+    }, text = {
+        val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
+        AndroidView(
+            factory = { TextView(it) },
+            update = {
+                val tip = """
+                        ${appOldSoFreezeBean.msg} <br>
+                        暂时无法提供该视频的缓存，这是由UP自己或其他主体可发起的冻结，冻结后BILIBILIAS不再提供对这些视频的缓存。<br>
+                        具体详见：<br>
+                        <a href="https://docs.qq.com/doc/DVVdQa1J5aGxJcm5Y">《BILIBILIAS UP主权益保护计划》</a>。
+                    """.trimIndent()
+                it.apply {
+                    it.setTextColor(textColor)
+                    text = HtmlCompat.fromHtml(tip, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                    movementMethod = LinkMovementMethod.getInstance()
+                }
+            }
+        )
+    }, confirmButton = {
+        ASTextButton(onClick = onDismiss) {
+            Text("我知道了")
+        }
+    })
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -267,7 +316,7 @@ fun ColumnScope.AnalysisVideoCardList(
         item {
             AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
                 viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
-            }, goToUser,onToLogin)
+            }, goToUser, onToLogin)
         }
         item {
             when (asLinkResultType) {
@@ -807,8 +856,8 @@ fun AnalysisVideoCard(
     analysisBaseInfo: AnalysisBaseInfo,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit,
-    onToLogin:()->Unit,
-    ) {
+    onToLogin: () -> Unit,
+) {
     when (asLinkResultType) {
         is ASLinkResultType.BILI.Video -> {
             BILIVideoCard(
@@ -847,7 +896,7 @@ fun BILIDonghuaCard(
     analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit,
-    onToLogin:()->Unit,
+    onToLogin: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -1012,8 +1061,8 @@ fun BILIVideoCard(
     isBILILogin: Boolean,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit,
-    onToLogin:()->Unit,
-    ) {
+    onToLogin: () -> Unit,
+) {
     val coroutineScope = rememberCoroutineScope()
     var picSaving by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
@@ -1163,6 +1212,7 @@ fun BILIVideoCard(
         }
     )
 }
+
 @Composable
 fun AuthorInfoContent(
     result: NetWorkResult<BILIVideoViewInfo?>,

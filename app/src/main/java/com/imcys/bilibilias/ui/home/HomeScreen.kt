@@ -109,27 +109,6 @@ import org.koin.androidx.compose.koinViewModel
 import java.security.MessageDigest
 import kotlin.math.min
 
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-internal fun HomeRoute(
-    homeRoute: HomeRoute,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    goToLogin: () -> Unit,
-    goToUserPage: (mid: Long) -> Unit,
-    goToAnalysis: () -> Unit,
-    goToDownloadPage: () -> Unit
-) {
-    HomeScreen(
-        homeRoute,
-        sharedTransitionScope,
-        animatedContentScope,
-        goToLogin,
-        goToUserPage,
-        goToAnalysis,
-        goToDownloadPage,
-    )
-}
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -486,7 +465,7 @@ fun HomeContent(
                 } else {
                     """
                             请在Download/BILIBILIAS目录下查看下载内容
-                            内部测试版本，请勿外传
+                            公开测试中，欢迎前往Github提交意见反馈
                         """.trimIndent()
                 },
                 fontSize = 14.sp,
@@ -781,7 +760,7 @@ private fun HomeScaffold(
                                     }
                                 }
                             },
-                            onErrorContent = { errorMsg, response ->
+                            onErrorContent = { _, _ ->
                                 ASIconButton(onClick = {
                                     haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
                                     goToLogin()
