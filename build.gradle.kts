@@ -15,5 +15,6 @@ plugins {
     alias(libs.plugins.bilibilias.android.application) apply false
     alias(libs.plugins.bilibilias.android.library) apply false
     alias(libs.plugins.bilibilias.android.koin) apply false
+    alias(libs.plugins.bilibilias.baidu.jar) apply false
 
 }

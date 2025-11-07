@@ -43,6 +43,7 @@ import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldCommonBean
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoLanguage
 import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
@@ -77,6 +78,7 @@ fun VideoDownloadScreen(
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     interactiveVideo: NetWorkResult<BILISteinEdgeInfo?>,
+    boostVideoInfo: AppOldCommonBean?,
     onUpdateSelectedCid: UpdateSelectedCid,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
@@ -87,9 +89,14 @@ fun VideoDownloadScreen(
     onUpdateAudioLanguage: OnUpdateAudioLanguage
 ) {
 
-    if (viewInfo.data?.isUpowerExclusive == true && viewInfo.data?.isUpowerPlay == false) {
+    if (viewInfo.data?.isUpowerExclusive == true) {
         // 拦截缓存，暂不支持
-        return
+        if (viewInfo.data?.isUpowerPlay == false) {
+            return
+        }
+        if (boostVideoInfo?.code != 0){
+            return
+        }
     }
 
     var selectEpisodeId by remember { mutableStateOf<Long?>(null) }

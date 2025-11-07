@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Notifications
@@ -51,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
@@ -94,6 +96,7 @@ fun SettingScreen(
     onToSystemExpand: () -> Unit = {},
     onToStorageManagement: () -> Unit = {},
     onToNamingConvention: () -> Unit = {},
+    onToLineConfig : () -> Unit = {},
     onLogoutFinish: (Long) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -249,7 +252,6 @@ fun SettingScreen(
             }
 
 
-
             item {
                 CategorySettingsItem(
                     text = "关于程序"
@@ -353,6 +355,22 @@ fun SettingScreen(
             }
 
 
+            item {
+                CategorySettingsItem(
+                    text = "高级"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Cloud),
+                    text = "线路配置",
+                    descriptionText = "试着改进你的下载体验。",
+                    onClick = onToLineConfig
+                )
+            }
+
+
 //            item {
 //                BaseSettingsItem(
 //                    painter = rememberVectorPainter(Icons.Outlined.Extension),
@@ -374,6 +392,7 @@ fun SettingScreen(
             onClickDismiss = {
                 showPrivacyPolicy = false
                 showPrivacyPolicyRefuseTip = true
+                StatService.setAuthorizedState(context, false)
                 vm.updatePrivacyPolicyAgreement(Refuse)
             }
         )

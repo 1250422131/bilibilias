@@ -30,6 +30,12 @@ inline fun analyticsSafe(action: () -> Unit) {
     }
 }
 
+inline fun baiduAnalyticsSafe(action: () -> Unit) {
+    if (BuildConfig.ENABLED_ANALYTICS && !BuildConfig.ENABLED_PLAY_APP_MODE){
+        action()
+    }
+}
+
 fun isEnabledAnalytics(): Boolean {
     return BuildConfig.ENABLED_ANALYTICS
 }

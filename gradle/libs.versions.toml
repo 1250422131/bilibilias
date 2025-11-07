@@ -131,6 +131,7 @@ bilibilias-android-library = { id = "bilibilias.android.library" }
 bilibilias-android-application = { id = "bilibilias.android.application" }
 bilibilias-android-koin = { id = "bilibilias.android.koin" }
 bilibilias-android-ffmpegVerification = { id = "bilibilias.android.ffmpegVerification" }
+bilibilias-baidu-jar = { id = "bilibilias.baidu.jar" }
 
 [bundles]
 compose = [

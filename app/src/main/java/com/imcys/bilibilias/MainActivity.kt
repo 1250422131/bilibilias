@@ -43,7 +43,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import androidx.compose.runtime.collectAsState
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.utils.analyticsSafe
+import com.imcys.bilibilias.common.utils.baiduAnalyticsSafe
 import com.imcys.bilibilias.ui.weight.ASTextButton
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +58,9 @@ class MainActivity : ComponentActivity() {
     private var showSkipVersion = MutableStateFlow(false)
     private var googlePlaySkipVersionListener: () -> Unit = {}
     private var performedInstallListen = {}
+
+    private var agreePrivacyPolicyState: AppSettings.AgreePrivacyPolicyState =
+        AppSettings.AgreePrivacyPolicyState.Default
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -183,8 +188,20 @@ class MainActivity : ComponentActivity() {
     private fun initAppSetting() {
         lifecycleScope.launch(Dispatchers.IO) {
             appSettingsFlow.collect {
+                agreePrivacyPolicyState = it.agreePrivacyPolicy
                 initFirebase(it.agreePrivacyPolicy)
+                initBaiduAnalytics(it.agreePrivacyPolicy)
             }
+        }
+    }
+
+    /**
+     * 初始化百度统计
+     */
+    fun initBaiduAnalytics(state: AppSettings.AgreePrivacyPolicyState) {
+        baiduAnalyticsSafe {
+            StatService.setAuthorizedState(this, state == AppSettings.AgreePrivacyPolicyState.Agreed)
+            StatService.start(this)
         }
     }
 
@@ -262,6 +279,22 @@ class MainActivity : ComponentActivity() {
                 completeUpdate()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        baiduAnalyticsSafe {
+            if (agreePrivacyPolicyState != AppSettings.AgreePrivacyPolicyState.Agreed) return
+            StatService.onResume(this)
+        }
+    }
+
+    override fun onPause() {
+        baiduAnalyticsSafe {
+            if (agreePrivacyPolicyState != AppSettings.AgreePrivacyPolicyState.Agreed) return
+            StatService.onPause(this)
+        }
+        super.onPause()
     }
 
 

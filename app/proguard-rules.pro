@@ -47,3 +47,5 @@
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite* {
    <fields>;
 }
+
+-keep class com.baidu.bottom.** { *; }

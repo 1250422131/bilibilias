@@ -182,7 +182,11 @@ private fun RoamSettingStateContent(
                 RoamSettingApplyScreen(state, haptics, vm)
             }
 
-            RoamUIState.NoLogin -> RoamSettingNoLoginTip(onGoToQRCodeLogin)
+            RoamUIState.NoLogin -> Column(modifier = modifier) {
+                RoamSettingNoLoginTip(
+                    onGoToQRCodeLogin
+                )
+            }
         }
     }
 }

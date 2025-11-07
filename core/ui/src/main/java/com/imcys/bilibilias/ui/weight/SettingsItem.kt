@@ -434,9 +434,9 @@ fun CategorySettingsItem(text: String) {
 }
 
 @Composable
-fun TipSettingsItem(text: String) {
+fun TipSettingsItem(text: String,modifier: Modifier? = null) {
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp + 10.dp, vertical = 10.dp)
+        modifier = modifier ?: Modifier.padding(horizontal = 16.dp + 10.dp, vertical = 10.dp),
     ) {
         Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
         Spacer(modifier = Modifier.height(10.dp))

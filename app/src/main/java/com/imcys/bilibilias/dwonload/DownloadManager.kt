@@ -240,7 +240,12 @@ class DownloadManager(
                         runCatching {
                             videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
                         }.onSuccess { cCInfo ->
-                            saveCCFile(asLinkResultType.viewInfo.data, ccFileType, cCInfo,languageName)
+                            saveCCFile(
+                                asLinkResultType.viewInfo.data,
+                                ccFileType,
+                                cCInfo,
+                                languageName
+                            )
                         }
                     }
                 }
@@ -415,7 +420,7 @@ class DownloadManager(
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
 
-               val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
                 uri?.let {
                     try {
                         resolver.openOutputStream(it)?.use { out ->
@@ -424,12 +429,19 @@ class DownloadManager(
                         }
                     } catch (e: Exception) {
                         // 写入失败：尝试删除刚创建的占位记录
-                        try { resolver.delete(it, null, null) } catch (_: Exception) {}
+                        try {
+                            resolver.delete(it, null, null)
+                        } catch (_: Exception) {
+                        }
                         return@withContext
                     } finally {
                         // 解除 pending 状态
-                        val update = ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) }
-                        try { resolver.update(it, update, null, null) } catch (_: Exception) {}
+                        val update =
+                            ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) }
+                        try {
+                            resolver.update(it, update, null, null)
+                        } catch (_: Exception) {
+                        }
                     }
                 }
 
@@ -643,14 +655,16 @@ class DownloadManager(
         val result = downloadSubTask(subTask, task, progressCallback)
 
         if (result) {
-            val videoNamingRule = if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
-                appSettingsRepository.appSettingsFlow.first().videoNamingRule
-            } else {
-                appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
-            }
+            val videoNamingRule =
+                if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
+                    appSettingsRepository.appSettingsFlow.first().videoNamingRule
+                } else {
+                    appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
+                }
             val conventionInfo = task.downloadSegment.namingConventionInfo
             val fileExtension = getFileExtension(subTask.subTaskType).removePrefix(".")
-            val fileName = buildFileNameWithConvention(videoNamingRule, conventionInfo, fileExtension)
+            val fileName =
+                buildFileNameWithConvention(videoNamingRule, conventionInfo, fileExtension)
             val mimeType = getMimeType(subTask.subTaskType)
             val file = File(subTask.savePath)
 
@@ -730,8 +744,9 @@ class DownloadManager(
         val downloaded = if (tempFile.exists()) tempFile.length() else 0L
         val referer = buildRefererUrl(task)
 
+        val downloadUrl = buildLineDownloadUrl(subTask.downloadUrl)
         // 发起请求
-        httpClient.prepareGet(subTask.downloadUrl) {
+        httpClient.prepareGet(downloadUrl) {
             header("Referer", referer)
             if (downloaded > 0) header("Range", "bytes=$downloaded-")
         }.execute { response ->
@@ -772,6 +787,21 @@ class DownloadManager(
         }
 
         return@withContext true
+    }
+
+    /**
+     * 替换CDN
+     */
+    private suspend fun buildLineDownloadUrl(downloadUrl: String): String {
+        val lineHost = appSettingsRepository.appSettingsFlow.first().biliLineHost ?: ""
+        val uposRegex = Regex("""upos-sz-estg[0-9a-z]*\.bilivideo\.com""", RegexOption.IGNORE_CASE)
+        return if (uposRegex.containsMatchIn(downloadUrl)) {
+            if (lineHost.isNotEmpty()) {
+                downloadUrl.replace(uposRegex, lineHost)
+            } else downloadUrl
+        } else {
+            downloadUrl
+        }
     }
 
 
@@ -845,18 +875,23 @@ class DownloadManager(
                     filePath = filePath.replace(rule.placeholder, value)
                 }
             }
+
             is NamingConventionInfo.Donghua -> {
-                donghuaNamingRules.forEach {
-                    rule ->
+                donghuaNamingRules.forEach { rule ->
                     val value = when (rule) {
                         FileNamePlaceholder.Donghua.Cid -> conventionInfo.cid ?: ""
-                        FileNamePlaceholder.Donghua.EpisodeNumber -> conventionInfo.episodeNumber ?: ""
-                        FileNamePlaceholder.Donghua.EpisodeTitle -> conventionInfo.episodeTitle ?: ""
+                        FileNamePlaceholder.Donghua.EpisodeNumber -> conventionInfo.episodeNumber
+                            ?: ""
+
+                        FileNamePlaceholder.Donghua.EpisodeTitle -> conventionInfo.episodeTitle
+                            ?: ""
+
                         FileNamePlaceholder.Donghua.Title -> conventionInfo.title ?: ""
                     }
                     filePath = filePath.replace(rule.placeholder, value)
                 }
             }
+
             else -> {
                 // 不支持的命名规则类型，返回原始命名规则
             }
@@ -870,11 +905,12 @@ class DownloadManager(
      * 处理合并成功
      */
     private suspend fun handleMergeSuccess(task: AppDownloadTask) {
-        val videoNamingRule = if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
-            appSettingsRepository.appSettingsFlow.first().videoNamingRule
-        } else {
-            appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
-        }
+        val videoNamingRule =
+            if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
+                appSettingsRepository.appSettingsFlow.first().videoNamingRule
+            } else {
+                appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
+            }
         val conventionInfo = task.downloadSegment.namingConventionInfo
         val finalPath = buildFileNameWithConvention(videoNamingRule, conventionInfo, "mp4")
         val mergedFile = File("${task.downloadSubTasks[0].savePath}_merged.mp4")
@@ -1057,13 +1093,18 @@ class DownloadManager(
             }
             // 检查是否已存在同名文件，存在则先删除
             val query = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-            val selection = "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
+            val selection =
+                "${MediaStore.Downloads.DISPLAY_NAME}=? AND ${MediaStore.Downloads.RELATIVE_PATH}=?"
             val selectionArgs = arrayOf(fileName, relativePath)
             resolver.query(query, arrayOf(MediaStore.Downloads._ID), selection, selectionArgs, null)
                 ?.use { cursor ->
                     if (cursor.moveToFirst()) {
-                        val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
-                        val existUri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
+                        val id =
+                            cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID))
+                        val existUri = ContentUris.withAppendedId(
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                            id
+                        )
                         resolver.delete(existUri, null, null)
                     }
                 }
@@ -1084,7 +1125,8 @@ class DownloadManager(
             return@withContext null
         } else {
             // Android Q以下，逐级创建文件夹
-            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val downloadsDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             var targetDir = File(downloadsDir, "BILIBILIAS")
             if (!targetDir.exists()) targetDir.mkdirs()
             if (folderPath.isNotEmpty()) {
@@ -1158,7 +1200,7 @@ class DownloadManager(
         taskTree.roots.forEach { processNode(it) }
 
         // 仅在下载媒体时更新任务列表
-        if (!downloadViewInfo.downloadMedia){
+        if (!downloadViewInfo.downloadMedia) {
             return
         }
 
@@ -1459,7 +1501,7 @@ class DownloadManager(
     ): DownloadSubTask {
         val savePath = getSaveTempSubTaskPath(
             subTaskType = type
-        ) + "/${segment.platformId}_${segment.title}.${
+        ) + "/${segment.platformId}_${segment.title.take(10)}.${
             when (type) {
                 DownloadSubTaskType.VIDEO -> "mp4"
                 DownloadSubTaskType.AUDIO -> "m4a"

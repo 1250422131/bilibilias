@@ -3,6 +3,7 @@ import com.imcys.bilibilias.buildlogic.BILIBILIASBuildType
 plugins {
     alias(libs.plugins.bilibilias.android.application)
     alias(libs.plugins.bilibilias.android.koin)
+    alias(libs.plugins.bilibilias.baidu.jar)
     alias(libs.plugins.gms.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
@@ -11,6 +12,7 @@ plugins {
 }
 val enabledPlayAppMode: String by project
 val enabledAnalytics: String by project
+val baiduStatId: String = project.findProperty("as.baidu.stat.id")?.toString() ?: ""
 
 android {
     namespace = "com.imcys.bilibilias"
@@ -18,9 +20,11 @@ android {
     defaultConfig {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias"
-        versionCode = 306
-        versionName = "3.0.0-PlumBlossom-12"
+        versionCode = 307
+        versionName = "3.0.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["BAIDU_STAT_ID"] = baiduStatId
+        buildConfigField("String", "BAIDU_STAT_ID", """"$baiduStatId"""".trimIndent())
     }
 
     signingConfigs {
@@ -37,6 +41,7 @@ android {
             dimension = "version"
             buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
             signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
+            resValue("string", "app_channel", "Official")
         }
 
         create("alpha") {
@@ -44,6 +49,7 @@ android {
             applicationIdSuffix = BILIBILIASBuildType.ALPHA.applicationIdSuffix
             versionNameSuffix = BILIBILIASBuildType.ALPHA.versionNameSuffix
             buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", "false")
+            resValue("string", "app_channel", "Alpha")
             // 动态签名配置
             val runnerTemp = System.getenv("RUNNER_TEMP")
             signingConfig = if (runnerTemp != null && file("$runnerTemp/mxjs-debug.jks").exists()) {
@@ -70,6 +76,7 @@ android {
             versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
             buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
             signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
+
         }
     }
 
@@ -102,6 +109,18 @@ android {
             freeCompilerArgs.add("-XXLanguage:+WhenGuards")
         }
     }
+
+    /**
+     * 百度统计静态清单合并
+     */
+    androidComponents {
+        onVariants { variant ->
+            if (enabledAnalytics.toBoolean() && !enabledPlayAppMode.toBoolean()) {
+                variant.sources.manifests.addStaticManifestFile("src/baidu/AndroidManifest.xml")
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -132,6 +151,16 @@ dependencies {
             implementation(it)
         } else {
             compileOnly(it)
+        }
+    }
+
+    // 百度统计
+    val baiduJar = fileTree("libs") { include("Baidu_Mtj_android_*.jar") }
+    if (!baiduJar.isEmpty) {
+        if (!enabledAnalytics.toBoolean() || enabledPlayAppMode.toBoolean()) {
+            compileOnly(baiduJar)
+        } else {
+            implementation(baiduJar)
         }
     }
 

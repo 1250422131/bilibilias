@@ -23,6 +23,7 @@ import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldCommonBean
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
@@ -76,6 +77,9 @@ class AnalysisViewModel(
 
     val currentUserInfo = _currentUserInfo.asStateFlow()
 
+    private val _boostVideoInfo = MutableStateFlow<AppOldCommonBean?>(null)
+    val boostVideoInfo = _boostVideoInfo.asStateFlow()
+
 
     private val debounceTime = 1000L // 防抖时间
     private val debounceJob: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -121,6 +125,10 @@ class AnalysisViewModel(
             }
         }
 
+    }
+
+    suspend fun loadBoostVideoInfo(): Result<AppOldCommonBean> {
+        return appAPIService.getAppOldBoostVideoInfo()
     }
 
     /**
@@ -616,6 +624,11 @@ class AnalysisViewModel(
             }
             when (it.status) {
                 ApiStatus.SUCCESS -> {
+                    // 检查充电
+                    if (it.data?.isUpowerExclusive == true){
+                        val boostInfo = loadBoostVideoInfo()
+                        _boostVideoInfo.emit(boostInfo.getOrNull())
+                    }
                     asVideoPlayerInfo(it.data?.cid ?: 0, it.data?.bvid, it.data?.aid)
                     // 检查互动视频
                     if (it.data?.rights?.isSteinGate != 0L) {

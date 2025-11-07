@@ -155,6 +155,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateLineHost(lineHost: String) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                this.biliLineHost = lineHost
+            }
+        }
+    }
+
 }
 
 

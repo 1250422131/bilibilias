@@ -4,6 +4,7 @@ import com.imcys.bilibilias.network.config.API.App.OLD_APP_FUNCTION_URL
 import com.imcys.bilibilias.network.config.API.App.OLD_APP_INFO_URL
 import com.imcys.bilibilias.network.config.API.App.OLD_VIDEO_DATA_POST_URL
 import com.imcys.bilibilias.network.model.app.AppOldApplyRoamBean
+import com.imcys.bilibilias.network.model.app.AppOldCommonBean
 import com.imcys.bilibilias.network.model.app.AppOldDonateBean
 import com.imcys.bilibilias.network.model.app.AppOldHomeBannerDataBean
 import com.imcys.bilibilias.network.model.app.AppOldSoFreezeBean
@@ -13,7 +14,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.http.parameters
 
 class AppAPIService(
@@ -148,6 +148,12 @@ class AppAPIService(
             }
 
         }
+    }
+
+    suspend fun getAppOldBoostVideoInfo() = runCatching {
+        httpClient.get(OLD_APP_FUNCTION_URL) {
+            parameter("type", "BoostVideo")
+        }.body<AppOldCommonBean>()
     }
 
 

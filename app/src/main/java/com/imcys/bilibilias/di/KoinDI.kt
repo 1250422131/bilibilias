@@ -13,6 +13,7 @@ import com.imcys.bilibilias.ui.login.CookieLoginViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.setting.SettingViewModel
 import com.imcys.bilibilias.ui.setting.contract.NamingConventionViewModel
+import com.imcys.bilibilias.ui.setting.developer.LineConfigViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementViewModel
@@ -54,6 +55,7 @@ val appModule = module {
     viewModel { StorageManagementViewModel(get()) }
     viewModel { NamingConventionViewModel(get()) }
     viewModel { RequestFrequentViewModel(get()) }
+    viewModel{ LineConfigViewModel(get(),get()) }
     factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(

@@ -38,6 +38,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NorthEast
@@ -98,6 +99,7 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.model.app.AppOldCommonBean
 import com.imcys.bilibilias.network.model.app.AppOldSoFreezeBean
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -120,6 +122,7 @@ import com.imcys.bilibilias.ui.weight.AsBackIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASCommonSelectGrid
 import com.imcys.bilibilias.weight.AsAutoError
@@ -303,6 +306,7 @@ fun ColumnScope.AnalysisVideoCardList(
     val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
     val currentUserInfo by viewModel.currentUserInfo.collectAsState()
     val interactiveVideo by viewModel.interactiveVideo.collectAsState()
+    val boostVideoInfo by viewModel.boostVideoInfo.collectAsState()
 
     val context = LocalContext.current
 
@@ -316,7 +320,7 @@ fun ColumnScope.AnalysisVideoCardList(
         item {
             AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
                 viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
-            }, goToUser, onToLogin)
+            }, goToUser, onToLogin,boostVideoInfo)
         }
         item {
             when (asLinkResultType) {
@@ -388,6 +392,7 @@ fun ColumnScope.AnalysisVideoCardList(
                         asLinkResultType.currentBvId,
                         asLinkResultType.viewInfo,
                         interactiveVideo,
+                        boostVideoInfo,
                         onUpdateSelectedCid = { it, selectType, title, cover ->
                             if (isSelectSingleModel) {
                                 viewModel.clearSelectedCidList()
@@ -857,6 +862,7 @@ fun AnalysisVideoCard(
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit,
     onToLogin: () -> Unit,
+    boostVideoInfo: AppOldCommonBean?,
 ) {
     when (asLinkResultType) {
         is ASLinkResultType.BILI.Video -> {
@@ -865,6 +871,7 @@ fun AnalysisVideoCard(
                 asLinkResultType.viewInfo,
                 analysisBaseInfo,
                 isBILILogin,
+                boostVideoInfo,
                 savePic = savePic,
                 goToUser = goToUser,
                 onToLogin = onToLogin
@@ -1059,6 +1066,7 @@ fun BILIVideoCard(
     videoInfo: NetWorkResult<BILIVideoViewInfo?>,
     analysisBaseInfo: AnalysisBaseInfo,
     isBILILogin: Boolean,
+    boostVideoInfo: AppOldCommonBean?,
     savePic: suspend (String?) -> Unit,
     goToUser: (Long) -> Unit,
     onToLogin: () -> Unit,
@@ -1169,10 +1177,7 @@ fun BILIVideoCard(
                 // 如果是充电视频，提示用户充电
                 if (!asLinkResultType.isCanPlay()) {
                     Spacer(Modifier.height(16.dp))
-                    ASWarringTip(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        enabledPadding = false
-                    ) {
+                    ASWarringTip {
                         Row(
                             Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -1183,6 +1188,27 @@ fun BILIVideoCard(
                             )
                         }
                     }
+
+                    if (boostVideoInfo?.code != 0){
+                        Spacer(Modifier.height(10.dp))
+                        ASErrorTip {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    Icons.Outlined.ErrorOutline,
+                                    contentDescription = "警告",
+                                )
+                                Spacer(Modifier.width(2.dp))
+                                Text(
+                                    boostVideoInfo?.msg ?: "",
+                                    fontSize = 14.sp,
+                                )
+                            }
+                        }
+                    }
+
                 }
 
 
@@ -1321,8 +1347,9 @@ fun AnalysisScaffold(
             }
         },
         floatingActionButton = {
+            val isCanPlay = asResultType is ASLinkResultType.BILI.Video && asResultType.isCanPlay()
             val visible = (downloadInfo?.selectedCid?.isNotEmpty() == true ||
-                    downloadInfo?.selectedEpId?.isNotEmpty() == true) && asResultType != null
+                    downloadInfo?.selectedEpId?.isNotEmpty() == true) && asResultType != null && isCanPlay
 
             AnimatedVisibility(
                 visible = visible,
