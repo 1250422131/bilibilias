@@ -342,23 +342,23 @@ data class BILIUserBangumiFollowInfo(
         @Serializable
         data class Stat(
             @SerialName("coin")
-            val coin: Long,
+            val coin: Long = 0,
             @SerialName("danmaku")
-            val danmaku: Long,
+            val danmaku: Long = 0,
             @SerialName("favorite")
-            val favorite: Long,
+            val favorite: Long = 0,
             @SerialName("follow")
-            val follow: Long,
+            val follow: Long = 0,
             @SerialName("likes")
-            val likes: Long,
+            val likes: Long = 0,
             @SerialName("reply")
-            val reply: Long,
+            val reply: Long = 0,
             @SerialName("series_follow")
-            val seriesFollow: Long,
+            val seriesFollow: Long = 0,
             @SerialName("series_view")
-            val seriesView: Long,
+            val seriesView: Long = 0,
             @SerialName("view")
-            val view: Long
+            val view: Long = 0
         )
     }
     

@@ -20,8 +20,8 @@ android {
     defaultConfig {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias"
-        versionCode = 309
-        versionName = "3.0.9"
+        versionCode = 312
+        versionName = "3.0.12"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["BAIDU_STAT_ID"] = baiduStatId
         buildConfigField("String", "BAIDU_STAT_ID", """"$baiduStatId"""".trimIndent())
@@ -76,6 +76,7 @@ android {
             versionNameSuffix = BILIBILIASBuildType.BETA.versionNameSuffix
             buildConfigField("boolean", "ENABLED_PLAY_APP_MODE", enabledPlayAppMode)
             signingConfig = signingConfigs.getByName("BILIBILIASSigningConfig")
+            resValue("string", "app_channel", "Beta")
 
         }
     }
