@@ -536,7 +536,7 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
         },
         confirmButton = {
             ASTextButton(onClick = {
-                context.openLink(appUpdateInfo.version)
+                context.openLink(appUpdateInfo.url)
             }) {
                 Text(text = "前往下载")
             }

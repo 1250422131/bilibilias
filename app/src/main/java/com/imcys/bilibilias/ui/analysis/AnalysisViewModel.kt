@@ -471,29 +471,31 @@ class AnalysisViewModel(
                 var authMid = 0L
                 var currentVideo = ""
 
-                when(val result = uiState.value.asLinkResultType){
+                when (val result = uiState.value.asLinkResultType) {
                     is ASLinkResultType.BILI.Donghua -> {
                         authMid = result.donghuaViewInfo.data?.upInfo?.mid ?: 0L
                     }
+
                     is ASLinkResultType.BILI.Video -> {
                         authMid = result.viewInfo.data?.owner?.mid ?: 0L
                         currentVideo = result.viewInfo.data?.bvid ?: ""
                     }
+
                     else -> {}
                 }
+// 暂停冻结视频处理
+//                val freezeInfo = appAPIService.checkVideoSoFreeze(
+//                    currentVideo,
+//                    authMid,
+//                )
 
-                val freezeInfo = appAPIService.checkVideoSoFreeze(
-                    currentVideo,
-                    authMid,
-                )
-
-                if (freezeInfo.getOrNull()?.code != 0) {
-                    _uiState.value = _uiState.value.copy(
-                        isCreateDownloadLoading = false,
-                        appOldSoFreezeBean = freezeInfo.getOrNull()
-                    )
-                    return@launch
-                }
+//                if (freezeInfo.getOrNull()?.code != 0) {
+//                    _uiState.value = _uiState.value.copy(
+//                        isCreateDownloadLoading = false,
+//                        appOldSoFreezeBean = freezeInfo.getOrNull()
+//                    )
+//                    return@launch
+//                }
 
                 downloadManager.addDownloadTask(
                     uiState.value.asLinkResultType!!,
@@ -625,7 +627,7 @@ class AnalysisViewModel(
             when (it.status) {
                 ApiStatus.SUCCESS -> {
                     // 检查充电
-                    if (it.data?.isUpowerExclusive == true){
+                    if (it.data?.isUpowerExclusive == true) {
                         val boostInfo = loadBoostVideoInfo()
                         _boostVideoInfo.emit(boostInfo.getOrNull())
                     }

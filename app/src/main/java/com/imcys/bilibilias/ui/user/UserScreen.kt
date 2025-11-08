@@ -830,11 +830,11 @@ private fun UserScaffold(
                         })
                     },
                     actions = {
-                        if (!userRoute.isAnalysisUser){
-                            ASIconButton(onClick = { onShowFreezeVideo.invoke() }) {
-                                Icon(Icons.Outlined.LocalPolice, contentDescription = "冻结视频")
-                            }
-                        }
+//                        if (!userRoute.isAnalysisUser){
+//                            ASIconButton(onClick = { onShowFreezeVideo.invoke() }) {
+//                                Icon(Icons.Outlined.LocalPolice, contentDescription = "冻结视频")
+//                            }
+//                        }
                         ASIconButton(onClick = {
                             onToSettings.invoke()
                         }) {

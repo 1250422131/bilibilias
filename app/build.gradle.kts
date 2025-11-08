@@ -20,8 +20,8 @@ android {
     defaultConfig {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias"
-        versionCode = 307
-        versionName = "3.0.7"
+        versionCode = 309
+        versionName = "3.0.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["BAIDU_STAT_ID"] = baiduStatId
         buildConfigField("String", "BAIDU_STAT_ID", """"$baiduStatId"""".trimIndent())
@@ -110,12 +110,12 @@ android {
         }
     }
 
-    /**
-     * 百度统计静态清单合并
-     */
-    androidComponents {
-        onVariants { variant ->
-            if (enabledAnalytics.toBoolean() && !enabledPlayAppMode.toBoolean()) {
+    if (!enabledPlayAppMode.toBoolean() && enabledAnalytics.toBoolean()) {
+        /**
+         * 百度统计静态清单合并
+         */
+        androidComponents {
+            onVariants { variant ->
                 variant.sources.manifests.addStaticManifestFile("src/baidu/AndroidManifest.xml")
             }
         }
@@ -157,10 +157,10 @@ dependencies {
     // 百度统计
     val baiduJar = fileTree("libs") { include("Baidu_Mtj_android_*.jar") }
     if (!baiduJar.isEmpty) {
-        if (!enabledAnalytics.toBoolean() || enabledPlayAppMode.toBoolean()) {
-            compileOnly(baiduJar)
-        } else {
+        if (enabledAnalytics.toBoolean() && !enabledPlayAppMode.toBoolean()) {
             implementation(baiduJar)
+        } else {
+            compileOnly(baiduJar)
         }
     }
 

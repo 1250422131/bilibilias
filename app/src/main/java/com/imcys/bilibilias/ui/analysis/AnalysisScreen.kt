@@ -218,12 +218,12 @@ fun AnalysisScreen(
         uiState.isCreateDownloadLoading,
     )
 
-    VideoFreezeTip(
-        uiState.appOldSoFreezeBean,
-        onDismiss = {
-            vm.closeShowVideoFreezeTip()
-        }
-    )
+//    VideoFreezeTip(
+//        uiState.appOldSoFreezeBean,
+//        onDismiss = {
+//            vm.closeShowVideoFreezeTip()
+//        }
+//    )
 
 }
 
@@ -320,7 +320,7 @@ fun ColumnScope.AnalysisVideoCardList(
         item {
             AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
                 viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
-            }, goToUser, onToLogin,boostVideoInfo)
+            }, goToUser, onToLogin, boostVideoInfo)
         }
         item {
             when (asLinkResultType) {
@@ -1189,7 +1189,7 @@ fun BILIVideoCard(
                         }
                     }
 
-                    if (boostVideoInfo?.code != 0){
+                    if (boostVideoInfo?.code != 0) {
                         Spacer(Modifier.height(10.dp))
                         ASErrorTip {
                             Row(
@@ -1347,7 +1347,8 @@ fun AnalysisScaffold(
             }
         },
         floatingActionButton = {
-            val isCanPlay = asResultType is ASLinkResultType.BILI.Video && asResultType.isCanPlay()
+            val isCanPlay =
+                if (asResultType is ASLinkResultType.BILI.Video) asResultType.isCanPlay() else true
             val visible = (downloadInfo?.selectedCid?.isNotEmpty() == true ||
                     downloadInfo?.selectedEpId?.isNotEmpty() == true) && asResultType != null && isCanPlay
 
