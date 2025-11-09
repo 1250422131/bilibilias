@@ -25,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

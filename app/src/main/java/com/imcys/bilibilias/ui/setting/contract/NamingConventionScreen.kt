@@ -33,8 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.FileNamePlaceholder
 import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
 import com.imcys.bilibilias.database.entity.download.videoNamingRules
