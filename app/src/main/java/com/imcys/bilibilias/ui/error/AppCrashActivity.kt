@@ -25,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -82,7 +84,7 @@ class AppCrashActivity : ComponentActivity() {
                 Button(onClick = {
                     exitProcess(0)
                 }) {
-                    Text("退出软件")
+                    Text(stringResource(R.string.error_exit_app))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(onClick = {
@@ -93,7 +95,7 @@ class AppCrashActivity : ComponentActivity() {
                         delay(2000)
                     }
                 }) {
-                    Text("复制异常")
+                    Text(stringResource(R.string.error_copy_error))
                 }
 
 

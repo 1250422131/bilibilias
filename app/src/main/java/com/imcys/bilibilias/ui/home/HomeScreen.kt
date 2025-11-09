@@ -520,16 +520,16 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
     }
     ASAlertDialog(
         showState = show,
-        title = { Text("更新提示") },
+        title = { Text(stringResource(R.string.update_hint_title)) },
         text = {
             Column(
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("检测到有新版本 ${appUpdateInfo.version} 可用。")
+                Text(stringResource(R.string.update_new_version_format, appUpdateInfo.version))
                 Spacer(Modifier.height(8.dp))
-                Text("更新内容：")
+                Text(stringResource(R.string.update_content))
                 Spacer(Modifier.height(4.dp))
                 Text(appUpdateInfo.feat)
             }
@@ -538,13 +538,13 @@ fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean
             ASTextButton(onClick = {
                 context.openLink(appUpdateInfo.url)
             }) {
-                Text(text = "前往下载")
+                Text(text = stringResource(R.string.update_go_download))
             }
         }, dismissButton = {
             ASTextButton(onClick = {
                 show = false
             }) {
-                Text(text = "取消")
+                Text(text = stringResource(R.string.common_cancel))
             }
         }, onDismiss = {
             show = false
@@ -557,9 +557,9 @@ fun CloseBulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("关闭公告") },
+        title = { Text(stringResource(R.string.home_close_announcement)) },
         text = {
-            Text("关闭后将不再显示，直到有新的公告发布")
+            Text(stringResource(R.string.home_announcement_close_hint))
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
@@ -582,7 +582,7 @@ fun BulletinDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("公告") },
+        title = { Text(stringResource(R.string.home_announcement)) },
         text = {
             Column(
                 modifier = Modifier
@@ -917,7 +917,7 @@ private fun LoginInfoBottomDialog(
                         verticalArrangement = Arrangement.Center
                     ) {
                         ContainedLoadingIndicator(Modifier.size(100.dp))
-                        Text("正在加载...")
+                        Text(stringResource(R.string.update_loading))
                     }
                 })
             }

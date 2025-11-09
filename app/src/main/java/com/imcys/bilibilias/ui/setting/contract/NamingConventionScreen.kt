@@ -33,8 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.FileNamePlaceholder
 import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
 import com.imcys.bilibilias.database.entity.download.videoNamingRules
@@ -130,7 +132,7 @@ fun LazyItemScope.NamingRuleEditor(
             }
             AnimatedVisibility(ruleValue != defaultRule) {
                 ASWarringTip {
-                    Text("如果您不了解命名规则的使用方法，请谨慎修改，也可前往文档查看使用方法。")
+                    Text(stringResource(R.string.setting_naming_warning))
                 }
             }
             OutlinedTextField(
@@ -139,7 +141,7 @@ fun LazyItemScope.NamingRuleEditor(
                     textFieldValue = it
                     onRuleChange(it.text)
                 },
-                label = { Text("命名规则") },
+                label = { Text(stringResource(R.string.setting_naming_convention)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged {
@@ -272,7 +274,7 @@ fun NamingConventionScaffold(
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("Beta")
+                                Text(stringResource(R.string.common_beta))
                             }
                         }
                     ) {

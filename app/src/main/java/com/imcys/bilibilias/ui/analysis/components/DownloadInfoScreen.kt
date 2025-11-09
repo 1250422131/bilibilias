@@ -24,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.toMenuVideoCode
 import com.imcys.bilibilias.common.utils.toVideoCode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
@@ -75,7 +77,7 @@ fun AudioQualitySelectScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择优先音频质量", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.analysis_select_audio_quality), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = modelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -201,7 +203,7 @@ fun VideoSupportFormatsSelectScreen(
                 },
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择优先分辨率", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.analysis_select_resolution), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -258,7 +260,7 @@ fun VideoSupportFormatsSelectScreen(
                     },
                     readOnly = true,
                     singleLine = false,
-                    label = { Text("选择优先编码", fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.analysis_select_codec), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,

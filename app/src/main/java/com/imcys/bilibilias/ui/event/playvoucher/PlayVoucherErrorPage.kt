@@ -18,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -36,7 +38,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
         topBar = {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
-                title = { Text("风控须知") },
+                title = { Text(stringResource(R.string.play_voucher_error_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 ),
@@ -44,7 +46,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = "返回"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 },
@@ -103,7 +105,7 @@ fun PlayVoucherErrorPage(onBlack:()-> Unit = {}) {
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
-                Text("我已知晓")
+                Text(stringResource(R.string.common_i_know))
             }
         }
     }

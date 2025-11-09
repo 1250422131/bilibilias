@@ -42,7 +42,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
@@ -181,8 +183,8 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("批量删除任务") },
-                text = { Text("确定要删除选中的任务记录和文件吗？") },
+                title = { Text(stringResource(R.string.download_batch_delete_title)) },
+                text = { Text(stringResource(R.string.download_delete_confirm_message)) },
                 confirmButton = {
                     ASTextButton(
                         onClick = {
@@ -190,14 +192,14 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                             showDeleteDialog = false
                         }
                     ) {
-                        Text("删除")
+                        Text(stringResource(R.string.common_delete))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text("取消")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )
@@ -225,7 +227,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text("正在下载")
+            Text(stringResource(R.string.status_downloading_title))
         }
         Spacer(Modifier.width(10.dp))
         ToggleButton(
@@ -237,7 +239,7 @@ private fun PageChangeTools(
                 }
             },
         ) {
-            Text("已完成下载")
+            Text(stringResource(R.string.status_completed_title))
         }
     }
 }
@@ -268,7 +270,7 @@ private fun EditTopTools(
             },
             border = CardDefaults.outlinedCardBorder()
         ) {
-            Text("反选")
+            Text(stringResource(R.string.download_deselect_all))
         }
 
         OutlinedButton(
@@ -278,7 +280,7 @@ private fun EditTopTools(
                 selectDeleteList.addAll(completedSegments)
             },
         ) {
-            Text("全选")
+            Text(stringResource(R.string.download_select_all))
         }
 
         Button(
@@ -291,7 +293,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
             )
         ) {
-            Text("取消")
+            Text(stringResource(R.string.common_cancel))
         }
 
         Button(
@@ -305,7 +307,7 @@ private fun EditTopTools(
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
             )
         ) {
-            Text("删除")
+            Text(stringResource(R.string.common_delete))
         }
 
 

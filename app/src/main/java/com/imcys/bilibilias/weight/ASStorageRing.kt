@@ -32,6 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.StorageInfoData
 import com.imcys.bilibilias.common.utils.StorageUtil
 

@@ -40,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +49,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.FirebaseExt
 import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.network.ApiStatus
@@ -102,7 +104,7 @@ fun CookeLoginContent(
                 cookiesString = it
                 vm.checkCookies(it)
             },
-            label = { Text("Cookie（浏览器直接复制，无需解码）") },
+            label = { Text(stringResource(R.string.login_cookie_input_label)) },
             maxLines = 4,
             minLines = 4
         )
@@ -140,7 +142,7 @@ fun CookeLoginContent(
                                 onFinish()
                             }
                         }) {
-                        Text("确认，这是我要登录的账户")
+                        Text(stringResource(R.string.login_confirm_account))
                     }
                     Spacer(Modifier.height(10.dp))
                 }
@@ -149,7 +151,7 @@ fun CookeLoginContent(
 
         // 提示
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text("请妥善保管您的Cookie，避免产生泄露风险。")
+            Text(stringResource(R.string.login_cookie_warning))
         }
 
         SavingDialog(showSavingDialog)
@@ -163,7 +165,7 @@ fun CookeLoginContent(
 @Composable
 fun SavingDialog(show: Boolean) {
     ASAlertDialog(showState = show, title = {
-        Text("存储身份信息")
+        Text(stringResource(R.string.login_saving_info))
     }, text = {
         Column(
             Modifier
@@ -173,7 +175,7 @@ fun SavingDialog(show: Boolean) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ContainedLoadingIndicator()
-            Text(text = "正在保存，请不要退出...")
+            Text(text = stringResource(R.string.login_saving_progress))
         }
     }, confirmButton = {})
 }
@@ -207,7 +209,7 @@ fun UserCard(modifier: Modifier = Modifier, mid: Long, name: String, level: Int,
             ) {
                 Text(name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f))
-                Text("LV${level}")
+                Text(stringResource(R.string.login_level_format, level))
             }
         }
     }
@@ -223,7 +225,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text("B站Cookie登录")
+                        Text(stringResource(R.string.login_cookie_title))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -234,7 +236,7 @@ private fun CookeLoginScaffold(onToBack: () -> Unit, content: @Composable (Paddi
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
+                                contentDescription = stringResource(R.string.cd_back)
                             )
                         }
                     }

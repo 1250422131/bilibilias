@@ -27,9 +27,11 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.ASConstant
 import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.di.ProvideKoinApplication
@@ -69,7 +71,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     style = BILIBILIASTopAppBarStyle.Small,
                     scrollBehavior = scrollBehavior,
                     title = {
-                        Text("登录")
+                        Text(stringResource(R.string.login_title))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -101,14 +103,9 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text("登录后你可以：", fontSize = 14.sp)
+                                Text(stringResource(R.string.login_after_you_can), fontSize = 14.sp)
                                 Text(
-                                    """
-                                ·支持更高清、更高码率的视频
-                                ·支持番剧缓存
-                                ·支持使用大会员权益
-                                ·支持享受漫游服务
-                            """.trimIndent(), fontSize = 14.sp,
+                                    stringResource(R.string.login_benefits), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -126,13 +123,13 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
-                                Text("登录即代表你同意：", fontSize = 14.sp)
+                                Text(stringResource(R.string.login_agreement_prefix), fontSize = 14.sp)
                                 Text(
-                                    "·哔哩哔哩账户和社区相关协议", fontSize = 14.sp,
+                                    stringResource(R.string.login_bilibili_agreement), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    "·《BILIBILIAS 隐私协议》",
+                                    stringResource(R.string.login_privacy_agreement),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.clickable {
@@ -140,7 +137,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     }
                                 )
                                 Text(
-                                    "·使用造成的一切后果 BILIBILIAS 概不负责", fontSize = 14.sp,
+                                    stringResource(R.string.login_disclaimer), fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -161,7 +158,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                                     .padding(vertical = 12.dp, horizontal = 16.dp)
                             ) {
                                 Text(
-                                    "特别的：\n本程序未得到哔哩哔哩授权，使用造成的一切后果哔哩哔哩概不负责",
+                                    stringResource(R.string.login_special_notice),
                                     fontSize = 14.sp,
                                     color = MaterialTheme.colorScheme.onTertiaryContainer
                                 )
@@ -178,7 +175,7 @@ fun LoginScreen(onToBack: () -> Unit, goToQRCodeLogin: () -> Unit) {
                     onClick = { goToQRCodeLogin.invoke() }
                 ) {
                     Text(
-                        "B站 扫码登录",
+                        stringResource(R.string.login_scan_qrcode),
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         fontSize = 16.sp
                     )

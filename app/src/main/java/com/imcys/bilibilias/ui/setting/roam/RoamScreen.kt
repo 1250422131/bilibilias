@@ -51,6 +51,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.imcys.bilibilias.R
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -209,12 +211,12 @@ private fun RoamSettingErrorScreen(errorMsg: String) {
             Modifier.size(100.dp)
         )
         Spacer(Modifier.height(8.dp))
-        Text("加载失败：$errorMsg，请稍后重试。", fontSize = 16.sp)
+        Text(stringResource(R.string.roam_load_failed_format, errorMsg), fontSize = 16.sp)
         Button(
             shape = CardDefaults.shape,
             onClick = {}
         ) {
-            Text("重试")
+            Text(stringResource(R.string.common_retry))
         }
     }
 }
@@ -338,7 +340,7 @@ private fun RoamApplyBody(
 @Composable
 private fun ApplyPendingTip(applyRoamContent: String) {
     ASInfoTip {
-        Text("当前您的审核正在进行中，请耐心等待，我们会尽快处理您的申请，通常会在7天内完成审核，有时会更长。")
+        Text(stringResource(R.string.roam_pending_review))
     }
     Spacer(Modifier.height(6.dp))
     Surface(
@@ -348,7 +350,7 @@ private fun ApplyPendingTip(applyRoamContent: String) {
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text("您的申请内容如下：")
+            Text(stringResource(R.string.roam_application_content))
             Text(applyRoamContent)
         }
     }
@@ -367,11 +369,11 @@ private fun ApplyForm(
 ) {
     if (isRejected) {
         ASErrorTip {
-            Text("您的漫游服务申请被拒绝，拒绝理由如下：${rejectReason ?: "暂无理由"}，您可以修改申请理由后重新提交申请。")
+            Text(stringResource(R.string.roam_rejected_format, rejectReason ?: stringResource(R.string.roam_test_failed)))
         }
     } else {
         ASWarringTip {
-            Text("当前您还未申请漫游服务，请填写申请理由后提交，你需要告知我们你将如何使用漫游服务，只有合理的申请我们才会通过。")
+            Text(stringResource(R.string.roam_not_applied))
         }
     }
 
@@ -403,7 +405,7 @@ private fun ApplyFormEditor(value: String, onValueChange: (String) -> Unit) {
                 style = MaterialTheme.typography.bodySmall
             )
         },
-        label = { Text("申请内容") },
+        label = { Text(stringResource(R.string.roam_application_reason)) },
         minLines = 4,
     )
 }
@@ -425,7 +427,7 @@ private fun ApplyFormSubmitButton(isLoading: Boolean, enabled: Boolean, onClick:
                 // 加载进度
                 CircularWavyProgressIndicator()
             } else {
-                Text("提交申请")
+                Text(stringResource(R.string.roam_submit_application))
             }
         }
     }
@@ -446,7 +448,7 @@ private fun RoamSettingSuccessScreen(
             Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("启用漫游", fontSize = 18.sp)
+            Text(stringResource(R.string.roam_enable_roam), fontSize = 18.sp)
             Spacer(Modifier.weight(1f))
             ASCheckThumbSwitch(
                 enabled = (uiState.isLoginTV || appSettings.enabledRoam),
@@ -517,7 +519,7 @@ fun RoamSettingScaffold(
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("Beta")
+                                Text(stringResource(R.string.common_beta))
                             }
                         }
                     ) {

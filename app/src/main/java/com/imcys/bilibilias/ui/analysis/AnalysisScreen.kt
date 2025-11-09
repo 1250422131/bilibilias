@@ -83,12 +83,14 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
@@ -238,7 +240,7 @@ fun VideoFreezeTip(
 
     if (appOldSoFreezeBean == null) return
     ASAlertDialog(showState = true, title = {
-        Text("受保护的视频")
+        Text(stringResource(R.string.analysis_protected_video))
     }, text = {
         val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
         AndroidView(
@@ -259,7 +261,7 @@ fun VideoFreezeTip(
         )
     }, confirmButton = {
         ASTextButton(onClick = onDismiss) {
-            Text("我知道了")
+            Text(stringResource(R.string.common_i_know))
         }
     })
 }
@@ -559,7 +561,7 @@ fun AdvancedSetting(
                     .animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("缓存配置")
+                Text(stringResource(R.string.analysis_cache_config))
                 Column {
                     ExposedDropdownMenuBox(
                         expanded = downloadModeExpanded,
@@ -581,7 +583,7 @@ fun AdvancedSetting(
                             },
                             readOnly = true,
                             singleLine = false,
-                            label = { Text("选择缓存模式", fontSize = 12.sp) },
+                            label = { Text(stringResource(R.string.analysis_select_cache_mode), fontSize = 12.sp) },
                             trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -636,7 +638,7 @@ fun AdvancedSetting(
                 }
 
                 Column {
-                    Text("下载内容")
+                    Text(stringResource(R.string.analysis_download_content))
                     ExtraCache(
                         isSelectSingleModel,
                         downloadInfo,
@@ -683,7 +685,7 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("流媒体下载", fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_stream_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadMedia == true,
             leadingIcon = {
@@ -704,7 +706,7 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("封面下载", fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_cover_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadCover == true,
             leadingIcon = {
@@ -724,7 +726,7 @@ fun ExtraCache(
         if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty() && isSelectSingleModel) {
             FilterChip(
                 label = {
-                    Text("字幕下载", fontSize = 12.sp)
+                    Text(stringResource(R.string.analysis_download_subtitle), fontSize = 12.sp)
                 },
                 selected = selectACCDownload,
                 leadingIcon = {
@@ -748,7 +750,7 @@ fun ExtraCache(
 
         FilterChip(
             label = {
-                Text("弹幕下载", fontSize = 12.sp)
+                Text(stringResource(R.string.analysis_danmaku_download), fontSize = 12.sp)
             },
             selected = downloadInfo?.downloadDanmaku == true,
             leadingIcon = {
@@ -767,7 +769,7 @@ fun ExtraCache(
     }
 
     if (selectACCDownload && isSelectSingleModel) {
-        Text("字幕下载")
+        Text(stringResource(R.string.analysis_download_subtitle))
         Spacer(Modifier.height(5.dp))
         SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)
     }
@@ -805,7 +807,7 @@ fun SelectACCCard(
                     onValueChange = {},
                     readOnly = true,
                     singleLine = false,
-                    label = { Text("选择字幕文件类型", fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.analysis_select_subtitle_type), fontSize = 12.sp) },
                     trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
@@ -958,7 +960,7 @@ fun BILIDonghuaCard(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = CardDefaults.shape
                             ) {
-                                Text("番剧", Modifier.padding(5.dp))
+                                Text(stringResource(R.string.analysis_bangumi), Modifier.padding(5.dp))
                             }
 
 
@@ -990,7 +992,7 @@ fun BILIDonghuaCard(
                                 } else {
                                     Icon(Icons.Outlined.Image, contentDescription = "下载封面")
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text("下载封面")
+                                    Text(stringResource(R.string.analysis_download_cover))
                                 }
                             }
                         }
@@ -1116,7 +1118,7 @@ fun BILIVideoCard(
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shape = CardDefaults.shape
                                 ) {
-                                    Text("充电视频", Modifier.padding(5.dp))
+                                    Text(stringResource(R.string.analysis_charged_video), Modifier.padding(5.dp))
                                 }
                             }
 
@@ -1148,7 +1150,7 @@ fun BILIVideoCard(
                                 } else {
                                     Icon(Icons.Outlined.Image, contentDescription = "下载封面")
                                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text("下载封面")
+                                    Text(stringResource(R.string.analysis_download_cover))
                                 }
                             }
                         }
@@ -1323,7 +1325,7 @@ fun AnalysisScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text("解析视频")
+                        Text(stringResource(R.string.analysis_parse_video))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -1442,7 +1444,7 @@ fun WritePermissionRequestTipDialog(
 fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("下载提示") },
+        title = { Text(stringResource(R.string.analysis_download_hint)) },
         text = {
             Text(
                 """
@@ -1453,7 +1455,7 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
         },
         confirmButton = {
             ASTextButton(onClick = onDownload) {
-                Text("了解")
+                Text(stringResource(R.string.common_understand))
             }
         },
     )

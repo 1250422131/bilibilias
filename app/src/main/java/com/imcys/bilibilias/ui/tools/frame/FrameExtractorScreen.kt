@@ -66,7 +66,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel.UIState
@@ -143,7 +145,7 @@ fun SelectVideoListDialog(
 ) {
     ASAlertDialog(
         showState = show,
-        title = { Text("选择导入视频") },
+        title = { Text(stringResource(R.string.frame_select_video_title)) },
         text = {
             LazyColumn(
                 modifier = Modifier.sizeIn(maxHeight = 600.dp),
@@ -210,7 +212,7 @@ fun SelectVideoListDialog(
                 }
             }
         }, confirmButton = {
-            Text("取消", Modifier.clickable {
+            Text(stringResource(R.string.common_cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -225,7 +227,7 @@ fun SelectVideoModelDialog(
     val haptics = LocalHapticFeedback.current
     ASAlertDialog(
         showState = showSelectVideoModel, clickBlankDismiss = true,
-        title = { Text("选择导入视频方式") },
+        title = { Text(stringResource(R.string.frame_select_method_title)) },
         text = {
             Column {
                 Surface(
@@ -246,7 +248,7 @@ fun SelectVideoModelDialog(
                     ) {
                         Icon(Icons.Outlined.DownloadDone, contentDescription = null)
                         Spacer(Modifier.width(10.dp))
-                        Text("从已下载导入")
+                        Text(stringResource(R.string.frame_import_from_downloaded))
                     }
                 }
 //                Spacer(Modifier.height(5.dp))
@@ -266,13 +268,13 @@ fun SelectVideoModelDialog(
 //                    ) {
 //                        Icon(Icons.Outlined.FileOpen, contentDescription = null)
 //                        Spacer(Modifier.width(10.dp))
-//                        Text("从本地文件导入")
+//                        Text(stringResource(R.string.frame_import_from_local))
 //                    }
 //                }
 
             }
         }, confirmButton = {
-            Text("取消", Modifier.clickable {
+            Text(stringResource(R.string.common_cancel), Modifier.clickable {
                 onClose.invoke()
             })
         })
@@ -295,7 +297,7 @@ private fun FrameExtractorContent(
 
         when (val state = uiState) {
             UIState.Default -> ASWarringTip {
-                Text("请在右上角选择导入视频")
+                Text(stringResource(R.string.frame_select_video_prompt))
             }
 
             is UIState.ImportSuccess -> ImportSuccessScreen(state, vm)
@@ -433,19 +435,19 @@ fun ExportDialog(
 
     ASAlertDialog(
         showState = showExportDialog,
-        title = { Text("选择导出位置") },
+        title = { Text(stringResource(R.string.frame_select_output_title)) },
         text = {
-            Text("请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。")
+            Text(stringResource(R.string.frame_select_output_message))
         },
         confirmButton = {
             ASTextButton(onClick = { launcher.launch(null) }) {
-                Text("选择位置")
+                Text(stringResource(R.string.frame_select_location))
             }
         },
         onDismiss = onDismiss,
         dismissButton = {
             ASTextButton(onClick = { onDismiss?.invoke() }) {
-                Text("取消")
+                Text(stringResource(R.string.common_cancel))
             }
         }
     )
@@ -468,7 +470,7 @@ fun SelectFpsItem(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("最大：$totalFps (帧/秒)")
+        Text(stringResource(R.string.frame_max_fps_format, totalFps))
         Spacer(Modifier.height(10.dp))
         Surface(shape = CardDefaults.shape) {
             Row(
@@ -489,7 +491,7 @@ fun SelectFpsItem(
                         }
                     }
                 ) {
-                    Text("-", fontSize = 20.sp)
+                    Text(stringResource(R.string.frame_minus), fontSize = 20.sp)
                 }
 
                 BasicTextField(
@@ -527,7 +529,7 @@ fun SelectFpsItem(
                         ) {
                             innerTextField()
                         }
-                        Text("帧/秒", modifier = Modifier.padding(horizontal = 6.dp))
+                        Text(stringResource(R.string.frame_fps_unit), modifier = Modifier.padding(horizontal = 6.dp))
                     }
                 }
 
@@ -543,7 +545,7 @@ fun SelectFpsItem(
                         }
                     }
                 ) {
-                    Text("+", fontSize = 20.sp)
+                    Text(stringResource(R.string.frame_plus), fontSize = 20.sp)
                 }
 
             }
@@ -592,7 +594,7 @@ private fun FrameExtractorScaffold(
                             onDismissRequest = { expandedMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("打开视频") },
+                                text = { Text(stringResource(R.string.frame_open_video)) },
                                 onClick = {
                                     expandedMenu = false
                                     onShowInputVideo.invoke()

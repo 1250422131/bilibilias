@@ -58,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -193,10 +194,10 @@ fun ChooseFreezeTypeDialog(
     onChooseSingle: () -> Unit
 ) {
     ASAlertDialog(
-        title = { Text("请选择冻结方式") },
+        title = { Text(stringResource(R.string.user_select_freeze_method)) },
         text = {
             Column {
-                Text("注意：BILIBILIAS提供的冻结仅能限制其他用户不在BILIBILIAS缓存，并不能限制其他第三方缓存工具。")
+                Text(stringResource(R.string.user_freeze_notice))
                 Spacer(modifier = Modifier.height(8.dp))
                 Surface(
                     shape = CardDefaults.shape,
@@ -248,7 +249,7 @@ fun FreezeAllVideosDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMode
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     ASAlertDialog(
-        title = { Text("冻结全部视频") },
+        title = { Text(stringResource(R.string.user_freeze_all_videos)) },
         icon = { Icon(Icons.Outlined.LocalPolice, contentDescription = "图标") },
         text = {
             AnimatedContent(isLoading) {
@@ -258,10 +259,10 @@ fun FreezeAllVideosDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMode
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         CircularWavyProgressIndicator()
-                        Text("正在冻结中，请稍等...")
+                        Text(stringResource(R.string.user_freezing_progress))
                     }
                 } else {
-                    Text("这是一个为UP主提供的功能，冻结后其他用户将无法缓存您自己投稿的所有视频，确定要冻结吗？")
+                    Text(stringResource(R.string.user_freeze_all_confirm_message))
                 }
             }
         },
@@ -304,7 +305,7 @@ fun FreezeSingleVideoDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMo
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     ASAlertDialog(
-        title = { Text("冻结某一个视频") },
+        title = { Text(stringResource(R.string.user_freeze_video)) },
         icon = { Icon(Icons.Outlined.LocalPolice, contentDescription = "图标") },
         text = {
             if (isLoading) {
@@ -313,16 +314,16 @@ fun FreezeSingleVideoDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMo
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CircularWavyProgressIndicator()
-                    Text("正在冻结中，请稍等...")
+                    Text(stringResource(R.string.user_freezing_progress))
                 }
             } else {
                 Column {
-                    Text("请输入要冻结的视频BV号，冻结后其他用户将无法缓存您的视频：")
+                    Text(stringResource(R.string.user_input_bv_prompt))
                     Spacer(modifier = Modifier.height(8.dp))
                     androidx.compose.material3.OutlinedTextField(
                         value = bvInput,
                         onValueChange = { bvInput = it },
-                        label = { Text("BV号") },
+                        label = { Text(stringResource(R.string.user_bv_number)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -434,7 +435,7 @@ private fun VideoHeader(
                     tint = MaterialTheme.colorScheme.outline
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("投稿视频", color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_uploaded_videos), color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.weight(1f))
 
                 ASIconButton(onClick = { onToWorkList.invoke() }) {
@@ -514,7 +515,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.ThumbUp, contentDescription = "最近点赞")
                 Spacer(Modifier.height(4.dp))
-                Text("点赞", fontSize = 14.sp)
+                Text(stringResource(R.string.user_likes), fontSize = 14.sp)
             }
         }
 
@@ -533,7 +534,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.History, contentDescription = "最近播放图标")
                 Spacer(Modifier.height(4.dp))
-                Text("最近", fontSize = 14.sp)
+                Text(stringResource(R.string.user_recent), fontSize = 14.sp)
             }
         }
 
@@ -552,7 +553,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.Star, contentDescription = "收藏")
                 Spacer(Modifier.height(4.dp))
-                Text("收藏", fontSize = 14.sp)
+                Text(stringResource(R.string.user_favorites), fontSize = 14.sp)
             }
         }
 
@@ -571,7 +572,7 @@ fun ActionRow(
             ) {
                 Icon(Icons.Outlined.Subscriptions, contentDescription = "追番")
                 Spacer(Modifier.height(4.dp))
-                Text("追番", fontSize = 14.sp)
+                Text(stringResource(R.string.user_bangumi), fontSize = 14.sp)
             }
         }
 
@@ -601,7 +602,7 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                         contentDescription = "关联平台"
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("已关联账户", color = MaterialTheme.colorScheme.outline)
+                    Text(stringResource(R.string.user_linked_accounts), color = MaterialTheme.colorScheme.outline)
 
                 }
                 Spacer(Modifier.height(24.dp))
@@ -660,7 +661,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("关注", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_following), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -679,7 +680,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("粉丝", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_fans), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
 
@@ -698,7 +699,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("获赞", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_thumbs_up), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
         item {
@@ -716,7 +717,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
                     )
                 )
                 Spacer(Modifier.height(4.dp))
-                Text("播放", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
+                Text(stringResource(R.string.user_plays), fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
             }
         }
     }

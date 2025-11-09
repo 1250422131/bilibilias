@@ -49,6 +49,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
@@ -341,7 +343,7 @@ fun DownloadFinishTaskCard(
             // 显示删除对话框
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("删除下载任务") },
+                title = { Text(stringResource(R.string.download_delete_confirm_title)) },
                 text = { Text("是否删除该下载任务及其文件？") },
                 confirmButton = {
                     ASTextButton(
@@ -350,14 +352,14 @@ fun DownloadFinishTaskCard(
                             showDeleteDialog = false
                         }
                     ) {
-                        Text("删除")
+                        Text(stringResource(R.string.common_delete))
                     }
                 },
                 dismissButton = {
                     ASTextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
-                        Text("取消")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )

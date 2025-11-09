@@ -39,8 +39,10 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.BiliApiResponse
@@ -113,7 +115,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text("Error：${errorMsg}")
+                    Text(stringResource(R.string.error_message_format, errorMsg))
                 }
                 AsErrorCopyIconButton(errorMsg)
             }
