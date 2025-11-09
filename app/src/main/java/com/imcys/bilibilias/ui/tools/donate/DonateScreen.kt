@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
@@ -108,7 +109,7 @@ fun DonateContent(paddingValues: PaddingValues) {
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("推")
+                                Text(stringResource(R.string.donate_recommend))
                             }
                         }
                     ) {
@@ -145,7 +146,7 @@ fun DonateContent(paddingValues: PaddingValues) {
                             .size(30.dp),
                     )
                     Spacer(Modifier.width(5.dp))
-                    Text("微信捐款", fontSize = 18.sp)
+                    Text(stringResource(R.string.donate_wechat), fontSize = 18.sp)
                 }
             }
         }
