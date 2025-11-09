@@ -37,8 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
@@ -154,7 +156,7 @@ fun VideoDownloadScreen(
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("缓存倾向")
+                Text(stringResource(R.string.analysis_cache_preference))
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     Icons.Outlined.Info,
@@ -296,13 +298,13 @@ fun BILIAISimultaneousInterpretation(
     Column(
         modifier = Modifier.animateContentSize()
     ) {
-        Text("AI原声翻译")
+        Text(stringResource(R.string.analysis_ai_translation))
         AnimatedVisibility(
             visible = selectAudioLanguage != null
         ) {
             Spacer(Modifier.height(6.dp))
             ASWarringTip {
-                Text("您正在使用哔哩哔哩还在Beta的功能，本APP提供的下载产物不代表B站最终品质。")
+                Text(stringResource(R.string.analysis_ai_beta_notice))
             }
         }
         Spacer(Modifier.height(6.dp))
@@ -325,9 +327,9 @@ fun InteractiveVideoPageScreen(
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
-        Text("选择互动视频")
+        Text(stringResource(R.string.analysis_select_interactive_video))
         ASEpisodeTitle(
-            "选择互动视频",
+            stringResource(R.string.analysis_select_interactive_video),
             episodeListMode,
             onUpdateEpisodeListMode = onUpdateEpisodeListMode
         )
@@ -424,7 +426,7 @@ fun UgcSeasonPageScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text("选择分P视频", fontSize = 12.sp) },
+                label = { Text(stringResource(R.string.analysis_select_part_video), fontSize = 12.sp) },
                 trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,

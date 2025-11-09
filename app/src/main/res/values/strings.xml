@@ -177,6 +177,11 @@
     <string name="analysis_download_started">下载已开始</string>
     <string name="analysis_go_to_download_page">前往下载页</string>
     <string name="analysis_stay_on_current_page">留在当前页</string>
+    <string name="analysis_ai_beta_notice">您正在使用哔哩哔哩还在Beta的功能，本APP提供的下载产物不代表B站最终品质。</string>
+    <string name="analysis_select_part_video">选择分P视频</string>
+    <string name="analysis_select_audio_quality">选择优先音频质量</string>
+    <string name="analysis_select_resolution">选择优先分辨率</string>
+    <string name="analysis_select_codec">选择优先编码</string>
     
     <!-- Download screen related strings -->
     <string name="download_select_all">全选</string>
