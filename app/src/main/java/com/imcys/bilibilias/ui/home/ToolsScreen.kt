@@ -47,6 +47,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -131,7 +132,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         item(
             span = { GridItemSpan(maxLineSpan) }
         ) {
-            Text("视频处理")
+            Text(stringResource(R.string.tools_video_processing))
         }
         items(videoTools) {
             ToolCard(it, onClick = {
@@ -140,7 +141,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Text("其他")
+            Text(stringResource(R.string.tools_other))
         }
 
         items(otherTools) {
@@ -167,7 +168,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
     ASAlertDialog(
         showState = showFeedbackDialog,
         title = {
-            Text("问题反馈")
+            Text(stringResource(R.string.tools_feedback))
         },
         text = {
             Column(
@@ -206,7 +207,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                 }
 
                 BadgedBox(badge = {
-                    Badge { Text("推荐") }
+                    Badge { Text(stringResource(R.string.common_recommend)) }
                 }) {
                     Surface(
                         shape = CardDefaults.shape,
@@ -283,7 +284,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
             ASTextButton(onClick = {
                 onDismiss.invoke()
             }) {
-                Text("好的")
+                Text(stringResource(R.string.common_ok))
             }
         }
 

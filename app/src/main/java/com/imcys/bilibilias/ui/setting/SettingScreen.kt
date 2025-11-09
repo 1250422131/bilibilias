@@ -49,6 +49,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -410,7 +411,7 @@ fun SettingScreen(
         // 退出登录对话框
         ASAlertDialog(
             showState = showLogoutDialog,
-            title = { Text("退出登录") },
+            title = { Text(stringResource(R.string.setting_logout)) },
             text = {
                 Column(
                     Modifier
@@ -420,9 +421,9 @@ fun SettingScreen(
                 ) {
                     if (showLogoutLoading) {
                         ContainedLoadingIndicator()
-                        Text("退出中....")
+                        Text(stringResource(R.string.setting_logging_out))
                     } else {
-                        Text("是否退出登录？退出登录将清除登录信息，解除登录占用。")
+                        Text(stringResource(R.string.setting_logout_confirm))
                     }
                 }
             },
@@ -439,14 +440,14 @@ fun SettingScreen(
                         onLogoutFinish(uiState.currentMid)
                     }
                 }) {
-                    Text("退出登录")
+                    Text(stringResource(R.string.setting_logout))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
                 }) {
-                    Text("取消")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
 

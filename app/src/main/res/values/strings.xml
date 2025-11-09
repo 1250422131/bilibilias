@@ -15,6 +15,7 @@
     <string name="common_ok">好的</string>
     <string name="common_i_know">我已知晓</string>
     <string name="common_retry">重试</string>
+    <string name="common_recommend">推荐</string>
     
     <!-- Login related strings -->
     <string name="login_title">登录</string>
@@ -50,6 +51,11 @@
     <string name="update_later">下次再说</string>
     <string name="update_downloaded">新版本已经下载完成，可随时进行更新。</string>
     <string name="update_action">更新</string>
+    <string name="update_hint_title">更新提示</string>
+    <string name="update_new_version_format">检测到有新版本 %s 可用。</string>
+    <string name="update_content">更新内容：</string>
+    <string name="update_loading">正在加载...</string>
+    <string name="update_go_download">前往下载</string>
     
     <!-- Request frequent/server error related strings -->
     <string name="request_frequent_testing">请求测试中...</string>
@@ -111,7 +117,7 @@
     
     <!-- Setting screen related strings -->
     <string name="setting_logout">退出登录</string>
-    <string name="setting_logout_confirm">您确认要退出当前账号的登录吗？</string>
+    <string name="setting_logout_confirm">是否退出登录？退出登录将清除登录信息，解除登录占用。</string>
     <string name="setting_logging_out">退出中....</string>
     <string name="setting_naming_convention">命名规则</string>
     <string name="setting_naming_warning">如果您不了解命名规则的使用方法，请谨慎修改，也可前往文档查看使用方法。</string>
