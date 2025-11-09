@@ -182,6 +182,13 @@
     <string name="analysis_select_audio_quality">选择优先音频质量</string>
     <string name="analysis_select_resolution">选择优先分辨率</string>
     <string name="analysis_select_codec">选择优先编码</string>
+    <string name="analysis_select_cache_mode">选择缓存模式</string>
+    <string name="analysis_stream_download">流媒体下载</string>
+    <string name="analysis_cover_download">封面下载</string>
+    <string name="analysis_danmaku_download">弹幕下载</string>
+    <string name="analysis_select_subtitle_type">选择字幕文件类型</string>
+    <string name="analysis_bangumi">番剧</string>
+    <string name="analysis_charged_video">充电视频</string>
     
     <!-- Download screen related strings -->
     <string name="download_select_all">全选</string>
@@ -198,6 +205,17 @@
     <string name="user_freeze_all_confirm_message">这是一个为UP主提供的功能，冻结后其他用户将无法缓存您自己投稿的所有视频，确定要冻结吗？</string>
     <string name="user_freezing_progress">正在冻结中，请稍等...</string>
     <string name="user_input_bv_prompt">请输入要冻结的视频BV号，冻结后其他用户将无法缓存您的视频：</string>
+    <string name="user_freeze_notice">注意：BILIBILIAS提供的冻结仅能限制其他用户不在BILIBILIAS缓存，并不能限制其他第三方缓存工具。</string>
+    <string name="user_uploaded_videos">投稿视频</string>
+    <string name="user_likes">点赞</string>
+    <string name="user_recent">最近</string>
+    <string name="user_favorites">收藏</string>
+    <string name="user_bangumi">追番</string>
+    <string name="user_linked_accounts">已关联账户</string>
+    <string name="user_following">关注</string>
+    <string name="user_fans">粉丝</string>
+    <string name="user_thumbs_up">获赞</string>
+    <string name="user_plays">播放</string>
     
     <!-- Copyright apply related strings -->
     <string name="copyright_video_cache_apply">视频缓存使用申请</string>
