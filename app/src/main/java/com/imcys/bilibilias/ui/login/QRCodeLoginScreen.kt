@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.login
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -66,6 +67,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
+import com.imcys.bilibilias.common.utils.FirebaseExt
+import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.ApiStatus
@@ -150,6 +157,7 @@ fun QRCodeLoginScreen(
         when (loginUserInfoState) {
             is NetWorkResult.Success<*> -> {
                 vm.saveLoginInfo(loginUserInfoState.data) {
+                    FirebaseExt.logLogin("QRCode")
                     if (route.isFromRoam || route.isFromAnalysis) {
                         // 如果是从漫游页面进入的，登录成功后直接返回
                         onToBack()

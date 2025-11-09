@@ -4,7 +4,7 @@ kotlin = "2.2.20"
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.9.3"
 activityCompose = "1.11.0"
-composeBom = "2025.10.00"
+composeBom = "2025.11.00"
 androidTools = "31.13.0"
 androidDesugarJdkLibs = "2.1.5"
 koinBom = "4.1.1"
@@ -76,7 +76,6 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-inappmessaging-display = { group = "com.google.firebase", name = "firebase-inappmessaging-display" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config" }
-firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx" }
 firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 konfetti-compose = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti-compose-version" }

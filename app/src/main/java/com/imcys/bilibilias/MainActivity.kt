@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import androidx.compose.runtime.collectAsState
 import com.baidu.mobstat.StatService
+import com.imcys.bilibilias.common.data.CommonBuildConfig
 import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.common.utils.baiduAnalyticsSafe
 import com.imcys.bilibilias.ui.weight.ASTextButton
@@ -189,6 +190,8 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             appSettingsFlow.collect {
                 agreePrivacyPolicyState = it.agreePrivacyPolicy
+                CommonBuildConfig.agreedPrivacyPolicy = it.agreePrivacyPolicy ==
+                        AppSettings.AgreePrivacyPolicyState.Agreed
                 initFirebase(it.agreePrivacyPolicy)
                 initBaiduAnalytics(it.agreePrivacyPolicy)
             }

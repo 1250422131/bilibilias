@@ -7,8 +7,10 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.core.net.toUri
 import com.imcys.bilibilias.BuildConfig
+import com.imcys.bilibilias.common.data.CommonBuildConfig
 
 fun Context.openLink(url: String) {
+    if (url.isEmpty()) return
     val intent = Intent().apply {
         action = "android.intent.action.VIEW"
         data = url.toUri()
@@ -25,7 +27,7 @@ fun String.copyText(context: Context, title: String) {
 }
 
 inline fun analyticsSafe(action: () -> Unit) {
-    if (BuildConfig.ENABLED_ANALYTICS){
+    if (BuildConfig.ENABLED_ANALYTICS && CommonBuildConfig.agreedPrivacyPolicy){
         action()
     }
 }

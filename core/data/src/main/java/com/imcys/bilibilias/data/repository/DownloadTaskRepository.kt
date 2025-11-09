@@ -85,7 +85,6 @@ class DownloadTaskRepository(
                 userName = userInfo?.name
                 userId = userInfo?.mid
             }
-
             appAPIService.submitASDownloadData(
                 aid = aid,
                 bvid = bvid,

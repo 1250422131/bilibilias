@@ -44,6 +44,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
+import com.imcys.bilibilias.common.utils.FirebaseExt
+import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
@@ -96,7 +102,7 @@ fun CookeLoginContent(
                 cookiesString = it
                 vm.checkCookies(it)
             },
-            label = {Text("Cookie（浏览器直接复制，无需解码）")},
+            label = { Text("Cookie（浏览器直接复制，无需解码）") },
             maxLines = 4,
             minLines = 4
         )
@@ -128,6 +134,7 @@ fun CookeLoginContent(
                         shape = CardDefaults.shape, onClick = {
                             showSavingDialog = true
                             scope.launch {
+                                FirebaseExt.logLogin("Cookie")
                                 vm.saveLoginCookie()
                                 showSavingDialog = false
                                 onFinish()
@@ -141,7 +148,7 @@ fun CookeLoginContent(
         )
 
         // 提示
-        Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text("请妥善保管您的Cookie，避免产生泄露风险。")
         }
 
