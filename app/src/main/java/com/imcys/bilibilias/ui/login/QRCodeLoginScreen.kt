@@ -64,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,6 +72,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.FirebaseExt
 import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.database.entity.LoginPlatform
@@ -348,7 +350,7 @@ private fun QRLoginScaffold(
                 ASTopAppBar(
                     style = BILIBILIASTopAppBarStyle.Small,
                     title = {
-                        Text("B站扫码登录")
+                        Text(stringResource(R.string.login_qrcode_title))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -359,7 +361,7 @@ private fun QRLoginScaffold(
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "返回"
+                                contentDescription = stringResource(R.string.cd_back)
                             )
                         }
                     },
@@ -369,7 +371,7 @@ private fun QRLoginScaffold(
                         }) {
                             Icon(
                                 Icons.Outlined.MoreVert,
-                                contentDescription = "操作"
+                                contentDescription = stringResource(R.string.cd_more_actions)
                             )
                         }
                         DropdownMenu(
@@ -378,7 +380,7 @@ private fun QRLoginScaffold(
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             DropdownMenuItem(
-                                text = { Text("使用Cookie登录") },
+                                text = { Text(stringResource(R.string.login_use_cookie)) },
                                 onClick = {
                                     expandedMenu = false
                                     onToCookieLogin.invoke()
@@ -426,12 +428,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.Outlined.Download,
-                                contentDescription = "下载二维码",
+                                contentDescription = stringResource(R.string.cd_download_qrcode),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                "下载二维码",
+                                stringResource(R.string.login_download_qrcode),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -452,12 +454,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.OpenInNew,
-                                contentDescription = "去扫描",
+                                contentDescription = stringResource(R.string.cd_go_scan),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                "去扫描",
+                                stringResource(R.string.login_go_scan),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -481,12 +483,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.Outlined.Download,
-                                contentDescription = "下载二维码",
+                                contentDescription = stringResource(R.string.cd_download_qrcode),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                "下载二维码",
+                                stringResource(R.string.login_download_qrcode),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -506,12 +508,12 @@ private fun ActionButton(
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.OpenInNew,
-                                contentDescription = "去扫描",
+                                contentDescription = stringResource(R.string.cd_go_scan),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                "去扫描",
+                                stringResource(R.string.login_go_scan),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 fontSize = 16.sp
                             )
@@ -544,17 +546,17 @@ private fun PlatformToggleButton(
     ) {
         Icon(
             imageVector = Icons.Outlined.WebAsset,
-            contentDescription = "Web扫码",
+            contentDescription = stringResource(R.string.cd_web_scan),
             modifier = Modifier.size(FilterChipDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text("Web")
+        Text(stringResource(R.string.login_web))
     }
 
     BadgedBox(
         badge = {
             Badge {
-                Text("申请")
+                Text(stringResource(R.string.login_apply_label))
             }
         }
     ) {
@@ -571,11 +573,11 @@ private fun PlatformToggleButton(
         ) {
             Icon(
                 imageVector = Icons.Outlined.WebAsset,
-                contentDescription = "TV扫码",
+                contentDescription = stringResource(R.string.cd_tv_scan),
                 modifier = Modifier.size(FilterChipDefaults.IconSize)
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("TV")
+            Text(stringResource(R.string.login_tv))
         }
     }
 }
@@ -630,9 +632,9 @@ private fun QRCodeContent(
                                     ASIconButton(onClick = {
                                         updateQrCode()
                                     }) {
-                                        Icon(Icons.Outlined.Replay, contentDescription = "重试")
+                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.common_retry))
                                     }
-                                    Text("网络异常，点击按钮重试。")
+                                    Text(stringResource(R.string.login_network_error))
                                 }
 
                                 ApiStatus.DEFAULT,
@@ -646,7 +648,7 @@ private fun QRCodeContent(
                                             qrCodeInfoState.data?.url,
                                             "UTF-8"
                                         ),
-                                        contentDescription = "登录二维码",
+                                        contentDescription = stringResource(R.string.cd_login_qrcode),
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .clickable {
@@ -660,10 +662,10 @@ private fun QRCodeContent(
                             ) {
                                 Icon(
                                     Icons.Outlined.Warning,
-                                    contentDescription = "未勾选同意隐私政策"
+                                    contentDescription = stringResource(R.string.cd_not_agree_privacy)
                                 )
                                 Spacer(Modifier.height(4.dp))
-                                Text("请勾选下方隐私政策")
+                                Text(stringResource(R.string.login_check_privacy_policy))
                             }
                         }
                     }
