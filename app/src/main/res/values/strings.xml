@@ -1,8 +1,230 @@
 <resources>
     <string name="app_name">BILIBILIAS</string>
     <string name="app_channel">official</string>
+    
+    <!-- Common strings -->
     <string name="common_privacy_policy">隐私政策</string>
     <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS使用Firebase来统计使用数据和发布远程配置，这意味着Firebase会收集您的一些设备信息和使用情况，因此您需要同意下面的<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">《隐私政策》</a>\n                            若您不同意上述隐私政策，App有可能无法接受推送的配置，导致无法正常使用。点击链接查看<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">阅读隐私政策</a>。\n                        "]]></string>
     <string name="common_agree">同意</string>
     <string name="common_refuse">拒绝</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_delete">删除</string>
+    <string name="common_beta">Beta</string>
+    <string name="common_understand">了解</string>
+    <string name="common_ok">好的</string>
+    <string name="common_i_know">我已知晓</string>
+    <string name="common_retry">重试</string>
+    
+    <!-- Login related strings -->
+    <string name="login_title">登录</string>
+    <string name="login_qrcode_title">B站扫码登录</string>
+    <string name="login_cookie_title">B站Cookie登录</string>
+    <string name="login_use_cookie">使用Cookie登录</string>
+    <string name="login_after_you_can">登录后你可以：</string>
+    <string name="login_benefits"><![CDATA[·支持更高清、更高码率的视频\n·支持番剧缓存\n·支持使用大会员权益\n·支持享受漫游服务]]></string>
+    <string name="login_agreement_prefix">登录即代表你同意：</string>
+    <string name="login_bilibili_agreement">·哔哩哔哩账户和社区相关协议</string>
+    <string name="login_privacy_agreement">·《BILIBILIAS 隐私协议》</string>
+    <string name="login_disclaimer">·使用造成的一切后果 BILIBILIAS 概不负责</string>
+    <string name="login_special_notice">特别的：\n本程序未得到哔哩哔哩授权，使用造成的一切后果哔哩哔哩概不负责</string>
+    <string name="login_scan_qrcode">B站 扫码登录</string>
+    <string name="login_web">Web</string>
+    <string name="login_tv">TV</string>
+    <string name="login_apply_label">申请</string>
+    <string name="login_download_qrcode">下载二维码</string>
+    <string name="login_go_scan">去扫描</string>
+    <string name="login_network_error">网络异常，点击按钮重试。</string>
+    <string name="login_check_privacy_policy">请勾选下方隐私政策</string>
+    <string name="login_cookie_input_label">Cookie（浏览器直接复制，无需解码）</string>
+    <string name="login_confirm_account">确认，这是我要登录的账户</string>
+    <string name="login_cookie_warning">请妥善保管您的Cookie，避免产生泄露风险。</string>
+    <string name="login_saving_info">存储身份信息</string>
+    <string name="login_saving_progress">正在保存，请不要退出...</string>
+    <string name="login_level_format">LV%d</string>
+    
+    <!-- Update related strings -->
+    <string name="update_skip_title">跳过更新</string>
+    <string name="update_skip_message">如果您暂时不想更新，可以跳过此版本，等下个版本再进行更新。</string>
+    <string name="update_skip_this_version">跳过此版本</string>
+    <string name="update_later">下次再说</string>
+    <string name="update_downloaded">新版本已经下载完成，可随时进行更新。</string>
+    <string name="update_action">更新</string>
+    
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">请求测试中...</string>
+    <string name="request_frequent_success">请求成功，可以正常使用啦！</string>
+    <string name="request_frequent_continue">返回继续使用</string>
+    <string name="request_frequent_incident">突发事件</string>
+    <string name="request_frequent_server_busy">B站当前服务器繁忙或维护中，暂时无法继续提供服务，请10分钟后来尝试~</string>
+    <string name="request_frequent_warning">但请注意，如果仅有您自己出现了这种情况，那很有可能是您本身触发了风控，请合理使用，避免为平台和账户带来风险~</string>
+    <string name="request_frequent_exit_app">退出应用</string>
+    
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">风控须知</string>
+    
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">使用须知</string>
+    <string name="instructions_not_bilibili">您正在使用的软件并非哔哩哔哩/bilibili，而是辅助其的第三方工具软件，与哔哩哔哩没有任何关联。</string>
+    <string name="instructions_no_authorization">此软件未得到哔哩哔哩许可，哔哩哔哩对此使用软件而造成的一切后果概不负责。</string>
+    <string name="instructions_purpose">BILIBILIAS是一款第三方的B站（哔哩哔哩）视频缓存工具，旨在帮助需要离线播放或者剪辑原创视频的自媒体博主。</string>
+    <string name="instructions_no_redistribution">在BILIBILIAS缓存的任何内容都不得进行二次传播，仅允许在您自己的终端设备播放或者制作剪辑视频（未经作者允许不得直接搬运）。</string>
+    <string name="instructions_self_responsibility">如果您违反了规定或者用作了非法用途，那么一切后果将由您自行承担，同时BILIBILIAS可能将禁止您继续使用。</string>
+    <string name="instructions_go_to_bilibili">不，我找的是哔哩哔哩</string>
+    <string name="instructions_i_agree">我知晓且同意</string>
+    
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">登录状态失效，正在为你检查剩余可用登录。</string>
+    <string name="account_all_invalid">所有账户已失效，请重新登录。</string>
+    
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content">尽管您拒绝了BILIBILIAS的隐私政策，但本APP是第三方的B站（哔哩哔哩）视频缓存工具，只要您继续使用本软件，仍需要您遵守哔哩哔哩平台相关政策。\n这是因为您在使用本APP过程中仍然在间接的使用哔哩哔哩，您可能还会需要通过登录哔哩哔哩的账号并获取视频内容，这是无法避免的，除非您卸载本软件。\n不过此时本软件不会收集您的任何个人隐私数据，您可以放心使用。&lt;br&gt;\n具体协议详见：\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;哔哩哔哩协议汇总&lt;/a&gt;。</string>
+    
+    <!-- Donate related strings -->
+    <string name="donate_recommend">推</string>
+    <string name="donate_wechat">微信捐款</string>
+    
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">选择导入视频</string>
+    <string name="frame_select_method_title">选择导入视频方式</string>
+    <string name="frame_import_from_downloaded">从已下载导入</string>
+    <string name="frame_import_from_local">从本地文件导入</string>
+    <string name="frame_select_video_prompt">请在右上角选择导入视频</string>
+    <string name="frame_select_output_title">选择导出位置</string>
+    <string name="frame_select_output_message">请选择导出逐帧图片的位置，建议对每个导出创建单独的文件夹，避免导出混淆。</string>
+    <string name="frame_select_location">选择位置</string>
+    <string name="frame_max_fps_format">最大：%d (帧/秒)</string>
+    <string name="frame_fps_unit">帧/秒</string>
+    <string name="frame_open_video">打开视频</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+    
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">视频处理</string>
+    <string name="tools_other">其他</string>
+    <string name="tools_feedback">问题反馈</string>
+    
+    <!-- Home screen related strings -->
+    <string name="home_announcement">公告</string>
+    <string name="home_close_announcement">关闭公告</string>
+    <string name="home_announcement_close_hint">关闭后将不再显示，直到有新的公告发布</string>
+    
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">退出登录</string>
+    <string name="setting_logout_confirm">您确认要退出当前账号的登录吗？</string>
+    <string name="setting_logging_out">退出中....</string>
+    <string name="setting_naming_convention">命名规则</string>
+    <string name="setting_naming_warning">如果您不了解命名规则的使用方法，请谨慎修改，也可前往文档查看使用方法。</string>
+    
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">线路配置</string>
+    <string name="developer_current_line">当前线路</string>
+    <string name="developer_line_list">线路列表</string>
+    
+    <!-- Version info related strings -->
+    <string name="version_copy_all">复制全部信息</string>
+    <string name="version_app_version">应用版本</string>
+    <string name="version_app_code">应用码</string>
+    <string name="version_app_channel">应用渠道</string>
+    
+    <!-- Roam related strings -->
+    <string name="roam_title">漫游</string>
+    <string name="roam_status_checking">检测中</string>
+    <string name="roam_status_available">可用</string>
+    <string name="roam_status_unavailable">不可用</string>
+    <string name="roam_account_status">账号状态</string>
+    <string name="roam_login_required">未登录，请先登录账号</string>
+    <string name="roam_go_login">前往登录</string>
+    <string name="roam_current_area">当前地区</string>
+    <string name="roam_target_area">目标地区</string>
+    <string name="roam_mainland_china">中国大陆</string>
+    <string name="roam_hk_macau_taiwan">港澳台地区</string>
+    <string name="roam_test_video">测试视频</string>
+    <string name="roam_can_access">此视频可以访问</string>
+    <string name="roam_cannot_access">此视频无法访问</string>
+    <string name="roam_speed_test">速度测试</string>
+    <string name="roam_testing">测试中</string>
+    <string name="roam_network_speed_format">网络速度：%.2f MB/s</string>
+    <string name="roam_test_failed">测试失败</string>
+    <string name="roam_select_server">选择服务器</string>
+    <string name="roam_server_list">服务器列表</string>
+    <string name="roam_enable_roam">启用漫游</string>
+    <string name="roam_area_restriction_notice">地区限制提示</string>
+    <string name="roam_area_restriction_message">此内容存在地区限制，您需要开启漫游后才能继续操作！</string>
+    <string name="roam_go_to_roam_page">前往漫游页</string>
+    
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">解析视频</string>
+    <string name="analysis_download_content">下载内容</string>
+    <string name="analysis_download_cover">下载封面</string>
+    <string name="analysis_download_subtitle">字幕下载</string>
+    <string name="analysis_download_hint">下载提示</string>
+    <string name="analysis_protected_video">受保护的视频</string>
+    <string name="analysis_cache_config">缓存配置</string>
+    <string name="analysis_cache_preference">缓存倾向</string>
+    <string name="analysis_ai_translation">AI原声翻译</string>
+    <string name="analysis_select_interactive_video">选择互动视频</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">视频质量</string>
+    <string name="analysis_audio_quality">音频质量</string>
+    <string name="analysis_codec">编解码器</string>
+    <string name="analysis_download_started">下载已开始</string>
+    <string name="analysis_go_to_download_page">前往下载页</string>
+    <string name="analysis_stay_on_current_page">留在当前页</string>
+    
+    <!-- Download screen related strings -->
+    <string name="download_select_all">全选</string>
+    <string name="download_deselect_all">反选</string>
+    <string name="download_delete_confirm_title">删除下载任务</string>
+    <string name="download_delete_confirm_message">确定要删除选中的任务记录和文件吗？</string>
+    <string name="download_caching">AS视频缓存中...</string>
+    
+    <!-- User screen related strings -->
+    <string name="user_bv_number">BV号</string>
+    <string name="user_freeze_video">冻结某一个视频</string>
+    <string name="user_freeze_all_videos">冻结全部视频</string>
+    <string name="user_select_freeze_method">请选择冻结方式</string>
+    <string name="user_freeze_all_confirm_message">这是一个为UP主提供的功能，冻结后其他用户将无法缓存您自己投稿的所有视频，确定要冻结吗？</string>
+    <string name="user_freezing_progress">正在冻结中，请稍等...</string>
+    <string name="user_input_bv_prompt">请输入要冻结的视频BV号，冻结后其他用户将无法缓存您的视频：</string>
+    
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">视频缓存使用申请</string>
+    
+    <!-- Error related strings -->
+    <string name="error_message_format">Error：%s</string>
+    <string name="error_exit_app">退出软件</string>
+    <string name="error_copy_error">复制异常</string>
+    
+    <!-- Download info related strings -->
+    <string name="download_info_title">下载信息</string>
+    <string name="download_info_total_size">总大小</string>
+    <string name="download_info_downloaded_size">已下载</string>
+    <string name="download_info_speed">速度</string>
+    <string name="download_info_remaining_time">剩余时间</string>
+    <string name="download_info_file_name">文件名</string>
+    <string name="download_info_save_path">保存路径</string>
+    <string name="download_info_status">状态</string>
+    <string name="download_info_start_time">开始时间</string>
+    <string name="download_info_complete_time">完成时间</string>
+    
+    <!-- Status related strings -->
+    <string name="status_downloading">下载中</string>
+    <string name="status_paused">已暂停</string>
+    <string name="status_completed">已完成</string>
+    <string name="status_failed">失败</string>
+    <string name="status_waiting">等待中</string>
+    
+    <!-- Content descriptions -->
+    <string name="cd_back">返回</string>
+    <string name="cd_more_actions">操作</string>
+    <string name="cd_download_qrcode">下载二维码</string>
+    <string name="cd_go_scan">去扫描</string>
+    <string name="cd_login_qrcode">登录二维码</string>
+    <string name="cd_not_agree_privacy">未勾选同意隐私政策</string>
+    <string name="cd_avatar">头像</string>
+    <string name="cd_go_to_bilibili">前往哔哩哔哩</string>
+    <string name="cd_web_scan">Web扫码</string>
+    <string name="cd_tv_scan">TV扫码</string>
+    <string name="cd_server_error_icon">服务器异常图标</string>
 </resources>

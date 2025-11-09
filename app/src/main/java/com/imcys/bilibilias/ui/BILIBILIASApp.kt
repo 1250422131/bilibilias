@@ -170,7 +170,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
             ASTopAppBar(
                 style = BILIBILIASTopAppBarStyle.Small,
                 title = {
-                    Text("使用须知")
+                    Text(stringResource(R.string.instructions_title))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -179,7 +179,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     ASIconButton(onClick = {}) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = "返回"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 },
@@ -211,9 +211,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                     ) {
                         item {
                             Text(
-                                """
-                您正在使用的软件并非哔哩哔哩/bilibili，而是辅助其的第三方工具软件，与哔哩哔哩没有任何关联。
-            """.trimIndent(),
+                                stringResource(R.string.instructions_not_bilibili),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
@@ -221,9 +219,7 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
 
                         item {
                             Text(
-                                """
-                                此软件未得到哔哩哔哩许可，哔哩哔哩对此使用软件而造成的一切后果概不负责。
-                                """.trimIndent(),
+                                stringResource(R.string.instructions_no_authorization),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
@@ -231,25 +227,19 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
 
                         item {
                             Text(
-                                """
-                                    BILIBILIAS是一款第三方的B站（哔哩哔哩）视频缓存工具，旨在帮助需要离线播放或者剪辑原创视频的自媒体博主。
-                                """.trimIndent(),
+                                stringResource(R.string.instructions_purpose),
                             )
                         }
 
                         item {
                             Text(
-                                """
-                            在BILIBILIAS缓存的任何内容都不得进行二次传播，仅允许在您自己的终端设备播放或者制作剪辑视频（未经作者允许不得直接搬运）。
-                        """.trimIndent(),
+                                stringResource(R.string.instructions_no_redistribution),
 
                                 )
                         }
                         item {
                             Text(
-                                """
-                            如果您违反了规定或者用作了非法用途，那么一切后果将由您自行承担，同时BILIBILIAS可能将禁止您继续使用。
-                        """.trimIndent(),
+                                stringResource(R.string.instructions_self_responsibility),
                             )
                         }
                     }
@@ -269,16 +259,16 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             ) {
 
-                Text("不，我找的是哔哩哔哩")
+                Text(stringResource(R.string.instructions_go_to_bilibili))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = "前往哔哩哔哩",
+                    contentDescription = stringResource(R.string.cd_go_to_bilibili),
                 )
 
             }
             Button(onClick = onClickKnowAbout, Modifier.fillMaxWidth()) {
-                Text("我知晓且同意")
+                Text(stringResource(R.string.instructions_i_agree))
             }
         }
     }
@@ -297,10 +287,10 @@ fun AccountCheckPage(targetUiState: UIState.AccountCheck) {
         if (targetUiState.isCheckLoading) {
             ContainedLoadingIndicator()
             Spacer(Modifier.height(5.dp))
-            Text("登录状态失效，正在为你检查剩余可用登录。")
+            Text(stringResource(R.string.account_check_invalid))
         } else {
             if (targetUiState.newCurrentUser == null) {
-                Text("所有账户已失效，请重新登录。")
+                Text(stringResource(R.string.account_all_invalid))
             }
         }
     }
@@ -374,13 +364,7 @@ fun PrivacyPolicyRefuseDialog(
             AndroidView(
                 factory = { TextView(it) },
                 update = {
-                    val tip = """
-                        尽管您拒绝了BILIBILIAS的隐私政策，但本APP是第三方的B站（哔哩哔哩）视频缓存工具，只要您继续使用本软件，仍需要您遵守哔哩哔哩平台相关政策。
-                        这是因为您在使用本APP过程中仍然在间接的使用哔哩哔哩，您可能还会需要通过登录哔哩哔哩的账号并获取视频内容，这是无法避免的，除非您卸载本软件。
-                        不过此时本软件不会收集您的任何个人隐私数据，您可以放心使用。<br>
-                        具体协议详见：
-                        <a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">哔哩哔哩协议汇总</a>。
-                    """.trimIndent()
+                    val tip = it.context.getString(R.string.privacy_refuse_content).trimIndent()
                     it.apply {
                         it.setTextColor(textColor)
                         text = HtmlCompat.fromHtml(tip, HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -391,7 +375,7 @@ fun PrivacyPolicyRefuseDialog(
         },
         confirmButton = {
             ASTextButton(onClick = onClickConfirm) {
-                Text(text = "我已知晓")
+                Text(text = stringResource(R.string.common_i_know))
             }
         },
     )

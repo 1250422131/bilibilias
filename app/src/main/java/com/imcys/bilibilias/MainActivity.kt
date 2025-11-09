@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
@@ -81,8 +82,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(showUpdateSnackBar) {
                 if (!showUpdateSnackBar.value) return@LaunchedEffect
                 val result = updateSnackBarHostState.showSnackbar(
-                    message = "新版本已经下载完成，可随时进行更新。",
-                    actionLabel = "更新",
+                    message = getString(R.string.update_downloaded),
+                    actionLabel = getString(R.string.update_action),
                     duration = SnackbarDuration.Short
                 )
                 when (result) {
@@ -131,17 +132,17 @@ class MainActivity : ComponentActivity() {
         if (value) {
             AlertDialog(
                 onDismissRequest = {},
-                title = { Text("跳过更新") },
-                text = { Text("如果您暂时不想更新，可以跳过此版本，等下个版本再进行更新。") },
+                title = { Text(stringResource(R.string.update_skip_title)) },
+                text = { Text(stringResource(R.string.update_skip_message)) },
                 confirmButton = {
                     ASTextButton(onClick = onConfirm) {
-                        Text("跳过此版本")
+                        Text(stringResource(R.string.update_skip_this_version))
                     }
 
                 },
                 dismissButton = {
                     ASTextButton(onClick = onDismiss) {
-                        Text("下次再说")
+                        Text(stringResource(R.string.update_later))
                     }
                 }
             )
