@@ -290,11 +290,11 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
         baiduAnalyticsSafe {
             if (agreePrivacyPolicyState != AppSettings.AgreePrivacyPolicyState.Agreed) return
             StatService.onPause(this)
         }
-        super.onPause()
     }
 
 

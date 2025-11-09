@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.imcys.bilibilias.common.event.analysisHandleChannel
@@ -140,6 +142,12 @@ fun BILIBILAISNavDisplay() {
             backStack = backStack,
             onBack = { backStack.removeLastOrNullSafe() },
             sceneStrategy = listDetailStrategy,
+            entryDecorators = listOf(
+                // 防止屏幕旋转等导致的重组时，页面状态丢失
+                rememberSaveableStateHolderNavEntryDecorator(),
+                // 限定每个页面有自己的viewmodel store
+                rememberViewModelStoreNavEntryDecorator()
+            ),
             transitionSpec = {
                 ContentTransform(
                     // 正向导航：新页面进入 - 只是淡入
