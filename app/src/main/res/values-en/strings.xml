@@ -81,8 +81,13 @@
     <string name="account_all_invalid">All accounts are invalid, please log in again.</string>
 
     <!-- Privacy policy refuse dialog strings -->
-    <string name="privacy_refuse_content">Although you rejected BILIBILIAS's privacy policy, this app is a third-party Bilibili video caching tool. As long as you continue to use this app, you must still comply with Bilibili’s related policies.\nThis is because you are still indirectly using Bilibili while using this app, and you may need to log in to your Bilibili account and access video content, which is unavoidable unless you uninstall this app.\nHowever, at this time, the software will not collect any of your personal privacy data, and you can use it with confidence.&lt;br&gt;\nFor details, see:\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;Bilibili Agreements Collection&lt;/a&gt;.</string>
-
+    <string name="privacy_refuse_content">
+        Although you have refused the privacy policy of BILIBILIAS, this app is a third-party video caching tool for Bilibili. As long as you continue to use this app, you are still required to comply with the relevant policies of the Bilibili platform.&#10;
+        This is because while using this app, you are still indirectly using Bilibili, and you may still need to log in to your Bilibili account and access video content—this is unavoidable unless you uninstall the app.&#10;
+        However, at this point, the app will not collect any of your personal private data, so you can use it with confidence.&#10;
+        For specific agreements, please refer to:&#10;
+        &lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;Summary of Bilibili Agreements&lt;/a&gt;.
+    </string>
     <!-- Donate related strings -->
     <string name="donate_recommend">Recommend</string>
     <string name="donate_wechat">WeChat Donate</string>
@@ -174,7 +179,6 @@
     <string name="analysis_cache_preference">Cache Preference</string>
     <string name="analysis_ai_translation">AI Original Audio Translation</string>
     <string name="analysis_select_interactive_video">Select Interactive Video</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">Video Quality</string>
     <string name="analysis_audio_quality">Audio Quality</string>
     <string name="analysis_codec">Codec</string>

@@ -1,0 +1,274 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">गोपनीयता नीति</string>
+    <string name="app_privacy_policy_tip"><![CDATA[
+\nBILIBILIAS Firebase का उपयोग डेटा और रिमोट कॉन्फ़िगरेशन प्राप्त करने के लिए करता है, इसका मतलब है कि Firebase आपके डिवाइस की कुछ जानकारी और उपयोग आंकड़े एकत्र करेगा। इसलिए आपको नीचे दी गई <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">गोपनीयता नीति</a> से सहमत होना आवश्यक है।
+यदि आप ऊपर दी गई गोपनीयता नीति से सहमत नहीं हैं, तो ऐप आवश्यक कॉन्फ़िगरेशन नहीं प्राप्त कर पाएगा और सामान्य रूप से कार्य नहीं कर पाएगा। लिंक पर क्लिक करें <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">गोपनीयता नीति पढ़ें</a>।
+    ]]></string>
+    <string name="common_agree">सहमत</string>
+    <string name="common_refuse">अस्वीकार</string>
+    <string name="common_cancel">रद्द करें</string>
+    <string name="common_confirm">पुष्टि करें</string>
+    <string name="common_delete">हटाएँ</string>
+    <string name="common_beta">बीटा</string>
+    <string name="common_understand">समझ गया</string>
+    <string name="common_ok">ठीक है</string>
+    <string name="common_i_know">मैं जानता हूँ</string>
+    <string name="common_retry">पुन: प्रयास करें</string>
+    <string name="common_recommend">सुझाव</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">लॉगिन</string>
+    <string name="login_qrcode_title">Bilibili QR कोड से लॉगइन</string>
+    <string name="login_cookie_title">Bilibili कुकी से लॉगइन</string>
+    <string name="login_use_cookie">कुकी से लॉगिन करें</string>
+    <string name="login_after_you_can">लॉगिन के बाद आप यह कर सकते हैं:</string>
+    <string name="login_benefits"><![CDATA[·बेहतर गुणवत्ता वाले वीडियो का समर्थन\n·एनीमेशन कैश का समर्थन\n·प्रीमियम सदस्य फ़ायदे का उपयोग\n·रोमिंग सेवा का लाभ]]></string>
+    <string name="login_agreement_prefix">लॉगिन करने का अर्थ है आप सहमत हैं:</string>
+    <string name="login_bilibili_agreement">·Bilibili अकाउंट और कम्युनिटी संबंधित समझौते</string>
+    <string name="login_privacy_agreement">·《BILIBILIAS गोपनीयता समझौता》</string>
+    <string name="login_disclaimer">·BILIBILIAS उपयोग के कारण किसी भी परिणाम के लिए ज़िम्मेदार नहीं है</string>
+    <string name="login_special_notice">विशेष सूचना:\nयह ऐप Bilibili द्वारा अधिकृत नहीं है। Bilibili इस सॉफ़्टवेयर के उपयोग से होने वाले परिणामों के लिए जिम्मेदार नहीं है।</string>
+    <string name="login_scan_qrcode">Bilibili QR कोड से लॉगइन</string>
+    <string name="login_web">वेब</string>
+    <string name="login_tv">टीवी</string>
+    <string name="login_apply_label">आवेदन करें</string>
+    <string name="login_download_qrcode">QR कोड डाउनलोड करें</string>
+    <string name="login_go_scan">स्कैन करने जाएं</string>
+    <string name="login_network_error">नेटवर्क त्रुटि, पुनः प्रयास के लिए बटन दबाएं।</string>
+    <string name="login_check_privacy_policy">कृपया नीचे गोपनीयता नीति चुनें</string>
+    <string name="login_cookie_input_label">कुकी (ब्राउज़र से सीधे कॉपी करें, डिकोडिंग की आवश्यकता नहीं)</string>
+    <string name="login_confirm_account">पुष्टि करें, यही वह खाता है जिसमें मैं लॉगिन करना चाहता हूँ</string>
+    <string name="login_cookie_warning">कृपया अपनी कुकी को सुरक्षित रखें, लीक का जोखिम न लें।</string>
+    <string name="login_saving_info">पहचान जानकारी सहेज रहा है</string>
+    <string name="login_saving_progress">सहेज रहा है, कृपया बाहर ना जाएं...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">अपडेट छोड़ें</string>
+    <string name="update_skip_message">अगर आप अभी अपडेट नहीं करना चाहते, तो इस संस्करण को छोड़ सकते हैं और अगले संस्करण में अपडेट कर सकते हैं।</string>
+    <string name="update_skip_this_version">यह संस्करण छोड़ें</string>
+    <string name="update_later">बाद में</string>
+    <string name="update_downloaded">नया संस्करण डाउनलोड हो चुका है, आप कभी भी अपडेट कर सकते हैं।</string>
+    <string name="update_action">अपडेट करें</string>
+    <string name="update_hint_title">अपडेट सुझाव</string>
+    <string name="update_new_version_format">नई वर्शन %s उपलब्ध है।</string>
+    <string name="update_content">अपडेट सामग्री:</string>
+    <string name="update_loading">लोड हो रहा है...</string>
+    <string name="update_go_download">डाउनलोड पेज पर जाएं</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">अनुरोध परीक्षण...</string>
+    <string name="request_frequent_success">अनुरोध सफल रहा, अब सामान्य रूप से उपयोग कर सकते हैं!</string>
+    <string name="request_frequent_continue">वापस जाएं और जारी रखें</string>
+    <string name="request_frequent_incident">आकस्मिक घटना</string>
+    <string name="request_frequent_server_busy">Bilibili सर्वर वर्तमान में व्यस्त या रखरखाव पर हैं, कृपया 10 मिनट बाद पुनः प्रयास करें~</string>
+    <string name="request_frequent_warning">नोटः अगर केवल आपके साथ ऐसी स्थिति है, तो हो सकता है आपके खाते पर जोखिम नियंत्रण सक्रिय हो गया है। कृपया समझदारी से उपयोग करें, प्लेटफ़ॉर्म और खाता जोखिम से बचाएं~</string>
+    <string name="request_frequent_exit_app">ऐप से बाहर जाएं</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">जोखिम नियंत्रण सूचना</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">उपयोग सूचना</string>
+    <string name="instructions_not_bilibili">आप जो सॉफ़्टवेयर उपयोग कर रहे हैं, वह Bilibili नहीं है, बल्कि एक सहायक थर्ड पार्टी टूल है, जिसका Bilibili से कोई संबंध नहीं है।</string>
+    <string name="instructions_no_authorization">यह सॉफ़्टवेयर Bilibili से अधिकृत नहीं है, Bilibili इसके उपयोग के किसी भी परिणाम के लिए जिम्मेदार नहीं है।</string>
+    <string name="instructions_purpose">BILIBILIAS एक थर्ड पार्टी Bilibili वीडियो कैशिंग टूल है, जो ऑफलाइन प्लेबैक या मूल वीडियो संपादन के लिए सामग्री निर्माताओं की सहायता के लिए बनाया गया है।</string>
+    <string name="instructions_no_redistribution">BILIBILIAS द्वारा संग्रहीत कोई भी सामग्री पुनः वितरित नहीं की जा सकती, केवल आपके अपने डिवाइस पर प्लेबैक या संपादन वीडियो बनाने के लिए अनुमत है (लेखक की अनुमति के बिना सीधे पुनः अपलोड किया जाना निषिद्ध है)।</string>
+    <string name="instructions_self_responsibility">अगर आप नियमों का उल्लंघन करते हैं या अवैध उपयोग करते हैं, तो सभी परिणाम आपके स्वयं के होंगे, साथ ही BILIBILIAS आपके उपयोग पर रोक लगा सकता है।</string>
+    <string name="instructions_go_to_bilibili">नहीं, मैं Bilibili ढूंढ रहा/रही हूँ</string>
+    <string name="instructions_i_agree">मैंने समझा और सहमत हूँ</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">लॉगिन स्थिति समाप्त हो गई है, उपलब्ध लॉगिन की जाँच हो रही है।</string>
+    <string name="account_all_invalid">सभी खातों की वैधता समाप्त हो गई है, कृपया फिर से लॉगिन करें।</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content"><![CDATA[
+हालांकि आपने BILIBILIAS की गोपनीयता नीति अस्वीकार कर दी है, यह ऐप एक थर्ड पार्टी Bilibili वीडियो कैशिंग टूल है। जब तक आप इस सॉफ़्टवेयर का उपयोग करते रहेंगे, आपको Bilibili प्लेटफार्म की संबंधित नीतियों का पालन करना होगा।
+ऐसा इसलिए क्योंकि ऐप उपयोग के दौरान भी आप अप्रत्यक्ष रूप से Bilibili का ही उपयोग कर रहे हैं, आपको Bilibili अकाउंट से लॉगिन और वीडियो सामग्री प्राप्त करनी पड़ सकती है, जिसे टालना असंभव है जब तक आप ऐप अनइंस्टॉल नहीं करते।
+हालांकि, इस समय ऐप आपकी कोई निजी जानकारी एकत्र नहीं करेगा, आप निश्चिंत होकर उपयोग कर सकते हैं।<br>
+विशेष विवरण के लिए देखें:
+<a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">Bilibili समझौते का संग्रह</a>.
+    ]]></string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">अनुशंसा</string>
+    <string name="donate_wechat">WeChat दान</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">वीडियो चुनें</string>
+    <string name="frame_select_method_title">वीडियो आयात विधि चुनें</string>
+    <string name="frame_import_from_downloaded">डाउनलोड किए गए से आयात करें</string>
+    <string name="frame_import_from_local">स्थानीय फ़ाइल से आयात करें</string>
+    <string name="frame_select_video_prompt">कृपया दाएँ ऊपर से वीडियो का चयन करें</string>
+    <string name="frame_select_output_title">निर्यात स्थान चुनें</string>
+    <string name="frame_select_output_message">फ्रेम चित्रों के निर्यात के लिए स्थान चुनें, प्रत्येक निर्यात के लिए अलग फ़ोल्डर बनाने की सलाह दी जाती है ताकि भ्रम से बचा जा सके।</string>
+    <string name="frame_select_location">स्थान चुनें</string>
+    <string name="frame_max_fps_format">अधिकतम: %d (फ्रेम/सेकंड)</string>
+    <string name="frame_fps_unit">फ्रेम/सेकंड</string>
+    <string name="frame_open_video">वीडियो खोलें</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">वीडियो प्रोसेसिंग</string>
+    <string name="tools_other">अन्य</string>
+    <string name="tools_feedback">प्रतिक्रिया</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">घोषणा</string>
+    <string name="home_close_announcement">घोषणा बंद करें</string>
+    <string name="home_announcement_close_hint">बंद करने के बाद यह फिर नहीं दिखाई देगा, जब तक नई घोषणा प्रकाशित नहीं होती</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">लॉग आउट</string>
+    <string name="setting_logout_confirm">क्या आप लॉग आउट करना चाहते हैं? लॉगआउट करने से लॉगिन जानकारी साफ़ हो जाएगी।</string>
+    <string name="setting_logging_out">लॉग आउट हो रहा है....</string>
+    <string name="setting_naming_convention">नामकरण नियम</string>
+    <string name="setting_naming_warning">अगर आप नामकरण नियम का उपयोग नहीं जानते, तो कृपया सावधानी से संशोधन करें या दस्तावेज़ देखें।</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">लाइन सेटिंग</string>
+    <string name="developer_current_line">वर्तमान लाइन</string>
+    <string name="developer_line_list">लाइन सूची</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">सभी जानकारी कॉपी करें</string>
+    <string name="version_app_version">ऐप संस्करण</string>
+    <string name="version_app_code">ऐप कोड</string>
+    <string name="version_app_channel">ऐप चैनल</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">रोमिंग</string>
+    <string name="roam_status_checking">जाँच हो रही है</string>
+    <string name="roam_status_available">उपलब्ध</string>
+    <string name="roam_status_unavailable">उपलब्ध नहीं</string>
+    <string name="roam_account_status">खाता स्थिति</string>
+    <string name="roam_login_required">लॉगिन नहीं हुआ है, कृपया पहले लॉगिन करें</string>
+    <string name="roam_go_login">लॉगिन पर जाएं</string>
+    <string name="roam_current_area">वर्तमान क्षेत्र</string>
+    <string name="roam_target_area">लक्ष्य क्षेत्र</string>
+    <string name="roam_mainland_china">मेनलैंड चाइना</string>
+    <string name="roam_hk_macau_taiwan">हांगकांग, मकाओ, ताइवान</string>
+    <string name="roam_test_video">परीक्षण वीडियो</string>
+    <string name="roam_can_access">इस वीडियो को एक्सेस किया जा सकता है</string>
+    <string name="roam_cannot_access">इस वीडियो को एक्सेस नहीं किया जा सकता</string>
+    <string name="roam_speed_test">स्पीड टेस्ट</string>
+    <string name="roam_testing">परीक्षण हो रहा है</string>
+    <string name="roam_network_speed_format">नेटवर्क स्पीड: %.2f MB/s</string>
+    <string name="roam_test_failed">परीक्षण असफल</string>
+    <string name="roam_select_server">सर्वर चुनें</string>
+    <string name="roam_server_list">सर्वर सूची</string>
+    <string name="roam_enable_roam">रोमिंग सक्षम करें</string>
+    <string name="roam_area_restriction_notice">क्षेत्रीय प्रतिबंध सूचना</string>
+    <string name="roam_area_restriction_message">इस सामग्री में क्षेत्रीय प्रतिबंध है, कृपया रोमिंग चालू करें!</string>
+    <string name="roam_go_to_roam_page">रोमिंग पेज पर जाएं</string>
+    <string name="roam_load_failed_format">लोड विफल : %s, कृपया बाद में पुन: प्रयास करें।</string>
+    <string name="roam_pending_review">आपका आवेदन समीक्षा में है, कृपया प्रतीक्षा करें, आम तौर पर 7 दिनों में समीक्षा पूर्ण होगी, कभी-कभी अधिक समय लग सकता है।</string>
+    <string name="roam_application_content">आपके आवेदन की सामग्री:</string>
+    <string name="roam_rejected_format">आपका रोमिंग सेवा आवेदन अस्वीकार कर दिया गया है, कारण: %s. आप नया कारण दर्ज कर पुनः आवेदन कर सकते हैं।</string>
+    <string name="roam_not_applied">आपने अभी तक रोमिंग सेवा के लिए आवेदन नहीं किया है। कृपया कारण लिखकर आवेदन करें, केवल उचित आवेदन स्वीकृत होंगे।</string>
+    <string name="roam_application_reason">आवेदन का कारण</string>
+    <string name="roam_submit_application">आवेदन भेजें</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">वीडियो विश्लेषण</string>
+    <string name="analysis_download_content">सामग्री डाउनलोड करें</string>
+    <string name="analysis_download_cover">कवर डाउनलोड करें</string>
+    <string name="analysis_download_subtitle">सबटाइटल डाउनलोड करें</string>
+    <string name="analysis_download_hint">डाउनलोड सुझाव</string>
+    <string name="analysis_protected_video">सुरक्षित वीडियो</string>
+    <string name="analysis_cache_config">कैश कॉन्फ़िगरेशन</string>
+    <string name="analysis_cache_preference">कैश वरीयता</string>
+    <string name="analysis_ai_translation">एआई मूल स्वर अनुवाद</string>
+    <string name="analysis_select_interactive_video">इंटरैक्टिव वीडियो चुनें</string>
+    <string name="analysis_video_quality">वीडियो गुणवत्ता</string>
+    <string name="analysis_audio_quality">ऑडियो गुणवत्ता</string>
+    <string name="analysis_codec">कोडेक</string>
+    <string name="analysis_download_started">डाउनलोड शुरू</string>
+    <string name="analysis_go_to_download_page">डाउनलोड पेज पर जाएं</string>
+    <string name="analysis_stay_on_current_page">वर्तमान पेज पर रहें</string>
+    <string name="analysis_ai_beta_notice">आप Bilibili की एक बीटा सुविधा का उपयोग कर रहे हैं। इस ऐप से मिलने वाला डाउनलोड प्रोडक्ट Bilibili की अंतिम गुणवत्ता का प्रतिनिधित्व नहीं करता।</string>
+    <string name="analysis_select_part_video">विभाजित वीडियो चुनें</string>
+    <string name="analysis_select_audio_quality">प्राथमिकता ऑडियो गुणवत्ता चुनें</string>
+    <string name="analysis_select_resolution">प्राथमिकता रेजोल्यूशन चुनें</string>
+    <string name="analysis_select_codec">प्राथमिकता कोडेक चुनें</string>
+    <string name="analysis_select_cache_mode">कैश मोड चुनें</string>
+    <string name="analysis_stream_download">स्ट्रीम डाउनलोड</string>
+    <string name="analysis_cover_download">कवर डाउनलोड</string>
+    <string name="analysis_danmaku_download">दनमाकु डाउनलोड</string>
+    <string name="analysis_select_subtitle_type">सबटाइटल फाइल टाइप चुनें</string>
+    <string name="analysis_bangumi">एनीमे</string>
+    <string name="analysis_charged_video">पेड वीडियो</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">सभी चुनें</string>
+    <string name="download_deselect_all">सभी का चयन रद्द करें</string>
+    <string name="download_delete_confirm_title">डाउनलोड कार्य हटाएँ</string>
+    <string name="download_delete_confirm_message">क्या आप चयनित कार्य और फाइलें हटाना चाहते हैं?</string>
+    <string name="download_caching">AS वीडियो कैशिंग...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">BV नंबर</string>
+    <string name="user_freeze_video">एक वीडियो फ्रीज करें</string>
+    <string name="user_freeze_all_videos">सभी वीडियो फ्रीज करें</string>
+    <string name="user_select_freeze_method">कृपया फ्रीज विधि चुनें</string>
+    <string name="user_freeze_all_confirm_message">यह फीचर केवल UP मालिक के लिए है, फ्रीज करने के बाद अन्य यूजर आपके सभी वीडियो कैश नहीं कर पाएंगे, क्या आप जारी रखना चाहते हैं?</string>
+    <string name="user_freezing_progress">फ्रीजिंग जारी है, कृपया प्रतीक्षा करें...</string>
+    <string name="user_input_bv_prompt">कृपया उस वीडियो का BV नंबर दर्ज करें जिसे आप फ्रीज करना चाहते हैं। फ्रीज के बाद अन्य यूजर आपके वीडियो को कैश नहीं कर पाएंगे:</string>
+    <string name="user_freeze_notice">नोट: BILIBILIAS द्वारा उपलब्ध फ्रीज केवल BILIBILIAS के उपयोगकर्ताओं के लिए है, अन्य थर्ड पार्टी टूल्स को रोक नहीं सकता।</string>
+    <string name="user_uploaded_videos">अपलोड किए गए वीडियो</string>
+    <string name="user_likes">लाइक्स</string>
+    <string name="user_recent">हाल ही</string>
+    <string name="user_favorites">पसंदीदा</string>
+    <string name="user_bangumi">ट्रैक कर रहे हैं एनीमे</string>
+    <string name="user_linked_accounts">लिंक्ड खाते</string>
+    <string name="user_following">फॉलोइंग</string>
+    <string name="user_fans">फैन</string>
+    <string name="user_thumbs_up">रिसीव्ड लाइक्स</string>
+    <string name="user_plays">प्लेज़</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">वीडियो कैश उपयोग आवेदन</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">त्रुटि : %s</string>
+    <string name="error_exit_app">ऐप से बाहर निकलें</string>
+    <string name="error_copy_error">कॉपी त्रुटि</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">डाउनलोड जानकारी</string>
+    <string name="download_info_total_size">कुल आकार</string>
+    <string name="download_info_downloaded_size">डाउनलोड किया गया</string>
+    <string name="download_info_speed">स्पीड</string>
+    <string name="download_info_remaining_time">शेष समय</string>
+    <string name="download_info_file_name">फ़ाइल नाम</string>
+    <string name="download_info_save_path">सेव स्थान</string>
+    <string name="download_info_status">स्थिति</string>
+    <string name="download_info_start_time">प्रारंभ समय</string>
+    <string name="download_info_complete_time">पूरा होने का समय</string>
+    <string name="download_batch_delete_title">बैच कार्य हटाएँ</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">डाउनलोड हो रहा है</string>
+    <string name="status_downloading_title">डाउनलोड हो रहा है</string>
+    <string name="status_paused">रोक दिया गया</string>
+    <string name="status_completed">पूर्ण हुआ</string>
+    <string name="status_completed_title">डाउनलोड पूर्ण</string>
+    <string name="status_failed">असफल</string>
+    <string name="status_waiting">प्रतीक्षा कर रहा है</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">वापस</string>
+    <string name="cd_more_actions">कार्रवाई</string>
+    <string name="cd_download_qrcode">QR कोड डाउनलोड करें</string>
+    <string name="cd_go_scan">स्कैन पर जाएं</string>
+    <string name="cd_login_qrcode">लॉगिन QR कोड</string>
+    <string name="cd_not_agree_privacy">गोपनीयता नीति अस्वीकार की</string>
+    <string name="cd_avatar">अवतार</string>
+    <string name="cd_go_to_bilibili">Bilibili पर जाएं</string>
+    <string name="cd_web_scan">वेब स्कैन</string>
+    <string name="cd_tv_scan">टीवी स्कैन</string>
+    <string name="cd_server_error_icon">सर्वर त्रुटि आइकन</string>
+</resources>

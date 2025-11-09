@@ -185,7 +185,6 @@
     <string name="analysis_cache_preference">تفضيل الحفظ المؤقت</string>
     <string name="analysis_ai_translation">ترجمة الذكاء الاصطناعي</string>
     <string name="analysis_select_interactive_video">اختر فيديو تفاعلي</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">جودة الفيديو</string>
     <string name="analysis_audio_quality">جودة الصوت</string>
     <string name="analysis_codec">الترميز</string>

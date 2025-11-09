@@ -174,7 +174,7 @@
     <string name="analysis_cache_preference">Ưu tiên bộ nhớ đệm</string>
     <string name="analysis_ai_translation">Dịch âm thanh AI</string>
     <string name="analysis_select_interactive_video">Chọn video tương tác</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
+
     <string name="analysis_video_quality">Chất lượng video</string>
     <string name="analysis_audio_quality">Chất lượng âm thanh</string>
     <string name="analysis_codec">Bộ giải mã</string>

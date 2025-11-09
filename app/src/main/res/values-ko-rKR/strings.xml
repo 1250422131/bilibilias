@@ -183,7 +183,6 @@
     <string name="analysis_cache_preference">캐시 선호도</string>
     <string name="analysis_ai_translation">AI 원음 번역</string>
     <string name="analysis_select_interactive_video">인터랙티브 비디오 선택</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">영상 화질</string>
     <string name="analysis_audio_quality">음질</string>
     <string name="analysis_codec">코덱</string>

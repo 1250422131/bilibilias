@@ -174,7 +174,6 @@
     <string name="analysis_cache_preference">Preferencia de caché</string>
     <string name="analysis_ai_translation">Traducción original de IA</string>
     <string name="analysis_select_interactive_video">Seleccionar vídeo interactivo</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">Calidad de vídeo</string>
     <string name="analysis_audio_quality">Calidad de audio</string>
     <string name="analysis_codec">Codec</string>

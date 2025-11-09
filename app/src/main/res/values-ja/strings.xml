@@ -174,7 +174,6 @@
     <string name="analysis_cache_preference">キャッシュ優先</string>
     <string name="analysis_ai_translation">AI音声翻訳</string>
     <string name="analysis_select_interactive_video">インタラクティブ動画選択</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">動画品質</string>
     <string name="analysis_audio_quality">音質</string>
     <string name="analysis_codec">コーデック</string>

@@ -183,7 +183,6 @@
     <string name="analysis_cache_preference">ចំណូលចិត្តសម្ងាត់</string>
     <string name="analysis_ai_translation">បកប្រែ AI ដើម</string>
     <string name="analysis_select_interactive_video">ជ្រើសវីដេអូអន្តរកម្ម</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">គុណភាពវីដេអូ</string>
     <string name="analysis_audio_quality">គុណភាពសម្លេង</string>
     <string name="analysis_codec">កូដក</string>

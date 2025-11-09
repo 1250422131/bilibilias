@@ -185,7 +185,6 @@
     <string name="analysis_cache_preference">Предпочтение кэша</string>
     <string name="analysis_ai_translation">Перевод с помощью ИИ</string>
     <string name="analysis_select_interactive_video">Выбрать интерактивное видео</string>
-    <string name="analysis_episode_range_format">%d~%d</string>
     <string name="analysis_video_quality">Качество видео</string>
     <string name="analysis_audio_quality">Качество звука</string>
     <string name="analysis_codec">Кодек</string>
