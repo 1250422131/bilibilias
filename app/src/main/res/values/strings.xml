@@ -213,11 +213,14 @@
     <string name="download_info_status">状态</string>
     <string name="download_info_start_time">开始时间</string>
     <string name="download_info_complete_time">完成时间</string>
+    <string name="download_batch_delete_title">批量删除任务</string>
     
     <!-- Status related strings -->
     <string name="status_downloading">下载中</string>
+    <string name="status_downloading_title">正在下载</string>
     <string name="status_paused">已暂停</string>
     <string name="status_completed">已完成</string>
+    <string name="status_completed_title">已完成下载</string>
     <string name="status_failed">失败</string>
     <string name="status_waiting">等待中</string>
     
