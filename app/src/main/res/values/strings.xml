@@ -158,6 +158,13 @@
     <string name="roam_area_restriction_notice">地区限制提示</string>
     <string name="roam_area_restriction_message">此内容存在地区限制，您需要开启漫游后才能继续操作！</string>
     <string name="roam_go_to_roam_page">前往漫游页</string>
+    <string name="roam_load_failed_format">加载失败：%s，请稍后重试。</string>
+    <string name="roam_pending_review">当前您的审核正在进行中，请耐心等待，我们会尽快处理您的申请，通常会在7天内完成审核，有时会更长。</string>
+    <string name="roam_application_content">您的申请内容如下：</string>
+    <string name="roam_rejected_format">您的漫游服务申请被拒绝，拒绝理由如下：%s，您可以修改申请理由后重新提交申请。</string>
+    <string name="roam_not_applied">当前您还未申请漫游服务，请填写申请理由后提交，你需要告知我们你将如何使用漫游服务，只有合理的申请我们才会通过。</string>
+    <string name="roam_application_reason">申请内容</string>
+    <string name="roam_submit_application">提交申请</string>
     
     <!-- Analysis/Download related strings -->
     <string name="analysis_parse_video">解析视频</string>

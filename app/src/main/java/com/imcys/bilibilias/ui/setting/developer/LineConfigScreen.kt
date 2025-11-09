@@ -212,7 +212,7 @@ private fun LineConfigScaffold(
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("Beta")
+                                Text(stringResource(R.string.common_beta))
                             }
                         }
                     ) {

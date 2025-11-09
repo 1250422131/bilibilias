@@ -82,7 +82,7 @@ class AppCrashActivity : ComponentActivity() {
                 Button(onClick = {
                     exitProcess(0)
                 }) {
-                    Text("退出软件")
+                    Text(stringResource(R.string.error_exit_app))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(onClick = {
@@ -93,7 +93,7 @@ class AppCrashActivity : ComponentActivity() {
                         delay(2000)
                     }
                 }) {
-                    Text("复制异常")
+                    Text(stringResource(R.string.error_copy_error))
                 }
 
 

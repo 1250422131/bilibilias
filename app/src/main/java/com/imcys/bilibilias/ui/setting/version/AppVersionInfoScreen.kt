@@ -36,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.imcys.bilibilias.R
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.common.utils.DeviceInfoUtils
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -108,7 +110,7 @@ fun VersionInfoContent(modifier: Modifier = Modifier) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("复制全部信息")
+            Text(stringResource(R.string.version_copy_all))
         }
     }
 }

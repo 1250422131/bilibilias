@@ -130,7 +130,7 @@ fun LazyItemScope.NamingRuleEditor(
             }
             AnimatedVisibility(ruleValue != defaultRule) {
                 ASWarringTip {
-                    Text("如果您不了解命名规则的使用方法，请谨慎修改，也可前往文档查看使用方法。")
+                    Text(stringResource(R.string.setting_naming_warning))
                 }
             }
             OutlinedTextField(
@@ -139,7 +139,7 @@ fun LazyItemScope.NamingRuleEditor(
                     textFieldValue = it
                     onRuleChange(it.text)
                 },
-                label = { Text("命名规则") },
+                label = { Text(stringResource(R.string.setting_naming_convention)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged {
@@ -272,7 +272,7 @@ fun NamingConventionScaffold(
                     BadgedBox(
                         badge = {
                             Badge {
-                                Text("Beta")
+                                Text(stringResource(R.string.common_beta))
                             }
                         }
                     ) {

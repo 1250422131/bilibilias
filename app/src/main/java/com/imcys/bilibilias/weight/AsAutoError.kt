@@ -113,7 +113,7 @@ fun CommonError(errorMsg: String, onRetry: (() -> Unit)?) {
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text("Error：${errorMsg}")
+                    Text(stringResource(R.string.error_message_format, errorMsg))
                 }
                 AsErrorCopyIconButton(errorMsg)
             }

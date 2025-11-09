@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
 import kotlin.math.ceil
 
@@ -132,7 +134,7 @@ fun <T> ASEpisodeSelection(
             val endEp = minOf((index + 1) * PAGE_SIZE, episodeCount)
             FilterChip(
                 onClick = { currentPageListIndex = index },
-                label = { Text("$startEp~$endEp") },
+                label = { Text(stringResource(R.string.analysis_episode_range_format, startEp, endEp)) },
                 selected = index == safePageIndex,
             )
         }
