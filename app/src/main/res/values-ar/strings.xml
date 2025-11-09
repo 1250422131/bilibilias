@@ -1,0 +1,277 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">سياسة الخصوصية</string>
+    <string name="app_privacy_policy_tip">
+        <![CDATA[
+\nيستخدم BILIBILIAS خدمة Firebase لجمع بيانات الاستخدام وتوفير الإعدادات عن بُعد، ما يعني أن Firebase سيجمع بعض معلومات جهازك واستخدامك. لذلك، عليك الموافقة على <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">سياسة الخصوصية</a> التالية.
+إذا لم توافق على سياسة الخصوصية، فقد لا يستطيع التطبيق تلقي الإعدادات اللازمة وقد لا يعمل بشكل طبيعي. انقر على الرابط لقراءة <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">سياسة الخصوصية</a>.
+        ]]>
+    </string>
+    <string name="common_agree">موافقة</string>
+    <string name="common_refuse">رفض</string>
+    <string name="common_cancel">إلغاء</string>
+    <string name="common_confirm">تأكيد</string>
+    <string name="common_delete">حذف</string>
+    <string name="common_beta">تجريبي</string>
+    <string name="common_understand">فهمت</string>
+    <string name="common_ok">حسنًا</string>
+    <string name="common_i_know">علمت</string>
+    <string name="common_retry">إعادة المحاولة</string>
+    <string name="common_recommend">موصى به</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="login_qrcode_title">تسجيل الدخول برمز QR لـ Bilibili</string>
+    <string name="login_cookie_title">تسجيل الدخول عبر ملفات تعريف الارتباط لـ Bilibili</string>
+    <string name="login_use_cookie">تسجيل الدخول بالكوكيز</string>
+    <string name="login_after_you_can">بعد تسجيل الدخول يمكنك:</string>
+    <string name="login_benefits"><![CDATA[·دعم فيديوهات بجودة أعلى ومعدل نقل أعلى\n·دعم تخزين الرسوم المتحركة\n·استخدام مزايا العضوية المميزة\n·استخدام خدمة التجوال]]></string>
+    <string name="login_agreement_prefix">تسجيل الدخول يعني موافقتك على:</string>
+    <string name="login_bilibili_agreement">·اتفاقيات حساب ومجتمع Bilibili</string>
+    <string name="login_privacy_agreement">·《اتفاقية الخصوصية BILIBILIAS》</string>
+    <string name="login_disclaimer">·BILIBILIAS غير مسؤول عن أي نتائج ناتجة عن الاستخدام</string>
+    <string name="login_special_notice">تنبيه خاص:\nهذا البرنامج غير مصرح به من قبل Bilibili. Bilibili غير مسؤول عن أي نتائج يسببها استخدام البرنامج.</string>
+    <string name="login_scan_qrcode">تسجيل الدخول برمز QR لـ Bilibili</string>
+    <string name="login_web">الويب</string>
+    <string name="login_tv">التلفزيون</string>
+    <string name="login_apply_label">تقديم طلب</string>
+    <string name="login_download_qrcode">تحميل رمز QR</string>
+    <string name="login_go_scan">اذهب إلى المسح</string>
+    <string name="login_network_error">خطأ في الشبكة، اضغط على الزر لإعادة المحاولة.</string>
+    <string name="login_check_privacy_policy">يرجى الموافقة على سياسة الخصوصية أدناه</string>
+    <string name="login_cookie_input_label">ملف الكوكيز (انسخه مباشرة من المتصفح، لا داعي للفك)</string>
+    <string name="login_confirm_account">تأكيد، هذا هو الحساب الذي أريد تسجيل الدخول به</string>
+    <string name="login_cookie_warning">يرجى الحفاظ على الكوكيز الخاصة بك لتفادي التسريب.</string>
+    <string name="login_saving_info">يتم حفظ معلومات الهوية</string>
+    <string name="login_saving_progress">جارٍ الحفظ، الرجاء عدم الخروج...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">تخطي التحديث</string>
+    <string name="update_skip_message">إذا كنت لا ترغب في التحديث الآن، يمكنك تخطي هذا الإصدار والتحديث في إصدار لاحق.</string>
+    <string name="update_skip_this_version">تخطي هذا الإصدار</string>
+    <string name="update_later">في وقت لاحق</string>
+    <string name="update_downloaded">تم تحميل الإصدار الجديد، يمكنك التحديث في أي وقت.</string>
+    <string name="update_action">تحديث</string>
+    <string name="update_hint_title">تنبيه لتحديث</string>
+    <string name="update_new_version_format">يتوفر إصدار جديد %s.</string>
+    <string name="update_content">محتوى التحديث:</string>
+    <string name="update_loading">جارٍ التحميل...</string>
+    <string name="update_go_download">الانتقال للتحميل</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">جارٍ اختبار الطلب...</string>
+    <string name="request_frequent_success">تم الطلب بنجاح، يمكنك الآن الاستخدام!</string>
+    <string name="request_frequent_continue">العودة للمتابعة</string>
+    <string name="request_frequent_incident">حدث غير متوقع</string>
+    <string name="request_frequent_server_busy">خوادم Bilibili مشغولة أو تحت الصيانة الآن، يرجى المحاولة مرة أخرى بعد 10 دقائق~</string>
+    <string name="request_frequent_warning">ملاحظة: إذا كانت الحالة لديك فقط، فقد يكون تم تفعيل نظام الأمان تلقائياً. يُرجى الاستخدام بشكل مناسب لتفادي المخاطر.~</string>
+    <string name="request_frequent_exit_app">الخروج من التطبيق</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">تحذير الأمان</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">إشعار استخدام</string>
+    <string name="instructions_not_bilibili">البرنامج المستخدم ليس Bilibili وإنما أداة طرف ثالث للمساعدة، ولا يتبع Bilibili بأي شكل.</string>
+    <string name="instructions_no_authorization">هذا البرنامج غير مصرح به من قبل Bilibili ولن تكون Bilibili مسؤولة عن أي نتائج ناتجة عن الاستخدام.</string>
+    <string name="instructions_purpose">BILIBILIAS أداة خارجية لحفظ فيديوهات Bilibili، تهدف لمساعدة من يحتاج لتشغيل الفيديوهات دون اتصال أو إنشاء مقاطع تحريرية.</string>
+    <string name="instructions_no_redistribution">لا يجوز إعادة توزيع أي محتوى تم حفظه عبر BILIBILIAS. يُسمح فقط بالتشغيل على جهازك أو لتحرير فيديوهات (ممنوع النقل المباشر دون إذن المؤلف).</string>
+    <string name="instructions_self_responsibility">إذا خالفت الشروط أو استخدمت التطبيق لأغراض غير مشروعة، ستتحمل جميع النتائج، وقد يتم حظرك من الاستخدام.</string>
+    <string name="instructions_go_to_bilibili">لا، أبحث عن Bilibili</string>
+    <string name="instructions_i_agree">فهمت وأوافق</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">انتهت صلاحية الجلسة، جارٍ التحقق من الحسابات الأخرى المتبقية.</string>
+    <string name="account_all_invalid">جميع الحسابات غير صالحة، يرجى تسجيل الدخول مجددًا.</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content"><![CDATA[
+على الرغم من أنك رفضت سياسة الخصوصية الخاصة بـBILIBILIAS، إلا أن هذا التطبيق هو أداة خارجية لحفظ فيديوهات Bilibili. طالما استمررت في استخدام التطبيق، يجب عليك الالتزام بسياسات منصة Bilibili.
+ذلك لأنك أثناء استخدام التطبيق ما زلت فعليًا تستخدم Bilibili بطريقة غير مباشرة، وقد تحتاج لتسجيل الدخول والوصول إلى محتوى الفيديو، وهو أمر لا يمكن تجنبه إلا بحذف التطبيق.
+ولكن، في هذا الوقت لن يجمع التطبيق أي بيانات خصوصية منك. لا تقلق أثناء الاستخدام.<br>
+اطلع على الاتفاقيات الكاملة هنا:
+<a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">مجموعة اتفاقيات Bilibili</a>.
+    ]]></string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">موصى به</string>
+    <string name="donate_wechat">تبرع WeChat</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">اختر الفيديو للاستيراد</string>
+    <string name="frame_select_method_title">اختر طريقة الاستيراد</string>
+    <string name="frame_import_from_downloaded">استيراد من الملفات المحفوظة</string>
+    <string name="frame_import_from_local">استيراد من ملف محلي</string>
+    <string name="frame_select_video_prompt">يرجى اختيار الفيديو للاستيراد من الأعلى</string>
+    <string name="frame_select_output_title">اختيار مكان الحفظ</string>
+    <string name="frame_select_output_message">يرجى اختيار مجلد حفظ الإطارات المستخرجة. من الأفضل وضع كل تصدير في مجلد منفصل لتجنب الخلط.</string>
+    <string name="frame_select_location">اختيار مكان</string>
+    <string name="frame_max_fps_format">الحد الأقصى: %d (إطار/ثانية)</string>
+    <string name="frame_fps_unit">إطار/ثانية</string>
+    <string name="frame_open_video">فتح الفيديو</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">معالجة الفيديو</string>
+    <string name="tools_other">أخرى</string>
+    <string name="tools_feedback">ملاحظات</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">إعلان</string>
+    <string name="home_close_announcement">إغلاق الإعلان</string>
+    <string name="home_announcement_close_hint">لن يتم عرضه إلا عند صدور إعلان جديد</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">تسجيل الخروج</string>
+    <string name="setting_logout_confirm">هل ترغب في تسجيل الخروج؟ سيتم حذف بيانات الدخول وتحرير الحساب.</string>
+    <string name="setting_logging_out">جارٍ تسجيل الخروج....</string>
+    <string name="setting_naming_convention">قواعد التسمية</string>
+    <string name="setting_naming_warning">إذا لم تكن على دراية بكيفية استخدام قواعد التسمية، يرجى عدم التعديل أو مراجعة الإرشادات.</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">إعداد الخط</string>
+    <string name="developer_current_line">الخط الحالي</string>
+    <string name="developer_line_list">قائمة الخطوط</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">نسخ كل المعلومات</string>
+    <string name="version_app_version">إصدار التطبيق</string>
+    <string name="version_app_code">كود التطبيق</string>
+    <string name="version_app_channel">قناة التطبيق</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">تجوال</string>
+    <string name="roam_status_checking">جارٍ الفحص</string>
+    <string name="roam_status_available">متاح</string>
+    <string name="roam_status_unavailable">غير متاح</string>
+    <string name="roam_account_status">حالة الحساب</string>
+    <string name="roam_login_required">لم يتم تسجيل الدخول، يرجى تسجيل الدخول أولاً</string>
+    <string name="roam_go_login">انتقل لتسجيل الدخول</string>
+    <string name="roam_current_area">المنطقة الحالية</string>
+    <string name="roam_target_area">المنطقة المستهدفة</string>
+    <string name="roam_mainland_china">الصين القارية</string>
+    <string name="roam_hk_macau_taiwan">هونغ كونغ وماكاو وتايوان</string>
+    <string name="roam_test_video">فيديو اختبار</string>
+    <string name="roam_can_access">يمكنك الوصول إلى هذا الفيديو</string>
+    <string name="roam_cannot_access">لا يمكنك الوصول إلى هذا الفيديو</string>
+    <string name="roam_speed_test">اختبار السرعة</string>
+    <string name="roam_testing">جارٍ الاختبار</string>
+    <string name="roam_network_speed_format">سرعة الشبكة: %.2f ميجابايت/ثانية</string>
+    <string name="roam_test_failed">فشل الاختبار</string>
+    <string name="roam_select_server">اختر خادم</string>
+    <string name="roam_server_list">قائمة الخوادم</string>
+    <string name="roam_enable_roam">تفعيل التجوال</string>
+    <string name="roam_area_restriction_notice">تنبيه تقييد المنطقة</string>
+    <string name="roam_area_restriction_message">هذه المحتويات مقيدة حسب المنطقة. يجب تفعيل التجوال للمتابعة!</string>
+    <string name="roam_go_to_roam_page">الانتقال لصفحة التجوال</string>
+    <string name="roam_load_failed_format">فشل التحميل: %s، يرجى المحاولة لاحقًا.</string>
+    <string name="roam_pending_review">طلبك قيد المراجعة، يرجى الانتظار. عادةً ما نستكمل خلال ٧ أيام، وقد يستغرق أطول أحيانًا.</string>
+    <string name="roam_application_content">محتوى طلبك:</string>
+    <string name="roam_rejected_format">تم رفض طلب خدمة التجوال، السبب: %s. يمكنك تعديل السبب وإعادة إرسال الطلب.</string>
+    <string name="roam_not_applied">لم تقدم طلبًا لخدمة التجوال بعد. يرجى كتابة السبب وإرساله، فقط الطلبات المبررة تقبل.</string>
+    <string name="roam_application_reason">سبب الطلب</string>
+    <string name="roam_submit_application">إرسال الطلب</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">تحليل الفيديو</string>
+    <string name="analysis_download_content">تنزيل المحتوى</string>
+    <string name="analysis_download_cover">تنزيل الغلاف</string>
+    <string name="analysis_download_subtitle">تنزيل الترجمة</string>
+    <string name="analysis_download_hint">نصيحة التنزيل</string>
+    <string name="analysis_protected_video">فيديو محمي</string>
+    <string name="analysis_cache_config">إعدادات الحفظ المؤقت</string>
+    <string name="analysis_cache_preference">تفضيل الحفظ المؤقت</string>
+    <string name="analysis_ai_translation">ترجمة الذكاء الاصطناعي</string>
+    <string name="analysis_select_interactive_video">اختر فيديو تفاعلي</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">جودة الفيديو</string>
+    <string name="analysis_audio_quality">جودة الصوت</string>
+    <string name="analysis_codec">الترميز</string>
+    <string name="analysis_download_started">بدأ التنزيل</string>
+    <string name="analysis_go_to_download_page">الانتقال لصفحة التحميل</string>
+    <string name="analysis_stay_on_current_page">البقاء في الصفحة الحالية</string>
+    <string name="analysis_ai_beta_notice">تستخدم ميزة تجريبية من Bilibili. النتيجة التي يوفرها التطبيق لا تمثل جودة Bilibili النهائية.</string>
+    <string name="analysis_select_part_video">اختر فيديو مقسم</string>
+    <string name="analysis_select_audio_quality">اختر جودة الصوت المفضلة</string>
+    <string name="analysis_select_resolution">اختر الدقة المفضلة</string>
+    <string name="analysis_select_codec">اختر الترميز المفضل</string>
+    <string name="analysis_select_cache_mode">اختر وضع الحفظ المؤقت</string>
+    <string name="analysis_stream_download">تحميل عبر البث</string>
+    <string name="analysis_cover_download">تنزيل الغلاف</string>
+    <string name="analysis_danmaku_download">تنزيل تعليقات دانماكو</string>
+    <string name="analysis_select_subtitle_type">اختر نوع ملف الترجمة</string>
+    <string name="analysis_bangumi">أنمي</string>
+    <string name="analysis_charged_video">فيديو مدفوع</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">تحديد الكل</string>
+    <string name="download_deselect_all">إلغاء تحديد الكل</string>
+    <string name="download_delete_confirm_title">حذف مهمة التنزيل</string>
+    <string name="download_delete_confirm_message">هل تريد حذف السجلات والملفات المحددة؟</string>
+    <string name="download_caching">جارٍ حفظ فيديو AS المؤقت...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">رقم BV</string>
+    <string name="user_freeze_video">تجميد فيديو معين</string>
+    <string name="user_freeze_all_videos">تجميد جميع الفيديوهات</string>
+    <string name="user_select_freeze_method">يرجى اختيار طريقة التجميد</string>
+    <string name="user_freeze_all_confirm_message">هذه الخاصية لأصحاب القنوات فقط. بعد التجميد، لن يستطيع الآخرون حفظ فيديوهاتك عبر التطبيق. هل أنت متأكد؟</string>
+    <string name="user_freezing_progress">جارٍ التجميد، يرجى الانتظار...</string>
+    <string name="user_input_bv_prompt">أدخل رقم BV للفيديو المراد تجميده. بعد التجميد، لن يستطيع الآخرون حفظ الفيديو الخاص بك:</string>
+    <string name="user_freeze_notice">ملاحظة: ميزة التجميد تعمل فقط على BILIBILIAS ولا تمنع أدوات طرف ثالث من الحفظ.</string>
+    <string name="user_uploaded_videos">الفيديوهات المنشورة</string>
+    <string name="user_likes">إعجابات</string>
+    <string name="user_recent">الأحدث</string>
+    <string name="user_favorites">المفضلات</string>
+    <string name="user_bangumi">متابعة الأنمي</string>
+    <string name="user_linked_accounts">حسابات مرتبطة</string>
+    <string name="user_following">يتابع</string>
+    <string name="user_fans">المعجبون</string>
+    <string name="user_thumbs_up">الإعجابات المستلمة</string>
+    <string name="user_plays">المشاهدات</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">طلب استخدام حفظ الفيديو</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">خطأ: %s</string>
+    <string name="error_exit_app">الخروج من التطبيق</string>
+    <string name="error_copy_error">خطأ في النسخ</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">معلومات التنزيل</string>
+    <string name="download_info_total_size">الحجم الكلي</string>
+    <string name="download_info_downloaded_size">تم التنزيل</string>
+    <string name="download_info_speed">السرعة</string>
+    <string name="download_info_remaining_time">الوقت المتبقي</string>
+    <string name="download_info_file_name">اسم الملف</string>
+    <string name="download_info_save_path">مسار الحفظ</string>
+    <string name="download_info_status">الحالة</string>
+    <string name="download_info_start_time">وقت البدء</string>
+    <string name="download_info_complete_time">وقت الانتهاء</string>
+    <string name="download_batch_delete_title">حذف المهام دفعة واحدة</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">جارٍ التنزيل</string>
+    <string name="status_downloading_title">جاري التنزيل</string>
+    <string name="status_paused">مؤقتًا</string>
+    <string name="status_completed">مكتمل</string>
+    <string name="status_completed_title">تم التنزيل</string>
+    <string name="status_failed">فشل</string>
+    <string name="status_waiting">بانتظار</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">عودة</string>
+    <string name="cd_more_actions">إجراءات</string>
+    <string name="cd_download_qrcode">تحميل رمز QR</string>
+    <string name="cd_go_scan">الانتقال للمسح</string>
+    <string name="cd_login_qrcode">رمز تسجيل الدخول</string>
+    <string name="cd_not_agree_privacy">لم توافق على سياسة الخصوصية</string>
+    <string name="cd_avatar">الصورة الشخصية</string>
+    <string name="cd_go_to_bilibili">الانتقال إلى Bilibili</string>
+    <string name="cd_web_scan">مسح عبر الويب</string>
+    <string name="cd_tv_scan">مسح عبر التلفزيون</string>
+    <string name="cd_server_error_icon">أيقونة خطأ الخادم</string>
+</resources>

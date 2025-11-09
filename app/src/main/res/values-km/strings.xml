@@ -1,0 +1,275 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">គោលនយោបាយភាពឯកជន</string>
+    <string name="app_privacy_policy_tip"><![CDATA[
+\nBILIBILIAS ប្រើប្រាស់ Firebase ដើម្បីប្រមូលទិន្នន័យ​និងកំណត់រចនាសម្ព័ន្ធចូលចីក។ វាមានន័យថា Firebase នឹងប្រមូលពត៌មានអ្នក និងប្រើប្រាស់ឧបករណ៍។ ដូច្នេះ អ្នកត្រូវតែយល់ព្រមនឹង <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">គោលនយោបាយភាពឯកជន</a> ខាងក្រោម។
+បើអ្នកមិនយល់ព្រមនឹងគោលនយោបាយនេះទេ អាប់នឹងអាចប្រើប្រាស់App ធម្មតាមិនបាន។ ចុចតំណនេះដើម្បី <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">អានគោលនយោបាយភាពឯកជន</a>។
+    ]]></string>
+    <string name="common_agree">យល់ព្រម</string>
+    <string name="common_refuse">បដិសេធ</string>
+    <string name="common_cancel">បោះបង់</string>
+    <string name="common_confirm">បញ្ជាក់</string>
+    <string name="common_delete">លុប</string>
+    <string name="common_beta">សាកល្បង</string>
+    <string name="common_understand">យល់</string>
+    <string name="common_ok">បានហើយ</string>
+    <string name="common_i_know">ខ្ញុំបានដឹង</string>
+    <string name="common_retry">សាកល្បងម្តងទៀត</string>
+    <string name="common_recommend">ណែនាំ</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">ចូលគណនី</string>
+    <string name="login_qrcode_title">ចូលដោយ QR របស់ Bilibili</string>
+    <string name="login_cookie_title">ចូលដោយ Cookie របស់ Bilibili</string>
+    <string name="login_use_cookie">ចូល​ដោយ Cookie</string>
+    <string name="login_after_you_can">នៅពេលដែលអ្នកចូល អ្នកអាច:</string>
+    <string name="login_benefits"><![CDATA[·គាំទ្រវីដេអូដែលមានគុណភាពខ្ពស់ និងអត្រាបញ្ជូនខ្ពស់\n·គាំទ្ររឿងកុនសំរាប់ផ្ទុក\n·ប្រើប្រាស់សិទ្ធិសមាជិកពិសេស\n·ប្រើសេវាកម្ម Roaming]]></string>
+    <string name="login_agreement_prefix">ការចូលមានន័យថាអ្នកយល់ព្រម៖</string>
+    <string name="login_bilibili_agreement">·កិច្ចព្រមព្រៀងគណនី និងសហគមន៍ Bilibili</string>
+    <string name="login_privacy_agreement">·《កិច្ចព្រមព្រៀងភាពឯកជន BILIBILIAS》</string>
+    <string name="login_disclaimer">·BILIBILIAS មិនទទួលខុសត្រូវចំពោះលទ្ធផលណាមួយនៃប្រើប្រាស់ឡើយ</string>
+    <string name="login_special_notice">ចំណាំ៖\nកម្មវិធីនេះមិនត្រូវបានអនុញ្ញាតដោយ Bilibili ទេ។ Bilibili មិនទទួលខុសត្រូវចំពោះលទ្ធផលក្នុងការប្រើប្រាស់កម្មវិធីនេះឡើយ។</string>
+    <string name="login_scan_qrcode">ចូលដោយស្កេន QR របស់ Bilibili</string>
+    <string name="login_web">វេបសាយ</string>
+    <string name="login_tv">ទូរទស្សន៍</string>
+    <string name="login_apply_label">ដាក់ពាក្យ</string>
+    <string name="login_download_qrcode">ទាញយក QR</string>
+    <string name="login_go_scan">ទៅស្កេន</string>
+    <string name="login_network_error">បណ្តាញមានបញ្ហា សូមចុចប៊ូតុងដើម្បីសាកល្បងម្ដងទៀត។</string>
+    <string name="login_check_privacy_policy">សូមធីកគោលនយោបាយភាពឯកជនខាងក្រោម</string>
+    <string name="login_cookie_input_label">Cookie (ចម្លងតាម Browser មិនបាច់ដោះសូត្រ)</string>
+    <string name="login_confirm_account">បញ្ជាក់ នេះគឺគណនីដែលខ្ញុំចង់ចូល</string>
+    <string name="login_cookie_warning">សូមរក្សា Cookie របស់អ្នកអោយមានសុវត្ថិភាព ដើម្បីជៀសវាងហានិភ័យរូចរាល។</string>
+    <string name="login_saving_info">កំពុងរក្សាទុកព័ត៌មាន</string>
+    <string name="login_saving_progress">កំពុងរក្សាទុក សូមកុំចាកចេញ...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">រំលងការអាប់ដេត</string>
+    <string name="update_skip_message">ប្រសិនបើអ្នកមិនចង់អាប់ដេតឥឡូវទេ អ្នកអាចរំលងកំណែនេះ រង់ចាំដើម្បីអាប់ដេតកំណែបន្ទាប់។</string>
+    <string name="update_skip_this_version">រំលងកំណែនេះ</string>
+    <string name="update_later">ធ្វើក្រោយ</string>
+    <string name="update_downloaded">កំណែថ្មីត្រូវបានទាញយករួចហើយ អ្នកអាចអាប់ដេតពេលណាក៏បាន។</string>
+    <string name="update_action">អាប់ដេត</string>
+    <string name="update_hint_title">ជូនដំណឹងអាប់ដេត</string>
+    <string name="update_new_version_format">មានកំណែថ្មី %s ។</string>
+    <string name="update_content">អាប់ដេតបញ្ចូល ៖</string>
+    <string name="update_loading">កំពុងដំណើរការ...</string>
+    <string name="update_go_download">ទៅទាញយក</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">កំពុងសាកល្បងសំណើ...</string>
+    <string name="request_frequent_success">សំណើជោគជ័យ អាចប្រើបានទៀងត្រូវ!</string>
+    <string name="request_frequent_continue">ត្រឡប់ទៅធ្វើបន្ត</string>
+    <string name="request_frequent_incident">ព្រឹត្តិការណ៍កើតឡើង</string>
+    <string name="request_frequent_server_busy">ម៉ាស៊ីនមេ Bilibili ពេញចំនួន ឬកំពុងថែទាំ សូមសាកល្បងម្ដងទៀតបន្ទាប់ពី១០នាទី~</string>
+    <string name="request_frequent_warning">សូមចំណាំ ប្រសិនបើមានបញ្ហាតែអ្នកឯង ប្រហែលជាអ្នកបានបង្កការព្រួយបារម្ភ។ សូមប្រើប្រាស់ដោយប្រុងប្រយ័ត្ន~</string>
+    <string name="request_frequent_exit_app">ចាកចេញពីកម្មវិធី</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">ជូនដំណឹងបញ្ជូនសុវត្ថិភាព</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">សេចក្តីណែនាំប្រើប្រាស់</string>
+    <string name="instructions_not_bilibili">កម្មវិធីដែលអ្នកប្រើ មិនមែន Bilibili ឬ bilibili ប៉ុន្តែនៅជាឧបករណ៍ជំនួយរបស់ភាគីទីបី មិនទាក់ទងអ្វីឡើយជាមួយ Bilibili។</string>
+    <string name="instructions_no_authorization">កម្មវិធីនេះមិនទទួលបានការអនុញ្ញាតពី Bilibili ទេ។ Bilibili មិនទទួលខុសត្រូវចំពោះលទ្ធផលណាមួយនៃការប្រើប្រាស់។</string>
+    <string name="instructions_purpose">BILIBILIAS ជាឧបករណ៍កភ្ជាប់វីដេអូ Bilibili របស់ភាគីទីបី ល្អសម្រាប់អ្នកបង្កើតមាតិកាដែលត្រូវការបាញ់វិដេអូក្រៅបណ្ដាញ ឬកាត់ដកវីដេអូដើម។</string>
+    <string name="instructions_no_redistribution">មាតិកាទាំងអស់ដែលបានផ្ទុកតាមរយៈ BILIBILIAS មិនអាចចែកចាយម្តងទៀតបានទេ ទុកធ្វើការលេងតែមាននៅលើឧបករណ៍ឬកាត់វីដេអូ (បើគ្មានការអនុញ្ញាតពីអ្នកនិពន្ធ។)</string>
+    <string name="instructions_self_responsibility">បើអ្នកលើកលែងប្រើតាមច្បាប់ ឬប្រើមិនត្រឹមត្រូវ អ្នកនឹងត្រូវទទួលខុសត្រូវផ្ទាល់ពីលទ្ធផល ហើយ BILIBILIAS ប្រហែលជាមានពេលផ្អាកឬបញ្ឈប់អ្នកប្រើ។</string>
+    <string name="instructions_go_to_bilibili">ទេ ខ្ញុំកំពុងស្វែងរក Bilibili</string>
+    <string name="instructions_i_agree">ខ្ញុំយល់ដឹងនិងយល់ព្រម</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">ស្ថានភាពចូលគណនីអស់សុពលភាព កំពុងពិនិត្យសម្រាប់គណនីសមស្រប។</string>
+    <string name="account_all_invalid">គណនីទាំងអស់អស់សុពលភាព សូមចូលគណនីថ្មីវិញ។</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content"><![CDATA[
+ទោះបីអ្នកបានបដិសេធគោលនយោបាយភាពឯកជនរបស់​ BILIBILIAS ក៏ដោយ App នេះគឺជាកម្មវិធីផ្ទុកវីដេអូ Bilibili របស់ភាគីទីបី។ នៅពេលដែលអ្នកនៅតែប្រើកម្មវិធីនេះ អ្នកត្រូវតែទទួលខុសត្រូវនិងគោរពគោលការណ៍នៃវេទិកា Bilibili។
+ពេលអ្នកប្រើកម្មវិធីនេះ អ្នកនៅតែប្រើដោយផ្ទាល់ Bilibili ដូចដែលអ្នកត្រូវចូលគណនី និងទាញយកមាតិកាវីដេអូ ដែលថាមិនអាចជៀសវាងពីលើកលែងលុបកម្មវិធី។
+ទន្ទឹមនឹងនេះ កម្មវិធីមិនប្រមូលពត៌មានឯកជនផ្ទាល់ខ្លួនរបស់អ្នកឡើយ។ អ្នកអាចប្រើដោយមានទំនុកចិត្ត។<br>
+សូមអានកិច្ចព្រមព្រៀង នៅ៖
+<a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">ប្រមូលសញ្ញា Bilibili</a>.
+    ]]></string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">ណែនាំ</string>
+    <string name="donate_wechat">ងាងវេចាត</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">ជ្រើសវីដេអូដើម្បីនាំចូល</string>
+    <string name="frame_select_method_title">ជ្រើសវិធីនាំចូលវីដេអូ</string>
+    <string name="frame_import_from_downloaded">នាំចូលពីវីដេអូដែលបានទាញ</string>
+    <string name="frame_import_from_local">នាំចូលពីឯកសារក្រុមហ៊ុន</string>
+    <string name="frame_select_video_prompt">សូមជ្រើសវីដេអូនាំចូលនៅជ្រុងខាងលើ</string>
+    <string name="frame_select_output_title">ជ្រើសទីតាំងដាក់ចេញ</string>
+    <string name="frame_select_output_message">សូមជ្រើសថតដាក់រូបភាពជាក្រោម ក៏ដូចជាគួរតែបង្កើតថតថ្មីនីមួយៗសម្រាប់ការនាំចេញដើម្បីជៀសការភាន់ច្រឡំ។</string>
+    <string name="frame_select_location">ជ្រើសទីតាំង</string>
+    <string name="frame_max_fps_format">អតិបរមា៖ %d (រូបភាព/វិនាទី)</string>
+    <string name="frame_fps_unit">រូបភាព/វិនាទី</string>
+    <string name="frame_open_video">បើកវីដេអូ</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">ដំណើរការវីដេអូ</string>
+    <string name="tools_other">ផ្សេងៗ</string>
+    <string name="tools_feedback">មតិរបស់អ្នក</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">សេចក្តីជូនដំណឹង</string>
+    <string name="home_close_announcement">បិទសេចក្តីជូនដំណឹង</string>
+    <string name="home_announcement_close_hint">បិទហើយនឹងមិនបង្ហាញឡើងវិញទេ រហូតដល់មានជូនដំណឹងថ្មី</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">ចាកចេញពីគណនី</string>
+    <string name="setting_logout_confirm">តើអ្នកចង់ចាកចេញពីគណនីទេ? ចាកចេញនឹងលុបព័ត៌មានចូលគណនី។</string>
+    <string name="setting_logging_out">កំពុងចាកចេញ....</string>
+    <string name="setting_naming_convention">ច្បាប់ដាក់ឈ្មោះ</string>
+    <string name="setting_naming_warning">បើអ្នកមិនដឹងពីច្បាប់ដាក់ឈ្មោះ សូមកុំផ្លាស់ប្តូរ ឬចូលទៅឯកសារ។</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">កំណត់បណ្ដាញ</string>
+    <string name="developer_current_line">បណ្ដាញបច្ចុប្បន្ន</string>
+    <string name="developer_line_list">បញ្ជីបណ្ដាញ</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">ចម្លងព័ត៌មានទាំងអស់</string>
+    <string name="version_app_version">កំណែកម្មវិធី</string>
+    <string name="version_app_code">កូដកម្មវិធី</string>
+    <string name="version_app_channel">ឆានែលកម្មវិធី</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">ដំណើរការ</string>
+    <string name="roam_status_checking">កំពុងពិនិត្យ</string>
+    <string name="roam_status_available">អាចប្រើបាន</string>
+    <string name="roam_status_unavailable">មិនអាចប្រើបាន</string>
+    <string name="roam_account_status">ស្ថានភាពគណនី</string>
+    <string name="roam_login_required">មិនទាន់ចូល សូមចូលគណនីមុន</string>
+    <string name="roam_go_login">ទៅចូលគណនី</string>
+    <string name="roam_current_area">តំបន់បច្ចុប្បន្ន</string>
+    <string name="roam_target_area">តំបន់គោលដៅ</string>
+    <string name="roam_mainland_china">ចិន大陆</string>
+    <string name="roam_hk_macau_taiwan">ហុងកុង ម៉ាកាវ តៃវ៉ាន់</string>
+    <string name="roam_test_video">វីដេអូសាកល្បង</string>
+    <string name="roam_can_access">អាចចូលទៅវីដេអូបាន</string>
+    <string name="roam_cannot_access">មិនអាចចូលវីដេអូបាន</string>
+    <string name="roam_speed_test">សាកល្បងល្បឿន</string>
+    <string name="roam_testing">កំពុងសាកល្បង</string>
+    <string name="roam_network_speed_format">ល្បឿនបណ្ដាញ៖ %.2f MB / វិនាទី</string>
+    <string name="roam_test_failed">សាកល្បងបរាជ័យ</string>
+    <string name="roam_select_server">ជ្រើសម៉ាស៊ីនមេ</string>
+    <string name="roam_server_list">បញ្ជីម៉ាស៊ីនមេ</string>
+    <string name="roam_enable_roam">បើកដំណើរការ</string>
+    <string name="roam_area_restriction_notice">ប្រកាសកំណត់តំបន់</string>
+    <string name="roam_area_restriction_message">មាតិកានេះមានកំណត់តំបន់ អ្នកត្រូវបើកដំណើរការដំបូង!</string>
+    <string name="roam_go_to_roam_page">ទៅទំព័រដំណើរការ</string>
+    <string name="roam_load_failed_format">បរាជ័យក្នុងការផ្ទុក៖ %s សូមសាកល្បងក្រោយម្តងទៀត។</string>
+    <string name="roam_pending_review">ពាក្យសុំរបស់អ្នកកំពុងពិនិត្យ សូមរង់ចាំ 通常会在7天内完成审核，有时会更长។</string>
+    <string name="roam_application_content">មាតិកាពាក្យសុំរបស់អ្នក៖</string>
+    <string name="roam_rejected_format">ពាក្យសុំដំណើរការរបស់អ្នកត្រូវបានបដិសេធ មូលហេតុ៖ %s អ្នកអាចកែប្រែហេតុផលនិងដាក់សារឡើងវិញ។</string>
+    <string name="roam_not_applied">អ្នកមិនទាន់ដាក់ពាក្យសុំជាមួយសេវាដំណើរការទេ សូមបំពេញមូលហេតុនិងដាក់សុំ វិញ អ្នកត្រូវលើកសម្ដែងមូលហេតុក្នុងការប្រើសេវា។</string>
+    <string name="roam_application_reason">មូលហេតុសុំ</string>
+    <string name="roam_submit_application">ដាក់ពាក្យសុំ</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">វិភាគវីដេអូ</string>
+    <string name="analysis_download_content">ទាញយកមាតិកា</string>
+    <string name="analysis_download_cover">ទាញយករូបគម្រប</string>
+    <string name="analysis_download_subtitle">ទាញយកអក្សររត់ក្រោម</string>
+    <string name="analysis_download_hint">ការណែនាំការទាញយក</string>
+    <string name="analysis_protected_video">វីដេអូដែលបានការពារ</string>
+    <string name="analysis_cache_config">កំណត់សម្ងាត់</string>
+    <string name="analysis_cache_preference">ចំណូលចិត្តសម្ងាត់</string>
+    <string name="analysis_ai_translation">បកប្រែ AI ដើម</string>
+    <string name="analysis_select_interactive_video">ជ្រើសវីដេអូអន្តរកម្ម</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">គុណភាពវីដេអូ</string>
+    <string name="analysis_audio_quality">គុណភាពសម្លេង</string>
+    <string name="analysis_codec">កូដក</string>
+    <string name="analysis_download_started">ការទាញយកបានចាប់ផ្តើម</string>
+    <string name="analysis_go_to_download_page">ទៅទំព័រទាញយក</string>
+    <string name="analysis_stay_on_current_page">ស្នាក់នៅទំព័របច្ចុប្បន្ន</string>
+    <string name="analysis_ai_beta_notice">អ្នកកំពុងប្រើមុខងារបែតា Bilibili មុខងារទាញយកនេះមិនតំណាងកម្រិតគុណភាពចុងក្រោយ Bilibili។</string>
+    <string name="analysis_select_part_video">ជ្រើសវីដេអូបំណែក</string>
+    <string name="analysis_select_audio_quality">ជ្រើសគុណភាពសម្លេងចំណូលចិត្ត</string>
+    <string name="analysis_select_resolution">ជ្រើសគុណភាពបង្ហាញចំណូលចិត្ត</string>
+    <string name="analysis_select_codec">ជ្រើសកូដកចំណូលចិត្ត</string>
+    <string name="analysis_select_cache_mode">ជ្រើសមូដសំងាត់</string>
+    <string name="analysis_stream_download">ទាញយកស្ទ្រីម</string>
+    <string name="analysis_cover_download">ទាញយករូបគម្រប</string>
+    <string name="analysis_danmaku_download">ទាញយក Danmaku</string>
+    <string name="analysis_select_subtitle_type">ជ្រើសប្រភេទឯកសារអក្សររត់ក្រោម</string>
+    <string name="analysis_bangumi">រឿងកុន</string>
+    <string name="analysis_charged_video">វីដេអូមានកម្រៃ</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">ជ្រើសទាំងអស់</string>
+    <string name="download_deselect_all">បោះបង់ជ្រើសទាំងអស់</string>
+    <string name="download_delete_confirm_title">លុបភារកិច្ចទាញយក</string>
+    <string name="download_delete_confirm_message">តើអ្នកចង់លុបទិន្នន័យនិងឯកសារជ្រើសទេ?</string>
+    <string name="download_caching">កំពុងផ្ទុកវីដេអូ AS...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">លេខ BV</string>
+    <string name="user_freeze_video">បោះពុម្ពវីដេអូនិមួយ</string>
+    <string name="user_freeze_all_videos">បោះពុម្ពវីដេអូទាំងអស់</string>
+    <string name="user_select_freeze_method">សូមជ្រើសវិធីបោះពុម្ព</string>
+    <string name="user_freeze_all_confirm_message">មុខងារនេះសម្រាប់ម្ចាស់គណនី បោះពុម្ពក្រោយអ្នកដទៃមិនអាចផ្ទុកវីដេអូរបស់អ្នក តើចង់បោះពុម្ពឬ?</string>
+    <string name="user_freezing_progress">កំពុងបោះពុម្ព សូមរង់ចាំ...</string>
+    <string name="user_input_bv_prompt">សូមបញ្ចូលលេខ BV វីដេអូនាំបោះពុម្ព បោះពុម្ពរួចអ្នកដទៃមិនអាចផ្ទុកវីដេអូរបស់អ្នក៖</string>
+    <string name="user_freeze_notice">សម្គាល់៖ មុខងារបោះពុម្ពលើសេវា BILIBILIAS ប៉ុណ្ណោះ សេវាភាគីទីបីអាចមិនត្រូវបានទប់ស្កាត់។</string>
+    <string name="user_uploaded_videos">វីដេអូនាំបញ្ចូល</string>
+    <string name="user_likes">ចូលចិត្ត</string>
+    <string name="user_recent">ថ្មីៗ</string>
+    <string name="user_favorites">សំណព្វ</string>
+    <string name="user_bangumi">តាមដានរឿងកុន</string>
+    <string name="user_linked_accounts">គណនីដែលបានភ្ជាប់</string>
+    <string name="user_following">កំពុងតាមដាន</string>
+    <string name="user_fans">អ្នកទូទៅ</string>
+    <string name="user_thumbs_up">ទទួលបានចូលចិត្ត</string>
+    <string name="user_plays">ការមើល</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">ពាក្យសុំប្រើកាសែវីដេអូ</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">កំហុស៖ %s</string>
+    <string name="error_exit_app">ចាកចេញកម្មវិធី</string>
+    <string name="error_copy_error">កំហុសចម្លង</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">ព័ត៌មានទាញយក</string>
+    <string name="download_info_total_size">ទំហំសរុប</string>
+    <string name="download_info_downloaded_size">បានទាញយក</string>
+    <string name="download_info_speed">ល្បឿន</string>
+    <string name="download_info_remaining_time">ពេលនៅសល់</string>
+    <string name="download_info_file_name">ឈ្មោះឯកសារ</string>
+    <string name="download_info_save_path">ទីតាំងរក្សាទុក</string>
+    <string name="download_info_status">ស្ថានភាព</string>
+    <string name="download_info_start_time">ពេលចាប់ផ្តើម</string>
+    <string name="download_info_complete_time">ពេលបញ្ចប់</string>
+    <string name="download_batch_delete_title">លុបភារកិច្ចច្រើនក្រុម</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">កំពុងទាញយក</string>
+    <string name="status_downloading_title">កំពុងទាញយក</string>
+    <string name="status_paused">ផ្អាក</string>
+    <string name="status_completed">បញ្ចប់</string>
+    <string name="status_completed_title">ទាញយករួច</string>
+    <string name="status_failed">បរាជ័យ</string>
+    <string name="status_waiting">កំពុងរង់ចាំ</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">ត្រឡប់</string>
+    <string name="cd_more_actions">អំពើ</string>
+    <string name="cd_download_qrcode">ទាញយក QR</string>
+    <string name="cd_go_scan">ទៅស្កេន</string>
+    <string name="cd_login_qrcode">QR ចូលគណនី</string>
+    <string name="cd_not_agree_privacy">មិនបានយល់ព្រមនឹងគោលនយោបាយភាពឯកជន</string>
+    <string name="cd_avatar">រូបតំណាង</string>
+    <string name="cd_go_to_bilibili">ទៅ Bilibili</string>
+    <string name="cd_web_scan">ស្កេនតាមវេបសាយ</string>
+    <string name="cd_tv_scan">ស្កេនតាមទូរទស្សន៍</string>
+    <string name="cd_server_error_icon">សញ្ញាសម្គាល់កំហុសម៉ាស៊ីនមេ</string>
+</resources>

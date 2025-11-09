@@ -1,0 +1,266 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">Política de Privacidad</string>
+    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS utiliza Firebase para recopilar datos de uso y gestionar la configuración remota, lo que significa que Firebase recopilará información sobre su dispositivo y su uso. Por lo tanto, debe aceptar la siguiente <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">Política de Privacidad</a>\n                            Si no acepta la política anterior, la aplicación podría no recibir la configuración necesaria y no funcionar correctamente. Haga clic en el enlace para <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">leer la política de privacidad</a>.\n                        "]]></string>
+    <string name="common_agree">Aceptar</string>
+    <string name="common_refuse">Rechazar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_confirm">Confirmar</string>
+    <string name="common_delete">Eliminar</string>
+    <string name="common_beta">Beta</string>
+    <string name="common_understand">Entendido</string>
+    <string name="common_ok">OK</string>
+    <string name="common_i_know">Lo sé</string>
+    <string name="common_retry">Reintentar</string>
+    <string name="common_recommend">Recomendar</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="login_qrcode_title">Inicio de sesión con código QR de BiliBili</string>
+    <string name="login_cookie_title">Inicio de sesión con Cookie de BiliBili</string>
+    <string name="login_use_cookie">Iniciar sesión con Cookie</string>
+    <string name="login_after_you_can">Después de iniciar sesión puedes:</string>
+    <string name="login_benefits"><![CDATA[·Soportar vídeos con mayor calidad y tasa de bits\n·Soportar caché de anime\n·Soportar privilegios de gran miembro\n·Soportar servicio de roaming]]></string>
+    <string name="login_agreement_prefix">Iniciar sesión significa que aceptas:</string>
+    <string name="login_bilibili_agreement">·Acuerdo de cuenta y comunidad de BiliBili</string>
+    <string name="login_privacy_agreement">·《Política de Privacidad de BILIBILIAS》</string>
+    <string name="login_disclaimer">·BILIBILIAS no se responsabiliza de las consecuencias del uso</string>
+    <string name="login_special_notice">Especial:\nEste programa no está autorizado por BiliBili. BiliBili no se responsabiliza por las consecuencias del uso de este software.</string>
+    <string name="login_scan_qrcode">Escanear código QR de BiliBili</string>
+    <string name="login_web">Web</string>
+    <string name="login_tv">TV</string>
+    <string name="login_apply_label">Solicitar</string>
+    <string name="login_download_qrcode">Descargar código QR</string>
+    <string name="login_go_scan">Ir a escanear</string>
+    <string name="login_network_error">Error de red, pulse el botón para reintentar.</string>
+    <string name="login_check_privacy_policy">Por favor, marque la política de privacidad</string>
+    <string name="login_cookie_input_label">Cookie (copie directamente desde el navegador, no es necesario decodificar)</string>
+    <string name="login_confirm_account">Confirmar, esta es la cuenta con la que quiero iniciar sesión</string>
+    <string name="login_cookie_warning">Por favor, mantenga segura su Cookie para evitar riesgos de fuga.</string>
+    <string name="login_saving_info">Guardando información de identidad</string>
+    <string name="login_saving_progress">Guardando, por favor no salga...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">Saltar actualización</string>
+    <string name="update_skip_message">Si no desea actualizar ahora, puede saltar esta versión y actualizar en la siguiente.</string>
+    <string name="update_skip_this_version">Saltar esta versión</string>
+    <string name="update_later">Quizás después</string>
+    <string name="update_downloaded">Nueva versión descargada, puede actualizar en cualquier momento.</string>
+    <string name="update_action">Actualizar</string>
+    <string name="update_hint_title">Sugerencia de actualización</string>
+    <string name="update_new_version_format">Se detectó una nueva versión %s disponible.</string>
+    <string name="update_content">Contenido de la actualización:</string>
+    <string name="update_loading">Cargando...</string>
+    <string name="update_go_download">Ir a descargar</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">Probando solicitud...</string>
+    <string name="request_frequent_success">¡Solicitud exitosa, puede usar normalmente!</string>
+    <string name="request_frequent_continue">Volver y continuar</string>
+    <string name="request_frequent_incident">Incidente inesperado</string>
+    <string name="request_frequent_server_busy">El servidor de BiliBili está ocupado o en mantenimiento, inténtelo de nuevo en 10 minutos~</string>
+    <string name="request_frequent_warning">Tenga en cuenta que si sólo usted tiene este problema, es posible que haya activado un control de riesgos. Úselo razonablemente para evitar riesgos para la plataforma y su cuenta.</string>
+    <string name="request_frequent_exit_app">Salir de la aplicación</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">Aviso de control de riesgos</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">Aviso de uso</string>
+    <string name="instructions_not_bilibili">El software que está usando no es BiliBili, sino una herramienta de terceros que no tiene ninguna relación con BiliBili.</string>
+    <string name="instructions_no_authorization">Este software no tiene la autorización de BiliBili, que no se hace responsable de las consecuencias de su uso.</string>
+    <string name="instructions_purpose">BILIBILIAS es una herramienta de caché de vídeo de BiliBili de terceros, diseñada para ayudar a los creadores de contenidos que necesitan reproducir offline o editar vídeos originales.</string>
+    <string name="instructions_no_redistribution">El contenido almacenado en BILIBILIAS no debe redistribuirse. Sólo se permite la reproducción o edición en su propio dispositivo (no se puede re-subir sin permiso del autor).</string>
+    <string name="instructions_self_responsibility">Si viola las reglas o hace un uso indebido, asumirá todas las consecuencias y BILIBILIAS podría prohibirle seguir usando el software.</string>
+    <string name="instructions_go_to_bilibili">No, busco BiliBili</string>
+    <string name="instructions_i_agree">Lo sé y acepto</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">Sesión caducada, comprobando cuentas disponibles.</string>
+    <string name="account_all_invalid">Todas las cuentas han caducado, inicie sesión de nuevo.</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content">Aunque haya rechazado la política de privacidad de BILIBILIAS, esta aplicación es una herramienta de caché de vídeo de BiliBili de terceros. Si continúa usando el software, aún debe cumplir con las políticas de BiliBili.\nEsto se debe a que, durante el uso de esta aplicación, está usando indirectamente BiliBili, y es posible que deba iniciar sesión con su cuenta de BiliBili y obtener contenido de vídeo, algo inevitable salvo que desinstale la app.\nSin embargo, el software no recopilará sus datos personales, puede usarlo con seguridad.&lt;br&gt;\nPara detalles consulte:\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;Resumen de acuerdos de BiliBili&lt;/a&gt;.</string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">Recomendar</string>
+    <string name="donate_wechat">Donación WeChat</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">Seleccionar vídeo de importación</string>
+    <string name="frame_select_method_title">Seleccionar método de importación</string>
+    <string name="frame_import_from_downloaded">Importar desde descargados</string>
+    <string name="frame_import_from_local">Importar desde archivo local</string>
+    <string name="frame_select_video_prompt">Seleccione el vídeo a importar desde la esquina superior derecha</string>
+    <string name="frame_select_output_title">Seleccionar ubicación de exportación</string>
+    <string name="frame_select_output_message">Seleccione la carpeta para exportar las imágenes. Se recomienda crear una carpeta diferente por exportación para evitar confusiones.</string>
+    <string name="frame_select_location">Seleccionar ubicación</string>
+    <string name="frame_max_fps_format">Máx: %d (fps)</string>
+    <string name="frame_fps_unit">fps</string>
+    <string name="frame_open_video">Abrir vídeo</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">Procesamiento de vídeo</string>
+    <string name="tools_other">Otros</string>
+    <string name="tools_feedback">Enviar comentarios</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">Anuncio</string>
+    <string name="home_close_announcement">Cerrar anuncio</string>
+    <string name="home_announcement_close_hint">No se mostrará hasta que haya un nuevo anuncio</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">Cerrar sesión</string>
+    <string name="setting_logout_confirm">¿Cerrar sesión? Esto eliminará la información y liberará recursos.</string>
+    <string name="setting_logging_out">Cerrando sesión....</string>
+    <string name="setting_naming_convention">Convención de nombres</string>
+    <string name="setting_naming_warning">Si no está familiarizado con el uso de la convención de nombres, no cambie y consulte la documentación.</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">Configuración de línea</string>
+    <string name="developer_current_line">Línea actual</string>
+    <string name="developer_line_list">Lista de líneas</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">Copiar toda la información</string>
+    <string name="version_app_version">Versión de la app</string>
+    <string name="version_app_code">Código de la app</string>
+    <string name="version_app_channel">Canal de la app</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">Roaming</string>
+    <string name="roam_status_checking">Comprobando</string>
+    <string name="roam_status_available">Disponible</string>
+    <string name="roam_status_unavailable">No disponible</string>
+    <string name="roam_account_status">Estado de la cuenta</string>
+    <string name="roam_login_required">No ha iniciado sesión, primero conéctese</string>
+    <string name="roam_go_login">Ir a iniciar sesión</string>
+    <string name="roam_current_area">Área actual</string>
+    <string name="roam_target_area">Área objetivo</string>
+    <string name="roam_mainland_china">China continental</string>
+    <string name="roam_hk_macau_taiwan">Hong Kong/Macao/Taiwán</string>
+    <string name="roam_test_video">Vídeo de prueba</string>
+    <string name="roam_can_access">Puede acceder a este vídeo</string>
+    <string name="roam_cannot_access">No puede acceder a este vídeo</string>
+    <string name="roam_speed_test">Prueba de velocidad</string>
+    <string name="roam_testing">Probando</string>
+    <string name="roam_network_speed_format">Velocidad de red: %.2f MB/s</string>
+    <string name="roam_test_failed">Prueba fallida</string>
+    <string name="roam_select_server">Seleccionar servidor</string>
+    <string name="roam_server_list">Lista de servidores</string>
+    <string name="roam_enable_roam">Habilitar roaming</string>
+    <string name="roam_area_restriction_notice">Aviso de restricción geográfica</string>
+    <string name="roam_area_restriction_message">Este contenido está restringido geográficamente. ¡Debe habilitar el roaming para continuar!</string>
+    <string name="roam_go_to_roam_page">Ir a la página de roaming</string>
+    <string name="roam_load_failed_format">Error al cargar: %s. Intente más tarde.</string>
+    <string name="roam_pending_review">Su solicitud está en revisión. Por favor espere, normalmente será revisada en 7 días, a veces más.</string>
+    <string name="roam_application_content">El contenido de su solicitud es:</string>
+    <string name="roam_rejected_format">Su solicitud de servicio de roaming ha sido rechazada. Motivo: %s. Puede modificar la razón y volver a solicitar.</string>
+    <string name="roam_not_applied">Aún no ha solicitado el servicio de roaming. Describa la razón de uso, solo se aprobarán solicitudes razonables.</string>
+    <string name="roam_application_reason">Motivo de la solicitud</string>
+    <string name="roam_submit_application">Enviar solicitud</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">Analizar vídeo</string>
+    <string name="analysis_download_content">Descargar contenido</string>
+    <string name="analysis_download_cover">Descargar portada</string>
+    <string name="analysis_download_subtitle">Descargar subtítulos</string>
+    <string name="analysis_download_hint">Sugerencia de descarga</string>
+    <string name="analysis_protected_video">Vídeo protegido</string>
+    <string name="analysis_cache_config">Configuración de caché</string>
+    <string name="analysis_cache_preference">Preferencia de caché</string>
+    <string name="analysis_ai_translation">Traducción original de IA</string>
+    <string name="analysis_select_interactive_video">Seleccionar vídeo interactivo</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">Calidad de vídeo</string>
+    <string name="analysis_audio_quality">Calidad de audio</string>
+    <string name="analysis_codec">Codec</string>
+    <string name="analysis_download_started">Descarga iniciada</string>
+    <string name="analysis_go_to_download_page">Ir a la página de descargas</string>
+    <string name="analysis_stay_on_current_page">Quedarse en la página actual</string>
+    <string name="analysis_ai_beta_notice">Está usando una función Beta de BiliBili. El resultado de la descarga no representa la calidad final de BiliBili.</string>
+    <string name="analysis_select_part_video">Seleccionar vídeo por partes</string>
+    <string name="analysis_select_audio_quality">Seleccionar calidad de audio preferida</string>
+    <string name="analysis_select_resolution">Seleccionar resolución preferida</string>
+    <string name="analysis_select_codec">Seleccionar codec preferido</string>
+    <string name="analysis_select_cache_mode">Seleccionar modo de caché</string>
+    <string name="analysis_stream_download">Descarga streaming</string>
+    <string name="analysis_cover_download">Descarga de portada</string>
+    <string name="analysis_danmaku_download">Descargar comentarios Danmaku</string>
+    <string name="analysis_select_subtitle_type">Seleccionar tipo de archivo de subtítulo</string>
+    <string name="analysis_bangumi">Anime</string>
+    <string name="analysis_charged_video">Vídeo de pago</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">Seleccionar todo</string>
+    <string name="download_deselect_all">Invertir selección</string>
+    <string name="download_delete_confirm_title">Eliminar descarga</string>
+    <string name="download_delete_confirm_message">¿Eliminar la tarea seleccionada y los archivos?</string>
+    <string name="download_caching">Caché de vídeo AS...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">Número BV</string>
+    <string name="user_freeze_video">Congelar un vídeo</string>
+    <string name="user_freeze_all_videos">Congelar todos los vídeos</string>
+    <string name="user_select_freeze_method">Seleccione método de congelación</string>
+    <string name="user_freeze_all_confirm_message">Función solo para creadores. Si congela todos los vídeos, otros usuarios no podrán guardar sus vídeos, ¿continuar?</string>
+    <string name="user_freezing_progress">Congelando, por favor espere...</string>
+    <string name="user_input_bv_prompt">Ingrese el número BV del vídeo a congelar. Después de eso, otros usuarios no podrán guardar su vídeo:</string>
+    <string name="user_freeze_notice">Nota: el bloqueo de BILIBILIAS solo restringe el almacenamiento aquí, otros softwares de terceros pueden ignorarlo.</string>
+    <string name="user_uploaded_videos">Vídeos subidos</string>
+    <string name="user_likes">Me gusta</string>
+    <string name="user_recent">Reciente</string>
+    <string name="user_favorites">Favoritos</string>
+    <string name="user_bangumi">Siguiendo anime</string>
+    <string name="user_linked_accounts">Cuentas vinculadas</string>
+    <string name="user_following">Siguiendo</string>
+    <string name="user_fans">Fans</string>
+    <string name="user_thumbs_up">Me gusta recibidos</string>
+    <string name="user_plays">Reproducciones</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">Solicitar uso de caché de vídeo</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">Error：%s</string>
+    <string name="error_exit_app">Salir de la app</string>
+    <string name="error_copy_error">Error al copiar</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">Información de descarga</string>
+    <string name="download_info_total_size">Tamaño total</string>
+    <string name="download_info_downloaded_size">Descargado</string>
+    <string name="download_info_speed">Velocidad</string>
+    <string name="download_info_remaining_time">Tiempo restante</string>
+    <string name="download_info_file_name">Nombre del archivo</string>
+    <string name="download_info_save_path">Ruta de guardado</string>
+    <string name="download_info_status">Estado</string>
+    <string name="download_info_start_time">Hora de inicio</string>
+    <string name="download_info_complete_time">Hora de finalización</string>
+    <string name="download_batch_delete_title">Eliminar tareas en lote</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">Descargando</string>
+    <string name="status_downloading_title">Descarga en curso</string>
+    <string name="status_paused">Pausado</string>
+    <string name="status_completed">Completado</string>
+    <string name="status_completed_title">Descarga completada</string>
+    <string name="status_failed">Fallido</string>
+    <string name="status_waiting">En espera</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Atrás</string>
+    <string name="cd_more_actions">Acciones</string>
+    <string name="cd_download_qrcode">Descargar código QR</string>
+    <string name="cd_go_scan">Ir a escanear</string>
+    <string name="cd_login_qrcode">Código QR de inicio de sesión</string>
+    <string name="cd_not_agree_privacy">No se aceptó la política de privacidad</string>
+    <string name="cd_avatar">Avatar</string>
+    <string name="cd_go_to_bilibili">Ir a BiliBili</string>
+    <string name="cd_web_scan">Escaneo web</string>
+    <string name="cd_tv_scan">Escaneo TV</string>
+    <string name="cd_server_error_icon">Icono de error de servidor</string>
+</resources>

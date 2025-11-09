@@ -1,0 +1,277 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">Политика конфиденциальности</string>
+    <string name="app_privacy_policy_tip">
+        <![CDATA[
+\nBILIBILIAS использует Firebase для сбора статистики использования и удалённой конфигурации, что означает, что Firebase будет собирать часть информации о вашем устройстве и использовании. Поэтому вам необходимо согласиться с <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">Политикой конфиденциальности</a>, приведённой ниже.
+Если вы не согласны с указанной политикой конфиденциальности, приложение, возможно, не сможет принимать новую конфигурацию и корректно работать. Перейдите по ссылке для <a href="https://bilibilias.imcys.com/policy/privacy_policy.html">ознакомления с политикой конфиденциальности</a>.
+        ]]>
+    </string>
+    <string name="common_agree">Согласиться</string>
+    <string name="common_refuse">Отклонить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_confirm">Подтвердить</string>
+    <string name="common_delete">Удалить</string>
+    <string name="common_beta">Бета</string>
+    <string name="common_understand">Понял</string>
+    <string name="common_ok">Ок</string>
+    <string name="common_i_know">Я понял</string>
+    <string name="common_retry">Повторить</string>
+    <string name="common_recommend">Рекомендовать</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">Вход</string>
+    <string name="login_qrcode_title">Вход по QR-коду Bilibili</string>
+    <string name="login_cookie_title">Вход по cookie Bilibili</string>
+    <string name="login_use_cookie">Войти с помощью cookie</string>
+    <string name="login_after_you_can">После входа вы сможете:</string>
+    <string name="login_benefits"><![CDATA[·Поддержка видео с более высоким качеством и битрейтом\n·Поддержка кэширования аниме\n·Возможность использования премиальных прав\n·Возможность пользоваться услугой роуминга]]></string>
+    <string name="login_agreement_prefix">Вход означает согласие:</string>
+    <string name="login_bilibili_agreement">·Соглашение по аккаунту и сообществу Bilibili</string>
+    <string name="login_privacy_agreement">·《Соглашение о конфиденциальности BILIBILIAS》</string>
+    <string name="login_disclaimer">·BILIBILIAS не несёт ответственности за любые последствия использования</string>
+    <string name="login_special_notice">Особое примечание:\nЭто приложение не авторизовано Bilibili. Bilibili не несет ответственности за последствия использования этого приложения.</string>
+    <string name="login_scan_qrcode">Вход по QR-коду Bilibili</string>
+    <string name="login_web">Веб</string>
+    <string name="login_tv">ТВ</string>
+    <string name="login_apply_label">Подать заявку</string>
+    <string name="login_download_qrcode">Скачать QR-код</string>
+    <string name="login_go_scan">Перейти к сканированию</string>
+    <string name="login_network_error">Ошибка сети, нажмите кнопку для повторной попытки.</string>
+    <string name="login_check_privacy_policy">Пожалуйста, отметьте согласие с политикой конфиденциальности ниже</string>
+    <string name="login_cookie_input_label">Cookie (скопируйте напрямую из браузера, декодировать не нужно)</string>
+    <string name="login_confirm_account">Подтвердить, это аккаунт, с которым хочу войти</string>
+    <string name="login_cookie_warning">Пожалуйста, храните ваши cookie в безопасности, чтобы избежать утечек.</string>
+    <string name="login_saving_info">Сохранение информации о личности</string>
+    <string name="login_saving_progress">Сохраняется, пожалуйста, не выходите...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">Пропустить обновление</string>
+    <string name="update_skip_message">Если вы не хотите обновлять сейчас, вы можете пропустить этот релиз и обновиться позже.</string>
+    <string name="update_skip_this_version">Пропустить эту версию</string>
+    <string name="update_later">Позже</string>
+    <string name="update_downloaded">Новая версия уже загружена и готова к обновлению.</string>
+    <string name="update_action">Обновить</string>
+    <string name="update_hint_title">Подсказка об обновлении</string>
+    <string name="update_new_version_format">Доступна новая версия %s.</string>
+    <string name="update_content">Содержание обновления:</string>
+    <string name="update_loading">Загрузка...</string>
+    <string name="update_go_download">Перейти к загрузке</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">Проверка запроса...</string>
+    <string name="request_frequent_success">Запрос выполнен успешно, можете пользоваться!</string>
+    <string name="request_frequent_continue">Назад для продолжения</string>
+    <string name="request_frequent_incident">Неожиданное событие</string>
+    <string name="request_frequent_server_busy">Серверы Bilibili сейчас перегружены или находятся на обслуживании, попробуйте через 10 минут~</string>
+    <string name="request_frequent_warning">Если только у вас подобная ситуация — возможно, активирован контроль рисков. Пользуйтесь разумно, чтобы не навредить аккаунту или платформе~</string>
+    <string name="request_frequent_exit_app">Выйти из приложения</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">Уведомление о рисках</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">Инструкция по использованию</string>
+    <string name="instructions_not_bilibili">Используемое ПО не является Bilibili/bilibili, а представляет собой стороннюю утилиту и не связано с Bilibili.</string>
+    <string name="instructions_no_authorization">Это ПО не авторизовано Bilibili, Bilibili не несёт ответственности за последствия использования данного ПО.</string>
+    <string name="instructions_purpose">BILIBILIAS — сторонний инструмент кэширования видео с Bilibili, предназначенный для помощи авторам, нуждающимся в офлайн-проигрывании или редактировании своих видео.</string>
+    <string name="instructions_no_redistribution">Контент, загруженный через BILIBILIAS, не подлежит повторному распространению, его разрешено использовать только на вашем собственном устройстве или для монтажа видео (без разрешения автора нельзя загружать напрямую).</string>
+    <string name="instructions_self_responsibility">Если вы нарушаете правила или используете приложение в незаконных целях, вся ответственность ложится на вас, а BILIBILIAS может заблокировать вам доступ.</string>
+    <string name="instructions_go_to_bilibili">Нет, я искал Bilibili</string>
+    <string name="instructions_i_agree">Я ознакомлен(а) и согласен(на)</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">Сессия устарела, проверяем доступные входы.</string>
+    <string name="account_all_invalid">Все аккаунты недействительны, повторите вход.</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content"><![CDATA[
+Несмотря на то, что вы отказались от политики конфиденциальности BILIBILIAS, это сторонний инструмент кэширования видео от Bilibili. Если вы продолжаете использовать приложение, обязаны выполнять требования Bilibili.
+Потому что даже при использовании приложения вы всё ещё косвенно пользуетесь Bilibili, и для доступа к видео придётся входить под своим аккаунтом. Это невозможно избежать, кроме как удалить приложение.
+Однако приложение не будет собирать ваши личные данные, вы можете не волноваться.<br>
+Полные условия смотрите по ссылке:
+<a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html">Cоглашения Bilibili</a>.
+    ]]></string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">Рекомендовать</string>
+    <string name="donate_wechat">Пожертвование через WeChat</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">Выберите видео для импорта</string>
+    <string name="frame_select_method_title">Выберите способ импорта видео</string>
+    <string name="frame_import_from_downloaded">Импортировать из загруженного</string>
+    <string name="frame_import_from_local">Импортировать из локального файла</string>
+    <string name="frame_select_video_prompt">Выберите видео для импорта в верхнем правом углу</string>
+    <string name="frame_select_output_title">Выберите папку для экспорта</string>
+    <string name="frame_select_output_message">Пожалуйста, выберите папку, куда сохранить извлечённые кадры, желательно для каждого экспорта использовать отдельную папку, чтобы избежать путаницы.</string>
+    <string name="frame_select_location">Выбор папки</string>
+    <string name="frame_max_fps_format">Максимум: %d (кадр/сек)</string>
+    <string name="frame_fps_unit">кадр/сек</string>
+    <string name="frame_open_video">Открыть видео</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">Обработка видео</string>
+    <string name="tools_other">Другое</string>
+    <string name="tools_feedback">Обратная связь</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">Объявление</string>
+    <string name="home_close_announcement">Закрыть объявление</string>
+    <string name="home_announcement_close_hint">После закрытия не будет отображаться до публикации нового объявления</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">Выйти</string>
+    <string name="setting_logout_confirm">Выйти из аккаунта? Это удалит вход и освободит аккаунт.</string>
+    <string name="setting_logging_out">Выход....</string>
+    <string name="setting_naming_convention">Правила номинации</string>
+    <string name="setting_naming_warning">Если вы не знаете, как использовать правила, изменяйте осторожно или читайте руководство.</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">Конфигурация линии</string>
+    <string name="developer_current_line">Текущая линия</string>
+    <string name="developer_line_list">Список линий</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">Копировать всю информацию</string>
+    <string name="version_app_version">Версия приложения</string>
+    <string name="version_app_code">Код приложения</string>
+    <string name="version_app_channel">Канал приложения</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">Роуминг</string>
+    <string name="roam_status_checking">Проверка</string>
+    <string name="roam_status_available">Доступно</string>
+    <string name="roam_status_unavailable">Недоступно</string>
+    <string name="roam_account_status">Статус аккаунта</string>
+    <string name="roam_login_required">Не выполнен вход, сначала войдите</string>
+    <string name="roam_go_login">Перейти к входу</string>
+    <string name="roam_current_area">Текущий регион</string>
+    <string name="roam_target_area">Целевой регион</string>
+    <string name="roam_mainland_china">Китай (материк)</string>
+    <string name="roam_hk_macau_taiwan">Гонконг, Макао, Тайвань</string>
+    <string name="roam_test_video">Тестовое видео</string>
+    <string name="roam_can_access">Это видео доступно</string>
+    <string name="roam_cannot_access">Это видео недоступно</string>
+    <string name="roam_speed_test">Тест скорости</string>
+    <string name="roam_testing">Проверка</string>
+    <string name="roam_network_speed_format">Скорость сети: %.2f МБ/с</string>
+    <string name="roam_test_failed">Тест не удался</string>
+    <string name="roam_select_server">Выберите сервер</string>
+    <string name="roam_server_list">Список серверов</string>
+    <string name="roam_enable_roam">Включить роуминг</string>
+    <string name="roam_area_restriction_notice">Уведомление о региональных ограничениях</string>
+    <string name="roam_area_restriction_message">Этот контент ограничен по региону, включите роуминг, чтобы продолжить!</string>
+    <string name="roam_go_to_roam_page">Перейти на страницу роуминга</string>
+    <string name="roam_load_failed_format">Ошибка загрузки: %s, попробуйте позже.</string>
+    <string name="roam_pending_review">Ваша заявка проверяется, пожалуйста ждите. Обычно это занимает до 7 дней, иногда дольше.</string>
+    <string name="roam_application_content">Содержание вашей заявки:</string>
+    <string name="roam_rejected_format">Заявка на роуминг отклонена, причина: %s. Можно скорректировать причину и подать снова.</string>
+    <string name="roam_not_applied">Вы ещё не подали заявку на роуминг. Опишите причину и отправьте заявку, только обоснованные заявки будут одобрены.</string>
+    <string name="roam_application_reason">Причина заявки</string>
+    <string name="roam_submit_application">Отправить заявку</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">Анализировать видео</string>
+    <string name="analysis_download_content">Скачать контент</string>
+    <string name="analysis_download_cover">Скачать обложку</string>
+    <string name="analysis_download_subtitle">Скачать субтитры</string>
+    <string name="analysis_download_hint">Подсказка для загрузки</string>
+    <string name="analysis_protected_video">Защищённое видео</string>
+    <string name="analysis_cache_config">Настройки кэша</string>
+    <string name="analysis_cache_preference">Предпочтение кэша</string>
+    <string name="analysis_ai_translation">Перевод с помощью ИИ</string>
+    <string name="analysis_select_interactive_video">Выбрать интерактивное видео</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">Качество видео</string>
+    <string name="analysis_audio_quality">Качество звука</string>
+    <string name="analysis_codec">Кодек</string>
+    <string name="analysis_download_started">Загрузка начата</string>
+    <string name="analysis_go_to_download_page">Перейти к странице загрузки</string>
+    <string name="analysis_stay_on_current_page">Остаться на текущей странице</string>
+    <string name="analysis_ai_beta_notice">Вы используете экспериментальную функцию Bilibili. Загруженный результат не является финальным качеством Bilibili.</string>
+    <string name="analysis_select_part_video">Выбрать часть видео</string>
+    <string name="analysis_select_audio_quality">Выбрать качество звука</string>
+    <string name="analysis_select_resolution">Выбрать разрешение</string>
+    <string name="analysis_select_codec">Выбрать кодек</string>
+    <string name="analysis_select_cache_mode">Выбрать режим кэширования</string>
+    <string name="analysis_stream_download">Загрузка потокового видео</string>
+    <string name="analysis_cover_download">Загрузка обложки</string>
+    <string name="analysis_danmaku_download">Загрузка комментариев Danmaku</string>
+    <string name="analysis_select_subtitle_type">Выберите тип файла субтитров</string>
+    <string name="analysis_bangumi">Аниме</string>
+    <string name="analysis_charged_video">Платное видео</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">Выбрать всё</string>
+    <string name="download_deselect_all">Отменить выбор</string>
+    <string name="download_delete_confirm_title">Удалить задачу загрузки</string>
+    <string name="download_delete_confirm_message">Вы действительно хотите удалить выбранные задачи и файлы?</string>
+    <string name="download_caching">Видео AS кэшируется...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">BV-номер</string>
+    <string name="user_freeze_video">Заморозить видео</string>
+    <string name="user_freeze_all_videos">Заморозить все видео</string>
+    <string name="user_select_freeze_method">Выберите способ заморозки</string>
+    <string name="user_freeze_all_confirm_message">Эта функция для владельцев каналов. После заморозки другие пользователи не смогут кэшировать ваши видео. Подтвердить?</string>
+    <string name="user_freezing_progress">Заморозка, подождите...</string>
+    <string name="user_input_bv_prompt">Введите BV-номер видео для заморозки. После этого другие пользователи не смогут кэшировать ваше видео:</string>
+    <string name="user_freeze_notice">Внимание: функция заморозки действует только для пользователей BILIBILIAS и не блокирует другие сторонние инструменты.</string>
+    <string name="user_uploaded_videos">Загруженные видео</string>
+    <string name="user_likes">Лайки</string>
+    <string name="user_recent">Недавние</string>
+    <string name="user_favorites">Избранное</string>
+    <string name="user_bangumi">Аниме в подписке</string>
+    <string name="user_linked_accounts">Связанные аккаунты</string>
+    <string name="user_following">Подписки</string>
+    <string name="user_fans">Фанаты</string>
+    <string name="user_thumbs_up">Получено лайков</string>
+    <string name="user_plays">Просмотры</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">Подать заявку на использование кэша видео</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">Ошибка: %s</string>
+    <string name="error_exit_app">Выйти из приложения</string>
+    <string name="error_copy_error">Ошибка копирования</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">Информация о загрузке</string>
+    <string name="download_info_total_size">Общий размер</string>
+    <string name="download_info_downloaded_size">Загружено</string>
+    <string name="download_info_speed">Скорость</string>
+    <string name="download_info_remaining_time">Оставшееся время</string>
+    <string name="download_info_file_name">Имя файла</string>
+    <string name="download_info_save_path">Путь сохранения</string>
+    <string name="download_info_status">Статус</string>
+    <string name="download_info_start_time">Время начала</string>
+    <string name="download_info_complete_time">Время завершения</string>
+    <string name="download_batch_delete_title">Удалить задачи скопом</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">Загрузка</string>
+    <string name="status_downloading_title">Идёт загрузка</string>
+    <string name="status_paused">Пауза</string>
+    <string name="status_completed">Готово</string>
+    <string name="status_completed_title">Загрузка завершена</string>
+    <string name="status_failed">Ошибка</string>
+    <string name="status_waiting">Ожидание</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Назад</string>
+    <string name="cd_more_actions">Действия</string>
+    <string name="cd_download_qrcode">Скачать QR-код</string>
+    <string name="cd_go_scan">Перейти к сканированию</string>
+    <string name="cd_login_qrcode">QR-код для входа</string>
+    <string name="cd_not_agree_privacy">Не согласованная политика конфиденциальности</string>
+    <string name="cd_avatar">Аватар</string>
+    <string name="cd_go_to_bilibili">Перейти на Bilibili</string>
+    <string name="cd_web_scan">Веб-сканирование</string>
+    <string name="cd_tv_scan">Сканирование на ТВ</string>
+    <string name="cd_server_error_icon">Иконка ошибки сервера</string>
+</resources>

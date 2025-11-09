@@ -1,0 +1,266 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">プライバシーポリシー</string>
+    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIASはFirebaseを利用して使用統計データやリモート設定の配信を行っています。これによりFirebaseは一部の端末情報や利用状況を収集するため、以下の<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">「プライバシーポリシー」</a>に同意する必要があります。\n                            上記のプライバシーポリシーに同意されない場合、アプリが設定を受け取れず、正常に動作しない可能性があります。詳細はリンク先より<a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">プライバシーポリシーを読む</a>をご覧ください。\n                        "]]></string>
+    <string name="common_agree">同意する</string>
+    <string name="common_refuse">拒否する</string>
+    <string name="common_cancel">キャンセル</string>
+    <string name="common_confirm">確認</string>
+    <string name="common_delete">削除</string>
+    <string name="common_beta">ベータ</string>
+    <string name="common_understand">理解した</string>
+    <string name="common_ok">OK</string>
+    <string name="common_i_know">承知しました</string>
+    <string name="common_retry">再試行</string>
+    <string name="common_recommend">おすすめ</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">ログイン</string>
+    <string name="login_qrcode_title">ビリビリQRコードログイン</string>
+    <string name="login_cookie_title">ビリビリCookieログイン</string>
+    <string name="login_use_cookie">Cookieでログイン</string>
+    <string name="login_after_you_can">ログイン後できること：</string>
+    <string name="login_benefits"><![CDATA[·より高い画質・高ビットレートの動画対応\n·アニメのキャッシュ対応\n·プレミアム会員特典の使用\n·ローミングサービスの利用]]></string>
+    <string name="login_agreement_prefix">ログインは以下への同意を意味します：</string>
+    <string name="login_bilibili_agreement">·ビリビリアカウントとコミュニティに関する規約</string>
+    <string name="login_privacy_agreement">·《BILIBILIASプライバシーポリシー》</string>
+    <string name="login_disclaimer">·使用による一切の結果についてBILIBILIASは責任を負いません</string>
+    <string name="login_special_notice">特記：\n本ソフトウェアはビリビリの認可を受けていません。本ソフトウェアの使用によるあらゆる結果についてビリビリは一切責任を負いません。</string>
+    <string name="login_scan_qrcode">ビリビリ QRコードログイン</string>
+    <string name="login_web">ウェブ</string>
+    <string name="login_tv">TV</string>
+    <string name="login_apply_label">申請</string>
+    <string name="login_download_qrcode">QRコードをダウンロード</string>
+    <string name="login_go_scan">スキャンへ</string>
+    <string name="login_network_error">ネットワーク異常です。ボタンを押して再試行してください。</string>
+    <string name="login_check_privacy_policy">下のプライバシーポリシーにチェックを入れてください</string>
+    <string name="login_cookie_input_label">Cookie（ブラウザからそのままコピー、デコード不要）</string>
+    <string name="login_confirm_account">これは自分のログインアカウントです。確認してください</string>
+    <string name="login_cookie_warning">Cookieは大切に保管し、漏洩リスクを避けてください。</string>
+    <string name="login_saving_info">ID情報を保存しています</string>
+    <string name="login_saving_progress">保存中、終了しないでください...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">アップデートをスキップ</string>
+    <string name="update_skip_message">今はアップデートしたくない場合、このバージョンをスキップして、次回のバージョンで更新できます。</string>
+    <string name="update_skip_this_version">このバージョンをスキップ</string>
+    <string name="update_later">後で</string>
+    <string name="update_downloaded">新しいバージョンがダウンロードされました。いつでもアップデートできます。</string>
+    <string name="update_action">アップデート</string>
+    <string name="update_hint_title">更新のお知らせ</string>
+    <string name="update_new_version_format">新しいバージョン %s が利用可能です。</string>
+    <string name="update_content">更新内容：</string>
+    <string name="update_loading">読み込み中...</string>
+    <string name="update_go_download">ダウンロードへ</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">リクエストテスト中...</string>
+    <string name="request_frequent_success">リクエスト成功！正常にご利用いただけます！</string>
+    <string name="request_frequent_continue">戻って続ける</string>
+    <string name="request_frequent_incident">突発的な事件</string>
+    <string name="request_frequent_server_busy">ビリビリのサーバーが混雑またはメンテナンス中のため、今しばらくお待ちください。10分後にもう一度試してください~</string>
+    <string name="request_frequent_warning">ご注意ください。もしあなただけがこの状況の場合、ご自身がリスクコントロールに引っかかっている可能性があります。無理な使用は避けてください~</string>
+    <string name="request_frequent_exit_app">アプリを終了</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">リスクコントロール通知</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">ご利用案内</string>
+    <string name="instructions_not_bilibili">ご利用中のソフトウェアはビリビリ/bilibiliではなく、その補助を目的とした第三者ツールであり、ビリビリとは一切関係ありません。</string>
+    <string name="instructions_no_authorization">このソフトウェアはビリビリの許可を受けておらず、ビリビリはその使用に起因するいかなる結果にも一切責任を負いません。</string>
+    <string name="instructions_purpose">BILIBILIASは第三者によるBilibili動画キャッシュツールであり、オフライン再生や動画切り抜きなどを必要とするクリエイター向けです。</string>
+    <string name="instructions_no_redistribution">BILIBILIASでキャッシュしたコンテンツの再配布は禁止されています。自身の端末での再生または切り抜き動画の制作に限ります（著作者の許可なく転載不可）。</string>
+    <string name="instructions_self_responsibility">規約違反や不正利用の場合、すべての責任はご自身で負担するものとし、BILIBILIASはご利用を禁止する場合があります。</string>
+    <string name="instructions_go_to_bilibili">いいえ、ビリビリを探しています</string>
+    <string name="instructions_i_agree">理解し同意します</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">ログイン状態が無効です。有効なログインを確認中。</string>
+    <string name="account_all_invalid">すべてのアカウントが無効です。再度ログインしてください。</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content">BILIBILIASのプライバシーポリシーに拒否された場合でも、このアプリは第三者によるBilibili動画キャッシュツールです。このソフトを使い続ける場合、ビリビリの関連ポリシーを遵守する必要があります。\nAPPの利用中は間接的にビリビリを利用することになり、アカウントログインや動画取得が避けられません。これが嫌な場合はアンインストールしてください。\nなお、ご利用時に個人情報は収集されませんので、ご安心ください。&lt;br&gt;\n詳細な規約は：\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;ビリビリ規約一覧&lt;/a&gt;をご確認ください。</string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">オススメ</string>
+    <string name="donate_wechat">WeChat寄付</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">インポートする動画を選択</string>
+    <string name="frame_select_method_title">インポート方法を選択</string>
+    <string name="frame_import_from_downloaded">ダウンロード済みからインポート</string>
+    <string name="frame_import_from_local">ローカルファイルからインポート</string>
+    <string name="frame_select_video_prompt">右上から動画を選択してください</string>
+    <string name="frame_select_output_title">出力先を選択</string>
+    <string name="frame_select_output_message">フレーム画像の出力先を選んでください。エクスポート混同を避けるため、エクスポートごとに別フォルダの作成を推奨します。</string>
+    <string name="frame_select_location">場所を選択</string>
+    <string name="frame_max_fps_format">最大：%d （FPS）</string>
+    <string name="frame_fps_unit">FPS</string>
+    <string name="frame_open_video">動画を開く</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">動画処理</string>
+    <string name="tools_other">その他</string>
+    <string name="tools_feedback">フィードバック</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">お知らせ</string>
+    <string name="home_close_announcement">お知らせを閉じる</string>
+    <string name="home_announcement_close_hint">新しいお知らせが公開されるまで非表示にします</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">ログアウト</string>
+    <string name="setting_logout_confirm">ログアウトしますか？ログイン情報が消去され、利用解除されます。</string>
+    <string name="setting_logging_out">ログアウト中....</string>
+    <string name="setting_naming_convention">命名規則</string>
+    <string name="setting_naming_warning">命名規則の使い方が分からない場合は編集せず、ドキュメントをご覧ください。</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">ライン設定</string>
+    <string name="developer_current_line">現在のライン</string>
+    <string name="developer_line_list">ラインリスト</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">すべてコピー</string>
+    <string name="version_app_version">アプリバージョン</string>
+    <string name="version_app_code">アプリコード</string>
+    <string name="version_app_channel">アプリチャンネル</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">ローミング</string>
+    <string name="roam_status_checking">確認中</string>
+    <string name="roam_status_available">利用可能</string>
+    <string name="roam_status_unavailable">利用不可</string>
+    <string name="roam_account_status">アカウント状態</string>
+    <string name="roam_login_required">未ログイン。先にログインしてください</string>
+    <string name="roam_go_login">ログインページへ</string>
+    <string name="roam_current_area">現在の地域</string>
+    <string name="roam_target_area">ターゲット地域</string>
+    <string name="roam_mainland_china">中国本土</string>
+    <string name="roam_hk_macau_taiwan">香港・マカオ・台湾地域</string>
+    <string name="roam_test_video">テスト動画</string>
+    <string name="roam_can_access">この動画は視聴可能です</string>
+    <string name="roam_cannot_access">この動画は視聴できません</string>
+    <string name="roam_speed_test">速度テスト</string>
+    <string name="roam_testing">テスト中</string>
+    <string name="roam_network_speed_format">ネット速度：%.2f MB/s</string>
+    <string name="roam_test_failed">テスト失敗</string>
+    <string name="roam_select_server">サーバーを選択</string>
+    <string name="roam_server_list">サーバーリスト</string>
+    <string name="roam_enable_roam">ローミング有効化</string>
+    <string name="roam_area_restriction_notice">地域制限通知</string>
+    <string name="roam_area_restriction_message">このコンテンツには地域制限がかかっています。ローミングを有効化する必要があります！</string>
+    <string name="roam_go_to_roam_page">ローミングページへ</string>
+    <string name="roam_load_failed_format">読み込み失敗：%s。しばらくして再試行してください。</string>
+    <string name="roam_pending_review">審査中です。完了までしばらくお待ちください。通常7日以内ですが、長引く場合もあります。</string>
+    <string name="roam_application_content">申請内容：</string>
+    <string name="roam_rejected_format">ローミング申請は却下されました。理由：%s。申請理由を修正して再申請できます。</string>
+    <string name="roam_not_applied">まだローミングサービスを申請していません。理由を記入のうえ申請してください。合理的な申請のみ承認されます。</string>
+    <string name="roam_application_reason">申請理由</string>
+    <string name="roam_submit_application">申請送信</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">動画解析</string>
+    <string name="analysis_download_content">コンテンツをダウンロード</string>
+    <string name="analysis_download_cover">カバー画像ダウンロード</string>
+    <string name="analysis_download_subtitle">字幕ダウンロード</string>
+    <string name="analysis_download_hint">ダウンロードヒント</string>
+    <string name="analysis_protected_video">保護された動画</string>
+    <string name="analysis_cache_config">キャッシュ設定</string>
+    <string name="analysis_cache_preference">キャッシュ優先</string>
+    <string name="analysis_ai_translation">AI音声翻訳</string>
+    <string name="analysis_select_interactive_video">インタラクティブ動画選択</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">動画品質</string>
+    <string name="analysis_audio_quality">音質</string>
+    <string name="analysis_codec">コーデック</string>
+    <string name="analysis_download_started">ダウンロード開始</string>
+    <string name="analysis_go_to_download_page">ダウンロードページへ</string>
+    <string name="analysis_stay_on_current_page">現在のページにとどまる</string>
+    <string name="analysis_ai_beta_notice">ビリビリのベータ機能を使用しています。本アプリのダウンロード成果物は最終品質を保証しません。</string>
+    <string name="analysis_select_part_video">パート動画選択</string>
+    <string name="analysis_select_audio_quality">優先音質選択</string>
+    <string name="analysis_select_resolution">優先解像度選択</string>
+    <string name="analysis_select_codec">優先コーデック選択</string>
+    <string name="analysis_select_cache_mode">キャッシュモード選択</string>
+    <string name="analysis_stream_download">ストリーミングダウンロード</string>
+    <string name="analysis_cover_download">カバー画像ダウンロード</string>
+    <string name="analysis_danmaku_download">弾幕ダウンロード</string>
+    <string name="analysis_select_subtitle_type">字幕ファイルタイプ選択</string>
+    <string name="analysis_bangumi">アニメ</string>
+    <string name="analysis_charged_video">課金動画</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">全選択</string>
+    <string name="download_deselect_all">選択解除</string>
+    <string name="download_delete_confirm_title">ダウンロードタスク削除</string>
+    <string name="download_delete_confirm_message">選択したタスクとファイルを削除しますか？</string>
+    <string name="download_caching">AS動画キャッシュ中...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">BV番号</string>
+    <string name="user_freeze_video">動画を凍結</string>
+    <string name="user_freeze_all_videos">全動画を凍結</string>
+    <string name="user_select_freeze_method">凍結方法を選択</string>
+    <string name="user_freeze_all_confirm_message">これはUP主向け機能です。凍結すると他ユーザーはあなたの動画をキャッシュできません。本当に凍結しますか？</string>
+    <string name="user_freezing_progress">凍結中です。しばらくお待ちください...</string>
+    <string name="user_input_bv_prompt">凍結したい動画のBV番号を入力してください。凍結後、他のユーザーはキャッシュできません：</string>
+    <string name="user_freeze_notice">注意：BILIBILIASの凍結機能はBILIBILIAS内に限定され、他のツールは制限されません。</string>
+    <string name="user_uploaded_videos">投稿動画</string>
+    <string name="user_likes">いいね</string>
+    <string name="user_recent">最近</string>
+    <string name="user_favorites">お気に入り</string>
+    <string name="user_bangumi">追っかけアニメ</string>
+    <string name="user_linked_accounts">連携アカウント</string>
+    <string name="user_following">フォロー中</string>
+    <string name="user_fans">ファン</string>
+    <string name="user_thumbs_up">獲得いいね</string>
+    <string name="user_plays">再生数</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">動画キャッシュ利用申請</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">エラー：%s</string>
+    <string name="error_exit_app">アプリ終了</string>
+    <string name="error_copy_error">コピー失敗</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">ダウンロード情報</string>
+    <string name="download_info_total_size">総サイズ</string>
+    <string name="download_info_downloaded_size">ダウンロード済み</string>
+    <string name="download_info_speed">速度</string>
+    <string name="download_info_remaining_time">残り時間</string>
+    <string name="download_info_file_name">ファイル名</string>
+    <string name="download_info_save_path">保存パス</string>
+    <string name="download_info_status">状態</string>
+    <string name="download_info_start_time">開始時刻</string>
+    <string name="download_info_complete_time">完了時刻</string>
+    <string name="download_batch_delete_title">タスク一括削除</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">ダウンロード中</string>
+    <string name="status_downloading_title">ダウンロード中</string>
+    <string name="status_paused">一時停止</string>
+    <string name="status_completed">完了</string>
+    <string name="status_completed_title">ダウンロード完了</string>
+    <string name="status_failed">失敗</string>
+    <string name="status_waiting">待機中</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">戻る</string>
+    <string name="cd_more_actions">アクション</string>
+    <string name="cd_download_qrcode">QRコードダウンロード</string>
+    <string name="cd_go_scan">スキャンへ</string>
+    <string name="cd_login_qrcode">ログインQRコード</string>
+    <string name="cd_not_agree_privacy">プライバシーポリシー未同意</string>
+    <string name="cd_avatar">アバター</string>
+    <string name="cd_go_to_bilibili">ビリビリへ</string>
+    <string name="cd_web_scan">ウェブスキャン</string>
+    <string name="cd_tv_scan">TVスキャン</string>
+    <string name="cd_server_error_icon">サーバーエラーアイコン</string>
+</resources>

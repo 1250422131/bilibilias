@@ -1,0 +1,266 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">Privacy Policy</string>
+    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS uses Firebase to collect usage data and deliver remote configurations, which means Firebase will collect some of your device information and usage data. Therefore, you need to agree to the following <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">Privacy Policy</a>.\n                            If you do not agree to the privacy policy above, the app may not be able to receive the required configuration and may not function properly. Click the link to <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">read the privacy policy</a>.\n                        "]]></string>
+    <string name="common_agree">Agree</string>
+    <string name="common_refuse">Reject</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_beta">Beta</string>
+    <string name="common_understand">Understand</string>
+    <string name="common_ok">OK</string>
+    <string name="common_i_know">I know</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_recommend">Recommend</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">Login</string>
+    <string name="login_qrcode_title">Bilibili QR Code Login</string>
+    <string name="login_cookie_title">Bilibili Cookie Login</string>
+    <string name="login_use_cookie">Login with Cookie</string>
+    <string name="login_after_you_can">After logging in, you can:</string>
+    <string name="login_benefits"><![CDATA[·Support higher quality and bitrate videos\n·Support anime caching\n·Support big member privileges\n·Support roaming services]]></string>
+    <string name="login_agreement_prefix">Logging in means that you agree to:</string>
+    <string name="login_bilibili_agreement">·Bilibili Account and Community Agreements</string>
+    <string name="login_privacy_agreement">·《BILIBILIAS Privacy Agreement》</string>
+    <string name="login_disclaimer">·BILIBILIAS is not responsible for any results caused by usage</string>
+    <string name="login_special_notice">Special Note:\nThis app is not authorized by Bilibili. Bilibili is not responsible for any consequences resulting from the use of this software</string>
+    <string name="login_scan_qrcode">Bilibili QR Code Login</string>
+    <string name="login_web">Web</string>
+    <string name="login_tv">TV</string>
+    <string name="login_apply_label">Apply</string>
+    <string name="login_download_qrcode">Download QR Code</string>
+    <string name="login_go_scan">Go to Scan</string>
+    <string name="login_network_error">Network error, click the button to retry.</string>
+    <string name="login_check_privacy_policy">Please check the privacy policy below</string>
+    <string name="login_cookie_input_label">Cookie (copy directly from browser, no need to decode)</string>
+    <string name="login_confirm_account">Confirm, this is the account I want to log in</string>
+    <string name="login_cookie_warning">Please keep your cookie safe to avoid leakage risk.</string>
+    <string name="login_saving_info">Saving identity information</string>
+    <string name="login_saving_progress">Saving, please do not exit...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">Skip Update</string>
+    <string name="update_skip_message">If you do not want to update now, you can skip this version and update later.</string>
+    <string name="update_skip_this_version">Skip this version</string>
+    <string name="update_later">Later</string>
+    <string name="update_downloaded">The new version has been downloaded and can be updated at any time.</string>
+    <string name="update_action">Update</string>
+    <string name="update_hint_title">Update Hint</string>
+    <string name="update_new_version_format">A new version %s is available.</string>
+    <string name="update_content">Update content:</string>
+    <string name="update_loading">Loading...</string>
+    <string name="update_go_download">Go to Download</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">Request testing...</string>
+    <string name="request_frequent_success">Request successful, you can use it now!</string>
+    <string name="request_frequent_continue">Go back to continue</string>
+    <string name="request_frequent_incident">Unexpected Event</string>
+    <string name="request_frequent_server_busy">Bilibili servers are currently busy or under maintenance. Please try again in 10 minutes~</string>
+    <string name="request_frequent_warning">Note: if only you are experiencing this, it may be that you triggered the risk control. Please use reasonably to avoid risks to the platform and account~</string>
+    <string name="request_frequent_exit_app">Exit App</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">Risk Control Notice</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">Usage Notice</string>
+    <string name="instructions_not_bilibili">The software you are using is not Bilibili, but a third-party tool that assists it and has no relation to Bilibili.</string>
+    <string name="instructions_no_authorization">This software is not authorized by Bilibili, and Bilibili bears no responsibility for any consequences of its use.</string>
+    <string name="instructions_purpose">BILIBILIAS is a third-party Bilibili video caching tool designed to help content creators who need to play offline or clip original videos.</string>
+    <string name="instructions_no_redistribution">Any content cached by BILIBILIAS must not be redistributed, and can only be played or used for making videos on your own device (do not re-upload without the author’s permission).</string>
+    <string name="instructions_self_responsibility">If you violate the rules or use illegally, you will bear all consequences yourself, and BILIBILIAS may ban your usage.</string>
+    <string name="instructions_go_to_bilibili">No, I am looking for Bilibili</string>
+    <string name="instructions_i_agree">I know and agree</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">Login session expired, checking for available logins.</string>
+    <string name="account_all_invalid">All accounts are invalid, please log in again.</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content">Although you rejected BILIBILIAS's privacy policy, this app is a third-party Bilibili video caching tool. As long as you continue to use this app, you must still comply with Bilibili’s related policies.\nThis is because you are still indirectly using Bilibili while using this app, and you may need to log in to your Bilibili account and access video content, which is unavoidable unless you uninstall this app.\nHowever, at this time, the software will not collect any of your personal privacy data, and you can use it with confidence.&lt;br&gt;\nFor details, see:\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;Bilibili Agreements Collection&lt;/a&gt;.</string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">Recommend</string>
+    <string name="donate_wechat">WeChat Donate</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">Select Video to Import</string>
+    <string name="frame_select_method_title">Select Video Import Method</string>
+    <string name="frame_import_from_downloaded">Import from Downloaded</string>
+    <string name="frame_import_from_local">Import from Local File</string>
+    <string name="frame_select_video_prompt">Please select the video to import in the upper right corner</string>
+    <string name="frame_select_output_title">Select Export Location</string>
+    <string name="frame_select_output_message">Please choose where to export the extracted frames. It is recommended to create a separate folder for each export to avoid confusion.</string>
+    <string name="frame_select_location">Select Location</string>
+    <string name="frame_max_fps_format">Max: %d (fps)</string>
+    <string name="frame_fps_unit">fps</string>
+    <string name="frame_open_video">Open Video</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">Video Processing</string>
+    <string name="tools_other">Other</string>
+    <string name="tools_feedback">Feedback</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">Announcement</string>
+    <string name="home_close_announcement">Close Announcement</string>
+    <string name="home_announcement_close_hint">Will not be shown again until a new announcement is released</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">Logout</string>
+    <string name="setting_logout_confirm">Do you want to logout? Logging out will clear login info and free your account.</string>
+    <string name="setting_logging_out">Logging out....</string>
+    <string name="setting_naming_convention">Naming Rules</string>
+    <string name="setting_naming_warning">If you are not familiar with how to use the naming rules, please modify with caution or refer to the documentation.</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">Line Configuration</string>
+    <string name="developer_current_line">Current Line</string>
+    <string name="developer_line_list">Line List</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">Copy All Information</string>
+    <string name="version_app_version">App Version</string>
+    <string name="version_app_code">App Code</string>
+    <string name="version_app_channel">App Channel</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">Roaming</string>
+    <string name="roam_status_checking">Checking</string>
+    <string name="roam_status_available">Available</string>
+    <string name="roam_status_unavailable">Unavailable</string>
+    <string name="roam_account_status">Account Status</string>
+    <string name="roam_login_required">Not logged in, please log in first</string>
+    <string name="roam_go_login">Go to Login</string>
+    <string name="roam_current_area">Current Area</string>
+    <string name="roam_target_area">Target Area</string>
+    <string name="roam_mainland_china">Mainland China</string>
+    <string name="roam_hk_macau_taiwan">Hong Kong, Macau, Taiwan</string>
+    <string name="roam_test_video">Test Video</string>
+    <string name="roam_can_access">This video is accessible</string>
+    <string name="roam_cannot_access">This video is not accessible</string>
+    <string name="roam_speed_test">Speed Test</string>
+    <string name="roam_testing">Testing</string>
+    <string name="roam_network_speed_format">Network Speed: %.2f MB/s</string>
+    <string name="roam_test_failed">Test Failed</string>
+    <string name="roam_select_server">Select Server</string>
+    <string name="roam_server_list">Server List</string>
+    <string name="roam_enable_roam">Enable Roaming</string>
+    <string name="roam_area_restriction_notice">Regional Restriction Notice</string>
+    <string name="roam_area_restriction_message">This content is regionally restricted, you need to enable roaming to continue!</string>
+    <string name="roam_go_to_roam_page">Go to Roaming Page</string>
+    <string name="roam_load_failed_format">Load failed: %s, please try again later.</string>
+    <string name="roam_pending_review">Your application is under review, please wait patiently. We will handle your request as soon as possible, usually within 7 days, sometimes longer.</string>
+    <string name="roam_application_content">Your application content is as follows:</string>
+    <string name="roam_rejected_format">Your roaming service application was rejected, the reason is: %s. You can modify your reason and submit again.</string>
+    <string name="roam_not_applied">You have not yet applied for roaming service. Please provide a reason and submit your application. Only reasonable applications will be approved.</string>
+    <string name="roam_application_reason">Application Reason</string>
+    <string name="roam_submit_application">Submit Application</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">Parse Video</string>
+    <string name="analysis_download_content">Download Content</string>
+    <string name="analysis_download_cover">Download Cover</string>
+    <string name="analysis_download_subtitle">Download Subtitle</string>
+    <string name="analysis_download_hint">Download Hint</string>
+    <string name="analysis_protected_video">Protected Video</string>
+    <string name="analysis_cache_config">Cache Configuration</string>
+    <string name="analysis_cache_preference">Cache Preference</string>
+    <string name="analysis_ai_translation">AI Original Audio Translation</string>
+    <string name="analysis_select_interactive_video">Select Interactive Video</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">Video Quality</string>
+    <string name="analysis_audio_quality">Audio Quality</string>
+    <string name="analysis_codec">Codec</string>
+    <string name="analysis_download_started">Download Started</string>
+    <string name="analysis_go_to_download_page">Go to Download Page</string>
+    <string name="analysis_stay_on_current_page">Stay on Current Page</string>
+    <string name="analysis_ai_beta_notice">You are using a Beta feature of Bilibili. The downloaded product provided by this app does not represent the final quality of Bilibili.</string>
+    <string name="analysis_select_part_video">Select Multipart Video</string>
+    <string name="analysis_select_audio_quality">Select Preferred Audio Quality</string>
+    <string name="analysis_select_resolution">Select Preferred Resolution</string>
+    <string name="analysis_select_codec">Select Preferred Codec</string>
+    <string name="analysis_select_cache_mode">Select Cache Mode</string>
+    <string name="analysis_stream_download">Stream Download</string>
+    <string name="analysis_cover_download">Cover Download</string>
+    <string name="analysis_danmaku_download">Danmaku Download</string>
+    <string name="analysis_select_subtitle_type">Select Subtitle File Type</string>
+    <string name="analysis_bangumi">Bangumi</string>
+    <string name="analysis_charged_video">Paid Video</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">Select All</string>
+    <string name="download_deselect_all">Deselect All</string>
+    <string name="download_delete_confirm_title">Delete Download Task</string>
+    <string name="download_delete_confirm_message">Are you sure you want to delete the selected task record and files?</string>
+    <string name="download_caching">AS video caching...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">BV Number</string>
+    <string name="user_freeze_video">Freeze a Video</string>
+    <string name="user_freeze_all_videos">Freeze All Videos</string>
+    <string name="user_select_freeze_method">Please select freeze method</string>
+    <string name="user_freeze_all_confirm_message">This is a feature for UP owners. After freezing, other users will not be able to cache all your uploaded videos. Are you sure?</string>
+    <string name="user_freezing_progress">Freezing in progress, please wait...</string>
+    <string name="user_input_bv_prompt">Please enter the BV number of the video you want to freeze. After freezing, other users will not be able to cache your video:</string>
+    <string name="user_freeze_notice">Note: The freeze function provided by BILIBILIAS can only restrict other users from caching in BILIBILIAS and cannot restrict other third-party caching tools.</string>
+    <string name="user_uploaded_videos">Uploaded Videos</string>
+    <string name="user_likes">Likes</string>
+    <string name="user_recent">Recent</string>
+    <string name="user_favorites">Favorites</string>
+    <string name="user_bangumi">Following Bangumi</string>
+    <string name="user_linked_accounts">Linked Accounts</string>
+    <string name="user_following">Following</string>
+    <string name="user_fans">Fans</string>
+    <string name="user_thumbs_up">Liked</string>
+    <string name="user_plays">Plays</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">Video Cache Usage Application</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">Error: %s</string>
+    <string name="error_exit_app">Exit App</string>
+    <string name="error_copy_error">Copy Error</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">Download Information</string>
+    <string name="download_info_total_size">Total Size</string>
+    <string name="download_info_downloaded_size">Downloaded</string>
+    <string name="download_info_speed">Speed</string>
+    <string name="download_info_remaining_time">Remaining Time</string>
+    <string name="download_info_file_name">File Name</string>
+    <string name="download_info_save_path">Save Path</string>
+    <string name="download_info_status">Status</string>
+    <string name="download_info_start_time">Start Time</string>
+    <string name="download_info_complete_time">Complete Time</string>
+    <string name="download_batch_delete_title">Batch Delete Tasks</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">Downloading</string>
+    <string name="status_downloading_title">Downloading</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_completed_title">Download Completed</string>
+    <string name="status_failed">Failed</string>
+    <string name="status_waiting">Waiting</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Back</string>
+    <string name="cd_more_actions">Actions</string>
+    <string name="cd_download_qrcode">Download QR Code</string>
+    <string name="cd_go_scan">Go to Scan</string>
+    <string name="cd_login_qrcode">Login QR Code</string>
+    <string name="cd_not_agree_privacy">Privacy Policy Not Agreed</string>
+    <string name="cd_avatar">Avatar</string>
+    <string name="cd_go_to_bilibili">Go to Bilibili</string>
+    <string name="cd_web_scan">Web Scan</string>
+    <string name="cd_tv_scan">TV Scan</string>
+    <string name="cd_server_error_icon">Server Error Icon</string>
+</resources>

@@ -1,0 +1,266 @@
+<resources>
+    <!-- Common strings -->
+    <string name="common_privacy_policy">Chính sách quyền riêng tư</string>
+    <string name="app_privacy_policy_tip"><![CDATA["\n                            BILIBILIAS sử dụng Firebase để thu thập dữ liệu sử dụng và phân phối cấu hình từ xa, điều này nghĩa là Firebase sẽ thu thập một số thông tin thiết bị và thông tin sử dụng của bạn. Do đó, bạn cần đồng ý với <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">Chính sách quyền riêng tư</a> dưới đây.\n                            Nếu bạn không đồng ý với chính sách quyền riêng tư trên, ứng dụng có thể không nhận được cấu hình cần thiết và sẽ không hoạt động bình thường. Nhấp vào liên kết để <a href=\"https://bilibilias.imcys.com/policy/privacy_policy.html\">đọc chính sách quyền riêng tư</a>.\n                        "]]></string>
+    <string name="common_agree">Đồng ý</string>
+    <string name="common_refuse">Từ chối</string>
+    <string name="common_cancel">Hủy</string>
+    <string name="common_confirm">Xác nhận</string>
+    <string name="common_delete">Xóa</string>
+    <string name="common_beta">Beta</string>
+    <string name="common_understand">Hiểu</string>
+    <string name="common_ok">OK</string>
+    <string name="common_i_know">Tôi đã biết</string>
+    <string name="common_retry">Thử lại</string>
+    <string name="common_recommend">Đề xuất</string>
+
+    <!-- Login related strings -->
+    <string name="login_title">Đăng nhập</string>
+    <string name="login_qrcode_title">Đăng nhập bằng mã QR Bilibili</string>
+    <string name="login_cookie_title">Đăng nhập bằng Cookie Bilibili</string>
+    <string name="login_use_cookie">Đăng nhập bằng Cookie</string>
+    <string name="login_after_you_can">Sau khi đăng nhập, bạn có thể:</string>
+    <string name="login_benefits"><![CDATA[·Hỗ trợ video chất lượng cao hơn và bitrate cao hơn\n·Hỗ trợ lưu trữ anime\n·Sử dụng các quyền lợi thành viên cao cấp\n·Sử dụng dịch vụ chuyển vùng]]></string>
+    <string name="login_agreement_prefix">Đăng nhập đồng nghĩa với việc bạn đồng ý:</string>
+    <string name="login_bilibili_agreement">·Thỏa thuận tài khoản và cộng đồng Bilibili</string>
+    <string name="login_privacy_agreement">·《Thỏa thuận quyền riêng tư BILIBILIAS》</string>
+    <string name="login_disclaimer">·BILIBILIAS không chịu trách nhiệm với bất cứ hậu quả nào do sử dụng</string>
+    <string name="login_special_notice">Lưu ý đặc biệt:\nỨng dụng này không được Bilibili ủy quyền. Bilibili không chịu trách nhiệm với bất kỳ hậu quả nào phát sinh từ việc sử dụng phần mềm này</string>
+    <string name="login_scan_qrcode">Đăng nhập bằng mã QR Bilibili</string>
+    <string name="login_web">Web</string>
+    <string name="login_tv">TV</string>
+    <string name="login_apply_label">Nộp đơn</string>
+    <string name="login_download_qrcode">Tải mã QR về</string>
+    <string name="login_go_scan">Đi quét mã</string>
+    <string name="login_network_error">Lỗi mạng, hãy nhấn nút để thử lại.</string>
+    <string name="login_check_privacy_policy">Vui lòng chọn chính sách quyền riêng tư bên dưới</string>
+    <string name="login_cookie_input_label">Cookie (sao chép trực tiếp từ trình duyệt, không cần giải mã)</string>
+    <string name="login_confirm_account">Xác nhận, đây là tài khoản tôi muốn đăng nhập</string>
+    <string name="login_cookie_warning">Vui lòng giữ an toàn cho cookie của bạn để tránh rủi ro rò rỉ.</string>
+    <string name="login_saving_info">Lưu thông tin định danh</string>
+    <string name="login_saving_progress">Đang lưu, vui lòng không thoát...</string>
+    <string name="login_level_format">LV%d</string>
+
+    <!-- Update related strings -->
+    <string name="update_skip_title">Bỏ qua cập nhật</string>
+    <string name="update_skip_message">Nếu bạn chưa muốn cập nhật, bạn có thể bỏ qua phiên bản này và cập nhật vào lần sau.</string>
+    <string name="update_skip_this_version">Bỏ qua phiên bản này</string>
+    <string name="update_later">Để sau</string>
+    <string name="update_downloaded">Phiên bản mới đã được tải về, có thể cập nhật bất cứ lúc nào.</string>
+    <string name="update_action">Cập nhật</string>
+    <string name="update_hint_title">Gợi ý cập nhật</string>
+    <string name="update_new_version_format">Đã có phiên bản mới %s.</string>
+    <string name="update_content">Nội dung cập nhật:</string>
+    <string name="update_loading">Đang tải...</string>
+    <string name="update_go_download">Đi đến tải về</string>
+
+    <!-- Request frequent/server error related strings -->
+    <string name="request_frequent_testing">Đang kiểm tra yêu cầu...</string>
+    <string name="request_frequent_success">Yêu cầu thành công, bạn có thể sử dụng bình thường!</string>
+    <string name="request_frequent_continue">Quay lại sử dụng tiếp</string>
+    <string name="request_frequent_incident">Sự cố bất ngờ</string>
+    <string name="request_frequent_server_busy">Máy chủ Bilibili hiện đang bận hoặc bảo trì, vui lòng thử lại sau 10 phút~</string>
+    <string name="request_frequent_warning">Lưu ý: Nếu chỉ mình bạn gặp phải tình trạng này, có thể bạn đã bị kiểm soát rủi ro. Vui lòng sử dụng hợp lý để tránh rủi ro cho nền tảng và tài khoản~</string>
+    <string name="request_frequent_exit_app">Thoát ứng dụng</string>
+
+    <!-- Play voucher / Risk control related strings -->
+    <string name="play_voucher_error_title">Cảnh báo kiểm soát rủi ro</string>
+
+    <!-- Instructions/About app related strings -->
+    <string name="instructions_title">Hướng dẫn sử dụng</string>
+    <string name="instructions_not_bilibili">Phần mềm bạn đang sử dụng không phải là Bilibili, mà là công cụ hỗ trợ của bên thứ ba, không liên quan gì đến Bilibili.</string>
+    <string name="instructions_no_authorization">Phần mềm này không được Bilibili cấp phép, Bilibili không chịu trách nhiệm về bất kỳ hậu quả nào khi sử dụng phần mềm này.</string>
+    <string name="instructions_purpose">BILIBILIAS là công cụ lưu trữ video Bilibili của bên thứ ba, nhằm hỗ trợ người sáng tạo nội dung phát video ngoại tuyến hoặc chỉnh sửa các video gốc.</string>
+    <string name="instructions_no_redistribution">Không được phát tán lại bất kỳ nội dung nào được lưu bởi BILIBILIAS, chỉ được phép phát trên thiết bị của bạn hoặc chỉnh sửa video (không được đăng lại nếu chưa được tác giả cho phép).</string>
+    <string name="instructions_self_responsibility">Nếu bạn vi phạm quy định hoặc sử dụng vào mục đích trái phép, bạn phải tự chịu mọi hậu quả và có thể sẽ bị cấm sử dụng BILIBILIAS.</string>
+    <string name="instructions_go_to_bilibili">Không, tôi đang tìm Bilibili</string>
+    <string name="instructions_i_agree">Tôi đã hiểu và đồng ý</string>
+
+    <!-- Account check related strings -->
+    <string name="account_check_invalid">Phiên đăng nhập đã hết hạn, đang kiểm tra các đăng nhập còn lại.</string>
+    <string name="account_all_invalid">Tất cả các tài khoản đã hết hạn, vui lòng đăng nhập lại.</string>
+
+    <!-- Privacy policy refuse dialog strings -->
+    <string name="privacy_refuse_content">Mặc dù bạn đã từ chối chính sách quyền riêng tư của BILIBILIAS, nhưng ứng dụng này là công cụ lưu trữ video Bilibili của bên thứ ba. Nếu tiếp tục sử dụng ứng dụng, bạn vẫn cần tuân thủ các chính sách liên quan của Bilibili.\nĐiều này là do khi sử dụng ứng dụng, bạn vẫn đang gián tiếp sử dụng Bilibili, có thể cần đăng nhập tài khoản và truy cập nội dung video, điều này không thể tránh khỏi trừ khi bạn gỡ cài đặt ứng dụng.\nTuy nhiên, lúc này ứng dụng sẽ không thu thập bất kỳ dữ liệu cá nhân nào của bạn, bạn có thể yên tâm sử dụng.&lt;br&gt;\nTham khảo chi tiết tại:\n&lt;a href="https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html"&gt;Tổng hợp các điều khoản của Bilibili&lt;/a&gt;.</string>
+
+    <!-- Donate related strings -->
+    <string name="donate_recommend">Đề xuất</string>
+    <string name="donate_wechat">Ủng hộ qua WeChat</string>
+
+    <!-- Frame extractor related strings -->
+    <string name="frame_select_video_title">Chọn video nhập vào</string>
+    <string name="frame_select_method_title">Chọn phương thức nhập</string>
+    <string name="frame_import_from_downloaded">Nhập từ video đã tải</string>
+    <string name="frame_import_from_local">Nhập từ tệp cục bộ</string>
+    <string name="frame_select_video_prompt">Vui lòng chọn video nhập ở góc trên bên phải</string>
+    <string name="frame_select_output_title">Chọn vị trí xuất ảnh</string>
+    <string name="frame_select_output_message">Vui lòng chọn thư mục xuất từng khung hình. Nên tạo thư mục riêng cho mỗi lần xuất để tránh nhầm lẫn.</string>
+    <string name="frame_select_location">Chọn vị trí</string>
+    <string name="frame_max_fps_format">Tối đa: %d (khung hình/giây)</string>
+    <string name="frame_fps_unit">khung hình/giây</string>
+    <string name="frame_open_video">Mở video</string>
+    <string name="frame_plus">+</string>
+    <string name="frame_minus">-</string>
+
+    <!-- Tools screen related strings -->
+    <string name="tools_video_processing">Xử lý video</string>
+    <string name="tools_other">Khác</string>
+    <string name="tools_feedback">Phản hồi</string>
+
+    <!-- Home screen related strings -->
+    <string name="home_announcement">Thông báo</string>
+    <string name="home_close_announcement">Đóng thông báo</string>
+    <string name="home_announcement_close_hint">Sau khi đóng sẽ không hiển thị lại cho tới khi có thông báo mới</string>
+
+    <!-- Setting screen related strings -->
+    <string name="setting_logout">Đăng xuất</string>
+    <string name="setting_logout_confirm">Bạn có muốn đăng xuất không? Đăng xuất sẽ xóa thông tin tài khoản và giải phóng phiên đăng nhập.</string>
+    <string name="setting_logging_out">Đang đăng xuất....</string>
+    <string name="setting_naming_convention">Quy tắc đặt tên</string>
+    <string name="setting_naming_warning">Nếu bạn không biết cách sử dụng quy tắc đặt tên, vui lòng không thay đổi hoặc tham khảo tài liệu hướng dẫn.</string>
+
+    <!-- Developer settings related strings -->
+    <string name="developer_line_config">Cấu hình đường truyền</string>
+    <string name="developer_current_line">Đường truyền hiện tại</string>
+    <string name="developer_line_list">Danh sách đường truyền</string>
+
+    <!-- Version info related strings -->
+    <string name="version_copy_all">Sao chép tất cả thông tin</string>
+    <string name="version_app_version">Phiên bản ứng dụng</string>
+    <string name="version_app_code">Mã ứng dụng</string>
+    <string name="version_app_channel">Kênh ứng dụng</string>
+
+    <!-- Roam related strings -->
+    <string name="roam_title">Chuyển vùng</string>
+    <string name="roam_status_checking">Đang kiểm tra</string>
+    <string name="roam_status_available">Có thể dùng</string>
+    <string name="roam_status_unavailable">Không thể dùng</string>
+    <string name="roam_account_status">Trạng thái tài khoản</string>
+    <string name="roam_login_required">Chưa đăng nhập, vui lòng đăng nhập trước</string>
+    <string name="roam_go_login">Đi tới đăng nhập</string>
+    <string name="roam_current_area">Khu vực hiện tại</string>
+    <string name="roam_target_area">Khu vực mục tiêu</string>
+    <string name="roam_mainland_china">Trung Quốc đại lục</string>
+    <string name="roam_hk_macau_taiwan">Hồng Kông, Ma Cao, Đài Loan</string>
+    <string name="roam_test_video">Video kiểm tra</string>
+    <string name="roam_can_access">Có thể truy cập video này</string>
+    <string name="roam_cannot_access">Không thể truy cập video này</string>
+    <string name="roam_speed_test">Kiểm tra tốc độ</string>
+    <string name="roam_testing">Đang kiểm tra</string>
+    <string name="roam_network_speed_format">Tốc độ mạng: %.2f MB/s</string>
+    <string name="roam_test_failed">Kiểm tra thất bại</string>
+    <string name="roam_select_server">Chọn máy chủ</string>
+    <string name="roam_server_list">Danh sách máy chủ</string>
+    <string name="roam_enable_roam">Bật tính năng chuyển vùng</string>
+    <string name="roam_area_restriction_notice">Thông báo giới hạn khu vực</string>
+    <string name="roam_area_restriction_message">Nội dung này bị giới hạn khu vực, bạn cần bật chuyển vùng để tiếp tục!</string>
+    <string name="roam_go_to_roam_page">Đi tới trang chuyển vùng</string>
+    <string name="roam_load_failed_format">Tải thất bại: %s, vui lòng thử lại sau.</string>
+    <string name="roam_pending_review">Đơn đăng ký của bạn đang được duyệt, vui lòng chờ. Thường sẽ xử lý trong vòng 7 ngày, đôi khi sẽ lâu hơn.</string>
+    <string name="roam_application_content">Nội dung đơn đăng ký của bạn:</string>
+    <string name="roam_rejected_format">Đơn chuyển vùng của bạn đã bị từ chối, lý do: %s. Bạn có thể chỉnh sửa lý do và gửi lại đơn.</string>
+    <string name="roam_not_applied">Bạn chưa đăng ký chuyển vùng. Vui lòng điền lý do sử dụng và gửi đơn. Chỉ những lý do hợp lý mới được chấp nhận.</string>
+    <string name="roam_application_reason">Lý do đăng ký</string>
+    <string name="roam_submit_application">Nộp đơn</string>
+
+    <!-- Analysis/Download related strings -->
+    <string name="analysis_parse_video">Phân tích video</string>
+    <string name="analysis_download_content">Tải nội dung</string>
+    <string name="analysis_download_cover">Tải ảnh bìa</string>
+    <string name="analysis_download_subtitle">Tải phụ đề</string>
+    <string name="analysis_download_hint">Gợi ý tải xuống</string>
+    <string name="analysis_protected_video">Video được bảo vệ</string>
+    <string name="analysis_cache_config">Cấu hình bộ nhớ đệm</string>
+    <string name="analysis_cache_preference">Ưu tiên bộ nhớ đệm</string>
+    <string name="analysis_ai_translation">Dịch âm thanh AI</string>
+    <string name="analysis_select_interactive_video">Chọn video tương tác</string>
+    <string name="analysis_episode_range_format">%d~%d</string>
+    <string name="analysis_video_quality">Chất lượng video</string>
+    <string name="analysis_audio_quality">Chất lượng âm thanh</string>
+    <string name="analysis_codec">Bộ giải mã</string>
+    <string name="analysis_download_started">Đã bắt đầu tải</string>
+    <string name="analysis_go_to_download_page">Đi tới trang tải về</string>
+    <string name="analysis_stay_on_current_page">Ở lại trang hiện tại</string>
+    <string name="analysis_ai_beta_notice">Bạn đang sử dụng tính năng Beta của Bilibili. Sản phẩm tải về không đại diện cho chất lượng cuối cùng của Bilibili.</string>
+    <string name="analysis_select_part_video">Chọn video chia phần</string>
+    <string name="analysis_select_audio_quality">Chọn chất lượng âm thanh ưu tiên</string>
+    <string name="analysis_select_resolution">Chọn độ phân giải ưu tiên</string>
+    <string name="analysis_select_codec">Chọn bộ giải mã ưu tiên</string>
+    <string name="analysis_select_cache_mode">Chọn chế độ lưu trữ</string>
+    <string name="analysis_stream_download">Tải về dạng stream</string>
+    <string name="analysis_cover_download">Tải ảnh bìa</string>
+    <string name="analysis_danmaku_download">Tải bình luận bay</string>
+    <string name="analysis_select_subtitle_type">Chọn loại tệp phụ đề</string>
+    <string name="analysis_bangumi">Anime</string>
+    <string name="analysis_charged_video">Video tính phí</string>
+
+    <!-- Download screen related strings -->
+    <string name="download_select_all">Chọn tất cả</string>
+    <string name="download_deselect_all">Bỏ chọn tất cả</string>
+    <string name="download_delete_confirm_title">Xóa tác vụ tải xuống</string>
+    <string name="download_delete_confirm_message">Bạn có chắc muốn xóa tác vụ và tệp đã chọn không?</string>
+    <string name="download_caching">Đang lưu video AS vào bộ nhớ đệm...</string>
+
+    <!-- User screen related strings -->
+    <string name="user_bv_number">Số BV</string>
+    <string name="user_freeze_video">Đóng băng một video</string>
+    <string name="user_freeze_all_videos">Đóng băng tất cả video</string>
+    <string name="user_select_freeze_method">Chọn phương thức đóng băng</string>
+    <string name="user_freeze_all_confirm_message">Đây là chức năng dành cho chủ kênh. Sau khi đóng băng, người khác không thể lưu trữ video bạn đăng. Bạn chắc chắn muốn đóng băng?</string>
+    <string name="user_freezing_progress">Đang đóng băng, vui lòng chờ...</string>
+    <string name="user_input_bv_prompt">Nhập số BV của video muốn đóng băng. Sau khi đóng băng, người khác sẽ không thể lưu video của bạn:</string>
+    <string name="user_freeze_notice">Lưu ý: chức năng đóng băng chỉ có hiệu lực trên BILIBILIAS, không hạn chế các công cụ bên ngoài khác.</string>
+    <string name="user_uploaded_videos">Video đã đăng</string>
+    <string name="user_likes">Lượt thích</string>
+    <string name="user_recent">Gần đây</string>
+    <string name="user_favorites">Yêu thích</string>
+    <string name="user_bangumi">Đang theo dõi anime</string>
+    <string name="user_linked_accounts">Tài khoản liên kết</string>
+    <string name="user_following">Đang theo dõi</string>
+    <string name="user_fans">Người theo dõi</string>
+    <string name="user_thumbs_up">Được thích</string>
+    <string name="user_plays">Lượt xem</string>
+
+    <!-- Copyright apply related strings -->
+    <string name="copyright_video_cache_apply">Đăng ký sử dụng bộ nhớ video</string>
+
+    <!-- Error related strings -->
+    <string name="error_message_format">Lỗi: %s</string>
+    <string name="error_exit_app">Thoát ứng dụng</string>
+    <string name="error_copy_error">Sao chép lỗi</string>
+
+    <!-- Download info related strings -->
+    <string name="download_info_title">Thông tin tải xuống</string>
+    <string name="download_info_total_size">Tổng dung lượng</string>
+    <string name="download_info_downloaded_size">Đã tải</string>
+    <string name="download_info_speed">Tốc độ</string>
+    <string name="download_info_remaining_time">Thời gian còn lại</string>
+    <string name="download_info_file_name">Tên tệp</string>
+    <string name="download_info_save_path">Đường dẫn lưu</string>
+    <string name="download_info_status">Trạng thái</string>
+    <string name="download_info_start_time">Thời gian bắt đầu</string>
+    <string name="download_info_complete_time">Thời gian hoàn thành</string>
+    <string name="download_batch_delete_title">Xóa hàng loạt tác vụ</string>
+
+    <!-- Status related strings -->
+    <string name="status_downloading">Đang tải xuống</string>
+    <string name="status_downloading_title">Đang tải xuống</string>
+    <string name="status_paused">Tạm dừng</string>
+    <string name="status_completed">Hoàn thành</string>
+    <string name="status_completed_title">Đã hoàn thành tải xuống</string>
+    <string name="status_failed">Thất bại</string>
+    <string name="status_waiting">Đang chờ</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Quay lại</string>
+    <string name="cd_more_actions">Hành động</string>
+    <string name="cd_download_qrcode">Tải mã QR về</string>
+    <string name="cd_go_scan">Đi quét mã</string>
+    <string name="cd_login_qrcode">Mã QR đăng nhập</string>
+    <string name="cd_not_agree_privacy">Chưa đồng ý với chính sách quyền riêng tư</string>
+    <string name="cd_avatar">Ảnh đại diện</string>
+    <string name="cd_go_to_bilibili">Đi tới Bilibili</string>
+    <string name="cd_web_scan">Quét bằng web</string>
+    <string name="cd_tv_scan">Quét bằng TV</string>
+    <string name="cd_server_error_icon">Biểu tượng lỗi máy chủ</string>
+</resources>
