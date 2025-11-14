@@ -448,9 +448,9 @@ class DownloadManager(
             } else {
                 // Android 9 及以下：写入公共目录 + 扫描
                 val baseDir =
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                val albumDir = File(baseDir, fileName).apply { if (!exists()) mkdirs() }
-                val outFile = File(albumDir, saveDirName)
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/${saveDirName}"
+                val albumDir = File(baseDir).apply { if (!exists()) mkdirs() }
+                val outFile = File(albumDir, fileName)
 
                 FileOutputStream(outFile).use { out ->
                     inputStream.copyTo(out)

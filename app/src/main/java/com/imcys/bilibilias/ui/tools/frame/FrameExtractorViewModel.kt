@@ -143,25 +143,58 @@ class FrameExtractorViewModel(
     fun initVideoInfo(context: Context) {
         deleteCacheDir(context)
         viewModelScope.launch(Dispatchers.IO) {
-            downloadTaskRepository.getSegmentAll().collect {
+            downloadTaskRepository.getSegmentAll().collect { list ->
                 _allDownloadSegment.emit(
-                    it.filter { segment ->
+                    list.filter { segment ->
                         segment.downloadState == DownloadState.COMPLETED &&
-                                (segment.downloadMode == DownloadMode.VIDEO_ONLY || segment.downloadMode == DownloadMode.AUDIO_VIDEO)
+                                (segment.downloadMode == DownloadMode.VIDEO_ONLY ||
+                                        segment.downloadMode == DownloadMode.AUDIO_VIDEO)
                     }.mapNotNull { segment ->
-                        // 安卓10及以上用DocumentFile判断文件是否存在
-                        val fileUri = segment.savePath.toUri()
-                        val docFile = DocumentFile.fromSingleUri(context, fileUri)
-                        if (docFile == null || !docFile.exists()) {
-                            // 文件不存在，跳过
+                        val savePath = segment.savePath
+                        if (savePath.isNullOrBlank()) {
+                            // 没有保存路径，忽略
                             null
+                        } else if (savePath.startsWith("content://")) {
+                            // Android 10+：MediaStore Uri
+                            val fileUri = savePath.toUri()
+                            val docFile = DocumentFile.fromSingleUri(context, fileUri)
+                            if (docFile == null || !docFile.exists()) {
+                                null
+                            } else {
+                                val retriever = MediaMetadataRetriever()
+                                try {
+                                    retriever.setDataSource(context, fileUri)
+                                    val durationStr = retriever.extractMetadata(
+                                        MediaMetadataRetriever.METADATA_KEY_DURATION
+                                    )
+                                    val durationMs = durationStr?.toLongOrNull() ?: 0L
+                                    segment.apply { tempDuration = durationMs }
+                                } catch (_: Exception) {
+                                    null
+                                } finally {
+                                    retriever.release()
+                                }
+                            }
                         } else {
-                            val retriever = MediaMetadataRetriever()
-                            retriever.setDataSource(context, fileUri)
-                            val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                            val durationMs = durationStr?.toLongOrNull() ?: 0L
-                            retriever.release()
-                            segment.apply { tempDuration = durationMs }
+                            // Android 10 以下：绝对路径文件
+                            val file = File(savePath)
+                            if (!file.exists()) {
+                                null
+                            } else {
+                                val retriever = MediaMetadataRetriever()
+                                try {
+                                    retriever.setDataSource(file.absolutePath)
+                                    val durationStr = retriever.extractMetadata(
+                                        MediaMetadataRetriever.METADATA_KEY_DURATION
+                                    )
+                                    val durationMs = durationStr?.toLongOrNull() ?: 0L
+                                    segment.apply { tempDuration = durationMs }
+                                } catch (_: Exception) {
+                                    null
+                                } finally {
+                                    retriever.release()
+                                }
+                            }
                         }
                     }
                 )
