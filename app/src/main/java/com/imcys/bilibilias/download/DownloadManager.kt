@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.dwonload
+package com.imcys.bilibilias.download
 
 import android.Manifest
 import android.app.ActivityManager
@@ -39,7 +39,7 @@ import com.imcys.bilibilias.database.entity.download.FileNamePlaceholder
 import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
 import com.imcys.bilibilias.database.entity.download.videoNamingRules
-import com.imcys.bilibilias.dwonload.service.DownloadService
+import com.imcys.bilibilias.download.service.DownloadService
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult

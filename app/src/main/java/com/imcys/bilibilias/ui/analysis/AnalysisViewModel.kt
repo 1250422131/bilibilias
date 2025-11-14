@@ -20,7 +20,7 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
-import com.imcys.bilibilias.dwonload.DownloadManager
+import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult

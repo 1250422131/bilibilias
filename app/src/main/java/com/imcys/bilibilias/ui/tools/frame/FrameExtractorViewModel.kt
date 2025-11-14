@@ -11,7 +11,7 @@ import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
-import com.imcys.bilibilias.dwonload.DownloadManager
+import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
