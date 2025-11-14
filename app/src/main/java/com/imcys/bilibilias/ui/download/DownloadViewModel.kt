@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
-import com.imcys.bilibilias.dwonload.DownloadManager
+import com.imcys.bilibilias.download.DownloadManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

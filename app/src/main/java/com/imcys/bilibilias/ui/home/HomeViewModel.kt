@@ -12,14 +12,13 @@ import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
-import com.imcys.bilibilias.dwonload.DownloadManager
+import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.config.API.App.SSE_HOST
 import com.imcys.bilibilias.network.config.API.App.SSE_PATH
 import com.imcys.bilibilias.network.config.API.App.SSE_PORT
 import com.imcys.bilibilias.network.emptyNetWorkResult
-import com.imcys.bilibilias.network.model.app.AppOldHomeBannerDataBean
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BannerConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo

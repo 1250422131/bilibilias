@@ -2,7 +2,7 @@ package com.imcys.bilibilias.di
 
 import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.datastore.userAppSettingsStore
-import com.imcys.bilibilias.dwonload.DownloadManager
+import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel

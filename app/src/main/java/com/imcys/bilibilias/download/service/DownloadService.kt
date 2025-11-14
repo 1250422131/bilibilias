@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.dwonload.service
+package com.imcys.bilibilias.download.service
 
 import android.Manifest.*
 import android.app.PendingIntent

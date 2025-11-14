@@ -84,7 +84,7 @@ import com.imcys.bilibilias.common.utils.openLink
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
-import com.imcys.bilibilias.dwonload.AppDownloadTask
+import com.imcys.bilibilias.download.AppDownloadTask
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo

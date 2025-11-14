@@ -57,7 +57,7 @@
             android:launchMode="singleTask" />
 
         <service
-            android:name=".dwonload.service.DownloadService"
+            android:name=".download.service.DownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.dwonload
+package com.imcys.bilibilias.download
 
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
