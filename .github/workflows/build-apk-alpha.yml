@@ -146,14 +146,20 @@ jobs:
       - name: Clean
         run: ./gradlew clean
 
-      # 还原签名
+      # PR 只需验证构建成功，使用 assembleAlphaDebug
+      - name: Build APK for PR (Debug)
+        if: github.event_name == 'pull_request'
+        run: ./gradlew :app:assembleAlphaDebug --stacktrace --info
+
+      # 还原签名 (仅在非 PR 时)
       - name: Decode signing keystore
+        if: github.event_name != 'pull_request'
         run: |
           printf '%s' "${{ secrets.ALPHA_KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/mxjs-debug.jks
 
-
-      # 验证 keystore 可读性
+      # 验证 keystore 可读性 (仅在非 PR 时)
       - name: Verify keystore
+        if: github.event_name != 'pull_request'
         run: |
           echo "=== Keystore Verification ==="
           keytool -list -keystore $RUNNER_TEMP/mxjs-debug.jks \
@@ -164,22 +170,28 @@ jobs:
           }
           echo "✅ Keystore verified"
 
-      # 把密码注入环境变量
+      # 把密码注入环境变量 (仅在非 PR 时)
       - name: Export signing secrets
+        if: github.event_name != 'pull_request'
         run: |
           echo "ALPHA_KEYSTORE_PASSWORD=${{ secrets.ALPHA_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ALPHA_KEY_ALIAS=${{ secrets.ALPHA_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ALPHA_KEY_PASSWORD=${{ secrets.ALPHA_KEY_PASSWORD }}" >> $GITHUB_ENV
 
+      # push 到 main 或手动触发时才打包 Release 版本
       - name: Assemble alphaRelease
+        if: github.event_name != 'pull_request'
         run: ./gradlew :app:assembleAlphaRelease --stacktrace --info
 
       - name: List outputs (debug)
+        if: github.event_name != 'pull_request'
         run: |
           echo "Outputs under app/build/outputs:"
           ls -R app/build/outputs || true
 
+      # 只在非 PR 时上传 APK
       - name: Upload APK
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: APK-alpha
