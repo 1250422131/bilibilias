@@ -154,8 +154,9 @@ fun VideoSupportFormatsSelectScreen(
                 }
             }
             videoCodingList = mVideoCodingList
-            // 更新视频编码选择
-            mVideoCodingList.firstOrNull()?.let {
+            // 更新视频编码选择，优先选择第一个不是 av01 的编码
+            val defaultCode = mVideoCodingList.firstOrNull { it != "av01" } ?: mVideoCodingList.firstOrNull()
+            defaultCode?.let {
                 onVideoCodeChange(it)
             }
             mSupportFormats?.filter { supportFormat ->

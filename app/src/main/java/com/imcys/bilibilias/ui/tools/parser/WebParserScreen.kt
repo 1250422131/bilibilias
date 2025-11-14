@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,20 +54,23 @@ data object WebParserRoute : NavKey
 
 @Composable
 fun WebParserScreen(webParserRoute: WebParserRoute, onToBack: () -> Unit) {
-    var currentUrl by remember { mutableStateOf("https://m.bilibili.com/") }
-
+    val vm = koinViewModel<WebParserViewModel>()
+    val uiState by vm.uiState.collectAsState()
     WebParserScaffold(onToBack, onToAs = {
-        sendAnalysisEvent(AnalysisEvent(currentUrl))
+        sendAnalysisEvent(AnalysisEvent(uiState.currentUrl))
     }) {
-        WebParserContent(it, onUpdateUrl = { url ->
-            currentUrl = url
+        WebParserContent(it, uiState.currentUrl, onUpdateUrl = { url ->
+            vm.updateCurrentUrl(url)
         })
     }
 }
 
 @Composable
-fun WebParserContent(paddingValues: PaddingValues, onUpdateUrl: (String) -> Unit = {}) {
-    val vm = koinViewModel<WebParserViewModel>()
+fun WebParserContent(
+    paddingValues: PaddingValues,
+    currentUrl: String,
+    onUpdateUrl: (String) -> Unit = {}
+) {
     var loadProgress by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val webView = remember {
@@ -95,7 +99,7 @@ fun WebParserContent(paddingValues: PaddingValues, onUpdateUrl: (String) -> Unit
                     request: WebResourceRequest?
                 ): Boolean {
                     if (request?.url?.toString()?.contains("bilibili://") == true) {
-                        context.openLink(request.url?.toString()?:"")
+                        context.openLink(request.url?.toString() ?: "")
                         return true
                     }
                     return super.shouldOverrideUrlLoading(view, request)
@@ -118,8 +122,6 @@ fun WebParserContent(paddingValues: PaddingValues, onUpdateUrl: (String) -> Unit
                     loadUrl(link)
                 }
             }, "AndroidBridge")
-
-            loadUrl("https://m.bilibili.com/")
         }
     }
     DisposableEffect(Unit) {
@@ -137,7 +139,7 @@ fun WebParserContent(paddingValues: PaddingValues, onUpdateUrl: (String) -> Unit
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { webView },
-            update = { }
+            update = { webView -> webView.loadUrl(currentUrl) }
         )
 
         if (loadProgress in 1..99) {
