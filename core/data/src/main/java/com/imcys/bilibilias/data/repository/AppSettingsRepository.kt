@@ -163,6 +163,23 @@ class AppSettingsRepository(
         }
     }
 
+    // 存储使用工具记录
+    suspend fun updateUseToolRecord(toolName: String) {
+        dataStore.updateData { currentSettings ->
+            val historyList = currentSettings.useToolHistoryList.toMutableList()
+            if (historyList.size > 10) {
+                historyList.removeLastOrNull()
+            }
+            historyList.add(0, toolName)
+            // 去重
+            val distinctList = historyList.distinct()
+            currentSettings.toBuilder()
+                .clearUseToolHistory()
+                .addAllUseToolHistory(distinctList)
+                .build()
+        }
+    }
+
 }
 
 

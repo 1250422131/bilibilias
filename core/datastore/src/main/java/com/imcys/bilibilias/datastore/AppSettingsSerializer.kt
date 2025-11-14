@@ -22,6 +22,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
     val appSettingsDefault = AppSettings.getDefaultInstance().toBuilder()
         .setVideoNamingRule("{p_title}")
         .setBangumiNamingRule("{episode_title}")
+        .addAllUseToolHistory(listOf("WebParser","FrameExtractor"))
         .build()
 
 
@@ -38,6 +39,10 @@ object AppSettingsSerializer : Serializer<AppSettings> {
             }
             if (parsed.videoNamingRule.isBlank()) {
                 builder.setVideoNamingRule(defaultValue.videoNamingRule)
+                modified = true
+            }
+            if (parsed.useToolHistoryList.isEmpty()){
+                builder.addAllUseToolHistory(defaultValue.useToolHistoryList)
                 modified = true
             }
             return if (modified) builder.build() else parsed

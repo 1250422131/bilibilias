@@ -19,6 +19,7 @@ import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementViewModel
 import com.imcys.bilibilias.ui.tools.donate.DonateViewModel
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorViewModel
+import com.imcys.bilibilias.ui.tools.parser.WebParserViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowViewModel
 import com.imcys.bilibilias.ui.user.folder.UserFolderViewModel
@@ -56,6 +57,7 @@ val appModule = module {
     viewModel { NamingConventionViewModel(get()) }
     viewModel { RequestFrequentViewModel(get()) }
     viewModel{ LineConfigViewModel(get(),get()) }
+    viewModel{ WebParserViewModel(get()) }
     factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(

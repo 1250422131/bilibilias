@@ -170,7 +170,8 @@ fun SelectVideoListDialog(
                             // 左侧图片
                             Column(
                                 modifier = Modifier
-                                    .weight(0.3f)
+                                    .weight(0.4f)
+                                    .aspectRatio(16f / 9f)
                                     .fillMaxHeight(),
                             ) {
                                 ASAsyncImage(

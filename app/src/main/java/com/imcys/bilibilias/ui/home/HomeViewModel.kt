@@ -11,6 +11,7 @@ import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.AppSettingsSerializer
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
@@ -91,6 +92,10 @@ class HomeViewModel(
     private val _appUpdateInfo = MutableStateFlow<AppUpdateConfigInfo?>(null)
     val appUpdateInfo = _appUpdateInfo.asStateFlow()
 
+    private val _useToolHistoryList = MutableStateFlow(toToolInfoList(AppSettingsSerializer.appSettingsDefault.useToolHistoryList))
+    val useToolHistoryList = _useToolHistoryList.asStateFlow()
+
+    // 使用工具历史列表
     init {
         initLayoutTypeset()
         initDownloadList()
@@ -216,12 +221,22 @@ class HomeViewModel(
         }
     }
 
+    private fun toToolInfoList(toolNameList: List<String>): List<ToolInfo> {
+        return toolNameList.mapNotNull { name ->
+            runCatching {
+                ToolInfo.valueOf(name)
+            }.getOrNull()
+        }.filter { info -> info.isScreen }
+    }
+
     private fun initLayoutTypeset() {
         viewModelScope.launch {
             appSettingsRepository.asyncHomeLayoutTypesetList()
             appSettings.collect {
                 _homeLayoutTypesetList.value = it.homeLayoutTypesetList
+                _useToolHistoryList.value = toToolInfoList(it.useToolHistoryList)
             }
+
         }
     }
 
@@ -315,6 +330,13 @@ class HomeViewModel(
     fun onAppUpdateDialogShown() {
         viewModelScope.launch {
             _uiState.emit(uiState.value.copy(shownAppUpdate = true))
+        }
+    }
+
+    // 更新使用工具记录
+    fun updateUseToolRecord(tool: ToolInfo) {
+        viewModelScope.launch {
+            appSettingsRepository.updateUseToolRecord(tool.name)
         }
     }
 

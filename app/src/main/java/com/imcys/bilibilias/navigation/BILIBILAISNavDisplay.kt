@@ -74,6 +74,8 @@ import com.imcys.bilibilias.ui.tools.donate.DonateRoute
 import com.imcys.bilibilias.ui.tools.donate.DonateScreen
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorScreen
+import com.imcys.bilibilias.ui.tools.parser.WebParserRoute
+import com.imcys.bilibilias.ui.tools.parser.WebParserScreen
 import com.imcys.bilibilias.ui.user.UserScreen
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
@@ -453,6 +455,12 @@ fun BILIBILAISNavDisplay() {
                 ) {
                     LineConfigScreen (
                         lineConfigRoute = it,
+                        onToBack = { backStack.removeLastOrNullSafe() }
+                    )
+                }
+                entry<WebParserRoute> {
+                    WebParserScreen(
+                        webParserRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }

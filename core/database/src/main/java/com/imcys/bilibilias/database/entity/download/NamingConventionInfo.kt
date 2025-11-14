@@ -50,7 +50,7 @@ sealed class FileNamePlaceholder(
 
 }
 
-sealed interface NamingConventionInfo {
+sealed class NamingConventionInfo(val ruleType: Int) {
     data class Video(
         var title: String? = null,
         var pTitle: String? = null,
@@ -59,12 +59,12 @@ sealed interface NamingConventionInfo {
         var aid: String? = null,
         var cid: String? = null,
         var p: String? = null,
-    ) : NamingConventionInfo
+    ) : NamingConventionInfo(1)
 
     data class Donghua(
         var title: String? = null,
         var episodeTitle: String? = null,
         var episodeNumber: String? = null,
         var cid: String? = null,
-    ) : NamingConventionInfo
+    ) : NamingConventionInfo(2)
 }

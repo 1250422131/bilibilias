@@ -17,6 +17,8 @@ import com.imcys.bilibilias.database.entity.download.DownloadTaskType
 import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.FlowNetWorkResult
+import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.filterWithSinglePage
@@ -98,6 +100,23 @@ class DownloadTaskRepository(
         }
     }
 
+    private suspend fun <T> autoRequestRetry(
+        onErrorTip: (NetWorkResult<T?>?) -> String,
+        block: suspend () -> FlowNetWorkResult<T>
+    ): T? {
+        var count = 1
+        var lastResult: NetWorkResult<T?>? = null
+        while (count < 3) {
+            val result = block().last()
+            lastResult = result
+            if (result.status == ApiStatus.SUCCESS) {
+                return result.data
+            }
+            count++
+        }
+        error(onErrorTip(lastResult))
+    }
+
     /**
      * 创建番剧下载任务
      */
@@ -106,9 +125,10 @@ class DownloadTaskRepository(
         currentEpId: Long,
         selectedEpId: List<Long>
     ): Result<DownloadTaskTree> = runCatching {
-        val donghuaInfo = videoInfoRepository.getDonghuaSeasonViewInfo(currentEpId).last()
-        if (donghuaInfo.status != ApiStatus.SUCCESS) error("番剧接口异常:${donghuaInfo.errorMsg}")
-        val data = donghuaInfo.data!!
+        val donghuaInfo = autoRequestRetry(onErrorTip = { donghuaInfo ->
+            "番剧接口异常:${donghuaInfo?.errorMsg}"
+        }) { videoInfoRepository.getDonghuaSeasonViewInfo(currentEpId) }
+        val data = donghuaInfo!!
 
         val task = getOrCreateTask(
             platformId = data.seasonId.toString(),
@@ -129,19 +149,20 @@ class DownloadTaskRepository(
         if (data.episodes.firstOrNull()?.aid != null) {
             runCatching {
                 val videoInfo =
-                    videoInfoRepository.getVideoView(aid = data.episodes.firstOrNull().toString())
-                        .last()
-                if (videoInfo.status == ApiStatus.SUCCESS) {
-                    val videoData = videoInfo.data!!
-                    submitDownloadAnalytics(
-                        aid = videoData.aid,
-                        bvid = videoData.bvid,
-                        copyright = videoData.copyright.toInt(),
-                        tName = videoData.tname,
-                        upName = videoData.owner.name,
-                        mid = videoData.owner.mid
-                    )
-                }
+                    autoRequestRetry(onErrorTip = { "网络异常，提交视频信息获取失败" }) {
+                        videoInfoRepository.getVideoView(
+                            aid = data.episodes.firstOrNull().toString()
+                        )
+                    }
+                val videoData = videoInfo!!
+                submitDownloadAnalytics(
+                    aid = videoData.aid,
+                    bvid = videoData.bvid,
+                    copyright = videoData.copyright.toInt(),
+                    tName = videoData.tname,
+                    upName = videoData.owner.name,
+                    mid = videoData.owner.mid
+                )
             }
         }
 
@@ -405,7 +426,7 @@ class DownloadTaskRepository(
         val nodeList = mutableListOf<DownloadTreeNode>()
 
         steinGateInfo.data?.storyList?.filter { it.cid in selectedCid }
-            ?.forEach {  story ->
+            ?.forEach { story ->
                 val node = getOrCreateNode(
                     taskId = taskId,
                     platformId = story.nodeId.toString(),
@@ -513,7 +534,7 @@ class DownloadTaskRepository(
             nodeType = DownloadTaskNodeType.BILI_DONGHUA_SEASON
         )
 
-        val segments = episodes.map {episode ->
+        val segments = episodes.map { episode ->
 
             val mNamingConvention = namingConventionInfo.copy(
                 episodeTitle = episode.longTitle.ifEmpty { episode.title },
@@ -670,7 +691,7 @@ class DownloadTaskRepository(
             } else null
         }
 
-        val segments = episodes.filterWithSinglePage().map{  episode ->
+        val segments = episodes.filterWithSinglePage().map { episode ->
 
             // 为每个子视频创建独立的下载任务
             val childTask = getOrCreateTask(
@@ -758,9 +779,9 @@ class DownloadTaskRepository(
             platformInfo = platformInfo,
             updateTime = Date(),
             downloadMode = downloadMode,
-            taskId = childTaskId  // 更新子任务关联
+            taskId = childTaskId,  // 更新子任务关联
+            namingConventionInfo = mNamingConventionInfo
         )?.also {
-            it.namingConventionInfo = mNamingConventionInfo
             downloadTaskDao.updateSegment(it)
         } ?: DownloadSegment(
             nodeId = nodeId,
@@ -774,12 +795,11 @@ class DownloadTaskRepository(
             duration = duration,
             downloadMode = downloadMode,
             savePath = "",
-            fileSize = 0
+            fileSize = 0,
+            namingConventionInfo = mNamingConventionInfo
         ).let {
             val segmentId = downloadTaskDao.insertSegment(it)
-            it.copy(segmentId = segmentId).apply {
-                namingConventionInfo = mNamingConventionInfo
-            }
+            it.copy(segmentId = segmentId)
         }
     }
 

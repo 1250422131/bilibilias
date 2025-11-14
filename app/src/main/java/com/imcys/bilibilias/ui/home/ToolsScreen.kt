@@ -22,8 +22,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.CopyAll
-import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material.icons.outlined.VideoCameraBack
+import androidx.compose.material.icons.outlined.WebAsset
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
@@ -58,15 +58,14 @@ import com.imcys.bilibilias.common.utils.ASConstant.QQ_CHANNEL_URL
 import com.imcys.bilibilias.common.utils.ASConstant.QQ_GROUP_URL
 import com.imcys.bilibilias.common.utils.DeviceInfoUtils
 import com.imcys.bilibilias.common.utils.openLink
-import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.tools.donate.DonateRoute
 import com.imcys.bilibilias.ui.tools.frame.FrameExtractorRoute
+import com.imcys.bilibilias.ui.tools.parser.WebParserRoute
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.tip.ASInfoTip
-import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import kotlinx.coroutines.launch
 
 @Composable
@@ -81,14 +80,42 @@ fun ToolsScreen(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 }
 
 
-data class ToolInfo(
-    val name: String,
+enum class ToolInfo(
+    val title: String,
     val desc: String,
     val icon: ImageVector? = null,
     val iconRes: Int? = null,
     val navKey: NavKey = HomeRoute(),
-    val onClick: (() -> Unit)? = null,
-)
+    val isScreen: Boolean = true,
+) {
+    // 逐帧提取
+    FrameExtractor(
+        title = "逐帧提取",
+        desc = "从视频中逐帧提取图片，画手书的好帮手！",
+        icon = Icons.Outlined.VideoCameraBack,
+        navKey = FrameExtractorRoute
+    ),
+    WebParser(
+        title = "网页解析",
+        desc = "直接在网页找到你需要的视频，可自动解析视频。",
+        icon = Icons.Outlined.WebAsset,
+        navKey = WebParserRoute
+    ),
+    // 反馈问题
+    Feedback(
+        title = "反馈问题",
+        desc = "🐞帮助我们改进程序，这对本项目的发展有重大意义！",
+        icon = Icons.Outlined.BugReport,
+        isScreen = false,
+    ),
+    // 捐助我们
+    Donate(
+        title = "捐助我们",
+        desc = "☕请我们喝一杯奶茶吧！",
+        iconRes = R.drawable.ic_credit_card_heart_24px,
+        navKey = DonateRoute
+    ),
+}
 
 @Composable
 private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
@@ -96,30 +123,31 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
     var showFeedbackDialog by remember { mutableStateOf(false) }
 
     val videoTools = listOf(
-        ToolInfo(
-            name = "逐帧提取",
-            desc = "从视频中逐帧提取图片，画手书的好帮手！",
-            icon = Icons.Outlined.VideoCameraBack,
-            navKey = FrameExtractorRoute
-        )
+        ToolInfo.FrameExtractor
+    )
+    val parserTools = listOf(
+        ToolInfo.WebParser
     )
     val otherTools = mutableListOf(
-        ToolInfo(
-            name = "反馈问题",
-            desc = "🐞帮助我们改进程序，这对本项目的发展有重大意义！",
-            icon = Icons.Outlined.BugReport,
-            onClick = { showFeedbackDialog = true }
-        )
+        ToolInfo.Feedback
     ).apply {
         if (!BuildConfig.ENABLED_PLAY_APP_MODE) {
             add(
-                ToolInfo(
-                    name = "捐助我们",
-                    desc = "☕请我们喝一杯奶茶吧！",
-                    iconRes = R.drawable.ic_credit_card_heart_24px,
-                    navKey = DonateRoute
-                )
+                ToolInfo.Donate
             )
+        }
+    }
+
+    // 点击工具处理
+    fun clickTool(toolInfo: ToolInfo) {
+        vm.updateUseToolRecord(toolInfo)
+        when (toolInfo) {
+            ToolInfo.Feedback -> {
+                showFeedbackDialog = true
+            }
+            else -> {
+                onToPage.invoke(toolInfo.navKey)
+            }
         }
     }
 
@@ -136,7 +164,18 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
         }
         items(videoTools) {
             ToolCard(it, onClick = {
-                onToPage.invoke(it.navKey)
+                clickTool(it)
+            })
+        }
+
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Text(stringResource(R.string.tools_parser_tools))
+        }
+        items(parserTools) {
+            ToolCard(it, onClick = {
+                clickTool(it)
             })
         }
 
@@ -146,7 +185,7 @@ private fun ToolsContent(vm: HomeViewModel, onToPage: (NavKey) -> Unit) {
 
         items(otherTools) {
             ToolCard(it, onClick = {
-                onToPage.invoke(it.navKey)
+                clickTool(it)
             })
         }
 
@@ -295,17 +334,10 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
 @Preview
 @Composable
 private fun ToolCard(
-    toolInfo: ToolInfo = ToolInfo(
-        name = "逐帧提取",
-        desc = "从视频中逐帧提取图片，画手书的好帮手！",
-        icon = Icons.Outlined.VideoCameraBack,
-        navKey = FrameExtractorRoute
-    ),
+    toolInfo: ToolInfo = ToolInfo.Feedback,
     onClick: () -> Unit = { }
 ) {
-    Surface(modifier = Modifier.fillMaxWidth(), shape = CardDefaults.shape, onClick = {
-        if (toolInfo.onClick != null) toolInfo.onClick.invoke() else onClick.invoke()
-    }) {
+    Surface(modifier = Modifier.fillMaxWidth(), shape = CardDefaults.shape, onClick = onClick) {
         Column(
             Modifier
                 .padding(10.dp)
@@ -334,7 +366,7 @@ private fun ToolCard(
 
             }
             Spacer(Modifier.height(2.dp))
-            Text(toolInfo.name, style = MaterialTheme.typography.titleMedium)
+            Text(toolInfo.title, style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(2.dp))
             Text(
                 toolInfo.desc,

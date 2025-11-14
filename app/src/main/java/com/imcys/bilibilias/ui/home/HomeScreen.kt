@@ -2,8 +2,8 @@ package com.imcys.bilibilias.ui.home
 
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.annotation.DrawableRes
 import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,14 +55,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -91,6 +95,7 @@ import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.utils.rememberHeightSizeClass
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
@@ -125,7 +130,7 @@ internal fun HomeScreen(
     goToAnalysis: () -> Unit,
     goToDownloadPage: () -> Unit,
     goToSetting: () -> Unit = {},
-    goToPage: (NavKey) -> Unit = {}
+    goToPage: (NavKey) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
@@ -177,7 +182,8 @@ internal fun HomeScreen(
                                 vm,
                                 homeLayoutTypesetList,
                                 downloadListState,
-                                goToDownloadPage
+                                goToDownloadPage,
+                                goToPage
                             )
                         }
 
@@ -276,15 +282,24 @@ fun HomeContent(
     vm: HomeViewModel,
     homeLayoutTypesetList: List<AppSettings.HomeLayoutItem>,
     downloadListState: List<AppDownloadTask>,
-    goToDownloadPage: () -> Unit
+    goToDownloadPage: () -> Unit,
+    goToPage: (NavKey) -> Unit
 ) {
 
     val bannerList by vm.bannerList.collectAsState()
     val bulletinInfo by vm.bulletinInfo.collectAsState()
     val appSettings by vm.appSettingsState.collectAsState()
     val appUpdateInfo by vm.appUpdateInfo.collectAsState()
+    val useToolHistoryList by vm.useToolHistoryList.collectAsState()
     val context = LocalContext.current
     val uiState by vm.uiState.collectAsState()
+    val windowsWidthSizeClass = rememberWidthSizeClass()
+    val toolsHistoryCount = when (windowsWidthSizeClass) {
+        WindowWidthSizeClass.Compact -> 2
+        WindowWidthSizeClass.Medium -> 4
+        WindowWidthSizeClass.Expanded -> 4
+        else -> 2
+    }
 
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
     var bulletinDialogShow by remember { mutableStateOf(false) }
@@ -326,148 +341,223 @@ fun HomeContent(
         }
 
         homeLayoutTypesetList.forEach { layout ->
-            when (layout.type) {
-                AppSettings.HomeLayoutType.Banner if (!layout.isHidden && !BuildConfig.ENABLED_PLAY_APP_MODE) -> {
-                    item {
-                        ASHorizontalMultiBrowseCarousel(
-                            autoScroll = true,
-                            modifier = Modifier
-                                .animateItem()
-                                .animateContentSize(),
-                            items = bannerList
-                        ) { item ->
-                            Box(Modifier.maskClip(CardDefaults.shape)) {
-                                ASAsyncImage(
-                                    model = item.url,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(168.dp)
-                                        .maskClip(CardDefaults.shape),
-                                    shape = CardDefaults.shape,
-                                    onClick = {
-                                        // 跳转链接
-                                        context.openLink(item.ref)
-                                    }
-                                )
+            if (!layout.isHidden) {
+                when (layout.type) {
+                    AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE) -> {
+                        item {
+                            ASHorizontalMultiBrowseCarousel(
+                                autoScroll = true,
+                                modifier = Modifier
+                                    .animateItem()
+                                    .animateContentSize(),
+                                items = bannerList
+                            ) { item ->
+                                Box(Modifier.maskClip(CardDefaults.shape)) {
+                                    ASAsyncImage(
+                                        model = item.url,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(168.dp)
+                                            .maskClip(CardDefaults.shape),
+                                        shape = CardDefaults.shape,
+                                        onClick = {
+                                            // 跳转链接
+                                            context.openLink(item.ref)
+                                        }
+                                    )
 
-                                Text(
-                                    item.title,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.W500,
-                                    color = MaterialTheme.colorScheme.surface,
-                                    maxLines = 2,
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .align(Alignment.BottomStart)
-                                )
+                                    Text(
+                                        item.title,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.W500,
+                                        color = MaterialTheme.colorScheme.surface,
+                                        maxLines = 2,
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .align(Alignment.BottomStart)
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                AppSettings.HomeLayoutType.Announcement if !layout.isHidden -> {
-                    if (appSettings.lastBulletinContent == bulletinInfo?.content) {
-                        // 内容相同，不展示
-                        return@forEach
-                    }
-                    item {
-                        CommonInfoCard(
-                            R.drawable.ic_brand_awareness_24px,
-                            "公告",
-                            bulletinInfo?.content ?: "暂无最新公告",
-                            onClickClose = {
-                                closeBulletinDialogShow = true
-                            },
-                            onClick = {
-                                if (bulletinInfo?.content.isNullOrEmpty()) return@CommonInfoCard
-                                bulletinDialogShow = true
-                            }
-                        )
-                    }
-                }
-
-                AppSettings.HomeLayoutType.UpdateInfo if !layout.isHidden -> {
-
-                    // Google Play 应用商店版本不展示更新内容
-                    if (BuildConfig.ENABLED_PLAY_APP_MODE) return@forEach
-
-                    if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
-                        // 版本相同，不展示
-                        return@forEach
+                    AppSettings.HomeLayoutType.Announcement -> {
+                        if (appSettings.lastBulletinContent == bulletinInfo?.content) {
+                            // 内容相同，不展示
+                            return@forEach
+                        }
+                        item {
+                            CommonInfoCard(
+                                modifier = Modifier
+                                    .animateItem()
+                                    .animateContentSize(),
+                                R.drawable.ic_brand_awareness_24px,
+                                "公告",
+                                bulletinInfo?.content ?: "暂无最新公告",
+                                onClickClose = {
+                                    closeBulletinDialogShow = true
+                                },
+                                onClick = {
+                                    if (bulletinInfo?.content.isNullOrEmpty()) return@CommonInfoCard
+                                    bulletinDialogShow = true
+                                }
+                            )
+                        }
                     }
 
-                    // if (appUpdateInfo?.version == null) return@forEach
-                    if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
-                        return@forEach
-                    }
+                    AppSettings.HomeLayoutType.UpdateInfo -> {
 
-                    if (appUpdateInfo?.version == getVersion(context).second) {
-                        return@forEach
-                    }
+                        // Google Play 应用商店版本不展示更新内容
+                        if (BuildConfig.ENABLED_PLAY_APP_MODE) return@forEach
 
-                    item {
-                        val content = when (getASBuildType(BuildConfig.FLAVOR)) {
-                            ASBuildType.OFFICIAL,
-                            ASBuildType.BETA -> {
-                                """
+                        if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
+                            // 版本相同，不展示
+                            return@forEach
+                        }
+
+                        // if (appUpdateInfo?.version == null) return@forEach
+                        if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
+                            return@forEach
+                        }
+
+                        if (appUpdateInfo?.version == getVersion(context).second) {
+                            return@forEach
+                        }
+
+                        item {
+                            val content = when (getASBuildType(BuildConfig.FLAVOR)) {
+                                ASBuildType.OFFICIAL,
+                                ASBuildType.BETA -> {
+                                    """
                                     新增：
                                     ${appUpdateInfo?.feat}
                                     修复：
                                     ${appUpdateInfo?.fix}
                                 """.trimIndent()
-                            }
+                                }
 
-                            ASBuildType.ALPHA -> appUpdateInfo?.feat
-                                ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                                ASBuildType.ALPHA -> appUpdateInfo?.feat
+                                    ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                            }
+                            CommonInfoCard(
+                                modifier = Modifier
+                                    .animateItem()
+                                    .animateContentSize(),
+                                R.drawable.ic_info_24px,
+                                "更新内容",
+                                content,
+                                onClick = {
+                                    context.openLink(appUpdateInfo?.url ?: "")
+                                }
+                            )
                         }
-                        CommonInfoCard(
-                            R.drawable.ic_info_24px,
-                            "更新内容",
-                            content,
-                            onClick = {
-                                context.openLink(appUpdateInfo?.url ?: "")
-                            }
-                        )
                     }
-                }
 
-                AppSettings.HomeLayoutType.DownloadList if !layout.isHidden -> {
-                    item {
-                        DownloadListCard(
-                            downloadListState,
-                            goToDownloadPage = goToDownloadPage,
-                            onPauseTask = {
-                                vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                            },
-                            onResumeTask = {
-                                vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                            },
-                            onCancelTask = {
-                                vm.cancelDownloadTask(it.downloadSegment.segmentId)
-                            }
-                        )
+                    AppSettings.HomeLayoutType.DownloadList -> {
+                        item {
+                            DownloadListCard(
+                                modifier = Modifier
+                                    .animateItem()
+                                    .animateContentSize(),
+                                downloadListState,
+                                goToDownloadPage = goToDownloadPage,
+                                onPauseTask = {
+                                    vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                                },
+                                onResumeTask = {
+                                    vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                                },
+                                onCancelTask = {
+                                    vm.cancelDownloadTask(it.downloadSegment.segmentId)
+                                }
+                            )
+                        }
                     }
-                }
 
-                else -> {}
+                    AppSettings.HomeLayoutType.Tools -> {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                val allToolCount by remember(
+                                    toolsHistoryCount,
+                                    useToolHistoryList.size
+                                ) {
+                                    mutableIntStateOf(
+                                        min(
+                                            toolsHistoryCount,
+                                            useToolHistoryList.size
+                                        )
+                                    )
+                                }
+                                useToolHistoryList.take(allToolCount)
+                                    .forEachIndexed { index, tool ->
+                                        key(tool.title) {
+                                            Surface(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .aspectRatio(18.3f / 13f),
+                                                shape = CardDefaults.shape,
+                                                color = if ((index + 1) % 2 != 0) MaterialTheme.colorScheme.primaryContainer
+                                                else MaterialTheme.colorScheme.tertiaryContainer,
+                                                onClick = {
+                                                    tool.let { vm.updateUseToolRecord(it) }
+                                                    goToPage(tool.navKey)
+                                                }
+                                            ) {
+                                                Column(
+                                                    modifier = Modifier
+                                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                                ) {
+                                                    tool.icon?.let {
+                                                        Icon(
+                                                            it,
+                                                            contentDescription = "图标",
+                                                            modifier = Modifier
+                                                        )
+                                                    } ?: run {
+                                                        Icon(
+                                                            painter = painterResource(tool.iconRes!!),
+                                                            contentDescription = "图标",
+                                                            modifier = Modifier
+                                                        )
+                                                    }
+                                                    Spacer(Modifier.height(8.dp))
+                                                    Text(tool.title, fontSize = 22.sp)
+                                                    Spacer(Modifier.weight(1f))
+                                                    Row(
+                                                        Modifier.fillMaxWidth(),
+                                                        horizontalArrangement = Arrangement.End
+                                                    ) {
+                                                        Icon(
+                                                            Icons.AutoMirrored.Outlined.ArrowForward,
+                                                            contentDescription = "前往"
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                repeat((toolsHistoryCount - allToolCount)) {
+                                    Spacer(Modifier.weight(1f))
+                                }
+                            }
+
+
+                        }
+                    }
+
+                    else -> {}
+                }
             }
-
         }
 
         item {
             Text(
-                if (BuildConfig.ENABLED_PLAY_APP_MODE) {
-                    """
-                            请在Download/BILIBILIAS目录下查看下载内容
-                            请不要忘记在Google Play填写意见评价
-                        """.trimIndent()
-                } else {
-                    """
-                            请在Download/BILIBILIAS目录下查看下载内容
-                            公开测试中，欢迎前往Github提交意见反馈
-                        """.trimIndent()
-                },
+                "请在Download/BILIBILIAS目录下查看下载内容",
                 fontSize = 14.sp,
                 fontWeight = FontWeight(330),
                 modifier = Modifier
@@ -482,7 +572,7 @@ fun HomeContent(
      * 更新提示对话框
      */
 
-    UpdateAppDialog(appUpdateInfo,uiState.shownAppUpdate, onAppUpdateDialogShown = {
+    UpdateAppDialog(appUpdateInfo, uiState.shownAppUpdate, onAppUpdateDialogShown = {
         vm.onAppUpdateDialogShown()
     })
 
@@ -505,7 +595,11 @@ fun HomeContent(
 }
 
 @Composable
-fun UpdateAppDialog(appUpdateInfo: AppUpdateConfigInfo?, shownAppUpdate: Boolean,onAppUpdateDialogShown:()->Unit) {
+fun UpdateAppDialog(
+    appUpdateInfo: AppUpdateConfigInfo?,
+    shownAppUpdate: Boolean,
+    onAppUpdateDialogShown: () -> Unit
+) {
     var show by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -602,13 +696,14 @@ fun BulletinDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DownloadListCard(
+    modifier: Modifier = Modifier,
     downloadListState: List<AppDownloadTask>,
     goToDownloadPage: () -> Unit,
     onPauseTask: (task: AppDownloadTask) -> Unit,
     onResumeTask: (task: AppDownloadTask) -> Unit,
     onCancelTask: (task: AppDownloadTask) -> Unit,
 ) {
-    SurfaceColorCard {
+    SurfaceColorCard(modifier = modifier) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -817,13 +912,14 @@ private fun HomeScaffold(
 
 @Composable
 private fun CommonInfoCard(
+    modifier: Modifier = Modifier,
     @DrawableRes iconId: Int,
     title: String = "",
     connect: String,
     onClickClose: (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
-    SurfaceColorCard {
+    SurfaceColorCard(modifier = modifier) {
         Surface(Modifier.clickable {
             onClick.invoke()
         }, shape = CardDefaults.shape) {

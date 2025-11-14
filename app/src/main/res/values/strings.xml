@@ -109,6 +109,7 @@
     <string name="tools_video_processing">视频处理</string>
     <string name="tools_other">其他</string>
     <string name="tools_feedback">问题反馈</string>
+    <string name="tools_parser_tools">解析工具</string>
     
     <!-- Home screen related strings -->
     <string name="home_announcement">公告</string>
@@ -177,7 +178,7 @@
     <string name="analysis_cache_preference">缓存倾向</string>
     <string name="analysis_ai_translation">AI原声翻译</string>
     <string name="analysis_select_interactive_video">选择互动视频</string>
-    <string name="analysis_episode_range_format" formatted="false">%d~%d</string>
+    <string name="analysis_episode_range_format" translatable="false">%d~%d</string>
     <string name="analysis_video_quality">视频质量</string>
     <string name="analysis_audio_quality">音频质量</string>
     <string name="analysis_codec">编解码器</string>

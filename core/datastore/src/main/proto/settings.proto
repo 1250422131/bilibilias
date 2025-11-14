@@ -38,6 +38,9 @@ message AppSettings {
   // bilibili线路配置
   string bili_line_host = 13;
 
+  // 使用过的工具记录
+  repeated string use_tool_history = 14;
+
   enum EpisodeListMode{
     EpisodeListMode_Grid = 0;
     EpisodeListMode_List = 1;

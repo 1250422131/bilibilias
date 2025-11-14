@@ -14,6 +14,7 @@ import com.imcys.bilibilias.database.converter.download.DownloadStageConverter
 import com.imcys.bilibilias.database.converter.download.DownloadStateConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskNodeTypeConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskTypeConverter
+import com.imcys.bilibilias.database.converter.download.NamingConventionConverter
 import java.util.Date
 
 /**
@@ -126,7 +127,8 @@ data class DownloadTaskNode(
 )
 @TypeConverters(
     DownloadModeConverter::class, DateConverter::class,
-    DownloadStateConverter::class, DownloadStageConverter::class
+    DownloadStateConverter::class, DownloadStageConverter::class,
+    NamingConventionConverter::class
 )
 data class DownloadSegment(
     @PrimaryKey(autoGenerate = true)
@@ -173,6 +175,9 @@ data class DownloadSegment(
     @ColumnInfo(name = "download_state")
     val downloadState: DownloadState = DownloadState.WAITING,
 
+    @ColumnInfo(name = "naming_convention_info")
+    val namingConventionInfo: NamingConventionInfo? = null,
+
     @ColumnInfo(name = "created_time")
     val createTime: Date = Date(),
 
@@ -182,8 +187,4 @@ data class DownloadSegment(
     // 仅仅用于临时存储视频时长等信息，不存数据库
     @Ignore
     var tempDuration: Long = 0
-
-    @Ignore
-    var namingConventionInfo: NamingConventionInfo? = null
-
 }
