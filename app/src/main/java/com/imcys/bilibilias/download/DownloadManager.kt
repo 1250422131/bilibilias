@@ -15,6 +15,7 @@ import android.os.IBinder
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
+import com.imcys.bilibilias.common.utils.autoRequestRetry
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
 import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
 import com.imcys.bilibilias.common.utils.download.DanmakuXmlUtil
@@ -871,8 +872,13 @@ class DownloadManager(
                         FileNamePlaceholder.Video.P -> conventionInfo.p ?: ""
                         FileNamePlaceholder.Video.PTitle -> conventionInfo.pTitle ?: ""
                         FileNamePlaceholder.Video.Title -> conventionInfo.title ?: ""
+                        FileNamePlaceholder.Video.CollectionSeasonTitle -> conventionInfo.collectionSeasonTitle ?: ""
+                        FileNamePlaceholder.Video.CollectionTitle -> conventionInfo.collectionTitle ?: ""
                     }
-                    filePath = filePath.replace(rule.placeholder, value)
+                    filePath = filePath
+                        .replace(rule.placeholder, value)
+                        .replace(Regex("_+"), "_")
+                        .replace(Regex("_+$"), "")
                 }
             }
 
@@ -887,6 +893,7 @@ class DownloadManager(
                             ?: ""
 
                         FileNamePlaceholder.Donghua.Title -> conventionInfo.title ?: ""
+                        FileNamePlaceholder.Donghua.SeasonTitle -> conventionInfo.seasonTitle ?: ""
                     }
                     filePath = filePath.replace(rule.placeholder, value)
                 }
@@ -1319,25 +1326,28 @@ class DownloadManager(
     ): List<DownloadSubTask> {
         // 获取视频播放信息
         val videoInfo = when (nodeType) {
-
             DownloadTaskNodeType.BILI_VIDEO_INTERACTIVE,
             DownloadTaskNodeType.BILI_VIDEO_PAGE,
             DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
-                videoInfoRepository.getVideoPlayerInfo(
-                    cid = segment.platformId.toLong(),
-                    bvId = getSegmentBvId(segment),
-                    curLanguage = downloadViewInfo.selectAudioLanguage?.lang,
-                    curProductionType = downloadViewInfo.selectAudioLanguage?.productionType
-                ).last()
+                autoRequestRetry{
+                    videoInfoRepository.getVideoPlayerInfo(
+                        cid = segment.platformId.toLong(),
+                        bvId = getSegmentBvId(segment),
+                        curLanguage = downloadViewInfo.selectAudioLanguage?.lang,
+                        curProductionType = downloadViewInfo.selectAudioLanguage?.productionType
+                    )
+                }
             }
 
             DownloadTaskNodeType.BILI_DONGHUA_EPISOD,
             DownloadTaskNodeType.BILI_DONGHUA_SEASON,
             DownloadTaskNodeType.BILI_DONGHUA_SECTION -> {
-                videoInfoRepository.getDonghuaPlayerInfo(
-                    epId = segment.platformId.toLong(),
-                    null
-                ).last()
+                autoRequestRetry {
+                    videoInfoRepository.getDonghuaPlayerInfo(
+                        epId = segment.platformId.toLong(),
+                        null
+                    )
+                }
             }
 
             else -> throw IllegalStateException("缓存类型不支持: ${nodeType.name}")

@@ -8,6 +8,8 @@ val videoNamingRules = listOf(
     FileNamePlaceholder.Video.Aid,
     FileNamePlaceholder.Video.BvId,
     FileNamePlaceholder.Video.Cid,
+    FileNamePlaceholder.Video.CollectionTitle,
+    FileNamePlaceholder.Video.CollectionSeasonTitle,
 )
 
 val donghuaNamingRules = listOf(
@@ -15,6 +17,7 @@ val donghuaNamingRules = listOf(
     FileNamePlaceholder.Donghua.EpisodeTitle,
     FileNamePlaceholder.Donghua.EpisodeNumber,
     FileNamePlaceholder.Donghua.Cid,
+    FileNamePlaceholder.Donghua.SeasonTitle,
 )
 
 
@@ -36,6 +39,12 @@ sealed class FileNamePlaceholder(
         object Aid : Video("{aid}", "AV号")
         object Cid : Video("{cid}", "CID号")
         object P : Video("{p}", "分P序号")
+
+        object CollectionTitle : Video("{collection_title}", "合集标题")
+        // 合集章节
+        object CollectionSeasonTitle : Video("{collection_season_title}", "合集章节标题")
+
+
     }
 
     sealed class Donghua(
@@ -46,6 +55,8 @@ sealed class FileNamePlaceholder(
         object EpisodeTitle : Donghua("{episode_title}", "动画集标题")
         object EpisodeNumber : Donghua("{episode_number}", "动画集数")
         object Cid : Donghua("{cid}", "CID号")
+        // 季度标题
+        object SeasonTitle : Donghua("{season_title}", "季度标题")
     }
 
 }
@@ -59,6 +70,8 @@ sealed class NamingConventionInfo(val ruleType: Int) {
         var aid: String? = null,
         var cid: String? = null,
         var p: String? = null,
+        var collectionTitle: String? = null,
+        var collectionSeasonTitle: String? = null,
     ) : NamingConventionInfo(1)
 
     data class Donghua(
@@ -66,5 +79,6 @@ sealed class NamingConventionInfo(val ruleType: Int) {
         var episodeTitle: String? = null,
         var episodeNumber: String? = null,
         var cid: String? = null,
+        var seasonTitle: String? = null,
     ) : NamingConventionInfo(2)
 }

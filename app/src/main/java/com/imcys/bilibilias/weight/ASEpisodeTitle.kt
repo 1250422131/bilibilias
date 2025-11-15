@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.weight
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.CircleShape
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.GridOn
+import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +23,9 @@ typealias OnUpdateEpisodeListMode = (AppSettings.EpisodeListMode) -> Unit
 @Composable
 fun ASEpisodeTitle(
     title: String,
+    isSelectSingleModel: Boolean = true,
     episodeListMode: AppSettings.EpisodeListMode,
+    onSelectAllClick: () -> Unit = {},
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Row(
@@ -29,6 +33,20 @@ fun ASEpisodeTitle(
     ) {
         Text(title)
         Spacer(Modifier.weight(1f))
+
+        AnimatedVisibility(!isSelectSingleModel) {
+            ASIconButton(
+                shape = CircleShape,
+                onClick = onSelectAllClick
+            ) {
+                Icon(
+                    Icons.Outlined.SelectAll,
+                    contentDescription = "全选",
+                )
+            }
+        }
+
+
         ASIconButton(
             shape = CircleShape,
             onClick = {

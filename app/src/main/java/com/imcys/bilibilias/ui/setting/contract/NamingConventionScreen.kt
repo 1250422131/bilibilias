@@ -271,15 +271,7 @@ fun NamingConventionScaffold(
                 scrollBehavior = scrollBehavior,
                 style = BILIBILIASTopAppBarStyle.Large,
                 title = {
-                    BadgedBox(
-                        badge = {
-                            Badge {
-                                Text(stringResource(R.string.common_beta))
-                            }
-                        }
-                    ) {
-                        Text(text = "命名规则")
-                    }
+                    Text(text = "命名规则")
                 },
                 navigationIcon = {
                     AsBackIconButton(onClick = {

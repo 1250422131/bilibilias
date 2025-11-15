@@ -375,6 +375,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         onToVideoCodingInfo = onToVideoCodingInfo,
                         onUpdateEpisodeListMode = {
                             viewModel.updateEpisodeListMode(it)
+                        },
+                        onUpdateSelectedEpList = {
+                            viewModel.onUpdateSelectEpIdList(it)
                         }
                     )
                 }
@@ -433,6 +436,9 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onUpdateAudioLanguage = {
                             viewModel.updateAudioLanguage(it)
+                        },
+                        onUpdateSelectCidList = {
+                            viewModel.onUpdateSelectCidList(it)
                         }
                     )
                 }

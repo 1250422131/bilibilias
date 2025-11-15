@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.TreeSet
 
 @OptIn(FlowPreview::class)
 class AnalysisViewModel(
@@ -381,8 +382,8 @@ class AnalysisViewModel(
 
                     _uiState.value = _uiState.value.copy(
                         asLinkResultType = ASLinkResultType.BILI.Donghua(
-                            (if (it.data?.episodes?.isEmpty() != true) it.data?.episodes[0]?.epId else
-                                if (it.data?.section?.isEmpty() != true) it.data?.section[0] else -1) as Long,
+                            (if (it.data?.episodes?.isEmpty() != true) (it.data?.episodes[0]?.epId ?: 0L) else
+                                if (it.data?.section?.isEmpty() != true) it.data?.section[0]?.episodes[0]?.epId ?: 0L else -1L),
                             it
                         )
                     )
@@ -792,4 +793,53 @@ class AnalysisViewModel(
             appOldSoFreezeBean = null
         )
     }
+
+    fun onUpdateSelectCidList(cidList: List<Long>) {
+        // 判断cidList是不是在_uiState.value.downloadInfo.selectedCid里都有
+        if (_uiState.value.downloadInfo?.selectedCid?.containsAll(cidList) == true) {
+            // 排除后更新
+            val currentCidList =
+                (_uiState.value.downloadInfo?.selectedCid ?: listOf()).toMutableList()
+                    .apply { removeAll(cidList) }
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(
+                    selectedCid = currentCidList
+                )
+            )
+        } else {
+            // 去重加入
+            val currentCidList =
+                (TreeSet(_uiState.value.downloadInfo?.selectedCid ?: listOf()) + cidList).toList()
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(
+                    selectedCid = currentCidList,
+                )
+            )
+        }
+
+    }
+    fun onUpdateSelectEpIdList(epIdList: List<Long>) {
+        if (_uiState.value.downloadInfo?.selectedEpId?.containsAll(epIdList) == true) {
+            // 排除后更新
+            val currentEpIdList =
+                (_uiState.value.downloadInfo?.selectedEpId ?: listOf()).toMutableList()
+                    .apply { removeAll(epIdList) }
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(
+                    selectedEpId = currentEpIdList
+                )
+            )
+        } else {
+            // 去重加入
+            val currentEpIdList =
+                (TreeSet(_uiState.value.downloadInfo?.selectedEpId ?: listOf()) + epIdList).toList()
+            _uiState.value = _uiState.value.copy(
+                downloadInfo = _uiState.value.downloadInfo?.copy(
+                    selectedEpId = currentEpIdList,
+                )
+            )
+        }
+
+    }
+
 }

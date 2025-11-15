@@ -53,6 +53,7 @@ import com.imcys.bilibilias.weight.OnUpdateEpisodeListMode
 
 typealias UpdateSelectedEpId = (epId: Long?, selectEpisodeType: SelectEpisodeType, title: String, cover: String) -> Unit
 
+typealias UpdateSelectedEpList = (epIdList: List<Long>) -> Unit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -66,6 +67,7 @@ fun DongmhuaDownloadScreen(
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
     onUpdateSelectedEpId: UpdateSelectedEpId,
+    onUpdateSelectedEpList: UpdateSelectedEpList,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
     onAudioQualityChange: (Long?) -> Unit = {},
@@ -171,8 +173,16 @@ fun DongmhuaDownloadScreen(
                             Column {
                                 ASEpisodeTitle(
                                     "选择缓存剧集",
+                                    isSelectSingleModel = isSelectSingleModel,
                                     episodeListMode = episodeListMode,
-                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode,
+                                    onSelectAllClick = {
+                                        val allEpList = mutableListOf<Long>()
+                                        donghuaViewInfo.data?.episodes?.forEach {
+                                            allEpList.add(it.epId)
+                                        }
+                                        onUpdateSelectedEpList(allEpList)
+                                    }
                                 )
                                 ASSectionEpisodeSelection(
                                     sectionList = donghuaViewInfo.data?.seasons,
@@ -238,8 +248,16 @@ fun DongmhuaDownloadScreen(
                             ) {
                                 ASEpisodeTitle(
                                     "选择缓存预告",
-                                    episodeListMode,
-                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                                    isSelectSingleModel = isSelectSingleModel,
+                                    episodeListMode = episodeListMode,
+                                    onUpdateEpisodeListMode = onUpdateEpisodeListMode,
+                                    onSelectAllClick = {
+                                        val allEpList = mutableListOf<Long>()
+                                        donghuaViewInfo.data?.section?.forEach {
+                                            allEpList.addAll(it.episodes.map { ep -> ep.epId })
+                                        }
+                                        onUpdateSelectedEpList(allEpList)
+                                    }
                                 )
                                 ASSectionEpisodeSelection(
                                     sectionList = donghuaViewInfo.data?.section,

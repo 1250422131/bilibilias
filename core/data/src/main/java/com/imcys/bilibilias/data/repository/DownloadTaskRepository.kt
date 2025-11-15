@@ -87,16 +87,18 @@ class DownloadTaskRepository(
                 userName = userInfo?.name
                 userId = userInfo?.mid
             }
-            appAPIService.submitASDownloadData(
-                aid = aid,
-                bvid = bvid,
-                copy = copyright,
-                tName = tName,
-                upName = upName,
-                mid = mid,
-                userName = userName,
-                userId = userId
-            )
+            runCatching {
+                appAPIService.submitASDownloadData(
+                    aid = aid,
+                    bvid = bvid,
+                    copy = copyright,
+                    tName = tName,
+                    upName = upName,
+                    mid = mid,
+                    userName = userName,
+                    userId = userId
+                )
+            }
         }
     }
 
@@ -320,6 +322,7 @@ class DownloadTaskRepository(
 
         // 1. 构建季度节点
         data.seasons.forEach { season ->
+            namingConventionInfo.seasonTitle = season.seasonTitle
             val episodes = if (season.seasonId == data.seasonId) {
                 data.episodes
             } else {
@@ -390,6 +393,7 @@ class DownloadTaskRepository(
                 buildUgcSectionNode(
                     taskId,
                     task,
+                    data.ugcSeason,
                     section,
                     filteredEpisodes,
                     downloadMode,
@@ -649,6 +653,7 @@ class DownloadTaskRepository(
     private suspend fun buildUgcSectionNode(
         taskId: Long,
         task: DownloadTask,
+        ugcSeason: BILIVideoViewInfo.UgcSeason?,
         section: BILIVideoViewInfo.UgcSeason.Section,
         episodes: List<BILIVideoViewInfo.UgcSeason.Section.Episode>,
         downloadMode: DownloadMode,
@@ -703,6 +708,8 @@ class DownloadTaskRepository(
             )
 
             val mNamingConvention = namingConventionInfo.copy(
+                collectionTitle = ugcSeason?.title,
+                collectionSeasonTitle = section.title,
                 pTitle = episode.title,
                 p = (section.episodes.indexOf(episode) + 1).toString(),
                 cid = episode.cid.toString(),

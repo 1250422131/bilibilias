@@ -70,6 +70,8 @@ typealias UpdateSelectedCid = (cid: Long?, selectEpisodeType: SelectEpisodeType,
 
 typealias OnUpdateAudioLanguage = (BILIVideoLanguageItem) -> Unit
 
+typealias OnUpdateSelectCidList = (List<Long>) -> Unit
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun VideoDownloadScreen(
@@ -81,6 +83,7 @@ fun VideoDownloadScreen(
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
     interactiveVideo: NetWorkResult<BILISteinEdgeInfo?>,
     boostVideoInfo: AppOldCommonBean?,
+    onUpdateSelectCidList: OnUpdateSelectCidList = {},
     onUpdateSelectedCid: UpdateSelectedCid,
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {},
@@ -96,7 +99,7 @@ fun VideoDownloadScreen(
         if (viewInfo.data?.isUpowerPlay == false) {
             return
         }
-        if (boostVideoInfo?.code != 0){
+        if (boostVideoInfo?.code != 0) {
             return
         }
     }
@@ -206,8 +209,18 @@ fun VideoDownloadScreen(
 
                         ASEpisodeTitle(
                             "选择缓存合集",
+                            isSelectSingleModel = isSelectSingleModel,
                             episodeListMode = episodeListMode,
-                            onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                            onUpdateEpisodeListMode = onUpdateEpisodeListMode,
+                            onSelectAllClick = {
+                                val allCidList = mutableListOf<Long>()
+                                viewInfo.data?.ugcSeason?.sections?.forEach {
+                                    allCidList.addAll(
+                                        it.episodes.filterWithSinglePage().map { ep -> ep.cid }
+                                    )
+                                }
+                                onUpdateSelectCidList(allCidList)
+                            }
                         )
 
                         UgcSeasonScreen(
@@ -243,7 +256,11 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        ASEpisodeTitle("选择缓存子集", episodeListMode, onUpdateEpisodeListMode)
+                        ASEpisodeTitle("选择缓存子集",
+                            isSelectSingleModel = isSelectSingleModel,
+                            episodeListMode =  episodeListMode, onSelectAllClick = {
+                                onUpdateSelectCidList(viewInfo.data?.pages?.map { it.cid } ?: emptyList())
+                        }, onUpdateEpisodeListMode)
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
@@ -266,14 +283,15 @@ fun VideoDownloadScreen(
                         InteractiveVideoPageScreen(
                             interactiveVideo.data,
                             downloadInfo,
+                            isSelectSingleModel,
                             episodeListMode = episodeListMode,
                             onUpdateSelectedCid = onUpdateSelectedCid,
-                            onUpdateEpisodeListMode = onUpdateEpisodeListMode
+                            onUpdateEpisodeListMode = onUpdateEpisodeListMode,
+                            onUpdateSelectCidList = onUpdateSelectCidList
                         )
                     }
                 })
             }
-
 
 
             // AI原声翻译
@@ -322,16 +340,22 @@ fun BILIAISimultaneousInterpretation(
 fun InteractiveVideoPageScreen(
     steinEdgeInfo: BILISteinEdgeInfo?,
     downloadInfo: DownloadViewInfo?,
+    isSelectSingleModel: Boolean,
     episodeListMode: AppSettings.EpisodeListMode,
     onUpdateSelectedCid: UpdateSelectedCid,
+    onUpdateSelectCidList: OnUpdateSelectCidList,
     onUpdateEpisodeListMode: OnUpdateEpisodeListMode
 ) {
     Column {
         Text(stringResource(R.string.analysis_select_interactive_video))
         ASEpisodeTitle(
             stringResource(R.string.analysis_select_interactive_video),
-            episodeListMode,
-            onUpdateEpisodeListMode = onUpdateEpisodeListMode
+            episodeListMode = episodeListMode,
+            isSelectSingleModel= isSelectSingleModel,
+            onUpdateEpisodeListMode = onUpdateEpisodeListMode,
+            onSelectAllClick = {
+                onUpdateSelectCidList(steinEdgeInfo?.storyList?.map { it.cid } ?: emptyList())
+            }
         )
         ASEpisodeSelection(
             episodeList = steinEdgeInfo?.storyList,
@@ -426,7 +450,12 @@ fun UgcSeasonPageScreen(
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
-                label = { Text(stringResource(R.string.analysis_select_part_video), fontSize = 12.sp) },
+                label = {
+                    Text(
+                        stringResource(R.string.analysis_select_part_video),
+                        fontSize = 12.sp
+                    )
+                },
                 trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
