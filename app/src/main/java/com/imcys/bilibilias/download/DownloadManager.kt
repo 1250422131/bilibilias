@@ -874,7 +874,7 @@ class DownloadManager(
                         FileNamePlaceholder.Video.Title -> conventionInfo.title ?: ""
                         FileNamePlaceholder.Video.CollectionSeasonTitle -> conventionInfo.collectionSeasonTitle ?: ""
                         FileNamePlaceholder.Video.CollectionTitle -> conventionInfo.collectionTitle ?: ""
-                    }
+                    }.replace("/","_")
                     filePath = filePath
                         .replace(rule.placeholder, value)
                         .replace(Regex("_+"), "_")
@@ -894,7 +894,7 @@ class DownloadManager(
 
                         FileNamePlaceholder.Donghua.Title -> conventionInfo.title ?: ""
                         FileNamePlaceholder.Donghua.SeasonTitle -> conventionInfo.seasonTitle ?: ""
-                    }
+                    }.replace("/","_")
                     filePath = filePath.replace(rule.placeholder, value)
                 }
             }

@@ -343,7 +343,7 @@ fun HomeContent(
         homeLayoutTypesetList.forEach { layout ->
             if (!layout.isHidden) {
                 when (layout.type) {
-                    AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE) -> {
+                    AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE && bannerList.isNotEmpty()) -> {
                         item {
                             ASHorizontalMultiBrowseCarousel(
                                 autoScroll = true,

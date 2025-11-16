@@ -19,6 +19,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.Lifecycle
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 inline fun <T> ASHorizontalMultiBrowseCarousel(
@@ -31,9 +36,20 @@ inline fun <T> ASHorizontalMultiBrowseCarousel(
     val carouselState = rememberCarouselState { items.size }
     var isUserInteracting by remember { mutableStateOf(false) }
     var autoScrollKey by remember { mutableIntStateOf(0) }
+    var isPageVisible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(autoScroll, autoScrollKey) {
-        if (autoScroll) {
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        isPageVisible = true
+        autoScrollKey++
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        isPageVisible = false
+        isUserInteracting = false
+        autoScrollKey++
+    }
+
+    LaunchedEffect(autoScroll, autoScrollKey, isPageVisible) {
+        if (autoScroll && isPageVisible) {
             while (!isUserInteracting) {
                 delay(scrollTime)
                 if (carouselState.currentItem == items.size - 1) {
@@ -51,20 +67,15 @@ inline fun <T> ASHorizontalMultiBrowseCarousel(
             .fillMaxWidth()
             .wrapContentHeight()
             .pointerInput(Unit) {
-                // 监听触摸事件
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
                         when (event.type) {
-                            PointerEventType.Press -> {
-                                isUserInteracting = true
-                            }
-                            PointerEventType.Release,
-                            PointerEventType.Exit -> {
+                            PointerEventType.Press -> isUserInteracting = true
+                            PointerEventType.Release, PointerEventType.Exit -> {
                                 isUserInteracting = false
-                                autoScrollKey++ // 触发重启自动滚动
+                                autoScrollKey++
                             }
-
                             else -> {}
                         }
                     }
