@@ -27,7 +27,7 @@ nav3Core = "1.0.0-beta01"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
 material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 paging = "3.3.6"
-palayAppUpdate = "2.1.0"
+playAppUpdate = "2.1.0"
 playAppReview = "2.0.2"
 kolor = "4.0.3"
 deviceCompat = "2.0"
@@ -94,8 +94,8 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 paging-compose = { group = "androidx.paging", name = "paging-compose-android", version.ref = "paging" }
-palay-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref = "palayAppUpdate" }
-palay-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref = "playAppReview" }
+play-app-update-kts = { module = "com.google.android.play:app-update-ktx", version.ref = "playAppUpdate" }
+play-app-review-kts = { module = "com.google.android.play:review-ktx", version.ref = "playAppReview" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
 
 # Core Navigation 3 libraries

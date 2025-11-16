@@ -144,8 +144,8 @@ dependencies {
 
     // Google Play 选配
     val googlePlayLibs = listOf(
-        libs.palay.app.update.kts,
-        libs.palay.app.review.kts
+        libs.play.app.update.kts,
+        libs.play.app.review.kts
     )
     googlePlayLibs.forEach {
         if (enabledPlayAppMode.toBoolean()) {
