@@ -29,6 +29,17 @@ BILIBILIAS没有得到哔哩哔哩许可，哔哩哔哩对用户使用此软件�
 
 BILIBILIAS是一款技术学习驱动的开源项目，我们很多的经验都来自本项目，同时也意味着该项目随时可能停止维护！
 
+
+## 下载
+
+|   系统    |                            GitHub                            |                  官网                  |
+|:-------:|:------------------------------------------------------------:|:------------------------------------:|
+| Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png"
+alt="下载应用，请到 F-Droid"
+height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+
 ## 立场
 
 BILIBILIAS 依托于B站开发，尊重并支持哔哩哔哩的各项规则和政策，任何使用本项目的用户都必须遵守哔哩哔哩的相关规定。
