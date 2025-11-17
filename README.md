@@ -90,10 +90,10 @@ BILIBILIAS 依托于B站开发，尊重并支持哔哩哔哩的各项规则和�
     - [ ] 完善平板UI适配
     - [ ] APP使用文档
 
-## BILIBILIAS-FFmpeg
+## 生态
 
-本项目所采用的[FFmpeg](https://github.com/FFmpeg/FFmpeg/)
-由[BILIBILIAS-FFmpeg](https://github.com/1250422131/bilibilias-ffmpeg)进行构建，完全使用FFmpeg的源代码。
+我们在项目中引入了一些CPP库，比如FFmpeg，为了将他们顺利迁移到Android平台，我们需要重新构建这些仓库。
+为此，我们创建了多个构建和发行的仓库，以便为BILIBILIAS项目提供支持：详细见：[ecology](https://github.com/1250422131/bilibilias/tree/main/ecology)
 
 ### 下载与配置
 
