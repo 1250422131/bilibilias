@@ -151,7 +151,7 @@ class FrameExtractorViewModel(
                                         segment.downloadMode == DownloadMode.AUDIO_VIDEO)
                     }.mapNotNull { segment ->
                         val savePath = segment.savePath
-                        if (savePath.isNullOrBlank()) {
+                        if (savePath.isBlank()) {
                             // 没有保存路径，忽略
                             null
                         } else if (savePath.startsWith("content://")) {

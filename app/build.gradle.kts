@@ -141,6 +141,7 @@ dependencies {
     implementation(libs.paging.compose)
 
     implementation(libs.device.compat)
+    implementation(libs.androidx.documentfile)
 
     // Google Play 选配
     val googlePlayLibs = listOf(
