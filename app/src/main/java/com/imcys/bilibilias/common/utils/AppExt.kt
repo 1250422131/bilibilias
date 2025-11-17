@@ -64,6 +64,20 @@ suspend fun <T> autoRequestRetry(
     return lastResult ?: error("请求异常")
 }
 
+fun Context.consumeClipboardText(): String? {
+    val clipboard =
+        getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            ?: return null
+
+    val clip = clipboard.primaryClip ?: return null
+    val text = clip.getItemAt(0).coerceToText(this)?.toString()?.trim().takeIf {
+        !it.isNullOrEmpty()
+    }
+    if (!text.isNullOrEmpty()) {
+        clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+    }
+    return text
+}
 
 inline fun analyticsSafe(action: () -> Unit) {
     if (BuildConfig.ENABLED_ANALYTICS && CommonBuildConfig.agreedPrivacyPolicy) {

@@ -57,6 +57,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,12 +81,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.data.ASBuildType
 import com.imcys.bilibilias.common.data.getASBuildType
 import com.imcys.bilibilias.common.utils.AppUtils.getVersion
 import com.imcys.bilibilias.common.utils.openLink
+import com.imcys.bilibilias.common.utils.consumeClipboardText
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
@@ -94,6 +99,7 @@ import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
+import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.utils.rememberHeightSizeClass
 import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
@@ -142,6 +148,27 @@ internal fun HomeScreen(
     val windowHeightSizeClass = rememberHeightSizeClass()
 
     val downloadListState by vm.downloadListState.collectAsState()
+
+    // Clipboard -> Auto navigate to Analysis
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Small delay to ensure the Activity has focus to read clipboard
+                scope.launch {
+                    kotlinx.coroutines.delay(180)
+                    val clipboardText = context.consumeClipboardText()
+                    if (!clipboardText.isNullOrEmpty()) {
+                        goToPage(AnalysisRoute(asInputText = clipboardText))
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LaunchedEffect(homeRoute.isFormLogin) {
         if (homeRoute.isFormLogin && !uiState.fromLoginEventConsumed) {
