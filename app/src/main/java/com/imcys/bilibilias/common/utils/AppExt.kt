@@ -64,6 +64,16 @@ suspend fun <T> autoRequestRetry(
     return lastResult ?: error("请求异常")
 }
 
+/**
+ * Reads text from the system clipboard and clears it if related to bilibili.
+ *
+ * This function retrieves the primary clip from the clipboard, extracts the text,
+ * trims whitespace, return the text and clears the clipboard to prevent re-processing
+ * the same content if the text is related to bilibili.
+ *
+ * @return The trimmed clipboard text, or null if clipboard is empty or unavailable
+ * or if the text is not related to bilibili.
+ */
 fun Context.consumeClipboardText(): String? {
     val clipboard =
         getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
@@ -73,9 +83,10 @@ fun Context.consumeClipboardText(): String? {
     val text = clip.getItemAt(0).coerceToText(this)?.toString()?.trim().takeIf {
         !it.isNullOrEmpty()
     }
-    if (!text.isNullOrEmpty()) {
-        clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+    if (text.isNullOrBlank() || AsRegexUtil.parse(text) == null) {
+        return null
     }
+    clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
     return text
 }
 

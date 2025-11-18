@@ -121,6 +121,7 @@ import org.koin.androidx.compose.koinViewModel
 import java.security.MessageDigest
 import kotlin.math.min
 
+private const val CLIPBOARD_READ_DELAY_MS = 180L
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -158,7 +159,7 @@ internal fun HomeScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 // Small delay to ensure the Activity has focus to read clipboard
                 scope.launch {
-                    kotlinx.coroutines.delay(180)
+                    kotlinx.coroutines.delay(CLIPBOARD_READ_DELAY_MS)
                     val clipboardText = context.consumeClipboardText()
                     if (!clipboardText.isNullOrEmpty()) {
                         goToPage(AnalysisRoute(asInputText = clipboardText))
