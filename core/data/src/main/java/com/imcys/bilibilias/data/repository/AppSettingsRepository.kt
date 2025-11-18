@@ -60,6 +60,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateClipboardAutoHandling(enabled: Boolean) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                enableClipboardAutoHandling = enabled
+            }
+        }
+    }
+
     suspend fun updateLastSkipUpdateVersionCode(versionCode: Int) {
         dataStore.updateData { currentSettings ->
             currentSettings.toBuilder()

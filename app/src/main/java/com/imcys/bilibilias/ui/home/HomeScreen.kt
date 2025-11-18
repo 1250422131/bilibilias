@@ -117,6 +117,7 @@ import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.DownloadTaskCard
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import java.security.MessageDigest
 import kotlin.math.min
@@ -154,12 +155,16 @@ internal fun HomeScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
+    val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 // Small delay to ensure the Activity has focus to read clipboard
                 scope.launch {
-                    kotlinx.coroutines.delay(CLIPBOARD_READ_DELAY_MS)
+                    delay(CLIPBOARD_READ_DELAY_MS)
+                    if (!appSettings.enableClipboardAutoHandling) {
+                        return@launch
+                    }
                     val clipboardText = context.consumeClipboardText()
                     if (!clipboardText.isNullOrEmpty()) {
                         goToPage(AnalysisRoute(asInputText = clipboardText))

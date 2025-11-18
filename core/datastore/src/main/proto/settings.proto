@@ -66,4 +66,5 @@ message AppSettings {
     Refuse = 3;
   }
 
+  bool enable_clipboard_auto_handling = 15;
 }
