@@ -91,6 +91,7 @@ fun AudioQualitySelectScreen(
             ExposedDropdownMenu(
                 expanded = modelExpanded,
                 onDismissRequest = { modelExpanded = false },
+                shape = CardDefaults.shape
             ) {
                 audioList?.forEach {
                     DropdownMenuItem(
@@ -219,6 +220,7 @@ fun VideoSupportFormatsSelectScreen(
             ExposedDropdownMenu(
                 expanded = videoModelExpanded,
                 onDismissRequest = { videoModelExpanded = false },
+                shape = CardDefaults.shape
             ) {
                 supportFormats.forEach {
                     DropdownMenuItem(
@@ -276,6 +278,7 @@ fun VideoSupportFormatsSelectScreen(
                 ExposedDropdownMenu(
                     expanded = videoCodeModelExpanded,
                     onDismissRequest = { videoCodeModelExpanded = false },
+                    shape = CardDefaults.shape
                 ) {
                     videoCodingList.forEach {
                         DropdownMenuItem(

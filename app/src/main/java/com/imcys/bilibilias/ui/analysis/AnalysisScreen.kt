@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.analysis
 
+import ClipboardAutoHandler
 import android.Manifest.permission
 import android.content.pm.PackageManager
 import android.os.Build
@@ -90,6 +91,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
@@ -98,6 +100,7 @@ import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.AppSettingsSerializer
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
@@ -149,10 +152,18 @@ fun AnalysisScreen(
     val uiState by vm.uiState.collectAsState()
     val isSelectSingleModel = uiState.isSelectSingleModel
     val episodeListMode = uiState.episodeListMode
+    val appSettings by vm.appSettings.collectAsState(AppSettingsSerializer.appSettingsDefault)
 
     LaunchedEffect(analysisRoute.asInputText) {
         // 解析分享内容
         vm.updateInputAsText(analysisRoute.asInputText)
+    }
+
+    // 监听剪贴板
+    ClipboardAutoHandler(
+        appSettings = appSettings,
+    ) { text ->
+        vm.updateInputAsText(text)
     }
 
 
@@ -604,6 +615,7 @@ fun AdvancedSetting(
                         ExposedDropdownMenu(
                             expanded = downloadModeExpanded,
                             onDismissRequest = { downloadModeExpanded = false },
+                            shape = CardDefaults.shape,
                         ) {
                             DownloadMode.entries.filter {
                                 // 如果没有音频资源，则不显示音视频分离选项
@@ -828,6 +840,7 @@ fun SelectACCCard(
                 ExposedDropdownMenu(
                     expanded = ccFileTypeExpanded,
                     onDismissRequest = { ccFileTypeExpanded = false },
+                    shape = CardDefaults.shape
                 ) {
                     CCFileType.entries.forEach {
                         DropdownMenuItem(

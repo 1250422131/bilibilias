@@ -470,6 +470,7 @@ fun UgcSeasonPageScreen(
             ExposedDropdownMenu(
                 expanded = videoEpisodeExpanded,
                 onDismissRequest = { videoEpisodeExpanded = false },
+                shape = CardDefaults.shape
             ) {
                 episodes.forEach {
                     DropdownMenuItem(
