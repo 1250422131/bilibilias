@@ -148,33 +148,25 @@ internal fun HomeScreen(
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
     val windowHeightSizeClass = rememberHeightSizeClass()
-
     val downloadListState by vm.downloadListState.collectAsState()
-
-    // Clipboard -> Auto navigate to Analysis
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
-    DisposableEffect(lifecycleOwner) {
+
+
+    DisposableEffect(lifecycleOwner, appSettings) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                // Small delay to ensure the Activity has focus to read clipboard
                 scope.launch {
-                    delay(CLIPBOARD_READ_DELAY_MS)
-                    if (!appSettings.enableClipboardAutoHandling) {
-                        return@launch
-                    }
-                    val clipboardText = context.consumeClipboardText()
-                    if (!clipboardText.isNullOrEmpty()) {
-                        goToPage(AnalysisRoute(asInputText = clipboardText))
-                    }
+                    handleClipboard(context, appSettings, goToPage)
                 }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
+
 
     LaunchedEffect(homeRoute.isFormLogin) {
         if (homeRoute.isFormLogin && !uiState.fromLoginEventConsumed) {
@@ -308,11 +300,33 @@ internal fun HomeScreen(
 
 
 /**
+ * 处理剪贴板内容
+ */
+private suspend fun handleClipboard(
+    context: Context,
+    appSettings: AppSettings,
+    goToPage: (NavKey) -> Unit = {}
+) {
+    delay(CLIPBOARD_READ_DELAY_MS)
+    if (!appSettings.enabledClipboardAutoHandling) {
+        return
+    }
+    // 登录状态
+    if (appSettings.agreePrivacyPolicy == AppSettings.AgreePrivacyPolicyState.Default)
+    { return }
+
+    val clipboardText = context.consumeClipboardText()
+    if (!clipboardText.isNullOrEmpty()) {
+        goToPage(AnalysisRoute(asInputText = clipboardText))
+    }
+}
+
+/**
  * 首页内容
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(
+private fun HomeContent(
     vm: HomeViewModel,
     homeLayoutTypesetList: List<AppSettings.HomeLayoutItem>,
     downloadListState: List<AppDownloadTask>,
@@ -544,7 +558,10 @@ fun HomeContent(
                                             ) {
                                                 Column(
                                                     modifier = Modifier
-                                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                                        .padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 12.dp
+                                                        )
                                                 ) {
                                                     tool.icon?.let {
                                                         Icon(
@@ -680,7 +697,7 @@ fun UpdateAppDialog(
 }
 
 @Composable
-fun CloseBulletinDialog(
+private fun CloseBulletinDialog(
     show: Boolean, onClickConfirm: () -> Unit, onClickDismiss: () -> Unit
 ) {
     ASAlertDialog(
@@ -704,7 +721,7 @@ fun CloseBulletinDialog(
 
 
 @Composable
-fun BulletinDialog(
+private fun BulletinDialog(
     bulletinConfigInfo: BulletinConfigInfo?,
     show: Boolean, onClickConfirm: () -> Unit,
 ) {
@@ -729,7 +746,7 @@ fun BulletinDialog(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadListCard(
+private fun DownloadListCard(
     modifier: Modifier = Modifier,
     downloadListState: List<AppDownloadTask>,
     goToDownloadPage: () -> Unit,
@@ -1058,7 +1075,7 @@ private fun LoginInfoBottomDialog(
 }
 
 @Composable
-fun rememberSignatureSHA1(context: Context = LocalContext.current): String? {
+private fun rememberSignatureSHA1(context: Context = LocalContext.current): String? {
     val packageName = context.packageName
     return remember(packageName, context) {
         try {

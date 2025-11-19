@@ -258,7 +258,7 @@ fun SettingScreen(
                     imageVector = Icons.Default.ContentPaste,
                     text = "自动解析",
                     description = "恢复前台时自动提取剪切板进行解析",
-                    checked = appSettings.enableClipboardAutoHandling,
+                    checked = appSettings.enabledClipboardAutoHandling,
                 ) { check ->
                     vm.updateClipboardAutoHandling(check)
                 }

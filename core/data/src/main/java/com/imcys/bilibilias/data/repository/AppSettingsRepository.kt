@@ -63,7 +63,7 @@ class AppSettingsRepository(
     suspend fun updateClipboardAutoHandling(enabled: Boolean) {
         dataStore.updateData { currentSettings ->
             currentSettings.copy {
-                enableClipboardAutoHandling = enabled
+                enabledClipboardAutoHandling = enabled
             }
         }
     }
