@@ -57,6 +57,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,12 +81,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.data.ASBuildType
 import com.imcys.bilibilias.common.data.getASBuildType
 import com.imcys.bilibilias.common.utils.AppUtils.getVersion
 import com.imcys.bilibilias.common.utils.openLink
+import com.imcys.bilibilias.common.utils.consumeClipboardText
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
@@ -94,6 +99,7 @@ import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
+import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.utils.rememberHeightSizeClass
 import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
@@ -111,10 +117,12 @@ import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.DownloadTaskCard
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import java.security.MessageDigest
 import kotlin.math.min
 
+private const val CLIPBOARD_READ_DELAY_MS = 180L
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -140,8 +148,25 @@ internal fun HomeScreen(
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
     val windowHeightSizeClass = rememberHeightSizeClass()
-
     val downloadListState by vm.downloadListState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
+
+
+    DisposableEffect(lifecycleOwner, appSettings) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch {
+                    handleClipboard(context, appSettings, goToPage)
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
 
     LaunchedEffect(homeRoute.isFormLogin) {
         if (homeRoute.isFormLogin && !uiState.fromLoginEventConsumed) {
@@ -275,11 +300,33 @@ internal fun HomeScreen(
 
 
 /**
+ * 处理剪贴板内容
+ */
+private suspend fun handleClipboard(
+    context: Context,
+    appSettings: AppSettings,
+    goToPage: (NavKey) -> Unit = {}
+) {
+    delay(CLIPBOARD_READ_DELAY_MS)
+    if (!appSettings.enabledClipboardAutoHandling) {
+        return
+    }
+    // 登录状态
+    if (appSettings.agreePrivacyPolicy == AppSettings.AgreePrivacyPolicyState.Default)
+    { return }
+
+    val clipboardText = context.consumeClipboardText()
+    if (!clipboardText.isNullOrEmpty()) {
+        goToPage(AnalysisRoute(asInputText = clipboardText))
+    }
+}
+
+/**
  * 首页内容
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(
+private fun HomeContent(
     vm: HomeViewModel,
     homeLayoutTypesetList: List<AppSettings.HomeLayoutItem>,
     downloadListState: List<AppDownloadTask>,
@@ -511,7 +558,10 @@ fun HomeContent(
                                             ) {
                                                 Column(
                                                     modifier = Modifier
-                                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                                        .padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 12.dp
+                                                        )
                                                 ) {
                                                     tool.icon?.let {
                                                         Icon(
@@ -647,7 +697,7 @@ fun UpdateAppDialog(
 }
 
 @Composable
-fun CloseBulletinDialog(
+private fun CloseBulletinDialog(
     show: Boolean, onClickConfirm: () -> Unit, onClickDismiss: () -> Unit
 ) {
     ASAlertDialog(
@@ -671,7 +721,7 @@ fun CloseBulletinDialog(
 
 
 @Composable
-fun BulletinDialog(
+private fun BulletinDialog(
     bulletinConfigInfo: BulletinConfigInfo?,
     show: Boolean, onClickConfirm: () -> Unit,
 ) {
@@ -696,7 +746,7 @@ fun BulletinDialog(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadListCard(
+private fun DownloadListCard(
     modifier: Modifier = Modifier,
     downloadListState: List<AppDownloadTask>,
     goToDownloadPage: () -> Unit,
@@ -1025,7 +1075,7 @@ private fun LoginInfoBottomDialog(
 }
 
 @Composable
-fun rememberSignatureSHA1(context: Context = LocalContext.current): String? {
+private fun rememberSignatureSHA1(context: Context = LocalContext.current): String? {
     val packageName = context.packageName
     return remember(packageName, context) {
         try {

@@ -60,6 +60,12 @@ class SettingViewModel(
         }
     }
 
+    fun updateClipboardAutoHandling(enabled: Boolean) {
+        viewModelScope.launch {
+            appSettingsRepository.updateClipboardAutoHandling(enabled)
+        }
+    }
+
     suspend fun logout() {
         val user = biliUsersDao.getBILIUserByUid(usersDataSource.getUserId())
         user?.let {

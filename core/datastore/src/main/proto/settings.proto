@@ -41,6 +41,8 @@ message AppSettings {
   // 使用过的工具记录
   repeated string use_tool_history = 14;
 
+  optional bool enabled_clipboard_auto_handling = 15;
+
   enum EpisodeListMode{
     EpisodeListMode_Grid = 0;
     EpisodeListMode_List = 1;

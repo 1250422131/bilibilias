@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.AirplaneTicket
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
+import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.outlined.Android
 import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Edit
@@ -250,6 +251,17 @@ fun SettingScreen(
                     descriptionText = "可使视频解析流量出国",
                     onClick = onToRoam
                 )
+            }
+
+            item {
+                SwitchSettingsItem(
+                    imageVector = Icons.Default.ContentPaste,
+                    text = "自动解析",
+                    description = "恢复前台时自动提取剪切板进行解析",
+                    checked = appSettings.enabledClipboardAutoHandling,
+                ) { check ->
+                    vm.updateClipboardAutoHandling(check)
+                }
             }
 
 
