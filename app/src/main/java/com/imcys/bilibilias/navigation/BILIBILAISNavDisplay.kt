@@ -20,8 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -77,6 +80,7 @@ import com.imcys.bilibilias.ui.tools.frame.FrameExtractorScreen
 import com.imcys.bilibilias.ui.tools.parser.WebParserRoute
 import com.imcys.bilibilias.ui.tools.parser.WebParserScreen
 import com.imcys.bilibilias.ui.user.UserScreen
+import com.imcys.bilibilias.ui.user.UserViewModel
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowRoute
 import com.imcys.bilibilias.ui.user.bangumifollow.BangumiFollowScreen
 import com.imcys.bilibilias.ui.user.folder.UserFolderRoute
@@ -436,7 +440,7 @@ fun BILIBILAISNavDisplay() {
                         }
                     )
                 }
-                entry<NamingConventionRoute> (
+                entry<NamingConventionRoute>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) {
                     NamingConventionScreen(
@@ -445,15 +449,15 @@ fun BILIBILAISNavDisplay() {
                     )
                 }
                 entry<RequestFrequentRoute> {
-                    RequestFrequentScreen (
+                    RequestFrequentScreen(
                         requestFrequentRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
-                entry<LineConfigRoute> (
+                entry<LineConfigRoute>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) {
-                    LineConfigScreen (
+                    LineConfigScreen(
                         lineConfigRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
@@ -506,3 +510,8 @@ fun <T : NavKey> NavBackStack<T>.removeLastOrNullSafe() {
         this.removeLastOrNull()
     }
 }
+
+fun <T : NavKey> myDecorator(): NavEntryDecorator<T> =
+    NavEntryDecorator(onPop = { contentKey -> }) { entry ->
+        entry.Content()
+    }

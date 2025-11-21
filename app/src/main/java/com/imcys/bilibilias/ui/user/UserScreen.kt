@@ -64,6 +64,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelStoreOwner
 import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.AnalysisEvent
@@ -105,7 +106,8 @@ internal fun UserScreen(
     onToCoinVide: (mid: Long) -> Unit,
     onToPlayHistory: () -> Unit,
 ) {
-    val vm = koinViewModel<UserViewModel>()
+    val owner = LocalContext.current as ViewModelStoreOwner
+    val vm = koinViewModel<UserViewModel>(viewModelStoreOwner = owner)
     val pageInfoState by vm.userPageInfoState.collectAsState()
     val userStatInfoState by vm.userStatInfoState.collectAsState()
     val spaceArchiveInfoState by vm.spaceArchiveInfoState.collectAsState()
