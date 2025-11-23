@@ -13,7 +13,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.imcys.bilibilias.datastore.AppSettings
+import kotlinx.coroutines.delay
 
+private const val CLIPBOARD_READ_DELAY_MS = 180L
 
 /**
  * 处理剪贴板自动识别
@@ -36,6 +38,7 @@ fun ClipboardAutoHandler(
     LaunchedEffect(lifecycleOwner, shouldHandleState) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             Log.d("TAG", "ClipboardAutoHandler: RESUMED")
+            delay(CLIPBOARD_READ_DELAY_MS)
             val text = context.consumeClipboardText()
             if (!text.isNullOrEmpty()) {
                 onClipboardTextState(text)
