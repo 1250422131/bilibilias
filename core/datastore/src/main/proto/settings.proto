@@ -41,7 +41,22 @@ message AppSettings {
   // 使用过的工具记录
   repeated string use_tool_history = 14;
 
+  // 启用剪贴板自动处理
   optional bool enabled_clipboard_auto_handling = 15;
+
+  // 视频解析平台
+  optional VideoParsePlatform video_parse_platform = 16;
+
+
+  enum VideoParsePlatform{
+    // Web
+    Web = 0;
+    // TV
+    TV = 1;
+    // 手机
+    Mobile = 2;
+  }
+
 
   enum EpisodeListMode{
     EpisodeListMode_Grid = 0;

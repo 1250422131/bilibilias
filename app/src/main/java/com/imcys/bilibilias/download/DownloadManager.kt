@@ -1389,7 +1389,7 @@ class DownloadManager(
                         listOf(
                             createSubTask(
                                 segment,
-                                selectedVideo.baseUrl,
+                                selectedVideo.finalUrl,
                                 DownloadSubTaskType.VIDEO
                             ),
                             createSubTask(
@@ -1403,7 +1403,7 @@ class DownloadManager(
                     DownloadMode.VIDEO_ONLY -> {
                         val selectedVideo = selectVideoQuality(videoData.video, downloadViewInfo)
                         listOf(
-                            createSubTask(segment, selectedVideo.baseUrl, DownloadSubTaskType.VIDEO)
+                            createSubTask(segment, selectedVideo.finalUrl, DownloadSubTaskType.VIDEO)
                         )
                     }
 

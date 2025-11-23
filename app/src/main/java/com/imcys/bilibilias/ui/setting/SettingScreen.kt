@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Android
 import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material.icons.outlined.Hub
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Policy
@@ -241,6 +242,15 @@ fun SettingScreen(
             item {
                 CategorySettingsItem(
                     text = "解析配置"
+                )
+            }
+
+            item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(Icons.Outlined.Hub),
+                    text = "解析平台",
+                    descriptionText = "使用不同的平台标识来解析视频",
+                    onClick = onToRoam
                 )
             }
 

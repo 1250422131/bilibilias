@@ -28,13 +28,13 @@ data class BILIVideoPlayerInfo(
     @SerialName("from")
     val from: String,
     @SerialName("last_play_cid")
-    val lastPlayCid: Long,
+    val lastPlayCid: Long?,
     @SerialName("last_play_time")
-    val lastPlayTime: Long,
+    val lastPlayTime: Long?,
     @SerialName("message")
-    val message: String,
+    val message: String?,
     @SerialName("play_conf")
-    val playConf: PlayConf,
+    val playConf: PlayConf?,
     @SerialName("quality")
     val quality: Long,
     @SerialName("result")

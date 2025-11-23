@@ -3,18 +3,22 @@ package com.imcys.bilibilias.network.config
 object API {
 
     object BILIBILI {
-        var WEB_API_BASE_URL = "https://api.bilibili.com/"
+
+        const val TV_API_BASE_URL = "https://api.snm0516.aisee.tv/"
+        const val WEB_API_BASE_URL = "https://api.bilibili.com/"
 
         const val APP_API_BASE_URL = "https://app.bilibili.com/"
 
         const val LOGIN_BASE_URL = "https://passport.bilibili.com/"
+
+        const val TV_LOGIN_BASE_URL = "https://passport.snm0516.aisee.tv/"
 
         const val SPACE_BASE_URL = "https://space.bilibili.com/"
 
         // 获取登录二维码
         const val WEB_QRCODE_GENERATE_URL = LOGIN_BASE_URL + "x/passport-login/web/qrcode/generate"
 
-        const val TV_QRCODE_GENERATE_URL = LOGIN_BASE_URL + "x/passport-tv-login/qrcode/auth_code"
+        const val TV_QRCODE_GENERATE_URL = TV_LOGIN_BASE_URL + "x/passport-tv-login/qrcode/auth_code"
 
         // 检测扫码登录状态
         const val WEB_QRCODE_POLL_URL = LOGIN_BASE_URL + "x/passport-login/web/qrcode/poll"
@@ -55,8 +59,15 @@ object API {
         // 番剧播放信息接口，通用接口
         val WEB_PGC_PLAYER_URL = WEB_API_BASE_URL + "pgc/player/web/playurl"
 
+        // TV番剧播放信息接口
+        val TV_PGC_PLAYER_URL = TV_API_BASE_URL + "pgc/player/api/playurltv"
+
         // 视频播放信息接口，通用接口
         val WEB_VIDEO_PLAYER_URL = WEB_API_BASE_URL + "x/player/wbi/playurl"
+
+        // TV视频播放信息接口
+        val TV_VIDEO_PLAYER_URL = TV_API_BASE_URL + "x/tv/playurl"
+
 
         // 视频播放信息接口，通用接口
         val WEB_VIDEO_PLAYER_NO_WEBI_URL = WEB_API_BASE_URL + "x/player/playurl"

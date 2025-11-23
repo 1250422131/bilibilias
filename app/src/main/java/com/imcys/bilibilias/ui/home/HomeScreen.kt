@@ -70,6 +70,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -94,6 +96,7 @@ import com.imcys.bilibilias.download.AppDownloadTask
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
+import com.imcys.bilibilias.network.model.app.BannerConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
@@ -143,11 +146,13 @@ internal fun HomeScreen(
     val windowHeightSizeClass = rememberHeightSizeClass()
     val downloadListState by vm.downloadListState.collectAsState()
     val appSettings by vm.appSettings.collectAsState(initial = AppSettings.getDefaultInstance())
+    val windowsWidthSizeClass = rememberWidthSizeClass()
+
 
     ClipboardAutoHandler(
         appSettings = appSettings,
         shouldHandleClipboard = {
-                appSettings.agreePrivacyPolicy != AppSettings.AgreePrivacyPolicyState.Default
+            appSettings.agreePrivacyPolicy != AppSettings.AgreePrivacyPolicyState.Default
         },
         onClipboardText = { text ->
             goToPage(AnalysisRoute(asInputText = text))
@@ -181,10 +186,12 @@ internal fun HomeScreen(
         goToAnalysis = goToAnalysis,
         goToSetting = goToSetting
     ) { p ->
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(p)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // 内容区
             HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page ->
@@ -229,7 +236,8 @@ internal fun HomeScreen(
                                 }
                             )
                             .background(
-                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                color = if (isSelected) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface,
                                 shape = CircleShape
                             )
                     )
@@ -245,16 +253,32 @@ internal fun HomeScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 15.dp)
+                                    .padding(horizontal = 15.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
+                                Surface(
+                                    onClick = goToAnalysis,
+                                    shape = CardDefaults.shape,
+                                    modifier = Modifier.animateContentSize()
+                                ) {
                                     ASCardTextField(
-                                        modifier = Modifier.sharedElement(
-                                            sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
-                                            animatedVisibilityScope = animatedContentScope
-                                        ),
-                                        value = "", onValueChange = {},
-                                        enabled = false, readOnly = true,
+                                        modifier = Modifier
+                                            .then(
+                                                if (windowsWidthSizeClass != WindowWidthSizeClass.Compact &&
+                                                    pagerState.currentPage == 0
+                                                ) Modifier.fillMaxWidth(0.8f)
+                                                else Modifier.fillMaxWidth()
+                                            )
+                                            .sharedElement(
+                                                sharedTransitionScope.rememberSharedContentState(
+                                                    key = "card-input-analysis"
+                                                ),
+                                                animatedVisibilityScope = animatedContentScope
+                                            ),
+                                        value = "",
+                                        onValueChange = {},
+                                        enabled = false,
+                                        readOnly = true,
                                         leadingIcon = {
                                             Icon(
                                                 modifier = Modifier.sharedElement(
@@ -269,7 +293,6 @@ internal fun HomeScreen(
                                             )
                                         }
                                     )
-
                                 }
                                 Spacer(Modifier.height(20.dp))
                             }
@@ -284,7 +307,6 @@ internal fun HomeScreen(
         popupUserInfoState = false
     }
 }
-
 
 
 /**
@@ -308,11 +330,12 @@ private fun HomeContent(
     val context = LocalContext.current
     val uiState by vm.uiState.collectAsState()
     val windowsWidthSizeClass = rememberWidthSizeClass()
+    val windowHeightSizeClass = rememberHeightSizeClass()
     val toolsHistoryCount = when (windowsWidthSizeClass) {
         WindowWidthSizeClass.Compact -> 2
-        WindowWidthSizeClass.Medium -> 4
-        WindowWidthSizeClass.Expanded -> 4
-        else -> 2
+        WindowWidthSizeClass.Medium if windowHeightSizeClass != WindowHeightSizeClass.Compact -> 4
+        WindowWidthSizeClass.Expanded if windowHeightSizeClass != WindowHeightSizeClass.Compact -> 6
+        else -> 4
     }
 
     var closeBulletinDialogShow by remember { mutableStateOf(false) }
@@ -330,260 +353,283 @@ private fun HomeContent(
         vm.initOldAppInfo(context)
     }
 
-    LazyColumn(
-        Modifier
-            .padding(horizontal = 15.dp)
-            .padding(top = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        if (unknownAppSign) {
-            item {
-                ASWarringTip(
-                    Modifier
-                        .animateItem()
-                        .animateContentSize()
-                ) {
-                    Text(
-                        if (BuildConfig.DEBUG) {
-                            "当前App处于Debug模式，如果您并非开发人员，请谨慎使用，建议在Github公开的渠道进行下载。"
-                        } else {
-                            "当前应用签名未知，请谨慎使用！建议在Github公开的渠道进行下载。"
-                        }
-                    )
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        LazyColumn(
+            Modifier
+                .padding(horizontal = 15.dp)
+                .padding(top = 10.dp)
+                .then(
+                    if (windowsWidthSizeClass != WindowWidthSizeClass.Compact) Modifier.fillMaxWidth(
+                        0.8f
+                    ) else Modifier
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (unknownAppSign) {
+                item {
+                    ASWarringTip(
+                        Modifier
+                            .animateItem()
+                            .animateContentSize()
+                    ) {
+                        Text(
+                            if (BuildConfig.DEBUG) {
+                                "当前App处于Debug模式，如果您并非开发人员，请谨慎使用，建议在Github公开的渠道进行下载。"
+                            } else {
+                                "当前应用签名未知，请谨慎使用！建议在Github公开的渠道进行下载。"
+                            }
+                        )
+                    }
                 }
             }
-        }
 
-        homeLayoutTypesetList.forEach { layout ->
-            if (!layout.isHidden) {
-                when (layout.type) {
-                    AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE && bannerList.isNotEmpty()) -> {
-                        item {
-                            ASHorizontalMultiBrowseCarousel(
-                                autoScroll = true,
-                                modifier = Modifier
-                                    .animateItem()
-                                    .animateContentSize(),
-                                items = bannerList
-                            ) { item ->
-                                Box(Modifier.maskClip(CardDefaults.shape)) {
-                                    ASAsyncImage(
-                                        model = item.url,
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(168.dp)
-                                            .maskClip(CardDefaults.shape),
-                                        shape = CardDefaults.shape,
-                                        onClick = {
-                                            // 跳转链接
-                                            context.openLink(item.ref)
+            homeLayoutTypesetList.forEach { layout ->
+                if (!layout.isHidden) {
+                    when (layout.type) {
+                        AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE && bannerList.isNotEmpty()) -> {
+                            item {
+                                ASHorizontalMultiBrowseCarousel(
+                                    autoScroll = true,
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .animateContentSize(),
+                                    items = bannerList
+                                ) { item ->
+                                    Box(Modifier.maskClip(CardDefaults.shape)) {
+                                        ASAsyncImage(
+                                            model = item.url,
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(168.dp)
+                                                .maskClip(CardDefaults.shape),
+                                            shape = CardDefaults.shape,
+                                            onClick = {
+                                                // 跳转链接
+                                                context.openLink(item.ref)
+                                            }
+                                        )
+
+                                        // 渐变黑色背景 + 文本
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .align(Alignment.BottomStart)
+                                                .background(
+                                                    brush = Brush.verticalGradient(
+                                                        colors = listOf(
+                                                            Color.Transparent,
+                                                            Color.Black.copy(alpha = 0.8f)
+                                                        )
+                                                    )
+                                                )
+                                        ) {
+                                            Text(
+                                                item.title,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.W500,
+                                                color = Color.White,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis,
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                            )
                                         }
-                                    )
-
-                                    Text(
-                                        item.title,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.W500,
-                                        color = MaterialTheme.colorScheme.surface,
-                                        maxLines = 2,
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .align(Alignment.BottomStart)
-                                    )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    AppSettings.HomeLayoutType.Announcement -> {
-                        if (appSettings.lastBulletinContent == bulletinInfo?.content) {
-                            // 内容相同，不展示
-                            return@forEach
-                        }
-                        item {
-                            CommonInfoCard(
-                                modifier = Modifier
-                                    .animateItem()
-                                    .animateContentSize(),
-                                R.drawable.ic_brand_awareness_24px,
-                                "公告",
-                                bulletinInfo?.content ?: "暂无最新公告",
-                                onClickClose = {
-                                    closeBulletinDialogShow = true
-                                },
-                                onClick = {
-                                    if (bulletinInfo?.content.isNullOrEmpty()) return@CommonInfoCard
-                                    bulletinDialogShow = true
-                                }
-                            )
-                        }
-                    }
-
-                    AppSettings.HomeLayoutType.UpdateInfo -> {
-
-                        // Google Play 应用商店版本不展示更新内容
-                        if (BuildConfig.ENABLED_PLAY_APP_MODE) return@forEach
-
-                        if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
-                            // 版本相同，不展示
-                            return@forEach
+                        AppSettings.HomeLayoutType.Announcement -> {
+                            if (appSettings.lastBulletinContent == bulletinInfo?.content) {
+                                // 内容相同，不展示
+                                return@forEach
+                            }
+                            item {
+                                CommonInfoCard(
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .animateContentSize(),
+                                    R.drawable.ic_brand_awareness_24px,
+                                    "公告",
+                                    bulletinInfo?.content ?: "暂无最新公告",
+                                    onClickClose = {
+                                        closeBulletinDialogShow = true
+                                    },
+                                    onClick = {
+                                        if (bulletinInfo?.content.isNullOrEmpty()) return@CommonInfoCard
+                                        bulletinDialogShow = true
+                                    }
+                                )
+                            }
                         }
 
-                        // if (appUpdateInfo?.version == null) return@forEach
-                        if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
-                            return@forEach
-                        }
+                        AppSettings.HomeLayoutType.UpdateInfo -> {
 
-                        if (appUpdateInfo?.version == getVersion(context).second) {
-                            return@forEach
-                        }
+                            // Google Play 应用商店版本不展示更新内容
+                            if (BuildConfig.ENABLED_PLAY_APP_MODE) return@forEach
 
-                        item {
-                            val content = when (getASBuildType(BuildConfig.FLAVOR)) {
-                                ASBuildType.OFFICIAL,
-                                ASBuildType.BETA -> {
-                                    """
+                            if (getVersion(context).second == appSettings.lastSkipUpdateVersion) {
+                                // 版本相同，不展示
+                                return@forEach
+                            }
+
+                            // if (appUpdateInfo?.version == null) return@forEach
+                            if (appUpdateInfo?.feat.isNullOrEmpty() || appUpdateInfo?.fix.isNullOrEmpty()) {
+                                return@forEach
+                            }
+
+                            if (appUpdateInfo?.version == getVersion(context).second) {
+                                return@forEach
+                            }
+
+                            item {
+                                val content = when (getASBuildType(BuildConfig.FLAVOR)) {
+                                    ASBuildType.OFFICIAL,
+                                    ASBuildType.BETA -> {
+                                        """
                                     新增：
                                     ${appUpdateInfo?.feat}
                                     修复：
                                     ${appUpdateInfo?.fix}
                                 """.trimIndent()
-                                }
+                                    }
 
-                                ASBuildType.ALPHA -> appUpdateInfo?.feat
-                                    ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                                    ASBuildType.ALPHA -> appUpdateInfo?.feat
+                                        ?: "Alpha版本请关注频道更新通知或GitHub Action构建。"
+                                }
+                                CommonInfoCard(
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .animateContentSize(),
+                                    R.drawable.ic_info_24px,
+                                    "更新内容",
+                                    content,
+                                    onClick = {
+                                        context.openLink(appUpdateInfo?.url ?: "")
+                                    }
+                                )
                             }
-                            CommonInfoCard(
-                                modifier = Modifier
-                                    .animateItem()
-                                    .animateContentSize(),
-                                R.drawable.ic_info_24px,
-                                "更新内容",
-                                content,
-                                onClick = {
-                                    context.openLink(appUpdateInfo?.url ?: "")
-                                }
-                            )
                         }
-                    }
 
-                    AppSettings.HomeLayoutType.DownloadList -> {
-                        item {
-                            DownloadListCard(
-                                modifier = Modifier
-                                    .animateItem()
-                                    .animateContentSize(),
-                                downloadListState,
-                                goToDownloadPage = goToDownloadPage,
-                                onPauseTask = {
-                                    vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                                },
-                                onResumeTask = {
-                                    vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                                },
-                                onCancelTask = {
-                                    vm.cancelDownloadTask(it.downloadSegment.segmentId)
-                                }
-                            )
+                        AppSettings.HomeLayoutType.DownloadList -> {
+                            item {
+                                DownloadListCard(
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .animateContentSize(),
+                                    downloadListState,
+                                    goToDownloadPage = goToDownloadPage,
+                                    onPauseTask = {
+                                        vm.pauseDownloadTask(it.downloadSegment.segmentId)
+                                    },
+                                    onResumeTask = {
+                                        vm.resumeDownloadTask(it.downloadSegment.segmentId)
+                                    },
+                                    onCancelTask = {
+                                        vm.cancelDownloadTask(it.downloadSegment.segmentId)
+                                    }
+                                )
+                            }
                         }
-                    }
 
-                    AppSettings.HomeLayoutType.Tools -> {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                val allToolCount by remember(
-                                    toolsHistoryCount,
-                                    useToolHistoryList.size
+                        AppSettings.HomeLayoutType.Tools -> {
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 ) {
-                                    mutableIntStateOf(
-                                        min(
-                                            toolsHistoryCount,
-                                            useToolHistoryList.size
+                                    val allToolCount by remember(
+                                        toolsHistoryCount,
+                                        useToolHistoryList.size
+                                    ) {
+                                        mutableIntStateOf(
+                                            min(
+                                                toolsHistoryCount,
+                                                useToolHistoryList.size
+                                            )
                                         )
-                                    )
-                                }
-                                useToolHistoryList.take(allToolCount)
-                                    .forEachIndexed { index, tool ->
-                                        key(tool.title) {
-                                            Surface(
-                                                modifier = Modifier
-                                                    .weight(1f)
-                                                    .aspectRatio(18.3f / 13f),
-                                                shape = CardDefaults.shape,
-                                                color = if ((index + 1) % 2 != 0) MaterialTheme.colorScheme.primaryContainer
-                                                else MaterialTheme.colorScheme.tertiaryContainer,
-                                                onClick = {
-                                                    tool.let { vm.updateUseToolRecord(it) }
-                                                    goToPage(tool.navKey)
-                                                }
-                                            ) {
-                                                Column(
+                                    }
+                                    useToolHistoryList.take(allToolCount)
+                                        .forEachIndexed { index, tool ->
+                                            key(tool.title) {
+                                                Surface(
                                                     modifier = Modifier
-                                                        .padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 12.dp
-                                                        )
-                                                ) {
-                                                    tool.icon?.let {
-                                                        Icon(
-                                                            it,
-                                                            contentDescription = "图标",
-                                                            modifier = Modifier
-                                                        )
-                                                    } ?: run {
-                                                        Icon(
-                                                            painter = painterResource(tool.iconRes!!),
-                                                            contentDescription = "图标",
-                                                            modifier = Modifier
-                                                        )
+                                                        .weight(1f)
+                                                        .aspectRatio(18.3f / 13f),
+                                                    shape = CardDefaults.shape,
+                                                    color = if ((index + 1) % 2 != 0) MaterialTheme.colorScheme.primaryContainer
+                                                    else MaterialTheme.colorScheme.tertiaryContainer,
+                                                    onClick = {
+                                                        tool.let { vm.updateUseToolRecord(it) }
+                                                        goToPage(tool.navKey)
                                                     }
-                                                    Spacer(Modifier.height(8.dp))
-                                                    Text(tool.title, fontSize = 22.sp)
-                                                    Spacer(Modifier.weight(1f))
-                                                    Row(
-                                                        Modifier.fillMaxWidth(),
-                                                        horizontalArrangement = Arrangement.End
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                horizontal = 16.dp,
+                                                                vertical = 12.dp
+                                                            )
                                                     ) {
-                                                        Icon(
-                                                            Icons.AutoMirrored.Outlined.ArrowForward,
-                                                            contentDescription = "前往"
-                                                        )
+                                                        tool.icon?.let {
+                                                            Icon(
+                                                                it,
+                                                                contentDescription = "图标",
+                                                                modifier = Modifier
+                                                            )
+                                                        } ?: run {
+                                                            Icon(
+                                                                painter = painterResource(tool.iconRes!!),
+                                                                contentDescription = "图标",
+                                                                modifier = Modifier
+                                                            )
+                                                        }
+                                                        Spacer(Modifier.height(8.dp))
+                                                        Text(tool.title, fontSize = 22.sp)
+                                                        Spacer(Modifier.weight(1f))
+                                                        Row(
+                                                            Modifier.fillMaxWidth(),
+                                                            horizontalArrangement = Arrangement.End
+                                                        ) {
+                                                            Icon(
+                                                                Icons.AutoMirrored.Outlined.ArrowForward,
+                                                                contentDescription = "前往"
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+                                    repeat((toolsHistoryCount - allToolCount)) {
+                                        Spacer(Modifier.weight(1f))
                                     }
-                                repeat((toolsHistoryCount - allToolCount)) {
-                                    Spacer(Modifier.weight(1f))
                                 }
+
+
                             }
-
-
                         }
-                    }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
             }
-        }
 
-        item {
-            Text(
-                "请在Download/BILIBILIAS目录下查看下载内容",
-                fontSize = 14.sp,
-                fontWeight = FontWeight(330),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                textAlign = TextAlign.Center
-            )
+            item {
+                Text(
+                    "请在Download/BILIBILIAS目录下查看下载内容",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(330),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
+
 
     /**
      * 更新提示对话框
@@ -608,7 +654,6 @@ private fun HomeContent(
     BulletinDialog(bulletinInfo, bulletinDialogShow, onClickConfirm = {
         bulletinDialogShow = false
     })
-
 }
 
 @Composable
@@ -926,7 +971,6 @@ private fun HomeScaffold(
     }
 }
 
-
 @Composable
 private fun CommonInfoCard(
     modifier: Modifier = Modifier,
@@ -961,7 +1005,6 @@ private fun CommonInfoCard(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.alpha(0.72f),
                     )
                     Spacer(Modifier.weight(1f))
@@ -980,6 +1023,7 @@ private fun CommonInfoCard(
                     fontSize = 14.sp,
                     fontWeight = FontWeight(330),
                     maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(top = 16.dp)
                 )
 

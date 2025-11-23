@@ -24,6 +24,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         .setBangumiNamingRule("{episode_title}")
         .addAllUseToolHistory(listOf("WebParser","FrameExtractor"))
         .setEnabledClipboardAutoHandling(true)
+        .setVideoParsePlatform(AppSettings.VideoParsePlatform.Web)
         .build()
 
 
@@ -50,7 +51,10 @@ object AppSettingsSerializer : Serializer<AppSettings> {
                 builder.setEnabledClipboardAutoHandling(defaultValue.enabledClipboardAutoHandling)
                 modified = true
             }
-
+            if (!parsed.hasVideoParsePlatform()){
+                builder.setVideoParsePlatform(defaultValue.videoParsePlatform)
+                modified = true
+            }
             return if (modified) builder.build() else parsed
         } catch (e: InvalidProtocolBufferException) {
             throw CorruptionException("Cannot read proto.", e)

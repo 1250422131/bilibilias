@@ -74,7 +74,6 @@ val RoamPlugin = createClientPlugin("RoamPlugin", ::RoamPluginConfig) {
             if (request.url.parameters["area"].isNullOrBlank()) {
                 request.url.parameters.append("area", "hk")
             }
-
         }
 
     }

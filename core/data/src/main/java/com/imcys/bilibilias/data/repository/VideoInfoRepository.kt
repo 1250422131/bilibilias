@@ -2,6 +2,8 @@ package com.imcys.bilibilias.data.repository
 
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
+import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.FlowNetWorkResult
@@ -20,7 +22,8 @@ class VideoInfoRepository(
     private val tvAPIService: BILIBILITVAPIService,
     private val usersDataSource: UsersDataSource,
     private val biliUsersDao: BILIUsersDao,
-    private val biliUserCookiesDao: BILIUserCookiesDao
+    private val biliUserCookiesDao: BILIUserCookiesDao,
+    private val appSettingsRepository: AppSettingsRepository,
 ) {
 
     suspend fun getVideoView(
@@ -52,33 +55,80 @@ class VideoInfoRepository(
         fnval: Int = 4048,
         qn: Int = 127,
         curLanguage: String? = null,
-        curProductionType: Int? = null
+        curProductionType: Int? = null,
+        platformType: AppSettings.VideoParsePlatform = AppSettings.VideoParsePlatform.Web
     ): Flow<NetWorkResult<BILIVideoPlayerInfo?>> {
         val tryLook = if (usersDataSource.isLogin()) null else "1"
-        return webApiService.getVideoPlayerInfo(
-            cid,
-            bvId,
-            aid,
-            fnval,
-            qn,
-            curLanguage,
-            curProductionType,
-            tryLook
-        ).map {
-            if (it.status == ApiStatus.SUCCESS) {
-                // 杜比
-                it.data?.dash?.dolby?.audio?.let { dolbyList ->
-                    if (dolbyList.isNotEmpty()) {
-                        it.data?.dash?.audio?.add(0, dolbyList[0])
+        return when(platformType){
+            AppSettings.VideoParsePlatform.Mobile,
+            AppSettings.VideoParsePlatform.UNRECOGNIZED ,
+            AppSettings.VideoParsePlatform.Web ->{
+                webApiService.getVideoPlayerInfo(
+                    cid,
+                    bvId,
+                    aid,
+                    fnval,
+                    qn,
+                    curLanguage,
+                    curProductionType,
+                    tryLook
+                ).map {
+                    if (it.status == ApiStatus.SUCCESS) {
+                        // 杜比
+                        it.data?.dash?.dolby?.audio?.let { dolbyList ->
+                            if (dolbyList.isNotEmpty()) {
+                                it.data?.dash?.audio?.add(0, dolbyList[0])
+                            }
+                        }
+
+                        // Hi—Res
+                        it.data?.dash?.flac?.audio?.let { flac ->
+                            it.data?.dash?.audio?.add(0, flac)
+                        }
+                    }
+                    it
+                }
+            }
+            AppSettings.VideoParsePlatform.TV ->{
+                var mAid = aid
+                if (aid == 0L || aid == null){
+                    val videoView = getVideoView(bvId = bvId).last()
+                    if (videoView.status == ApiStatus.SUCCESS){
+                        mAid = videoView.data?.aid
                     }
                 }
 
-                // Hi—Res
-                it.data?.dash?.flac?.audio?.let { flac ->
-                    it.data?.dash?.audio?.add(0, flac)
+                val userId = usersDataSource.getUserId()
+                val currentUser = biliUsersDao.getBILIUserByUid(userId)
+                var currentAccessToken = currentUser?.accessToken ?: ""
+                if (currentUser != null && currentUser.loginPlatform != LoginPlatform.TV){
+                    val user = biliUsersDao.getBILIUserByMidAndPlatform(currentUser.mid,
+                        LoginPlatform.TV)
+                    currentAccessToken = user?.accessToken ?: ""
+                }
+                tvAPIService.getVideoPlayerInfo(
+                    cid,
+                    mAid,
+                    fnval,
+                    qn,
+                    currentAccessToken
+                ).map {
+                    if (it.status == ApiStatus.SUCCESS) {
+                        // 杜比
+                        it.data?.dash?.dolby?.audio?.let { dolbyList ->
+                            if (dolbyList.isNotEmpty()) {
+                                it.data?.dash?.audio?.add(0, dolbyList[0])
+                            }
+                        }
+
+                        // Hi—Res
+                        it.data?.dash?.flac?.audio?.let { flac ->
+                            it.data?.dash?.audio?.add(0, flac)
+                        }
+                    }
+                    it
                 }
             }
-            it
         }
     }
 

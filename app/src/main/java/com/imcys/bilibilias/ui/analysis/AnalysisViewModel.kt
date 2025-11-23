@@ -527,8 +527,17 @@ class AnalysisViewModel(
             // Dash模式
             val mVideoCodingList = mutableSetOf<String>()
             mSupportFormats?.forEach { format ->
-                format.codecs.forEach { code ->
-                    mVideoCodingList.add(code.split(".")[0])
+                if (format.codecs.isEmpty()){
+                    dashVideoList.forEach { video ->
+                        val code = video.codecs.split(".")[0]
+                        if (code !in mVideoCodingList){
+                            mVideoCodingList.add(code)
+                        }
+                    }
+                } else {
+                    format.codecs.forEach { code ->
+                        mVideoCodingList.add(code.split(".")[0])
+                    }
                 }
             }
             mSupportFormats?.filter { supportFormat ->

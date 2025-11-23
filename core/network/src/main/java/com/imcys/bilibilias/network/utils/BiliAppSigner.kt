@@ -8,8 +8,8 @@ import java.util.TreeMap
 
 
 object BiliAppSigner {
-    const val APP_KEY: String = "27eb53fc9058f8c3"
-    const val APP_SEC: String = "c2ed53a74eeefe3cf99fbd01d8c9c375"
+    const val APP_KEY: String = "4409e2ce8ffd12b8"
+    const val APP_SEC: String = "59b43e04ad6965f34319062b478f83dd"
 
     fun appSign(params: MutableMap<String, String>): String? {
         // 为请求参数进行 APP 签名

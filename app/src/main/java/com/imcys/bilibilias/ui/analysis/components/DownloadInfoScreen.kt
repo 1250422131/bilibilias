@@ -150,8 +150,17 @@ fun VideoSupportFormatsSelectScreen(
                 // 筛选出支持的清晰度
                 it.quality == downloadInfo?.selectVideoQualityId
             }?.forEach {
-                it.codecs.forEach { code ->
-                    mVideoCodingList.add(code.split(".")[0])
+                if (it.codecs.isEmpty()){
+                    dashVideoList.forEach { video ->
+                        val code = video.codecs.split(".")[0]
+                        if (code !in mVideoCodingList){
+                            mVideoCodingList.add(code)
+                        }
+                    }
+                } else {
+                    it.codecs.forEach { code ->
+                        mVideoCodingList.add(code.split(".")[0])
+                    }
                 }
             }
             videoCodingList = mVideoCodingList

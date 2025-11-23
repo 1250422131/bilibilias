@@ -148,6 +148,15 @@ val netWorkModule = module {
             install(HttpCookies) {
                 storage = get<AsCookiesStorage>()
             }
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Log.d("Ktor", message)
+                    }
+                }
+                level = LogLevel.ALL
+            }
+
         }
     }
 

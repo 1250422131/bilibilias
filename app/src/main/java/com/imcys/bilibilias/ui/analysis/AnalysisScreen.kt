@@ -9,9 +9,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -25,17 +27,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Download
@@ -68,6 +72,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -91,7 +96,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
@@ -117,6 +121,7 @@ import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
+import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
@@ -153,6 +158,7 @@ fun AnalysisScreen(
     val isSelectSingleModel = uiState.isSelectSingleModel
     val episodeListMode = uiState.episodeListMode
     val appSettings by vm.appSettings.collectAsState(AppSettingsSerializer.appSettingsDefault)
+    val windowsWidthSize = rememberWidthSizeClass()
 
     LaunchedEffect(analysisRoute.asInputText) {
         // 解析分享内容
@@ -208,20 +214,49 @@ fun AnalysisScreen(
                     Spacer(Modifier.height(16.dp))
                 }
             }
-
             uiState.asLinkResultType?.let { type ->
-                AnalysisVideoCardList(
-                    uiState.downloadInfo,
-                    type,
-                    uiState.isBILILogin,
-                    uiState.analysisBaseInfo,
-                    isSelectSingleModel = isSelectSingleModel,
-                    episodeListMode = episodeListMode,
-                    viewModel = vm,
-                    goToUser = goToUser,
-                    onToVideoCodingInfo = onToVideoCodingInfo,
-                    onToLogin = onToLogin
-                )
+                SharedTransitionLayout {
+                    AnimatedContent(
+                        windowsWidthSize,
+                        label = "screen-change"
+                    ) { targetState ->
+                        when (targetState) {
+                            WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> {
+                                VerticalAnalysisVideoCardList(
+                                    uiState.downloadInfo,
+                                    type,
+                                    uiState.isBILILogin,
+                                    uiState.analysisBaseInfo,
+                                    animatedContentScope = this@AnimatedContent,
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    isSelectSingleModel = isSelectSingleModel,
+                                    episodeListMode = episodeListMode,
+                                    viewModel = vm,
+                                    goToUser = goToUser,
+                                    onToVideoCodingInfo = onToVideoCodingInfo,
+                                    onToLogin = onToLogin
+                                )
+                            }
+
+                            else -> {
+                                HorizontalAnalysisVideoCardList(
+                                    uiState.downloadInfo,
+                                    type,
+                                    uiState.isBILILogin,
+                                    uiState.analysisBaseInfo,
+                                    animatedContentScope = this@AnimatedContent,
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    isSelectSingleModel = isSelectSingleModel,
+                                    episodeListMode = episodeListMode,
+                                    viewModel = vm,
+                                    goToUser = goToUser,
+                                    onToVideoCodingInfo = onToVideoCodingInfo,
+                                    onToLogin = onToLogin
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
         }
@@ -302,8 +337,9 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ColumnScope.AnalysisVideoCardList(
+fun ColumnScope.HorizontalAnalysisVideoCardList(
     downloadInfo: DownloadViewInfo?,
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
@@ -314,205 +350,134 @@ fun ColumnScope.AnalysisVideoCardList(
     goToUser: (Long) -> Unit,
     onToVideoCodingInfo: () -> Unit,
     onToLogin: () -> Unit,
+    animatedContentScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
-    val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
-    val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
-    val currentUserInfo by viewModel.currentUserInfo.collectAsState()
-    val interactiveVideo by viewModel.interactiveVideo.collectAsState()
+    val boostVideoInfo by viewModel.boostVideoInfo.collectAsState()
+    val context = LocalContext.current
+
+    Row(
+        Modifier
+            .padding(horizontal = 15.dp)
+            .weight(1f),
+    ) {
+        with(sharedTransitionScope) {
+            Column(
+                modifier = Modifier
+                    .weight(6f)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Column(
+                    Modifier.sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(
+                            key = "as-video-card"
+                        ),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                ) {
+                    AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
+                        viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
+                    }, goToUser, onToLogin, boostVideoInfo)
+                    Spacer(Modifier.height(15.dp))
+                }
+            }
+
+            Spacer(Modifier.width(15.dp))
+
+            Column(
+                modifier = Modifier
+                    .sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(
+                            key = "as-video-download-config"
+                        ),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                    .weight(4f)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                AnalysisDownloadConfigContent(
+                    downloadInfo,
+                    asLinkResultType,
+                    isSelectSingleModel,
+                    episodeListMode,
+                    viewModel,
+                    onToVideoCodingInfo
+                )
+
+                Spacer(Modifier.height(15.dp))
+            }
+
+
+        }
+
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun ColumnScope.VerticalAnalysisVideoCardList(
+    downloadInfo: DownloadViewInfo?,
+    asLinkResultType: ASLinkResultType,
+    isBILILogin: Boolean,
+    analysisBaseInfo: AnalysisBaseInfo,
+    isSelectSingleModel: Boolean,
+    episodeListMode: AppSettings.EpisodeListMode,
+    viewModel: AnalysisViewModel,
+    goToUser: (Long) -> Unit,
+    onToVideoCodingInfo: () -> Unit,
+    onToLogin: () -> Unit,
+    animatedContentScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope,
+) {
     val boostVideoInfo by viewModel.boostVideoInfo.collectAsState()
 
     val context = LocalContext.current
-
-    LazyColumn(
+    Column(
         modifier = Modifier
             .weight(1f)
-            .fillMaxWidth(),
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(horizontal = 15.dp)
     ) {
-        item {
-            AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
-                viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
-            }, goToUser, onToLogin, boostVideoInfo)
-        }
-        item {
-            when (asLinkResultType) {
-                is ASLinkResultType.BILI.Donghua -> {
-                    DongmhuaDownloadScreen(
-                        downloadInfo,
-                        donghuaPlayerInfo,
-                        currentUserInfo,
-                        isSelectSingleModel,
-                        episodeListMode,
-                        asLinkResultType.currentEpId,
-                        asLinkResultType.donghuaViewInfo,
-                        onSelectSeason = {
-                            viewModel.updateSelectSeason(it)
-                        },
-                        onUpdateSelectedEpId = { epId, selectType, title, cover ->
-                            if (isSelectSingleModel) {
-                                viewModel.clearSelectedEpIdList()
-                                viewModel.updateSelectedPlayerInfo(
-                                    epId ?: 0L,
-                                    selectType,
-                                    title,
-                                    cover
-                                )
-                                if (selectType is SelectEpisodeType.EPID) {
-                                    viewModel.updateSelectedEpIdList(epId)
-                                }
-                            } else {
-                                viewModel.updateSelectedEpIdList(epId)
-                            }
-                        },
-                        onVideoQualityChange = {
-                            viewModel.updateVideoQualityId(it)
-                        },
-                        onVideoCodeChange = {
-                            viewModel.updateVideoCode(it)
-                        },
-                        onAudioQualityChange = {
-                            viewModel.updateAudioQualityId(it)
-                        },
-                        onSelectSingleModel = {
-                            viewModel.updateSelectSingleModel(it)
-                            if (it) {
-                                // 切换到单选模式，清空已选择列表
-                                val lastEpId = downloadInfo?.selectedEpId?.lastOrNull()
-                                viewModel.clearSelectedEpIdList()
-                                viewModel.updateSelectedEpIdList(lastEpId)
-                            }
-                        },
-                        onToVideoCodingInfo = onToVideoCodingInfo,
-                        onUpdateEpisodeListMode = {
-                            viewModel.updateEpisodeListMode(it)
-                        },
-                        onUpdateSelectedEpList = {
-                            viewModel.onUpdateSelectEpIdList(it)
-                        }
-                    )
-                }
-
-                is ASLinkResultType.BILI.Video -> {
-
-                    if (asLinkResultType.isNotFound()) {
-                        CheckInputASTextTip()
-                        return@item
-                    }
-
-                    VideoDownloadScreen(
-                        downloadInfo,
-                        videoPlayerInfo,
-                        isSelectSingleModel,
-                        episodeListMode,
-                        asLinkResultType.currentBvId,
-                        asLinkResultType.viewInfo,
-                        interactiveVideo,
-                        boostVideoInfo,
-                        onUpdateSelectedCid = { it, selectType, title, cover ->
-                            if (isSelectSingleModel) {
-                                viewModel.clearSelectedCidList()
-                                viewModel.updateSelectedPlayerInfo(
-                                    it ?: 0L,
-                                    selectType,
-                                    title,
-                                    cover
-                                )
-                                viewModel.updateSelectedCidList(it)
-                            } else {
-                                viewModel.updateSelectedCidList(it)
-                            }
-                        },
-                        onVideoQualityChange = {
-                            viewModel.updateVideoQualityId(it)
-                        },
-                        onVideoCodeChange = {
-                            viewModel.updateVideoCode(it)
-                        },
-                        onAudioQualityChange = {
-                            viewModel.updateAudioQualityId(it)
-                        },
-                        onSelectSingleModel = {
-                            viewModel.updateSelectSingleModel(it)
-                            if (it) {
-                                // 切换到单选模式，清空已选择列表
-                                val lastCid = downloadInfo?.selectedCid?.lastOrNull()
-                                viewModel.clearSelectedCidList()
-                                viewModel.updateSelectedCidList(lastCid)
-                            }
-                        },
-                        onToVideoCodingInfo = onToVideoCodingInfo,
-                        onUpdateEpisodeListMode = {
-                            viewModel.updateEpisodeListMode(it)
-                        },
-                        onUpdateAudioLanguage = {
-                            viewModel.updateAudioLanguage(it)
-                        },
-                        onUpdateSelectCidList = {
-                            viewModel.onUpdateSelectCidList(it)
-                        }
-                    )
-                }
-
-                else -> {}
-            }
-        }
-        item {
-            when (asLinkResultType) {
-                is ASLinkResultType.BILI.Donghua -> {
-                    AdvancedSetting(
-                        isSelectSingleModel,
-                        emptyNetWorkResult(),
-                        downloadInfo,
-                        donghuaPlayerInfo,
-                        donghuaPlayerInfo.data?.dash,
-                        onCheckCoverDownload = {
-                            viewModel.updateDownloadCover(it)
-                        },
-                        onCheckDownloadDanmaku = {
-                            viewModel.updateDownloadDanmaku(it)
-                        },
-                        onCheckMediaDownload = {
-                            viewModel.updateDownloadMedia(it)
-                        }
-                    ) {
-                        viewModel.updateDownloadMode(it)
-                    }
-                }
-
-                is ASLinkResultType.BILI.Video ->
-                    AdvancedSetting(
-                        isSelectSingleModel,
-                        asLinkResultType.viewInfo,
-                        downloadInfo,
-                        videoPlayerInfo,
-                        videoPlayerInfo.data?.dash,
-                        onCheckCoverDownload = {
-                            viewModel.updateDownloadCover(it)
-                        },
-                        onCheckDownloadDanmaku = {
-                            viewModel.updateDownloadDanmaku(it)
-                        },
-                        onCheckMediaDownload = {
-                            viewModel.updateDownloadMedia(it)
-                        },
-                        onSelectCCId = { id, type ->
-                            viewModel.updateSelectCCIdList(id, type)
-                        },
-                        onCleanCCId = {
-                            viewModel.clearCCIdList()
-                        }
-                    ) {
-                        viewModel.updateDownloadMode(it)
-                    }
-
-                else -> {
-
-                }
+        with(sharedTransitionScope) {
+            Column(
+                Modifier.sharedElement(
+                    sharedTransitionScope.rememberSharedContentState(
+                        key = "as-video-card"
+                    ),
+                    animatedVisibilityScope = animatedContentScope
+                ),
+            ) {
+                AnalysisVideoCard(asLinkResultType, isBILILogin, analysisBaseInfo, savePic = {
+                    viewModel.downloadImageToAlbum(context, it, "BILIBILIAS")
+                }, goToUser, onToLogin, boostVideoInfo)
             }
 
-        }
-        item {
+            Column(
+                Modifier.sharedElement(
+                    sharedTransitionScope.rememberSharedContentState(
+                        key = "as-video-download-config"
+                    ),
+                    animatedVisibilityScope = animatedContentScope
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                AnalysisDownloadConfigContent(
+                    downloadInfo,
+                    asLinkResultType,
+                    isSelectSingleModel,
+                    episodeListMode,
+                    viewModel,
+                    onToVideoCodingInfo
+                )
+
+            }
+
             Spacer(Modifier.height(15.dp))
         }
     }
@@ -542,7 +507,7 @@ fun CheckInputASTextTip() {
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AdvancedSetting(
+private fun AdvancedSetting(
     isSelectSingleModel: Boolean,
     videoInfo: NetWorkResult<BILIVideoViewInfo?>,
     downloadInfo: DownloadViewInfo?,
@@ -600,7 +565,12 @@ fun AdvancedSetting(
                             },
                             readOnly = true,
                             singleLine = false,
-                            label = { Text(stringResource(R.string.analysis_select_cache_mode), fontSize = 12.sp) },
+                            label = {
+                                Text(
+                                    stringResource(R.string.analysis_select_cache_mode),
+                                    fontSize = 12.sp
+                                )
+                            },
                             trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -825,7 +795,12 @@ fun SelectACCCard(
                     onValueChange = {},
                     readOnly = true,
                     singleLine = false,
-                    label = { Text(stringResource(R.string.analysis_select_subtitle_type), fontSize = 12.sp) },
+                    label = {
+                        Text(
+                            stringResource(R.string.analysis_select_subtitle_type),
+                            fontSize = 12.sp
+                        )
+                    },
                     trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
@@ -979,7 +954,10 @@ fun BILIDonghuaCard(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = CardDefaults.shape
                             ) {
-                                Text(stringResource(R.string.analysis_bangumi), Modifier.padding(5.dp))
+                                Text(
+                                    stringResource(R.string.analysis_bangumi),
+                                    Modifier.padding(5.dp)
+                                )
                             }
 
 
@@ -1137,7 +1115,10 @@ fun BILIVideoCard(
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shape = CardDefaults.shape
                                 ) {
-                                    Text(stringResource(R.string.analysis_charged_video), Modifier.padding(5.dp))
+                                    Text(
+                                        stringResource(R.string.analysis_charged_video),
+                                        Modifier.padding(5.dp)
+                                    )
                                 }
                             }
 
@@ -1430,7 +1411,7 @@ fun AnalysisScaffold(
 
 
 @Composable
-fun WritePermissionRequestTipDialog(
+private fun WritePermissionRequestTipDialog(
     permissionsToRequest: Array<String>,
     onDismiss: () -> Unit,
     onRequest: () -> Unit
@@ -1460,7 +1441,7 @@ fun WritePermissionRequestTipDialog(
 
 
 @Composable
-fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
+private fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.analysis_download_hint)) },
@@ -1480,3 +1461,193 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     )
 }
 
+
+/**
+ * 下载配置内容
+ */
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun AnalysisDownloadConfigContent(
+    downloadInfo: DownloadViewInfo?,
+    asLinkResultType: ASLinkResultType,
+    isSelectSingleModel: Boolean,
+    episodeListMode: AppSettings.EpisodeListMode,
+    viewModel: AnalysisViewModel,
+    onToVideoCodingInfo: () -> Unit,
+) {
+    val donghuaPlayerInfo by viewModel.donghuaPlayerInfo.collectAsState()
+    val videoPlayerInfo by viewModel.videoPlayerInfo.collectAsState()
+    val currentUserInfo by viewModel.currentUserInfo.collectAsState()
+    val interactiveVideo by viewModel.interactiveVideo.collectAsState()
+    val boostVideoInfo by viewModel.boostVideoInfo.collectAsState()
+
+    when (asLinkResultType) {
+        is ASLinkResultType.BILI.Donghua -> {
+            DongmhuaDownloadScreen(
+                downloadInfo,
+                donghuaPlayerInfo,
+                currentUserInfo,
+                isSelectSingleModel,
+                episodeListMode,
+                asLinkResultType.currentEpId,
+                asLinkResultType.donghuaViewInfo,
+                onSelectSeason = {
+                    viewModel.updateSelectSeason(it)
+                },
+                onUpdateSelectedEpId = { epId, selectType, title, cover ->
+                    if (isSelectSingleModel) {
+                        viewModel.clearSelectedEpIdList()
+                        viewModel.updateSelectedPlayerInfo(
+                            epId ?: 0L,
+                            selectType,
+                            title,
+                            cover
+                        )
+                        if (selectType is SelectEpisodeType.EPID) {
+                            viewModel.updateSelectedEpIdList(epId)
+                        }
+                    } else {
+                        viewModel.updateSelectedEpIdList(epId)
+                    }
+                },
+                onVideoQualityChange = {
+                    viewModel.updateVideoQualityId(it)
+                },
+                onVideoCodeChange = {
+                    viewModel.updateVideoCode(it)
+                },
+                onAudioQualityChange = {
+                    viewModel.updateAudioQualityId(it)
+                },
+                onSelectSingleModel = {
+                    viewModel.updateSelectSingleModel(it)
+                    if (it) {
+                        val lastEpId = downloadInfo?.selectedEpId?.lastOrNull()
+                        viewModel.clearSelectedEpIdList()
+                        viewModel.updateSelectedEpIdList(lastEpId)
+                    }
+                },
+                onToVideoCodingInfo = onToVideoCodingInfo,
+                onUpdateEpisodeListMode = {
+                    viewModel.updateEpisodeListMode(it)
+                },
+                onUpdateSelectedEpList = {
+                    viewModel.onUpdateSelectEpIdList(it)
+                }
+            )
+        }
+
+        is ASLinkResultType.BILI.Video -> {
+            if (asLinkResultType.isNotFound()) {
+                CheckInputASTextTip()
+                return
+            }
+
+            VideoDownloadScreen(
+                downloadInfo,
+                videoPlayerInfo,
+                isSelectSingleModel,
+                episodeListMode,
+                asLinkResultType.currentBvId,
+                asLinkResultType.viewInfo,
+                interactiveVideo,
+                boostVideoInfo,
+                onUpdateSelectedCid = { cid, selectType, title, cover ->
+                    if (isSelectSingleModel) {
+                        viewModel.clearSelectedCidList()
+                        viewModel.updateSelectedPlayerInfo(
+                            cid ?: 0L,
+                            selectType,
+                            title,
+                            cover
+                        )
+                        viewModel.updateSelectedCidList(cid)
+                    } else {
+                        viewModel.updateSelectedCidList(cid)
+                    }
+                },
+                onVideoQualityChange = {
+                    viewModel.updateVideoQualityId(it)
+                },
+                onVideoCodeChange = {
+                    viewModel.updateVideoCode(it)
+                },
+                onAudioQualityChange = {
+                    viewModel.updateAudioQualityId(it)
+                },
+                onSelectSingleModel = {
+                    viewModel.updateSelectSingleModel(it)
+                    if (it) {
+                        val lastCid = downloadInfo?.selectedCid?.lastOrNull()
+                        viewModel.clearSelectedCidList()
+                        viewModel.updateSelectedCidList(lastCid)
+                    }
+                },
+                onToVideoCodingInfo = onToVideoCodingInfo,
+                onUpdateEpisodeListMode = {
+                    viewModel.updateEpisodeListMode(it)
+                },
+                onUpdateAudioLanguage = {
+                    viewModel.updateAudioLanguage(it)
+                },
+                onUpdateSelectCidList = {
+                    viewModel.onUpdateSelectCidList(it)
+                }
+            )
+        }
+
+        else -> {}
+    }
+
+    when (asLinkResultType) {
+        is ASLinkResultType.BILI.Donghua -> {
+            AdvancedSetting(
+                isSelectSingleModel,
+                emptyNetWorkResult(),
+                downloadInfo,
+                donghuaPlayerInfo,
+                donghuaPlayerInfo.data?.dash,
+                onCheckCoverDownload = {
+                    viewModel.updateDownloadCover(it)
+                },
+                onCheckDownloadDanmaku = {
+                    viewModel.updateDownloadDanmaku(it)
+                },
+                onCheckMediaDownload = {
+                    viewModel.updateDownloadMedia(it)
+                }
+            ) {
+                viewModel.updateDownloadMode(it)
+            }
+        }
+
+        is ASLinkResultType.BILI.Video -> {
+            AdvancedSetting(
+                isSelectSingleModel,
+                asLinkResultType.viewInfo,
+                downloadInfo,
+                videoPlayerInfo,
+                videoPlayerInfo.data?.dash,
+                onCheckCoverDownload = {
+                    viewModel.updateDownloadCover(it)
+                },
+                onCheckDownloadDanmaku = {
+                    viewModel.updateDownloadDanmaku(it)
+                },
+                onCheckMediaDownload = {
+                    viewModel.updateDownloadMedia(it)
+                },
+                onSelectCCId = { id, type ->
+                    viewModel.updateSelectCCIdList(id, type)
+                },
+                onCleanCCId = {
+                    viewModel.clearCCIdList()
+                }
+            ) {
+                viewModel.updateDownloadMode(it)
+            }
+        }
+
+        else -> {}
+    }
+}

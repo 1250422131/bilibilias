@@ -9,7 +9,7 @@ data class BILIVideoDurl(
     @SerialName("ahead")
     val ahead: String,
     @SerialName("backup_url")
-    val backupUrl: List<String>,
+    val backupUrl: List<String> = emptyList(),
     @SerialName("length")
     val length: Long,
     @SerialName("md5")
@@ -71,7 +71,7 @@ data class BILIVideoDash(
     @SerialName("duration")
     val duration: Long,
     @SerialName("minBufferTime")
-    val minBufferTime: Double,
+    val minBufferTime: Double?,
     @SerialName("video")
     val video: List<Video>
 ) {
@@ -88,15 +88,15 @@ data class BILIVideoDash(
         @SerialName("baseUrl")
         val baseUrl: String?,
         @SerialName("codecid")
-        val codecid: Long,
+        val codecid: Long?,
         @SerialName("codecs")
         val codecs: String,
         @SerialName("frame_rate")
-        val frame_rate: String,
+        val frame_rate: String?,
         @SerialName("frameRate")
         val frameRate: String?,
         @SerialName("height")
-        val height: Long,
+        val height: Long?,
         @SerialName("id")
         val id: Long,
         @SerialName("md5")
@@ -106,7 +106,7 @@ data class BILIVideoDash(
         @SerialName("mime_type")
         val mime_type: String,
         @SerialName("sar")
-        val sar: String,
+        val sar: String?,
         @SerialName("segment_base")
         val segment_base: SegmentBase?,
         @SerialName("SegmentBase")
@@ -118,10 +118,10 @@ data class BILIVideoDash(
         @SerialName("start_with_sap")
         val startWithSap: Long = 0,
         @SerialName("width")
-        val width: Long
+        val width: Long?
     ) {
         val finalUrl =
-            baseUrl ?: base_url ?: (backupUrl.firstOrNull() ?: backup_url.firstOrNull() ?: "")
+            base_url ?: baseUrl ?: (backup_url.firstOrNull() ?: backupUrl.firstOrNull() ?: "")
     }
 
 
@@ -144,35 +144,35 @@ data class BILIVideoDash(
     @Serializable
     data class Video(
         @SerialName("backupUrl")
-        val backupUrl: List<String>,
+        val backupUrl: List<String> = emptyList(),
         @SerialName("backup_url")
         val backup_url: List<String>,
         @SerialName("bandwidth")
         val bandwidth: Long,
         @SerialName("base_url")
-        val base_url: String,
+        val base_url: String?,
         @SerialName("baseUrl")
-        val baseUrl: String,
+        val baseUrl: String?,
         @SerialName("codecid")
-        val codecid: Long,
+        val codecid: Long?,
         @SerialName("codecs")
         val codecs: String,
         @SerialName("frame_rate")
-        val frame_rate: String,
+        val frame_rate: String?,
         @SerialName("frameRate")
-        val frameRate: String,
+        val frameRate: String?,
         @SerialName("height")
-        val height: Long,
+        val height: Long?,
         @SerialName("id")
         val id: Long,
         @SerialName("md5")
         val md5: String?,
         @SerialName("mimeType")
-        val mimeType: String,
+        val mimeType: String?,
         @SerialName("mime_type")
         val mime_type: String,
         @SerialName("sar")
-        val sar: String,
+        val sar: String?,
         @SerialName("segment_base")
         val segment_base: SegmentBase?,
         @SerialName("SegmentBase")
@@ -184,8 +184,11 @@ data class BILIVideoDash(
         @SerialName("start_with_sap")
         val startWithSap: Long = 0,
         @SerialName("width")
-        val width: Long
-    )
+        val width: Long?
+    ){
+        val finalUrl =
+            base_url ?: baseUrl ?: (backup_url.firstOrNull() ?: backupUrl.firstOrNull() ?: "")
+    }
 
     @Serializable
     data class SegmentBase(

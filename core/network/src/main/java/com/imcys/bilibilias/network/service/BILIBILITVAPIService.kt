@@ -6,6 +6,7 @@ import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.TV_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.TV_QRCODE_GENERATE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.TV_QRCODE_POLL_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.TV_VIDEO_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_VIDEO_PLAYER_NO_WEBI_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_VIDEO_PLAYER_URL
 import com.imcys.bilibilias.network.config.APP_KEY
@@ -29,6 +30,7 @@ import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import kotlin.collections.component1
@@ -76,25 +78,31 @@ class BILIBILITVAPIService(
 
     suspend fun getVideoPlayerInfo(
         cid: Long,
-        bvId: String?,
         aid: Long? = null,
         fnval: Int = 4048,
         qn: Int = 127,
-        tryLook: String? = null,
-        accessKey: String? = null,
+        accessKey: String,
     ): FlowNetWorkResult<BILIVideoPlayerInfo> = httpClient.httpRequest {
         val newMap = mutableMapOf<String, String>().apply {
-            bvId?.let { put(BVID, it) }
-            aid?.let { put(AID, it.toString()) }
+            aid?.let { put("object_id", it.toString()) }
             put(CID, cid.toString())
             put(QN, qn.toString())
             put(FNVAL, fnval.toString())
             put(FOURK, "1")
-            accessKey?.let { put(ACCESS_KEY, it) }
+            put("build", 106500.toString())
+            put("mobi_app", "android_tv_yst")
+            put("platform", "android")
+            put("playurl_type", 1.toString())
+            put("device", "android")
+            put("mid", "351201307")
         }
-
-        get(WEB_VIDEO_PLAYER_NO_WEBI_URL) {
-            setAppParams(newMap)
+        get(TV_VIDEO_PLAYER_URL) {
+            header("Cache-Control","no-cache")
+            setAppParams(
+                mutableMapOf(
+                    ACCESS_KEY to accessKey
+                ) + newMap
+            )
         }
     }
 

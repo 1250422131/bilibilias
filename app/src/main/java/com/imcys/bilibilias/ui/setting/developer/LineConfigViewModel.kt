@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.setting.developer
 
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
+import io.ktor.client.request.header
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
@@ -104,7 +106,7 @@ class LineConfigViewModel(
                             val speed =
                                 speedTest(
                                     line,
-                                    it.data?.dash?.video?.firstOrNull()?.baseUrl ?: ""
+                                    it.data?.dash?.video?.firstOrNull()?.finalUrl ?: ""
                                 )
                             setLineHost(
                                 line.copy(
