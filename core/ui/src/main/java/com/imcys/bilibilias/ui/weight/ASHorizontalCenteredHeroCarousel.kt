@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.carousel.CarouselItemScope
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.HorizontalCenteredHeroCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,14 +19,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.Lifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun <T> ASHorizontalMultiBrowseCarousel(
+inline fun <T> ASHorizontalCenteredHeroCarousel(
     items: List<T>,
     modifier: Modifier = Modifier,
     autoScroll: Boolean = false,
@@ -61,7 +59,7 @@ inline fun <T> ASHorizontalMultiBrowseCarousel(
         }
     }
 
-    HorizontalMultiBrowseCarousel(
+    HorizontalCenteredHeroCarousel(
         state = carouselState,
         modifier = modifier
             .fillMaxWidth()
@@ -81,7 +79,6 @@ inline fun <T> ASHorizontalMultiBrowseCarousel(
                     }
                 }
             },
-        preferredItemWidth = 300.dp,
         itemSpacing = 8.dp,
     ) { i ->
         val item = items[i]

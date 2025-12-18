@@ -96,7 +96,6 @@ import com.imcys.bilibilias.download.AppDownloadTask
 import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
-import com.imcys.bilibilias.network.model.app.BannerConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
@@ -105,7 +104,7 @@ import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASCardTextField
-import com.imcys.bilibilias.ui.weight.ASHorizontalMultiBrowseCarousel
+import com.imcys.bilibilias.ui.weight.ASHorizontalCenteredHeroCarousel
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -388,7 +387,7 @@ private fun HomeContent(
                     when (layout.type) {
                         AppSettings.HomeLayoutType.Banner if (!BuildConfig.ENABLED_PLAY_APP_MODE && bannerList.isNotEmpty()) -> {
                             item {
-                                ASHorizontalMultiBrowseCarousel(
+                                ASHorizontalCenteredHeroCarousel(
                                     autoScroll = true,
                                     modifier = Modifier
                                         .animateItem()

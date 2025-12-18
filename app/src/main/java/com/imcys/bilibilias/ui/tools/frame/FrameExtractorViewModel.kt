@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import androidx.core.graphics.createBitmap
 import androidx.documentfile.provider.DocumentFile
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 
@@ -52,8 +53,9 @@ class FrameExtractorViewModel(
 
     }
 
-    private val _uiState = MutableStateFlow<UIState>(UIState.Default)
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<UIState>
+        field = MutableStateFlow<UIState>(UIState.Default)
+
     private val _allDownloadSegment = MutableStateFlow<List<DownloadSegment>>(emptyList())
     val allDownloadSegment = _allDownloadSegment.asStateFlow()
 
@@ -75,13 +77,13 @@ class FrameExtractorViewModel(
     suspend fun updateSelectFps(videoPath: String? = null, currentFps: Int) =
         withContext(Dispatchers.IO) {
 
-            val tempVideoPath = videoPath ?: when (_uiState.value) {
+            val tempVideoPath = videoPath ?: when (uiState.value) {
                 is UIState.Importing -> {
-                    (_uiState.value as UIState.Importing).selectVideoPath
+                    (uiState.value as UIState.Importing).selectVideoPath
                 }
 
                 is UIState.ImportSuccess -> {
-                    (_uiState.value as UIState.ImportSuccess).videoPath
+                    (uiState.value as UIState.ImportSuccess).videoPath
                 }
 
                 else -> {
@@ -119,14 +121,14 @@ class FrameExtractorViewModel(
                         }
 
                         override fun onProgress(progress: Int) {
-                            _uiState.value = UIState.Importing(
+                            uiState.value = UIState.Importing(
                                 progress = progress / 100f,
                                 selectVideoPath = tempVideoPath
                             )
                         }
 
                         override fun onComplete() {
-                            _uiState.value =
+                            uiState.value =
                                 UIState.ImportSuccess(
                                     videoFps = videoFps,
                                     frameList = bitmapList,
@@ -213,16 +215,16 @@ class FrameExtractorViewModel(
 
 
     fun exportFrameToImage(context: Context, exportUri: String) {
-        if (_uiState.value is UIState.ImportSuccess) {
-            val oldUIState = (_uiState.value as UIState.ImportSuccess).copy()
-            val uiState = _uiState.value as UIState.ImportSuccess
+        if (uiState.value is UIState.ImportSuccess) {
+            val oldUIState = (uiState.value as UIState.ImportSuccess).copy()
+            val uiState = uiState.value as UIState.ImportSuccess
             viewModelScope.launch(Dispatchers.IO) {
                 val treeUri = exportUri.toUri()
                 val docFile = DocumentFile.fromTreeUri(
                     context, treeUri
                 )
                 uiState.frameList.forEachIndexed { index, bitmap ->
-                    _uiState.value = UIState.Exporting(
+                    this@FrameExtractorViewModel.uiState.value = UIState.Exporting(
                         progress = (index + 1) / uiState.frameList.size.toFloat(),
                         exportPath = exportUri
                     )
@@ -234,7 +236,7 @@ class FrameExtractorViewModel(
                         }
                     }
                 }
-                _uiState.value = oldUIState
+                this@FrameExtractorViewModel.uiState.value = oldUIState
             }
         }
     }

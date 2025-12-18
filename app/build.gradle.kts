@@ -107,7 +107,7 @@ android {
 
     kotlin {
         compilerOptions {
-            freeCompilerArgs.add("-XXLanguage:+WhenGuards")
+            freeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
         }
     }
 
