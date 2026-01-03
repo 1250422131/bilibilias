@@ -271,7 +271,7 @@ class BILIBILIWebAPIService(
     suspend fun getDonghuaOgvPlayerInfo(
         epId: Long?,
         seasonId: Long?,
-        fnval: Int = 12240,
+        fnval: Int = 4048,
         qn: Int = 116,
         csrf: String? = null,
     ): FlowNetWorkResult<BILIDonghuaOgvPlayerInfo> {

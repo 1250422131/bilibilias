@@ -228,7 +228,6 @@ private fun RoamSettingErrorScreen(errorMsg: String) {
 private fun RoamSettingNoLoginTip(onGoToQRCodeLogin: (LoginPlatform) -> Unit) {
     Column(Modifier.padding(10.dp)) {
         ASWarringTip(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
             enabledPadding = false
         ) {
             Row(

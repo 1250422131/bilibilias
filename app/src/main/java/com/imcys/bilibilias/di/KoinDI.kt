@@ -37,7 +37,7 @@ val appModule = module {
     single { androidContext().assets }
     single { androidContext().contentResolver }
     viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { QRCodeLoginViewModel(get(), get(), get(), get()) }
+    viewModel { QRCodeLoginViewModel(get(), get(), get(), get(), get()) }
     viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(), get()) }
     viewModel { UserViewModel(get(),get()) }
     viewModel { AnalysisViewModel(get(), get(), get(), get(), get(), get()) }
@@ -52,7 +52,7 @@ val appModule = module {
     viewModel { LayoutTypesetViewModel(get()) }
     viewModel { UserPlayHistoryViewModel(get()) }
     viewModel { FrameExtractorViewModel(get(), get(), get()) }
-    viewModel { CookieLoginViewModel(get(), get(), get(),get()) }
+    viewModel { CookieLoginViewModel(get(), get(), get(),get(),get()) }
     viewModel { DonateViewModel(get()) }
     viewModel { StorageManagementViewModel(get()) }
     viewModel { NamingConventionViewModel(get()) }

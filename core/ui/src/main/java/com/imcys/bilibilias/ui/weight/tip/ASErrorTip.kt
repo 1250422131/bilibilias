@@ -19,13 +19,12 @@ fun ASErrorTip(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         shape = CardDefaults.shape,
         color = MaterialTheme.colorScheme.errorContainer,
     ) {
         Column(
-            modifier
+            Modifier
                 .fillMaxWidth()
                 .run {
                     if (enabledPadding) padding(vertical = 12.dp, horizontal = 16.dp)

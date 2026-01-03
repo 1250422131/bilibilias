@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.login
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -29,6 +28,7 @@ import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Replay
+import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.outlined.WebAsset
 import androidx.compose.material3.Badge
@@ -50,7 +50,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.windowsizeclass.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,13 +69,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
-import com.google.firebase.analytics.logEvent
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.FirebaseExt
-import com.imcys.bilibilias.common.utils.analyticsSafe
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.ApiStatus
@@ -86,6 +82,7 @@ import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASAgreePrivacyPolicy
 import org.koin.androidx.compose.koinViewModel
 import java.net.URLEncoder
@@ -183,7 +180,7 @@ fun QRCodeLoginScreen(
                 .padding(bottom = 24.dp)
         ) {
             SharedTransitionLayout {
-                AnimatedContent(windowWidthSizeClass,label = "扫码登录内容区域") { size ->
+                AnimatedContent(windowWidthSizeClass, label = "扫码登录内容区域") { size ->
                     when (size) {
                         WindowWidthSizeClass.Compact -> {
                             QRCodeLoginContentWidthCompact(
@@ -262,10 +259,12 @@ fun QRCodeLoginContentWidthMediumAndExpanded(
                 contentAlignment = Alignment.Center
             ) {
                 ActionButton(
-                    Modifier.fillMaxWidth().sharedElement(
-                        rememberSharedContentState(key = "actionButton"),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    ),
+                    Modifier
+                        .fillMaxWidth()
+                        .sharedElement(
+                            rememberSharedContentState(key = "actionButton"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
                     agreePrivacyPolicy,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
@@ -316,14 +315,14 @@ fun QRCodeLoginContentWidthCompact(
             // 操作区域
             ActionButton(
                 Modifier
-                   .fillMaxWidth()
+                    .fillMaxWidth()
                     .sharedElement(
                         rememberSharedContentState(key = "actionButton"),
                         animatedVisibilityScope = animatedVisibilityScope
                     ),
                 agreePrivacyPolicy,
                 animatedVisibilityScope = animatedVisibilityScope,
-                sharedTransitionScope= sharedTransitionScope,
+                sharedTransitionScope = sharedTransitionScope,
                 saveQRCodeImage = {
                     vm.saveQRCodeImageToGallery(context)
                 },
@@ -408,9 +407,9 @@ private fun ActionButton(
     sharedTransitionScope: SharedTransitionScope,
 ) {
     val windowWidthSizeClass = rememberWidthSizeClass()
-    with(sharedTransitionScope){
-        AnimatedContent(windowWidthSizeClass) { size->
-            when(size){
+    with(sharedTransitionScope) {
+        AnimatedContent(windowWidthSizeClass) { size ->
+            when (size) {
                 WindowWidthSizeClass.Compact -> {
                     Row(modifier) {
                         Button(
@@ -467,8 +466,9 @@ private fun ActionButton(
                         }
                     }
                 }
-                WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded ->{
-                    Column (modifier) {
+
+                WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+                    Column(modifier) {
                         Button(
                             enabled = agreePrivacyPolicy,
                             modifier = Modifier
@@ -572,7 +572,7 @@ private fun PlatformToggleButton(
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
-                imageVector = Icons.Outlined.WebAsset,
+                imageVector = Icons.Outlined.Tv,
                 contentDescription = stringResource(R.string.cd_tv_scan),
                 modifier = Modifier.size(FilterChipDefaults.IconSize)
             )
@@ -603,11 +603,13 @@ private fun QRCodeContent(
             modifier = Modifier.align(Alignment.Center),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
+        ) {
             val modifier = when (widthSizeClass) {
                 WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth(0.6f)
-                WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> Modifier.fillMaxHeight(0.6f)
+                WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> Modifier.fillMaxHeight(
+                    0.6f
+                )
+
                 else -> Modifier
             }.aspectRatio(1f)
 
@@ -632,7 +634,10 @@ private fun QRCodeContent(
                                     ASIconButton(onClick = {
                                         updateQrCode()
                                     }) {
-                                        Icon(Icons.Outlined.Replay, contentDescription = stringResource(R.string.common_retry))
+                                        Icon(
+                                            Icons.Outlined.Replay,
+                                            contentDescription = stringResource(R.string.common_retry)
+                                        )
                                     }
                                     Text(stringResource(R.string.login_network_error))
                                 }
@@ -642,6 +647,7 @@ private fun QRCodeContent(
                                     -> {
                                     ContainedLoadingIndicator()
                                 }
+
                                 ApiStatus.SUCCESS -> {
                                     ASAsyncImage(
                                         "https://pan.misakamoe.com/qrcode/?url=" + URLEncoder.encode(
@@ -680,6 +686,13 @@ private fun QRCodeContent(
             ASAgreePrivacyPolicy(agreePrivacyPolicy, onClick = {
                 updateAgreePrivacyPolicy(!agreePrivacyPolicy)
             })
+            Spacer(Modifier.height(15.dp))
+            ASWarringTip{
+                Text(
+                    "登录后将自动切换对应的平台解析，也可在设置切换，如果您不熟悉，建议直接Web登录。",
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }

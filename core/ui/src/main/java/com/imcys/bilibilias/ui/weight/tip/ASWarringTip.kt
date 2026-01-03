@@ -19,8 +19,7 @@ fun ASWarringTip(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         shape = CardDefaults.shape,
         color = MaterialTheme.colorScheme.tertiaryContainer,
     ) {

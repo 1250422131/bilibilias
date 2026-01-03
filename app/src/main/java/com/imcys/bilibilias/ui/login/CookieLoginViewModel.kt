@@ -3,12 +3,14 @@ package com.imcys.bilibilias.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.model.BILILoginUserModel
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.database.entity.ASSharedCookieEncoding
 import com.imcys.bilibilias.database.entity.BILIUserCookiesEntity
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.AsCookiesStorage
 import com.imcys.bilibilias.network.NetWorkResult
@@ -23,7 +25,8 @@ class CookieLoginViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val userInfoRepository: UserInfoRepository,
     private val usersDataSource: UsersDataSource,
-    private val asCookiesStorage: AsCookiesStorage
+    private val asCookiesStorage: AsCookiesStorage,
+    private val appSettingsRepository: AppSettingsRepository,
 ) : ViewModel() {
 
 
@@ -107,7 +110,7 @@ class CookieLoginViewModel(
 
         usersDataSource.setUserId(userId)
         asCookiesStorage.syncDataBaseCookies()
-
+        appSettingsRepository.updateVideoParsePlatform(AppSettings.VideoParsePlatform.Web)
 
 
     }

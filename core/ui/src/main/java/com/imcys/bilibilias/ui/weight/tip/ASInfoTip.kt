@@ -18,8 +18,7 @@ fun ASInfoTip(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         shape = CardDefaults.shape,
         color = MaterialTheme.colorScheme.secondaryContainer,
     ) {

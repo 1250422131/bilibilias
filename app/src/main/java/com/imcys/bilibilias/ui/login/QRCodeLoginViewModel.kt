@@ -45,6 +45,7 @@ import kotlinx.coroutines.withContext
 import androidx.core.graphics.createBitmap
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.toDataStoreType
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.AppSettingSource
 import java.io.File
 import java.io.FileOutputStream
@@ -183,6 +184,7 @@ class QRCodeLoginViewModel(
 
             usersDataSource.setUserId(userId)
             asCookiesStorage.syncDataBaseCookies()
+            appSettingsRepository.updateVideoParsePlatform(uiState.selectedLoginPlatform.toDataStoreType())
 
             uiState = uiState.copy(isLoginLoading = false)
 

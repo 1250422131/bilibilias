@@ -50,7 +50,7 @@ class VideoInfoRepository(
     suspend fun getDonghuaPlayerInfo(
         epId: Long?,
         seasonId: Long?,
-        fnval: Int = 12240,
+        fnval: Int = 4048,
         qn: Int = 127,
     ): Flow<NetWorkResult<BILIDonghuaPlayerSynthesize>> {
         val platformType = appSettingsRepository.getVideoParsePlatform()

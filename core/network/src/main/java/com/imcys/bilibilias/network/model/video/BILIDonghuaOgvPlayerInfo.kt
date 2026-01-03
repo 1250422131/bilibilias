@@ -46,7 +46,7 @@ data class BILIDonghuaOgvPlayerInfo(
             @SerialName("hide")
             val hide: Hide?,
             @SerialName("show")
-            val show: Show
+            val show: Show?
         ) {
             @Serializable
             data class Hide(
