@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ASCommonLoadingScreen() {
+fun ASCommonLoadingScreen(tip: String = "加载中...") {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularWavyProgressIndicator()
-        Text(text = "加载中...")
+        Text(text = tip)
     }
 }

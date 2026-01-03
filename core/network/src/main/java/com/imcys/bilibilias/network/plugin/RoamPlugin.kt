@@ -48,6 +48,10 @@ val RoamPlugin = createClientPlugin("RoamPlugin", ::RoamPluginConfig) {
     onRequest { request, _ ->
         if (request.isSSE()) return@onRequest
         if (appSettings?.data?.first()?.enabledRoam == false) return@onRequest
+        if (appSettings?.data?.first()?.videoParsePlatform == AppSettings.VideoParsePlatform.TV) {
+            return@onRequest
+        }
+
         request.headers.append("Roam-Enabled", "true")
         val originalFull = request.url.toString()
         if (whitelist.none { originalFull.contains(it) }) return@onRequest

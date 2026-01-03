@@ -59,6 +59,9 @@ object API {
         // 番剧播放信息接口，通用接口
         val WEB_PGC_PLAYER_URL = WEB_API_BASE_URL + "pgc/player/web/playurl"
 
+        // 新Web端番剧播放信息接口
+        val WEB_OGV_PLAYER_URL = WEB_API_BASE_URL + "ogv/player/playview"
+
         // TV番剧播放信息接口
         val TV_PGC_PLAYER_URL = TV_API_BASE_URL + "pgc/player/api/playurltv"
 

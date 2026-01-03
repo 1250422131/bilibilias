@@ -54,7 +54,17 @@ class UserInfoRepository(
 
     suspend fun deleteBILIUserByUid(userId: Long) = biliUsersDao.deleteBILIUserByUid(userId)
 
-    suspend fun getBILIUserListByMid(mid: Long) = biliUsersDao.getBILIUserListByMid(mid)
+    suspend fun getBILIUserListByMid(mid: Long) = biliUsersDao.getBILIUserListByUid(mid)
+
+    suspend fun getBILIUserListByPlatform(
+        loginPlatform: LoginPlatform
+    ) = biliUsersDao.getBILIUserListByPlatform(loginPlatform)
+
+    suspend fun getBILIUserByMidAndPlatform(
+        mid: Long,
+        loginPlatform: LoginPlatform
+    ) = biliUsersDao.getBILIUserByMidAndPlatform(mid, loginPlatform)
+
     suspend fun getSpaceArchiveInfo(
         mid: Long,
         pn: Int = 1,

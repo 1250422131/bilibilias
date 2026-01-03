@@ -1,14 +1,11 @@
 package com.imcys.bilibilias.ui.setting.developer
 
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.network.ApiStatus
-import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
-import io.ktor.client.request.header
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
@@ -142,11 +139,6 @@ class LineConfigViewModel(
                 val connection = url.openConnection()
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
-                connection.setRequestProperty(
-                    "Referer",
-                    "https://www.bilibili.com/video/BV1Cf421q78E/"
-                )
-                connection.setRequestProperty("User-Agent", BROWSER_USER_AGENT)
                 connection.connect()
                 val buffer = ByteArray(2048)
                 var size = 0

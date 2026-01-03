@@ -34,9 +34,9 @@ interface BILIUsersDao {
     ): List<BILIUsersEntity>
 
 
-    @Query("select * from bili_users where mid = :mid")
-    suspend fun getBILIUserListByMid(
-        mid: Long,
+    @Query("select * from bili_users where login_platform = :loginPlatform")
+    suspend fun getBILIUserListByPlatform(
+        loginPlatform: LoginPlatform
     ): List<BILIUsersEntity>
 
 

@@ -83,11 +83,27 @@ suspend inline fun <reified Data> HttpClient.httpRequest(
             runCatching {
                 emit(NetWorkResult.Loading(true))
                 val response = request(this@httpRequest)
-                val body = response.body<BiliApiResponse<Data?>>().apply {
-                    // 请求参数补充
-                    responseHeader = response.headers.entries()
+                val body = runCatching {
+                    response.body<BiliApiResponse<Data?>>().apply {
+                        // 请求参数补充
+                        responseHeader = response.headers.entries()
+                    }
+                }.getOrNull()
+                if (body != null) {
+                    // 如果成功解析为 BiliApiResponse，使用原有逻辑
+                    Pair(response, body)
+                } else {
+                    val directData = response.body<Data?>()
+                    val mockResponse = BiliApiResponse<Data?>(
+                        code = 0,
+                        data = directData,
+                        result = null,
+                        message = null,
+                        ttl = 0,
+                        responseHeader = response.headers.entries()
+                    )
+                    Pair(response, mockResponse)
                 }
-                Pair(response, body)
             }.onSuccess {
                 val body = it.second
                 val response = it.first
@@ -97,14 +113,23 @@ suspend inline fun <reified Data> HttpClient.httpRequest(
                     0 -> {
                         emit(NetWorkResult.Success(mData, body))
                     }
+
                     -101 -> {
                         sendLoginErrorEvent()
                         emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
                     }
+
                     -509 -> {
                         sendRequestFrequentEvent(url = response.request.url.toString())
-                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: "请求过于频繁，请稍后再试"))
+                        emit(
+                            NetWorkResult.Error(
+                                mData,
+                                body,
+                                exception = body.message ?: "请求过于频繁，请稍后再试"
+                            )
+                        )
                     }
+
                     else -> {
                         emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
                     }
@@ -113,7 +138,6 @@ suspend inline fun <reified Data> HttpClient.httpRequest(
                 emit(NetWorkResult.Error(null, null, it.message ?: ""))
             }
         }
-
     }
 
 inline fun <T, R> NetWorkResult<T>.mapData(transform: (T?, BiliApiResponse<T?>?) -> R?): NetWorkResult<R> {

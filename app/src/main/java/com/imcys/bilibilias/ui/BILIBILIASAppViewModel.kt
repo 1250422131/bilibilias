@@ -103,8 +103,6 @@ class BILIBILIASAppViewModel(
         }
     }
 
-
-
     fun onKnowAboutApp() {
         viewModelScope.launch(Dispatchers.IO) {
             appSettingsRepository.updateKnowAboutApp(AppSettings.KnowAboutApp.Know)

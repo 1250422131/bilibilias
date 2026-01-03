@@ -43,6 +43,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.core.graphics.createBitmap
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
+import com.imcys.bilibilias.data.repository.toDataStoreType
+import com.imcys.bilibilias.datastore.source.AppSettingSource
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URLEncoder
@@ -51,7 +54,8 @@ class QRCodeLoginViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val contentResolver: ContentResolver,
     private val usersDataSource: UsersDataSource,
-    private val asCookiesStorage: AsCookiesStorage
+    private val asCookiesStorage: AsCookiesStorage,
+    private val appSettingsRepository: AppSettingsRepository,
 ) : ViewModel() {
 
     data class UIState(
@@ -79,9 +83,6 @@ class QRCodeLoginViewModel(
 
     val loginUserInfoState = _loginUserInfoState.asStateFlow()
 
-    init {
-        getLoadLoginQRCodeInfo()
-    }
 
     /**
      * 加载登录二维码
@@ -180,12 +181,12 @@ class QRCodeLoginViewModel(
                 qrCodeLoginRepository.insertBILIUserCookie(cookie)
             }
 
-            if (uiState.selectedLoginPlatform == LoginPlatform.WEB) {
-                usersDataSource.setUserId(userId)
-                asCookiesStorage.syncDataBaseCookies()
-            }
+            usersDataSource.setUserId(userId)
+            asCookiesStorage.syncDataBaseCookies()
 
             uiState = uiState.copy(isLoginLoading = false)
+
+
             launch(Dispatchers.Main) {
                 onSaveFinish.invoke()
             }

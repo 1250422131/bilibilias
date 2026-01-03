@@ -55,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.navigation3.runtime.NavKey
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.datastore.AppSettings
@@ -62,6 +63,7 @@ import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.ui.PrivacyPolicyDialog
 import com.imcys.bilibilias.ui.PrivacyPolicyRefuseDialog
+import com.imcys.bilibilias.ui.setting.platform.ParsePlatformRoute
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTextButton
@@ -99,7 +101,8 @@ fun SettingScreen(
     onToSystemExpand: () -> Unit = {},
     onToStorageManagement: () -> Unit = {},
     onToNamingConvention: () -> Unit = {},
-    onToLineConfig : () -> Unit = {},
+    onToLineConfig: () -> Unit = {},
+    onToPage: (navKey: NavKey) -> Unit = {},
     onLogoutFinish: (Long) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -250,7 +253,7 @@ fun SettingScreen(
                     painter = rememberVectorPainter(Icons.Outlined.Hub),
                     text = "解析平台",
                     descriptionText = "使用不同的平台标识来解析视频",
-                    onClick = onToRoam
+                    onClick = { onToPage(ParsePlatformRoute) }
                 )
             }
 

@@ -18,13 +18,13 @@ fun ASInfoTip(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         shape = CardDefaults.shape,
         color = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         Column(
-            modifier
+            Modifier
                 .fillMaxWidth()
                 .run {
                     if (enabledPadding) padding(vertical = 12.dp, horizontal = 16.dp)

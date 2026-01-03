@@ -9,7 +9,7 @@ class NamingConventionConverter {
     fun fromString(value: String?): NamingConventionInfo? {
         return value?.let {
             val jsonObject = JSONObject(value)
-            val ruleType = jsonObject.getInt("ruleType")
+            val ruleType = runCatching {  jsonObject.getInt("ruleType") }.getOrNull()
             when (ruleType) {
                 0 -> {
                     NamingConventionInfo.Video(

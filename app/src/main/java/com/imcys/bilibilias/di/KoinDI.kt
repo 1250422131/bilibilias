@@ -15,6 +15,7 @@ import com.imcys.bilibilias.ui.setting.SettingViewModel
 import com.imcys.bilibilias.ui.setting.contract.NamingConventionViewModel
 import com.imcys.bilibilias.ui.setting.developer.LineConfigViewModel
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetViewModel
+import com.imcys.bilibilias.ui.setting.platform.ParsePlatformViewModel
 import com.imcys.bilibilias.ui.setting.roam.RoamViewModel
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementViewModel
 import com.imcys.bilibilias.ui.tools.donate.DonateViewModel
@@ -58,6 +59,7 @@ val appModule = module {
     viewModel { RequestFrequentViewModel(get()) }
     viewModel{ LineConfigViewModel(get(),get()) }
     viewModel{ WebParserViewModel(get()) }
+    viewModel{ ParsePlatformViewModel(get(),get(),get(),get(),get()) }
     factory { androidContext().userAppSettingsStore }
     single {
         DownloadManager(

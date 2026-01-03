@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.common.utils.autoRequestRetry
@@ -45,7 +46,9 @@ import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
+import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
 import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
@@ -89,12 +92,6 @@ import java.io.RandomAccessFile
 
 /**
  * 下载管理器
- *
- * 主要功能：
- * 1. 任务管理：添加、暂停、恢复、取消下载任务
- * 2. 并发控制：支持多任务并发下载
- * 3. 断点续传：支持网络中断后继续下载
- * 4. 文件管理：自动合并音视频，移动到下载目录
  */
 class DownloadManager(
     private val context: BILIBILIASApplication,
@@ -583,17 +580,77 @@ class DownloadManager(
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private suspend fun executeTaskDownload(task: AppDownloadTask) {
         downloadService?.let { service ->
-            val downloadResult = downloadAppTask(task, service)
 
+            // 前置任务
+            handlePredecessor(task)
+
+            val downloadResult = downloadAppTask(task, service)
             if (downloadResult && task.downloadSubTasks.size >= 2) {
                 mergeTask(task, service)
             }
+
+            // 后置任务
+            handleSuccessor(task)
 
             val finalTask = findTaskById(task.downloadSegment.segmentId)
             if (finalTask?.downloadState == DownloadState.COMPLETED) {
                 removeTaskFromList(task.downloadSegment.segmentId)
             }
         }
+    }
+
+
+    /**
+     * 前置下载任务
+     */
+    private suspend fun handlePredecessor(task: AppDownloadTask) {}
+
+
+    /**
+     * 后置下载任务
+     */
+    private suspend fun handleSuccessor(task: AppDownloadTask) {
+
+
+        val segment = downloadTaskRepository.getSegmentBySegmentId(task.downloadSegment.segmentId)
+        if (segment == null) {
+            updateTaskState(task, DownloadState.ERROR)
+            return
+        }
+
+        val lastFile = File(segment.savePath)
+        val lastFileMimeType = getMimeType(task.downloadSegment.downloadMode)
+        val lastFileName = getLastFileName(task, lastFileMimeType.split("/").lastOrNull() ?: "")
+        val uriStr = moveToDownloadAndRegister(lastFile, lastFileName, lastFileMimeType)
+        if (uriStr != null) {
+            val newTask = task.copy(
+                downloadSegment = segment.copy(
+                    savePath = uriStr,
+                    downloadState = DownloadState.COMPLETED
+                )
+            )
+            downloadTaskRepository.updateSegment(newTask.downloadSegment)
+            updateTaskState(newTask, DownloadState.COMPLETED)
+        } else {
+            updateTaskState(task, DownloadState.ERROR)
+        }
+    }
+
+
+
+    /**
+     * 获取最终导出的文件名
+     */
+    private suspend fun getLastFileName(task: AppDownloadTask, fileExtension: String): String {
+        val videoNamingRule =
+            if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
+                appSettingsRepository.appSettingsFlow.first().videoNamingRule
+            } else {
+                appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
+            }
+        val conventionInfo = task.downloadSegment.namingConventionInfo
+        val fileExtension = fileExtension
+        return buildFileNameWithConvention(videoNamingRule, conventionInfo, fileExtension)
     }
 
     /**
@@ -656,32 +713,14 @@ class DownloadManager(
         val result = downloadSubTask(subTask, task, progressCallback)
 
         if (result) {
-            val videoNamingRule =
-                if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
-                    appSettingsRepository.appSettingsFlow.first().videoNamingRule
-                } else {
-                    appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
-                }
-            val conventionInfo = task.downloadSegment.namingConventionInfo
-            val fileExtension = getFileExtension(subTask.subTaskType).removePrefix(".")
-            val fileName =
-                buildFileNameWithConvention(videoNamingRule, conventionInfo, fileExtension)
-            val mimeType = getMimeType(subTask.subTaskType)
-            val file = File(subTask.savePath)
-
-            val uriStr = moveToDownloadAndRegister(file, fileName, mimeType)
-            if (uriStr != null) {
-                val newTask = task.copy(
-                    downloadSegment = task.downloadSegment.copy(
-                        savePath = uriStr,
-                        downloadState = DownloadState.COMPLETED
-                    )
+            val newTask = task.copy(
+                downloadSegment = task.downloadSegment.copy(
+                    savePath = subTask.savePath,
+                    downloadState = DownloadState.COMPLETED
                 )
-                downloadTaskRepository.updateSegment(newTask.downloadSegment)
-                updateTaskState(newTask, DownloadState.COMPLETED)
-            } else {
-                updateTaskState(task, DownloadState.ERROR)
-            }
+            )
+            updateTaskState(newTask, DownloadState.COMPLETED)
+            downloadTaskRepository.updateSegment(newTask.downloadSegment)
         }
 
         return result
@@ -698,9 +737,13 @@ class DownloadManager(
         val file = File(subTask.savePath)
         val tempFile = File("${subTask.savePath}.downloading")
 
+        val downloadUrl =
+            getTaskDownloadUrl(task.downloadSegment, subTask.subTaskType, task.downloadViewInfo)
+                ?: ""
+        Log.d("downloadUrl", "下载地址: ${downloadUrl} -- ${subTask.subTaskType}")
         // 1. 获取远端文件长度，判断本地是否已经完整
         val remoteLength = try {
-            val headResp = httpClient.head(subTask.downloadUrl) {
+            val headResp = httpClient.head(downloadUrl) {
                 header("Referer", buildRefererUrl(task))
             }
             headResp.headers["Content-Length"]?.toLongOrNull() ?: -1L
@@ -715,7 +758,7 @@ class DownloadManager(
 
         repeat(MAX_RETRY_ATTEMPTS) { attempt ->
             try {
-                val success = performDownload(subTask, task, tempFile, onUpdateProgress)
+                val success = performDownload(downloadUrl, task, tempFile, onUpdateProgress)
                 if (success) {
                     if (file.exists()) file.delete()
                     tempFile.renameTo(file)
@@ -737,7 +780,7 @@ class DownloadManager(
      * 执行实际的HTTP下载
      */
     private suspend fun performDownload(
-        subTask: DownloadSubTask,
+        downloadUrl: String?,
         task: AppDownloadTask,
         tempFile: File,
         onUpdateProgress: (Float) -> Unit
@@ -745,7 +788,7 @@ class DownloadManager(
         val downloaded = if (tempFile.exists()) tempFile.length() else 0L
         val referer = buildRefererUrl(task)
 
-        val downloadUrl = buildLineDownloadUrl(subTask.downloadUrl)
+        val downloadUrl = buildLineDownloadUrl(downloadUrl ?: "")
         // 发起请求
         httpClient.prepareGet(downloadUrl) {
             header("Referer", referer)
@@ -872,9 +915,12 @@ class DownloadManager(
                         FileNamePlaceholder.Video.P -> conventionInfo.p ?: ""
                         FileNamePlaceholder.Video.PTitle -> conventionInfo.pTitle ?: ""
                         FileNamePlaceholder.Video.Title -> conventionInfo.title ?: ""
-                        FileNamePlaceholder.Video.CollectionSeasonTitle -> conventionInfo.collectionSeasonTitle ?: ""
-                        FileNamePlaceholder.Video.CollectionTitle -> conventionInfo.collectionTitle ?: ""
-                    }.replace("/","_")
+                        FileNamePlaceholder.Video.CollectionSeasonTitle -> conventionInfo.collectionSeasonTitle
+                            ?: ""
+
+                        FileNamePlaceholder.Video.CollectionTitle -> conventionInfo.collectionTitle
+                            ?: ""
+                    }.replace("/", "_")
                     filePath = filePath
                         .replace(rule.placeholder, value)
                         .replace(Regex("_+"), "_")
@@ -894,7 +940,7 @@ class DownloadManager(
 
                         FileNamePlaceholder.Donghua.Title -> conventionInfo.title ?: ""
                         FileNamePlaceholder.Donghua.SeasonTitle -> conventionInfo.seasonTitle ?: ""
-                    }.replace("/","_")
+                    }.replace("/", "_")
                     filePath = filePath.replace(rule.placeholder, value)
                 }
             }
@@ -912,30 +958,16 @@ class DownloadManager(
      * 处理合并成功
      */
     private suspend fun handleMergeSuccess(task: AppDownloadTask) {
-        val videoNamingRule =
-            if (task.downloadSegment.namingConventionInfo is NamingConventionInfo.Video) {
-                appSettingsRepository.appSettingsFlow.first().videoNamingRule
-            } else {
-                appSettingsRepository.appSettingsFlow.first().bangumiNamingRule
-            }
-        val conventionInfo = task.downloadSegment.namingConventionInfo
-        val finalPath = buildFileNameWithConvention(videoNamingRule, conventionInfo, "mp4")
-        val mergedFile = File("${task.downloadSubTasks[0].savePath}_merged.mp4")
-        val uriStr = moveToDownloadAndRegister(mergedFile, finalPath, "video/mp4")
         File(task.downloadSubTasks[0].savePath).delete()
         File(task.downloadSubTasks[1].savePath).delete()
-        if (uriStr != null) {
-            val newTask = task.copy(
-                downloadSegment = task.downloadSegment.copy(
-                    savePath = uriStr,
-                    downloadState = DownloadState.COMPLETED
-                )
+        val newTask = task.copy(
+            downloadSegment = task.downloadSegment.copy(
+                savePath = "${task.downloadSubTasks[0].savePath}_merged.mp4",
+                downloadState = DownloadState.COMPLETED
             )
-            downloadTaskRepository.updateSegment(newTask.downloadSegment)
-            updateTaskState(newTask, DownloadState.COMPLETED)
-        } else {
-            updateTaskState(task, DownloadState.ERROR)
-        }
+        )
+        updateTaskState(newTask, DownloadState.COMPLETED)
+        downloadTaskRepository.updateSegment(newTask.downloadSegment)
     }
 
 
@@ -1033,6 +1065,19 @@ class DownloadManager(
             DownloadSubTaskType.AUDIO -> "audio/mp4"
         }
     }
+
+    /**
+     * 获取MIME类型
+     */
+    private fun getMimeType(mode: DownloadMode): String {
+        return when (mode) {
+            DownloadMode.AUDIO_VIDEO,
+            DownloadMode.VIDEO_ONLY -> "video/mp4"
+
+            DownloadMode.AUDIO_ONLY -> "video/mp3"
+        }
+    }
+
 
     /**
      * 更新任务状态
@@ -1188,6 +1233,7 @@ class DownloadManager(
                         downloadTask = taskTree.task,
                         downloadSegment = segment,
                         downloadSubTasks = downloadSubTasks,
+                        downloadViewInfo = downloadViewInfo,
                         downloadStage = DownloadStage.DOWNLOAD,
                         cover = cover,
                     )
@@ -1329,7 +1375,7 @@ class DownloadManager(
             DownloadTaskNodeType.BILI_VIDEO_INTERACTIVE,
             DownloadTaskNodeType.BILI_VIDEO_PAGE,
             DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
-                autoRequestRetry{
+                autoRequestRetry {
                     videoInfoRepository.getVideoPlayerInfo(
                         cid = segment.platformId.toLong(),
                         bvId = getSegmentBvId(segment),
@@ -1364,9 +1410,22 @@ class DownloadManager(
         }
 
         val videoData = when (val result = videoInfo.data) {
+            // 废除
             is BILIDonghuaPlayerInfo -> result.dash ?: result.durls?.firstOrNull {
                 it.quality == downloadViewInfo.selectVideoQualityId
             }?.durl?.first() ?: result.durls?.first()?.durl?.first()
+            // 废除
+            is BILIDonghuaOgvPlayerInfo -> result.videoInfo.dash
+                ?: result.videoInfo.durls?.firstOrNull {
+                    it.quality == downloadViewInfo.selectVideoQualityId
+                }?.durl?.first() ?: result.videoInfo.durls?.first()?.durl?.first()
+
+            is BILIDonghuaPlayerSynthesize -> {
+                result.dash
+                    ?: result.durls?.firstOrNull {
+                        it.quality == downloadViewInfo.selectVideoQualityId
+                    }?.durl?.first() ?: result.durls?.first()?.durl?.first()
+            }
 
             is BILIVideoPlayerInfo -> result.dash ?: result.durls?.firstOrNull {
                 it.quality == downloadViewInfo.selectVideoQualityId
@@ -1378,41 +1437,35 @@ class DownloadManager(
         } ?: return emptyList()
 
         // 根据segment的下载模式选择流
-
-
         val subTasks = when (videoData) {
             is BILIVideoDash -> {
                 when (segment.downloadMode) {
                     DownloadMode.AUDIO_VIDEO -> {
-                        val selectedVideo = selectVideoQuality(videoData.video, downloadViewInfo)
-                        val selectedAudio = selectAudioQuality(videoData, downloadViewInfo)
                         listOf(
                             createSubTask(
                                 segment,
-                                selectedVideo.finalUrl,
                                 DownloadSubTaskType.VIDEO
                             ),
                             createSubTask(
                                 segment,
-                                selectedAudio.finalUrl,
                                 DownloadSubTaskType.AUDIO
                             )
                         )
                     }
 
                     DownloadMode.VIDEO_ONLY -> {
-                        val selectedVideo = selectVideoQuality(videoData.video, downloadViewInfo)
                         listOf(
-                            createSubTask(segment, selectedVideo.finalUrl, DownloadSubTaskType.VIDEO)
+                            createSubTask(
+                                segment,
+                                DownloadSubTaskType.VIDEO
+                            )
                         )
                     }
 
                     DownloadMode.AUDIO_ONLY -> {
-                        val selectedAudio = selectAudioQuality(videoData, downloadViewInfo)
                         listOf(
                             createSubTask(
                                 segment,
-                                selectedAudio.finalUrl,
                                 DownloadSubTaskType.AUDIO
                             )
                         )
@@ -1425,7 +1478,7 @@ class DownloadManager(
                     segment.copy(downloadMode = DownloadMode.VIDEO_ONLY)
                 )
                 listOf(
-                    createSubTask(segment, videoData.url, DownloadSubTaskType.VIDEO)
+                    createSubTask(segment, DownloadSubTaskType.VIDEO)
                 )
             }
 
@@ -1434,6 +1487,113 @@ class DownloadManager(
 
         delay(500L) // 避免请求过快
         return subTasks
+    }
+
+
+    /**
+     * 获取任务视频下载地址
+     */
+    private suspend fun getTaskDownloadUrl(
+        segment: DownloadSegment,
+        subTaskType: DownloadSubTaskType,
+        downloadViewInfo: DownloadViewInfo
+    ): String? {
+
+        val nodeType = downloadTaskRepository.getTaskNodeByNodeId(segment.nodeId)?.nodeType
+            ?: throw IllegalStateException("无法获取任务节点类型")
+
+        // 获取视频播放信息
+        val videoInfo = when (nodeType) {
+            DownloadTaskNodeType.BILI_VIDEO_INTERACTIVE,
+            DownloadTaskNodeType.BILI_VIDEO_PAGE,
+            DownloadTaskNodeType.BILI_VIDEO_SECTION_EPISODES -> {
+                autoRequestRetry {
+                    videoInfoRepository.getVideoPlayerInfo(
+                        cid = segment.platformId.toLong(),
+                        bvId = getSegmentBvId(segment),
+                        curLanguage = downloadViewInfo.selectAudioLanguage?.lang,
+                        curProductionType = downloadViewInfo.selectAudioLanguage?.productionType
+                    )
+                }
+            }
+
+            DownloadTaskNodeType.BILI_DONGHUA_EPISOD,
+            DownloadTaskNodeType.BILI_DONGHUA_SEASON,
+            DownloadTaskNodeType.BILI_DONGHUA_SECTION -> {
+                autoRequestRetry {
+                    videoInfoRepository.getDonghuaPlayerInfo(
+                        epId = segment.platformId.toLong(),
+                        null
+                    )
+                }
+            }
+
+            else -> throw IllegalStateException("缓存类型不支持: ${nodeType.name}")
+        }
+        if (videoInfo.status != ApiStatus.SUCCESS) {
+            throw IllegalStateException(
+                """
+                视频接口异常:
+                平台ID：${segment.platformId}
+                任务平台ID：${getSegmentBvId(segment)}
+            """.trimIndent()
+            )
+        }
+        val videoData = when (val result = videoInfo.data) {
+
+            // 废除
+            is BILIDonghuaPlayerInfo -> result.dash ?: result.durls?.firstOrNull {
+                it.quality == downloadViewInfo.selectVideoQualityId
+            }?.durl?.first() ?: result.durls?.first()?.durl?.first()
+
+            // 废除
+            is BILIDonghuaOgvPlayerInfo -> result.videoInfo.dash
+                ?: result.videoInfo.durls?.firstOrNull {
+                    it.quality == downloadViewInfo.selectVideoQualityId
+                }?.durl?.first() ?: result.videoInfo.durls?.first()?.durl?.first()
+
+            is BILIDonghuaPlayerSynthesize -> {
+                result.dash
+                    ?: result.durls?.firstOrNull {
+                        it.quality == downloadViewInfo.selectVideoQualityId
+                    }?.durl?.first() ?: result.durls?.first()?.durl?.first()
+            }
+
+            is BILIVideoPlayerInfo -> result.dash ?: result.durls?.firstOrNull {
+                it.quality == downloadViewInfo.selectVideoQualityId
+            }?.durl?.first() ?: result.durls?.first()?.durl?.first()
+
+            else -> {
+                null
+            }
+        } ?: return null
+
+        return when (videoData) {
+            is BILIVideoDash -> {
+                when (subTaskType) {
+                    DownloadSubTaskType.VIDEO -> selectVideoQuality(
+                        videoData.video,
+                        downloadViewInfo
+                    ).finalUrl
+
+                    DownloadSubTaskType.AUDIO -> selectAudioQuality(
+                        videoData,
+                        downloadViewInfo
+                    ).finalUrl
+                }
+
+            }
+
+            is BILIVideoDurl -> {
+                when (subTaskType) {
+                    DownloadSubTaskType.VIDEO -> videoData.url
+                    DownloadSubTaskType.AUDIO -> null
+                }
+            }
+
+            else -> throw IllegalStateException("不支持的下载数据类型")
+        }
+
     }
 
     /**
@@ -1506,7 +1666,6 @@ class DownloadManager(
 
     private fun createSubTask(
         segment: DownloadSegment,
-        url: String,
         type: DownloadSubTaskType
     ): DownloadSubTask {
         val savePath = getSaveTempSubTaskPath(
@@ -1520,7 +1679,6 @@ class DownloadManager(
         return DownloadSubTask(
             segmentId = segment.segmentId,
             savePath = savePath,
-            downloadUrl = url,
             subTaskType = type,
             downloadState = DownloadState.WAITING
         )

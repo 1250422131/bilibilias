@@ -7,7 +7,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 data class BILIVideoDurl(
     @SerialName("ahead")
-    val ahead: String,
+    val ahead: String?,
     @SerialName("backup_url")
     val backupUrl: List<String> = emptyList(),
     @SerialName("length")
@@ -21,7 +21,7 @@ data class BILIVideoDurl(
     @SerialName("url")
     val url: String,
     @SerialName("vhead")
-    val vhead: String
+    val vhead: String?
 )
 
 @Serializable
@@ -137,8 +137,8 @@ data class BILIVideoDash(
     data class Dolby(
         @SerialName("audio")
         val audio: List<Audio>?,
-        @SerialName("type")
-        val type: Long = 0
+//        @SerialName("type")
+//        val type: Long = 0
     )
 
     @Serializable

@@ -1,13 +1,10 @@
 package com.imcys.bilibilias.data.repository
 
-import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.IOException
+import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
-import com.imcys.bilibilias.datastore.Settings
 import com.imcys.bilibilias.datastore.copy
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 
 class AppSettingsRepository(
@@ -17,6 +14,9 @@ class AppSettingsRepository(
 
     val appSettingsFlow: Flow<AppSettings> = dataStore.data
 
+    // 获取当前平台类型
+    suspend fun getVideoParsePlatform(): AppSettings.VideoParsePlatform =
+        appSettingsFlow.first().videoParsePlatform
 
     // 同意了隐私政策
     suspend fun hasAgreedPrivacyPolicy(): Boolean {
@@ -188,6 +188,29 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateVideoParsePlatform(platform: AppSettings.VideoParsePlatform) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                videoParsePlatform = platform
+            }
+        }
+    }
+
+}
+
+fun AppSettings.VideoParsePlatform.getDescription(): String = this.name
+
+fun AppSettings.VideoParsePlatform.toDatabaseType(): LoginPlatform = when (this) {
+    AppSettings.VideoParsePlatform.Web -> LoginPlatform.WEB
+    AppSettings.VideoParsePlatform.TV -> LoginPlatform.TV
+    AppSettings.VideoParsePlatform.Mobile -> LoginPlatform.MOBILE
+    else -> LoginPlatform.WEB
+}
+
+fun LoginPlatform.toDataStoreType() = when (this) {
+    LoginPlatform.WEB -> AppSettings.VideoParsePlatform.Web
+    LoginPlatform.MOBILE -> AppSettings.VideoParsePlatform.Mobile
+    LoginPlatform.TV -> AppSettings.VideoParsePlatform.TV
 }
 
 

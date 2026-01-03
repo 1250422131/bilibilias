@@ -8,11 +8,18 @@ import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.mapData
 import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
+import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
+import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlin.collections.get
@@ -43,9 +50,130 @@ class VideoInfoRepository(
     suspend fun getDonghuaPlayerInfo(
         epId: Long?,
         seasonId: Long?,
-        qn: Int = 12240,
-        fnval: Int = 127,
-    ) = webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
+        fnval: Int = 12240,
+        qn: Int = 127,
+    ): Flow<NetWorkResult<BILIDonghuaPlayerSynthesize>> {
+        val platformType = appSettingsRepository.getVideoParsePlatform()
+        val cookieCsrf = biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
+            .firstOrNull { cookie -> cookie.name == "bili_jct" }?.value
+        return when (platformType) {
+            AppSettings.VideoParsePlatform.Web,
+            AppSettings.VideoParsePlatform.Mobile,
+            AppSettings.VideoParsePlatform.UNRECOGNIZED -> {
+                webApiService.getDonghuaOgvPlayerInfo(epId, seasonId, qn, fnval, cookieCsrf)
+                    .flatMapConcat { ogvInfoResult ->
+                        val check =
+                            (ogvInfoResult.status == ApiStatus.SUCCESS && ogvInfoResult.responseData?.code != 0) ||
+                                    (ogvInfoResult.status == ApiStatus.ERROR)
+                        if (check) {
+                            // 走新接口，保留类型转换
+                            webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
+                                .map { playerInfoResult ->
+                                    if (playerInfoResult.status == ApiStatus.SUCCESS) {
+                                        playerInfoResult.mapData { playResult, _ ->
+                                            val videoInfo = playResult!!
+                                            BILIDonghuaPlayerSynthesize(
+                                                isPreview = videoInfo.isPreview == 1L,
+                                                acceptFormat = videoInfo.acceptFormat,
+                                                dash = videoInfo.dash,
+                                                durl = videoInfo.durl,
+                                                durls = videoInfo.durls,
+                                                quality = videoInfo.quality,
+                                                acceptQuality = videoInfo.acceptQuality,
+                                                timelength = videoInfo.timelength,
+                                                format = videoInfo.format,
+                                                videoCodecid = videoInfo.videoCodecid,
+                                                supportFormats = videoInfo.supportFormats,
+                                                type = videoInfo.type
+                                            )
+                                        }
+                                    } else {
+                                        playerInfoResult.mapData { _, _ -> null }
+                                    }
+                                }
+                        } else if (ogvInfoResult.status == ApiStatus.SUCCESS) {
+                            flowOf(
+                                ogvInfoResult.mapData { ogvResult, _ ->
+                                    val videoInfo = ogvResult?.videoInfo!!
+                                    BILIDonghuaPlayerSynthesize(
+                                        isPreview = ogvResult.playVideoType == "preview",
+                                        acceptFormat = videoInfo.acceptFormat,
+                                        dash = videoInfo.dash,
+                                        durl = videoInfo.durl,
+                                        durls = videoInfo.durls,
+                                        quality = videoInfo.quality,
+                                        acceptQuality = videoInfo.acceptQuality,
+                                        timelength = videoInfo.timelength,
+                                        format = videoInfo.format,
+                                        videoCodecid = videoInfo.videoCodecid,
+                                        supportFormats = videoInfo.supportFormats,
+                                        type = videoInfo.type
+                                    )
+                                }
+                            )
+                        } else {
+                            flowOf(ogvInfoResult.mapData { _, _ -> null })
+                        }
+                    }
+            }
+
+            AppSettings.VideoParsePlatform.TV -> {
+                var mAid: Long? = null
+                var mCid: Long? = null
+                val videoView = getDonghuaSeasonViewInfo(epId = epId).last()
+                if (videoView.status == ApiStatus.SUCCESS) {
+                    val epIndex = videoView.data?.episodes?.indexOfFirst {
+                        it.epId == epId
+                    }
+                    if (epIndex != null && epIndex != -1) {
+                        mAid = videoView.data?.episodes?.get(epIndex)?.aid
+                        mCid = videoView.data?.episodes?.get(epIndex)?.cid
+                    }
+                }
+
+                val userId = usersDataSource.getUserId()
+                val currentUser = biliUsersDao.getBILIUserByUid(userId)
+                var currentAccessToken = currentUser?.accessToken ?: ""
+                if (currentUser != null && currentUser.loginPlatform != LoginPlatform.TV) {
+                    val user = biliUsersDao.getBILIUserByMidAndPlatform(
+                        currentUser.mid,
+                        LoginPlatform.TV
+                    )
+                    currentAccessToken = user?.accessToken ?: ""
+                }
+                tvAPIService.getDonghuaPlayerInfo(
+                    aid = mAid,
+                    cid = mCid,
+                    fnval = 4048,
+                    qn = qn,
+                    epId = epId ?: 0L,
+                    accessKey = currentAccessToken,
+                ).map { playerInfoResult ->
+                    if (playerInfoResult.status == ApiStatus.SUCCESS) {
+                        playerInfoResult.mapData { playResult, _ ->
+                            val videoInfo = playResult!!
+                            BILIDonghuaPlayerSynthesize(
+                                isPreview = videoInfo.isPreview == 1L,
+                                acceptFormat = videoInfo.acceptFormat,
+                                dash = videoInfo.dash,
+                                durl = videoInfo.durl,
+                                durls = videoInfo.durls,
+                                quality = videoInfo.quality,
+                                acceptQuality = videoInfo.acceptQuality,
+                                timelength = videoInfo.timelength,
+                                format = videoInfo.format,
+                                videoCodecid = videoInfo.videoCodecid,
+                                supportFormats = videoInfo.supportFormats,
+                                type = videoInfo.type
+                            )
+                        }
+                    } else {
+                        playerInfoResult.mapData { _, _ -> null }
+                    }
+                }
+            }
+        }
+    }
 
 
     suspend fun getVideoPlayerInfo(
@@ -56,13 +184,13 @@ class VideoInfoRepository(
         qn: Int = 127,
         curLanguage: String? = null,
         curProductionType: Int? = null,
-        platformType: AppSettings.VideoParsePlatform = AppSettings.VideoParsePlatform.Web
     ): Flow<NetWorkResult<BILIVideoPlayerInfo?>> {
+        val platformType = appSettingsRepository.getVideoParsePlatform()
         val tryLook = if (usersDataSource.isLogin()) null else "1"
-        return when(platformType){
+        return when (platformType) {
             AppSettings.VideoParsePlatform.Mobile,
-            AppSettings.VideoParsePlatform.UNRECOGNIZED ,
-            AppSettings.VideoParsePlatform.Web ->{
+            AppSettings.VideoParsePlatform.UNRECOGNIZED,
+            AppSettings.VideoParsePlatform.Web -> {
                 webApiService.getVideoPlayerInfo(
                     cid,
                     bvId,
@@ -89,11 +217,12 @@ class VideoInfoRepository(
                     it
                 }
             }
-            AppSettings.VideoParsePlatform.TV ->{
+
+            AppSettings.VideoParsePlatform.TV -> {
                 var mAid = aid
-                if (aid == 0L || aid == null){
+                if (aid == 0L || aid == null) {
                     val videoView = getVideoView(bvId = bvId).last()
-                    if (videoView.status == ApiStatus.SUCCESS){
+                    if (videoView.status == ApiStatus.SUCCESS) {
                         mAid = videoView.data?.aid
                     }
                 }
@@ -101,9 +230,11 @@ class VideoInfoRepository(
                 val userId = usersDataSource.getUserId()
                 val currentUser = biliUsersDao.getBILIUserByUid(userId)
                 var currentAccessToken = currentUser?.accessToken ?: ""
-                if (currentUser != null && currentUser.loginPlatform != LoginPlatform.TV){
-                    val user = biliUsersDao.getBILIUserByMidAndPlatform(currentUser.mid,
-                        LoginPlatform.TV)
+                if (currentUser != null && currentUser.loginPlatform != LoginPlatform.TV) {
+                    val user = biliUsersDao.getBILIUserByMidAndPlatform(
+                        currentUser.mid,
+                        LoginPlatform.TV
+                    )
                     currentAccessToken = user?.accessToken ?: ""
                 }
                 tvAPIService.getVideoPlayerInfo(

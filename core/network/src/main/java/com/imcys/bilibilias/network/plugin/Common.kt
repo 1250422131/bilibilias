@@ -14,3 +14,8 @@ fun HttpResponse.isSSE(): Boolean {
     val contentType = this.headers["Content-Type"] ?: return false
     return contentType.contains("text/event-stream")
 }
+
+fun HttpResponse.isNoJson(): Boolean {
+    val contentType = this.headers["Content-Type"] ?: return false
+    return !contentType.contains("application/json")
+}

@@ -14,6 +14,7 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_HISTORY_CURSOR_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LIKE_LIST_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGOUT_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_OGV_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PLAY_INFO_V2_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
@@ -28,7 +29,6 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_ACC_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
 import com.imcys.bilibilias.network.config.BROWSER_FINGERPRINT
-import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
 import com.imcys.bilibilias.network.config.BVID
 import com.imcys.bilibilias.network.config.CID
 import com.imcys.bilibilias.network.config.EP_ID
@@ -63,6 +63,7 @@ import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
 import com.imcys.bilibilias.network.model.user.BILIUserVideoLikeInfo
 import com.imcys.bilibilias.network.model.user.LikeAndCoinItemData
+import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
@@ -70,6 +71,11 @@ import com.imcys.bilibilias.network.model.video.BILIVideoCCInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.network.model.video.OgvExpInfo
+import com.imcys.bilibilias.network.model.video.OgvPlayerParam
+import com.imcys.bilibilias.network.model.video.OgvVideoIndex
+import com.imcys.bilibilias.network.model.video.OgvVideoParam
+import com.imcys.bilibilias.network.model.video.RequestOgvPlayerInfoData
 import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -78,6 +84,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import io.ktor.http.ContentType
@@ -122,6 +129,13 @@ class BILIBILIWebAPIService(
         httpClient.httpRequest {
             get(WEB_LOGIN_INFO_URL)
         }
+
+    /**
+     * 获取登录信息
+     */
+    suspend fun checkLoginUserInfo(): BILILoginUserInfo = httpClient.get(WEB_LOGIN_INFO_URL).body()
+
+
 
     /**
      * 获取WebI签名信息
@@ -250,6 +264,41 @@ class BILIBILIWebAPIService(
         get(WEB_PGC_PLAYER_URL) {
             newMap.forEach { (k, v) ->
                 parameter(k, v)
+            }
+        }
+    }
+
+    suspend fun getDonghuaOgvPlayerInfo(
+        epId: Long?,
+        seasonId: Long?,
+        fnval: Int = 12240,
+        qn: Int = 116,
+        csrf: String? = null,
+    ): FlowNetWorkResult<BILIDonghuaOgvPlayerInfo> {
+        val body = RequestOgvPlayerInfoData(
+            expInfo = OgvExpInfo(
+                deviceSupportHdr = true,
+                ogvHalfPay = true,
+            ),
+            playerParam = OgvPlayerParam(
+                drmTechType = 2,
+                fnval = fnval,
+                fnver = 0,
+            ),
+            videoParam = OgvVideoParam(
+                qn = qn,
+            ),
+            videoIndex = OgvVideoIndex(
+                ogvEpisodeId = epId,
+                ogvSeasonId = seasonId,
+            ),
+            scene = "normal"
+        )
+        return httpClient.httpRequest {
+            post(WEB_OGV_PLAYER_URL) {
+                contentType(ContentType.Application.Json)
+                csrf?.let { parameter("csrf", it) }
+                setBody(body)
             }
         }
     }

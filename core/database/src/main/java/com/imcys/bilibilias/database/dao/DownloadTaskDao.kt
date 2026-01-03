@@ -45,12 +45,19 @@ interface DownloadTaskDao {
         platformId: String
     ): DownloadTaskNode?
 
-
+    @Query("SELECT * FROM download_task_node WHERE node_id = :nodeId")
+    suspend fun getTaskNodeByNodeId(
+        nodeId: Long,
+    ): DownloadTaskNode?
     /**
      *  根据 platformId 查询单个任务
      */
     @Query("SELECT * FROM download_segment WHERE node_id = :nodeId AND platform_id = :platformId")
     suspend fun getSegmentByNodeIdAndPlatformId(nodeId: Long, platformId: String): DownloadSegment?
+
+
+    @Query("SELECT * FROM download_segment WHERE segment_id = :segmentId")
+    suspend fun getSegmentBySegmentId(segmentId: Long): DownloadSegment?
 
 
     @Query("SELECT * FROM download_segment ORDER BY segment_id DESC")

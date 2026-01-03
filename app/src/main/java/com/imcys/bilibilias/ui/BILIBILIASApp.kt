@@ -57,6 +57,7 @@ import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.loginErrorChannel
+import com.imcys.bilibilias.common.event.updateAccountChannel
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay

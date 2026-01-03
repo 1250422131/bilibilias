@@ -80,7 +80,9 @@ val netWorkModule = module {
                 maxReconnectionAttempts = 4
                 reconnectionTime = 2.seconds
             }
-            install(AutoBILIInfoPlugin)
+            install(AutoBILIInfoPlugin){
+                appSetting = androidContext().userAppSettingsStore
+            }
             install(RoamPlugin) {
                 domainReplacement = mapOf(
                     "api.bilibili.com" to "bili-api.misakamoe.com",
@@ -115,7 +117,7 @@ val netWorkModule = module {
 
                                 // 解析并重新格式化 JSON
                                 val jsonElement = json.parseToJsonElement(jsonBody)
-                                val formattedJson =
+                                val formattedJson = if (message.contains("application/octet-stream")) "" else
                                     json.encodeToString(JsonElement.serializer(), jsonElement)
 
                                 "$prefix\n$formattedJson$suffix"
@@ -147,6 +149,9 @@ val netWorkModule = module {
             }
             install(HttpCookies) {
                 storage = get<AsCookiesStorage>()
+            }
+            install(AutoBILIInfoPlugin){
+                appSetting = androidContext().userAppSettingsStore
             }
             install(Logging) {
                 logger = object : Logger {

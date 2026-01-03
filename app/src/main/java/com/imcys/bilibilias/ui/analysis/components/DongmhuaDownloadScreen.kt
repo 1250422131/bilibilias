@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -41,10 +43,13 @@ import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
+import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
 import com.imcys.bilibilias.weight.ASEpisodeTitle
 import com.imcys.bilibilias.weight.ASSectionEpisodeSelection
 import com.imcys.bilibilias.weight.AsAutoError
@@ -59,7 +64,7 @@ typealias UpdateSelectedEpList = (epIdList: List<Long>) -> Unit
 @Composable
 fun DongmhuaDownloadScreen(
     downloadInfo: DownloadViewInfo?,
-    donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
+    donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerSynthesize?>,
     currentUserInfo: BILIUsersEntity?,
     isSelectSingleModel: Boolean,
     episodeListMode: AppSettings.EpisodeListMode,
@@ -113,6 +118,27 @@ fun DongmhuaDownloadScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+
+            AnimatedVisibility(donghuaPlayerInfo.data?.isPreview == true) {
+                ASWarringTip {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            Icons.Outlined.Warning,
+                            contentDescription = "警告",
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "当前为预览模式，仅限会员观看完整视频，下载后可能无法播放完整视频。",
+                            fontSize = 14.sp,
+                        )
+                    }
+                }
+            }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.analysis_cache_preference))
                 Spacer(Modifier.width(4.dp))
@@ -196,7 +222,6 @@ fun DongmhuaDownloadScreen(
                                     episodeTitle = { it.longTitle.ifBlank { it.title } },
                                     episodeListMode = episodeListMode,
                                     sectionTitle = { it.seasonTitle },
-                                    episodeEnabled = { !(!isVip && it.badge == "会员") },
                                     episodeContentContainer = { it, content ->
                                         Box {
                                             content()

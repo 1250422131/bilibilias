@@ -6,7 +6,8 @@ sealed class UIState {
     data object Default : UIState()
     data class AccountCheck(
         val isCheckLoading: Boolean = false,
-        val newCurrentUser: BILIUsersEntity? = null
+        val newCurrentUser: BILIUsersEntity? = null,
+        val userList: List<BILIUsersEntity> = emptyList()
     ) : UIState() // 正在检测
 
     data object KnowAboutApp : UIState()

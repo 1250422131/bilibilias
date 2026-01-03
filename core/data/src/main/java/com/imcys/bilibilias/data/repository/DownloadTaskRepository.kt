@@ -830,6 +830,14 @@ class DownloadTaskRepository(
     ): DownloadTaskNode? =
         downloadTaskDao.getTaskNodeByTaskIdAndPlatformId(taskId, platformId)
 
+    suspend fun getTaskNodeByNodeId(
+        nodeId: Long,
+    ): DownloadTaskNode? = downloadTaskDao.getTaskNodeByNodeId(nodeId)
+
+
+    suspend fun getSegmentBySegmentId(segmentId: Long) =
+        downloadTaskDao.getSegmentBySegmentId(segmentId)
+
     suspend fun getSegmentByNodeIdAndPlatformId(
         nodeId: Long,
         platformId: String

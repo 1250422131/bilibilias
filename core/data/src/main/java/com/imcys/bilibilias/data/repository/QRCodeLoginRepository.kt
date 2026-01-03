@@ -112,6 +112,41 @@ class QRCodeLoginRepository(
 
     }
 
+    suspend fun checkLoginUserInfo(
+        loginPlatform: LoginPlatform,
+        accessKey: String? = null
+    ): Result<BILILoginUserModel> {
+        return runCatching {
+            when (loginPlatform) {
+                LoginPlatform.WEB -> webApiService.checkLoginUserInfo().let { loginInfo ->
+                    if (WebiTokenUtils.key == null) {
+                        // 检测Webi
+                        loginInfo.wbiImg?.let { WebiTokenUtils.setKey(it) }
+                    }
+                    BILILoginUserModel(
+                        face = loginInfo.face,
+                        level = loginInfo.levelInfo?.currentLevel,
+                        name = loginInfo.uname,
+                        mid = loginInfo.mid,
+                        vipState = loginInfo.vip?.status,
+                    )
+                }
+
+                LoginPlatform.MOBILE,
+                LoginPlatform.TV -> tvAPIService.checkLoginUserInfo(accessKey ?: "")
+                    .let { loginInfo ->
+                        BILILoginUserModel(
+                            face = loginInfo.face,
+                            mid = loginInfo.mid,
+                            level = loginInfo.level,
+                            name = loginInfo.name,
+                            vipState = loginInfo.vip?.status,
+                        )
+                    }
+            }
+        }
+    }
+
 
     suspend fun saveLoginInfo(biliUsersEntity: BILIUsersEntity) =
         biliUsersDao.insertBILIUser(biliUsersEntity)

@@ -30,6 +30,9 @@ set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/lib
 add_library(dav1d SHARED IMPORTED)
 set_target_properties(dav1d PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/libdav1d.so)
 
+add_library(fftools SHARED IMPORTED)
+set_target_properties(fftools PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/libfftools.so)
+
 file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/*.cpp")
 #file(GLOB_RECURSE BILI_AS_FFMPEG_MODULES "src/*.ixx")
 
@@ -52,6 +55,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         swresample
         swscale
         dav1d
+        fftools
         android
         log
         dl

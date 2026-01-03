@@ -57,3 +57,13 @@ val requestFrequentHandleChannel = _requestFrequentHandleChannel.receiveAsFlow()
 fun sendRequestFrequentEvent(url: String) {
     _requestFrequentHandleChannel.trySend(RequestFrequentEvent(url))
 }
+
+// 刷新账户事件
+data object UpdateAccountChannel
+
+private val _updateAccountChannel = Channel<UpdateAccountChannel>(Channel.UNLIMITED);
+val updateAccountChannel = _updateAccountChannel.receiveAsFlow()
+
+fun sendUpdateAccountEvent() {
+    _updateAccountChannel.trySend(UpdateAccountChannel)
+}

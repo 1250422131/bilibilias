@@ -18,9 +18,9 @@ data class BILIDonghuaPlayerInfo(
     @SerialName("accept_quality")
     val acceptQuality: List<Long>,
     @SerialName("bp")
-    val bp: Long,
+    val bp: Long?,
     @SerialName("code")
-    val code: Long,
+    val code: Long?,
     @SerialName("dash")
     val dash: BILIVideoDash? = null,
     @SerialName("durl")
@@ -28,35 +28,35 @@ data class BILIDonghuaPlayerInfo(
     @SerialName("durls")
     val durls: List<BILIVideoDurls>?,
     @SerialName("error_code")
-    val errorCode: Long,
+    val errorCode: Long?,
     @SerialName("fnval")
-    val fnval: Long,
+    val fnval: Long?,
     @SerialName("fnver")
-    val fnver: Long,
+    val fnver: Long?,
     @SerialName("format")
     val format: String,
     @SerialName("from")
-    val from: String,
+    val from: String?,
     @SerialName("has_paid")
-    val hasPaid: Boolean,
+    val hasPaid: Boolean?,
     @SerialName("is_drm")
-    val isDrm: Boolean,
+    val isDrm: Boolean?,
     @SerialName("is_preview")
-    val isPreview: Long,
+    val isPreview: Long?,
     @SerialName("message")
-    val message: String,
+    val message: String?,
     @SerialName("no_rexcode")
-    val noRexcode: Long,
+    val noRexcode: Long?,
     @SerialName("quality")
     val quality: Long,
     @SerialName("result")
-    val result: String,
+    val result: String?,
     @SerialName("seek_param")
-    val seekParam: String,
+    val seekParam: String?,
     @SerialName("seek_type")
-    val seekType: String,
+    val seekType: String?,
     @SerialName("status")
-    val status: Long,
+    val status: Long?,
     @SerialName("support_formats")
     val supportFormats: List<BILIVideoSupportFormat>,
     @SerialName("timelength")
@@ -66,5 +66,5 @@ data class BILIDonghuaPlayerInfo(
     @SerialName("video_codecid")
     val videoCodecid: Long,
     @SerialName("video_project")
-    val videoProject: Boolean
+    val videoProject: Boolean?
 )

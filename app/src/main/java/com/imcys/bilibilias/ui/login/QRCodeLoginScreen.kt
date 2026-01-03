@@ -129,6 +129,7 @@ fun QRCodeLoginScreen(
     LaunchedEffect(route.defaultLoginPlatform) {
         vm.updateLoginPlatform(route.defaultLoginPlatform)
     }
+
     // 监听扫码结果
     LaunchedEffect(qrCodeScanInfoState) {
         when (qrCodeScanInfoState) {
@@ -556,12 +557,11 @@ private fun PlatformToggleButton(
     BadgedBox(
         badge = {
             Badge {
-                Text(stringResource(R.string.login_apply_label))
+                Text("Beta")
             }
         }
     ) {
         ToggleButton(
-            enabled = route.isFromRoam,
             checked = selectedLoginPlatform == LoginPlatform.TV,
             onCheckedChange = {
                 if (it) {

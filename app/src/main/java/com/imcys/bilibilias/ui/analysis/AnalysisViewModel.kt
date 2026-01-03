@@ -24,8 +24,10 @@ import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import com.imcys.bilibilias.network.mapData
 import com.imcys.bilibilias.network.model.app.AppOldCommonBean
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
@@ -63,7 +65,7 @@ class AnalysisViewModel(
     val appSettings = appSettingsRepository.appSettingsFlow
 
     private val _donghuaPlayerInfo =
-        MutableStateFlow<NetWorkResult<BILIDonghuaPlayerInfo?>>(emptyNetWorkResult())
+        MutableStateFlow<NetWorkResult<BILIDonghuaPlayerSynthesize?>>(emptyNetWorkResult())
     val donghuaPlayerInfo = _donghuaPlayerInfo.asStateFlow()
 
     private val _videoPlayerInfo =
@@ -414,13 +416,14 @@ class AnalysisViewModel(
         viewModelScope.launch {
             videoInfoRepository.getDonghuaPlayerInfo(epId, seasonId).collect {
                 _donghuaPlayerInfo.value = it
+                val videoData = it.data
 
                 if (it.status == ApiStatus.SUCCESS) {
                     getDefaultDownloadInfoConfig(
-                        it.data?.dash?.video,
-                        it.data?.dash?.audio,
-                        it.data?.durls,
-                        it.data?.supportFormats
+                        videoData?.dash?.video,
+                        videoData?.dash?.audio,
+                        videoData?.durls,
+                        videoData?.supportFormats
                     ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
 
                         launch(Dispatchers.IO) {

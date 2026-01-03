@@ -6,7 +6,6 @@ import java.util.Date
 
 data class DownloadSubTask(
     val segmentId: Long,
-    val downloadUrl: String,
     val savePath: String,
     val progress: Float = 0.0f,
     val subTaskType: DownloadSubTaskType,

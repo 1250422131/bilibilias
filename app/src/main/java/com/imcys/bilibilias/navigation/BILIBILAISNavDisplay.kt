@@ -68,6 +68,8 @@ import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetRoute
 import com.imcys.bilibilias.ui.setting.layout.LayoutTypesetScreen
 import com.imcys.bilibilias.ui.setting.navigation.RoamRoute
 import com.imcys.bilibilias.ui.setting.navigation.SettingRoute
+import com.imcys.bilibilias.ui.setting.platform.ParsePlatformRoute
+import com.imcys.bilibilias.ui.setting.platform.ParsePlatformScreen
 import com.imcys.bilibilias.ui.setting.roam.RoamScreen
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementRoute
 import com.imcys.bilibilias.ui.setting.storage.StorageManagementScreen
@@ -311,7 +313,8 @@ fun BILIBILAISNavDisplay() {
                             }?.let {
                                 backStack.remove(it)
                             }
-                        }
+                        },
+                        onToPage = { backStack.addWithReuse(it) }
                     )
                 }
                 entry<RoamRoute>(
@@ -465,6 +468,12 @@ fun BILIBILAISNavDisplay() {
                 entry<WebParserRoute> {
                     WebParserScreen(
                         webParserRoute = it,
+                        onToBack = { backStack.removeLastOrNullSafe() }
+                    )
+                }
+                entry<ParsePlatformRoute> {
+                    ParsePlatformScreen(
+                        parsePlatformRoute = it,
                         onToBack = { backStack.removeLastOrNullSafe() }
                     )
                 }
