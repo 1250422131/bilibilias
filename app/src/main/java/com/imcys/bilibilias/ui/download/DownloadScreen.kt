@@ -1,10 +1,14 @@
 package com.imcys.bilibilias.ui.download
 
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,12 +18,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -37,6 +46,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -44,9 +54,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider.getUriForFile
+import androidx.core.net.toUri
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
-import com.imcys.bilibilias.database.entity.download.DownloadState
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
 import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -55,39 +67,59 @@ import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.DownloadFinishTaskCard
 import com.imcys.bilibilias.weight.DownloadTaskCard
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
     val vm = koinViewModel<DownloadViewModel>()
-    val downloadListState by vm.downloadListState.collectAsState()
-    val allDownloadSegment by vm.allDownloadSegment.collectAsState()
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
 
+    // 收集状态
+    val downloadListState by vm.downloadListState.collectAsState()
+    val completedSegments by vm.completedSegments.collectAsState()
+    val currentSortType by vm.downloadSortType.collectAsState()
+
+    // 本地 UI 状态
     var selectIndex by remember { mutableIntStateOf(0) }
     var downloadFinishEditState by remember { mutableStateOf(false) }
     val selectDeleteList = remember { mutableStateListOf<DownloadSegment>() }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    // 收集事件
+    LaunchedEffect(Unit) {
+        vm.uiEvent.collect { event ->
+            when (event) {
+                is DownloadUiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is DownloadUiEvent.OpenFile -> {
+                    openFile(context, event.segment)
+                }
+            }
+        }
+    }
+
+    // 同步默认标签页
     LaunchedEffect(route.defaultListIndex) {
         selectIndex = route.defaultListIndex
     }
 
-    val completedSegments = allDownloadSegment.filter {
-        it.downloadState == DownloadState.COMPLETED
-    }
-
+    // 当没有已完成项目时退出编辑模式
     LaunchedEffect(completedSegments) {
         if (completedSegments.isEmpty()) {
             downloadFinishEditState = false
         }
     }
 
+    // 退出编辑模式时清空选择列表
     LaunchedEffect(downloadFinishEditState) {
         selectDeleteList.clear()
     }
 
+    // 返回键处理
     BackHandler(enabled = true) {
         if (downloadFinishEditState) {
             downloadFinishEditState = false
@@ -96,31 +128,24 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
         }
     }
 
-    fun updateSelectItems(segment: DownloadSegment) {
-        if (selectDeleteList.contains(segment)) {
-            selectDeleteList.remove(segment)
-        } else {
-            selectDeleteList.add(segment)
-        }
-    }
-
     DownloadScaffold(onToBack = onToBack) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            AnimatedContent(downloadFinishEditState, label = "") { state ->
-                if (state) {
+            AnimatedContent(downloadFinishEditState, label = "toolbar") { isEditing ->
+                if (isEditing) {
                     EditTopTools(
-                        completedSegments, selectDeleteList,
-                        onUpdateDownloadFinishEditState = {
-                            downloadFinishEditState = it
-                        },
-                        onUpdateShowDeleteDialog = {
-                            showDeleteDialog = it
-                        }
+                        completedSegments = completedSegments,
+                        selectDeleteList = selectDeleteList,
+                        onCancelEdit = { downloadFinishEditState = false },
+                        onShowDeleteDialog = { showDeleteDialog = true }
                     )
                 } else {
-                    PageChangeTools(selectIndex, haptics, onUpdateSelectIndex = {
-                        selectIndex = it
-                    })
+                    PageChangeTools(
+                        selectIndex = selectIndex,
+                        haptics = haptics,
+                        currentSortType = currentSortType,
+                        onUpdateSelectIndex = { selectIndex = it },
+                        onUpdateSortType = { vm.updateDownloadSortType(it) }
+                    )
                 }
             }
 
@@ -130,19 +155,13 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
             ) {
                 when (selectIndex) {
                     0 -> {
-                        items(downloadListState, key = { it.downloadSegment.platformId }) {
+                        items(downloadListState, key = { it.downloadSegment.platformId }) { task ->
                             DownloadTaskCard(
                                 modifier = Modifier.animateItem(),
-                                task = it,
-                                onPause = {
-                                    vm.pauseDownloadTask(it.downloadSegment.segmentId)
-                                },
-                                onResume = {
-                                    vm.resumeDownloadTask(it.downloadSegment.segmentId)
-                                },
-                                onCancel = {
-                                    vm.cancelDownloadTask(it.downloadSegment.segmentId)
-                                }
+                                task = task,
+                                onPause = { vm.pauseDownloadTask(task.downloadSegment.segmentId) },
+                                onResume = { vm.resumeDownloadTask(task.downloadSegment.segmentId) },
+                                onCancel = { vm.cancelDownloadTask(task.downloadSegment.segmentId) }
                             )
                         }
                     }
@@ -158,20 +177,16 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
                                         }
                                     ) {
                                         if (downloadFinishEditState) {
-                                            updateSelectItems(segment)
+                                            toggleSelection(selectDeleteList, segment)
                                         } else {
-                                            vm.openDownloadSegmentFile(context, segment)
+                                            vm.requestOpenFile(segment)
                                         }
                                     },
                                 downloadSegment = segment,
                                 downloadFinishEditState = downloadFinishEditState,
                                 selectDeleteList = selectDeleteList,
-                                onDeleteTaskAndFile = {
-                                    vm.deleteDownloadSegment(context, segment)
-                                },
-                                onSelect = {
-                                    updateSelectItems(segment)
-                                }
+                                onDeleteTaskAndFile = { vm.deleteDownloadSegment(segment) },
+                                onSelect = { toggleSelection(selectDeleteList, segment) }
                             )
                         }
                     }
@@ -179,35 +194,82 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
             }
         }
 
+        // 删除确认对话框
         if (showDeleteDialog) {
-            // 显示删除对话框
-            AlertDialog(
-                onDismissRequest = { showDeleteDialog = false },
-                title = { Text(stringResource(R.string.download_batch_delete_title)) },
-                text = { Text(stringResource(R.string.download_delete_confirm_message)) },
-                confirmButton = {
-                    ASTextButton(
-                        onClick = {
-                            vm.downloadSelectedTasks(selectDeleteList.toList())
-                            showDeleteDialog = false
-                        }
-                    ) {
-                        Text(stringResource(R.string.common_delete))
-                    }
+            DeleteConfirmDialog(
+                onConfirm = {
+                    vm.deleteSelectedTasks(selectDeleteList.toList())
+                    showDeleteDialog = false
+                    downloadFinishEditState = false
                 },
-                dismissButton = {
-                    ASTextButton(
-                        onClick = { showDeleteDialog = false }
-                    ) {
-                        Text(stringResource(R.string.common_cancel))
-                    }
-                }
+                onDismiss = { showDeleteDialog = false }
             )
         }
+    }
+}
 
+// region 辅助函数
+private fun toggleSelection(list: SnapshotStateList<DownloadSegment>, segment: DownloadSegment) {
+    if (segment in list) {
+        list.remove(segment)
+    } else {
+        list.add(segment)
+    }
+}
+
+private fun openFile(context: Context, segment: DownloadSegment) {
+    val savePath = segment.savePath
+    val (uri, type) = if (savePath.startsWith("content://")) {
+        val fileUri = savePath.toUri()
+        fileUri to (context.contentResolver.getType(fileUri) ?: "")
+    } else {
+        val file = File(savePath)
+        val fileUri = runCatching {
+            getUriForFile(context, "${context.applicationContext.packageName}.provider", file)
+        }.getOrNull()
+
+        if (fileUri == null) {
+            Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT).show()
+            return
+        }
+        fileUri to (context.contentResolver.getType(fileUri) ?: "")
     }
 
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        setDataAndType(uri, type)
+    }
 
+    runCatching {
+        context.startActivity(intent)
+    }.onFailure {
+        Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT).show()
+    }
+}
+// endregion
+
+// region 子组件
+@Composable
+private fun DeleteConfirmDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.download_batch_delete_title)) },
+        text = { Text(stringResource(R.string.download_delete_confirm_message)) },
+        confirmButton = {
+            ASTextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.common_delete))
+            }
+        },
+        dismissButton = {
+            ASTextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.common_cancel))
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -215,9 +277,16 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
 private fun PageChangeTools(
     selectIndex: Int,
     haptics: HapticFeedback,
-    onUpdateSelectIndex: (Int) -> Unit = {}
+    currentSortType: AppSettings.DownloadSortType,
+    onUpdateSelectIndex: (Int) -> Unit,
+    onUpdateSortType: (AppSettings.DownloadSortType) -> Unit
 ) {
-    Row(Modifier.padding(10.dp)) {
+    var showSortMenu by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         ToggleButton(
             checked = selectIndex == 0,
             onCheckedChange = {
@@ -229,7 +298,9 @@ private fun PageChangeTools(
         ) {
             Text(stringResource(R.string.status_downloading_title))
         }
+
         Spacer(Modifier.width(10.dp))
+
         ToggleButton(
             checked = selectIndex == 1,
             onCheckedChange = {
@@ -241,6 +312,45 @@ private fun PageChangeTools(
         ) {
             Text(stringResource(R.string.status_completed_title))
         }
+
+        // 排序选择器（仅在已完成标签页显示）
+        if (selectIndex == 1) {
+            Spacer(Modifier.weight(1f))
+            Box {
+                TextButton(onClick = { showSortMenu = true }) {
+                    Text(getSortTypeDisplayName(currentSortType))
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                }
+                DropdownMenu(
+                    expanded = showSortMenu,
+                    onDismissRequest = { showSortMenu = false }
+                ) {
+                    AppSettings.DownloadSortType.entries
+                        .filter { it != AppSettings.DownloadSortType.UNRECOGNIZED }
+                        .forEach { sortType ->
+                            DropdownMenuItem(
+                                text = { Text(getSortTypeDisplayName(sortType)) },
+                                onClick = {
+                                    onUpdateSortType(sortType)
+                                    showSortMenu = false
+                                }
+                            )
+                        }
+                }
+            }
+        }
+    }
+}
+
+private fun getSortTypeDisplayName(sortType: AppSettings.DownloadSortType): String {
+    return when (sortType) {
+        AppSettings.DownloadSortType.DownloadSort_TimeDesc -> "时间↓"
+        AppSettings.DownloadSortType.DownloadSort_TimeAsc -> "时间↑"
+        AppSettings.DownloadSortType.DownloadSort_TitleAsc -> "标题A→Z"
+        AppSettings.DownloadSortType.DownloadSort_TitleDesc -> "标题Z→A"
+        AppSettings.DownloadSortType.DownloadSort_SizeDesc -> "大小↓"
+        AppSettings.DownloadSortType.DownloadSort_SizeAsc -> "大小↑"
+        else -> "时间↓"
     }
 }
 
@@ -248,8 +358,8 @@ private fun PageChangeTools(
 private fun EditTopTools(
     completedSegments: List<DownloadSegment>,
     selectDeleteList: SnapshotStateList<DownloadSegment>,
-    onUpdateDownloadFinishEditState: (Boolean) -> Unit = { _ -> },
-    onUpdateShowDeleteDialog: (Boolean) -> Unit = { _ -> },
+    onCancelEdit: () -> Unit,
+    onShowDeleteDialog: () -> Unit
 ) {
     Row(
         Modifier
@@ -260,12 +370,8 @@ private fun EditTopTools(
         OutlinedButton(
             shape = CardDefaults.shape,
             onClick = {
-                completedSegments.forEach { completedSegment ->
-                    if (completedSegment in selectDeleteList) {
-                        selectDeleteList.remove(completedSegment)
-                    } else {
-                        selectDeleteList.add(completedSegment)
-                    }
+                completedSegments.forEach { segment ->
+                    toggleSelection(selectDeleteList, segment)
                 }
             },
             border = CardDefaults.outlinedCardBorder()
@@ -285,9 +391,7 @@ private fun EditTopTools(
 
         Button(
             shape = CardDefaults.shape,
-            onClick = {
-                onUpdateDownloadFinishEditState.invoke(false)
-            },
+            onClick = onCancelEdit,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -299,9 +403,7 @@ private fun EditTopTools(
         Button(
             enabled = selectDeleteList.isNotEmpty(),
             shape = CardDefaults.shape,
-            onClick = {
-                onUpdateShowDeleteDialog(true)
-            },
+            onClick = onShowDeleteDialog,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -309,31 +411,31 @@ private fun EditTopTools(
         ) {
             Text(stringResource(R.string.common_delete))
         }
-
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DownloadScaffold(onToBack: () -> Unit = {}, content: @Composable (PaddingValues) -> Unit) {
+fun DownloadScaffold(
+    onToBack: () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit
+) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
-            Column {
-                ASTopAppBar(
-                    style = BILIBILIASTopAppBarStyle.Small,
-                    title = { Text(text = "下载管理") },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    ),
-                    navigationIcon = {
-                        AsBackIconButton(onClick = onToBack)
-                    },
-                )
-            }
+            ASTopAppBar(
+                style = BILIBILIASTopAppBarStyle.Small,
+                title = { Text(text = "下载管理") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ),
+                navigationIcon = {
+                    AsBackIconButton(onClick = onToBack)
+                },
+            )
         },
     ) { paddingValues ->
         content(paddingValues)
     }
 }
+// endregion

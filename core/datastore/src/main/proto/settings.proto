@@ -83,4 +83,16 @@ message AppSettings {
     Refuse = 3;
   }
 
+  // 下载完成列表排序方式
+  DownloadSortType download_sort_type = 17;
+
+  enum DownloadSortType {
+    DownloadSort_TimeDesc = 0;  // 时间降序（默认）
+    DownloadSort_TimeAsc = 1;   // 时间升序
+    DownloadSort_TitleAsc = 2;  // 标题 A→Z
+    DownloadSort_TitleDesc = 3; // 标题 Z→A
+    DownloadSort_SizeDesc = 4;  // 文件大小降序
+    DownloadSort_SizeAsc = 5;   // 文件大小升序
+  }
+
 }

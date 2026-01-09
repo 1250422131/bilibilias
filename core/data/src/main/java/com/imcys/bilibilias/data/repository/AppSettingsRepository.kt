@@ -196,6 +196,14 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateDownloadSortType(sortType: AppSettings.DownloadSortType) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                downloadSortType = sortType
+            }
+        }
+    }
+
 }
 
 fun AppSettings.VideoParsePlatform.getDescription(): String = this.name

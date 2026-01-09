@@ -2,6 +2,7 @@ package com.imcys.bilibilias.download
 
 import android.Manifest
 import android.app.ActivityManager
+import android.app.Application
 import android.content.ComponentName
 import android.content.ContentUris
 import android.content.ContentValues
@@ -15,7 +16,6 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.common.utils.autoRequestRetry
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
 import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
@@ -72,29 +72,29 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileOutputStream
-import java.util.concurrent.ConcurrentHashMap
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.yield
 import java.io.RandomAccessFile
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 下载管理器
  */
 class DownloadManager(
-    private val context: BILIBILIASApplication,
+    private val context: Application,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val videoInfoRepository: VideoInfoRepository,
     private val appAPIService: AppAPIService,
