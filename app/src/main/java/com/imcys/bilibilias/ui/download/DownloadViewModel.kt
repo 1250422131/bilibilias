@@ -2,43 +2,93 @@ package com.imcys.bilibilias.ui.download
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
-import android.widget.Toast
-import androidx.core.content.FileProvider.getUriForFile
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
+import com.imcys.bilibilias.database.entity.download.DownloadState
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.download.DownloadManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
-import androidx.core.net.toUri
 
 class DownloadViewModel(
     private val downloadManager: DownloadManager,
     private val downloadTaskRepository: DownloadTaskRepository,
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
+    private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
+
+    // region 事件流
+    private val _uiEvent = MutableSharedFlow<DownloadUiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+    // endregion
+
+    // region 下载任务状态
     val downloadListState = downloadManager.getAllDownloadTasks()
 
-    private val _allDownloadSegment = MutableStateFlow<List<DownloadSegment>>(emptyList())
-    val allDownloadSegment = _allDownloadSegment
+    private val _allDownloadSegment = downloadTaskRepository.getSegmentAll().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            downloadTaskRepository.getSegmentAll().collect {
-                allDownloadSegment.emit(it)
-            }
+    val downloadSortType = appSettingsRepository.appSettingsFlow
+        .map { it.downloadSortType }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            AppSettings.DownloadSortType.DownloadSort_TimeDesc
+        )
+
+    /**
+     * 已完成的下载列表（已排序）
+     */
+    val completedSegments = combine(
+        _allDownloadSegment,
+        downloadSortType
+    ) { segments, sortType ->
+        segments
+            .filter { it.downloadState == DownloadState.COMPLETED }
+            .sortedWith(getSortComparator(sortType))
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
+
+    // endregion
+
+    // region 排序
+    fun updateDownloadSortType(sortType: AppSettings.DownloadSortType) {
+        viewModelScope.launch {
+            appSettingsRepository.updateDownloadSortType(sortType)
         }
     }
 
-    /**
-     * 暂停下载任务
-     * [segmentId] 下载任务的ID
-     */
+    private fun getSortComparator(sortType: AppSettings.DownloadSortType): Comparator<DownloadSegment> {
+        return when (sortType) {
+            AppSettings.DownloadSortType.DownloadSort_TimeDesc -> compareByDescending { it.updateTime }
+            AppSettings.DownloadSortType.DownloadSort_TimeAsc -> compareBy { it.updateTime }
+            AppSettings.DownloadSortType.DownloadSort_TitleAsc -> compareBy { it.title }
+            AppSettings.DownloadSortType.DownloadSort_TitleDesc -> compareByDescending { it.title }
+            AppSettings.DownloadSortType.DownloadSort_SizeDesc -> compareByDescending { it.fileSize }
+            AppSettings.DownloadSortType.DownloadSort_SizeAsc -> compareBy { it.fileSize }
+            else -> compareByDescending { it.updateTime }
+        }
+    }
+    // endregion
+
+    // region 下载任务控制
     fun pauseDownloadTask(segmentId: Long) {
         viewModelScope.launch { downloadManager.pauseTask(segmentId) }
     }
@@ -51,117 +101,82 @@ class DownloadViewModel(
     fun cancelDownloadTask(segmentId: Long) {
         viewModelScope.launch { downloadManager.cancelTask(segmentId) }
     }
+    // endregion
+
+    // region 文件操作
     /**
-     * 打开下载的文件
-     * [context] 上下文
-     * [segment] 下载任务
+     * 请求打开下载的文件
+     * 发送事件给 UI 层处理
      */
-    fun openDownloadSegmentFile(context: Context, segment: DownloadSegment) {
-        // 文件地址
+    fun requestOpenFile(segment: DownloadSegment) {
         val savePath = segment.savePath
-        if (savePath.startsWith("content://")) {
-            // content uri 直接打开
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            val fileUri = savePath.toUri()
-            val type = context.contentResolver.getType(fileUri) ?: ""
-            intent.setDataAndType(fileUri, type)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            try {
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            return
-        } else {
-            // 普通文件路径
+        // 检查文件是否存在
+        if (!savePath.startsWith("content://")) {
             val file = File(savePath)
             if (!file.exists()) {
-                Toast.makeText(context, "文件不存在，可能已被删除", Toast.LENGTH_SHORT).show()
+                sendToast("文件不存在，可能已被删除")
                 return
-            }
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            val fileUri = try {
-                getUriForFile(context, context.applicationContext.packageName + ".provider", file)
-            } catch (e: Exception) {
-                null
-            }
-            if (fileUri == null) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
-                    .show()
-                return
-            }
-            val type = context.contentResolver.getType(fileUri) ?: ""
-            intent.setDataAndType(fileUri, type)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            try {
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT)
-                    .show()
             }
         }
-
+        viewModelScope.launch {
+            _uiEvent.emit(DownloadUiEvent.OpenFile(segment))
+        }
     }
 
-    fun downloadSelectedTasks(segments: List<DownloadSegment>) {
+    /**
+     * 删除多个下载任务及文件
+     */
+    fun deleteSelectedTasks(segments: List<DownloadSegment>) {
         viewModelScope.launch(Dispatchers.IO) {
-            segments.forEach { segment->
-                runCatching {
-                    val savePath = segment.savePath
-                    if (savePath.startsWith("content://")) {
-                        val uri = savePath.toUri()
-                        contentResolver.delete(uri, null, null)
-                    } else {
-                        val file = File(savePath)
-                        if (!file.exists()) {} else { file.delete() }
-                    }
-                }
+            segments.forEach { segment ->
+                deleteFileInternal(segment.savePath)
                 downloadTaskRepository.deleteSegment(segment.segmentId)
             }
         }
     }
 
-    fun deleteDownloadSegment(context: Context, segment: DownloadSegment) {
+    /**
+     * 删除单个下载任务及文件
+     */
+    fun deleteDownloadSegment(segment: DownloadSegment) {
         viewModelScope.launch(Dispatchers.IO) {
-            var deleteSuccess = false
-            var fileNotExist = false
-
-            runCatching {
-                val savePath = segment.savePath
-                if (savePath.startsWith("content://")) {
-                    val uri = savePath.toUri()
-                    val rows = contentResolver.delete(uri, null, null)
-                    deleteSuccess = rows > 0
-                } else {
-                    val file = File(savePath)
-                    if (!file.exists()) {
-                        fileNotExist = true
-                    } else {
-                        deleteSuccess = file.delete()
-                    }
-                }
-            }.onFailure {
-                deleteSuccess = false
-            }
-
+            val result = deleteFileInternal(segment.savePath)
             downloadTaskRepository.deleteSegment(segment.segmentId)
 
-            val message = when {
-                fileNotExist -> "文件不存在"
-                deleteSuccess -> "删除成功"
-                else -> "删除失败，文件可能已经被删除或不存在"
+            val message = when (result) {
+                DeleteResult.SUCCESS -> "删除成功"
+                DeleteResult.FILE_NOT_EXIST -> "文件不存在"
+                DeleteResult.FAILED -> "删除失败，文件可能已经被删除或不存在"
             }
-
-            launch(Dispatchers.Main) {
-                Toast.makeText(
-                    context,
-                    message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            sendToast(message)
         }
+    }
+
+    private fun deleteFileInternal(savePath: String): DeleteResult {
+        return runCatching {
+            if (savePath.startsWith("content://")) {
+                val uri = savePath.toUri()
+                val rows = contentResolver.delete(uri, null, null)
+                if (rows > 0) DeleteResult.SUCCESS else DeleteResult.FAILED
+            } else {
+                val file = File(savePath)
+                when {
+                    !file.exists() -> DeleteResult.FILE_NOT_EXIST
+                    file.delete() -> DeleteResult.SUCCESS
+                    else -> DeleteResult.FAILED
+                }
+            }
+        }.getOrElse { DeleteResult.FAILED }
+    }
+
+    private fun sendToast(message: String) {
+        viewModelScope.launch {
+            _uiEvent.emit(DownloadUiEvent.ShowToast(message))
+        }
+    }
+    // endregion
+
+    private enum class DeleteResult {
+        SUCCESS, FILE_NOT_EXIST, FAILED
     }
 }

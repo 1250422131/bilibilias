@@ -1,7 +1,10 @@
 package com.imcys.bilibilias.di
 
-import com.imcys.bilibilias.BILIBILIASApplication
-import com.imcys.bilibilias.datastore.userAppSettingsStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.datastore.AppSettingsSerializer
 import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
@@ -27,8 +30,9 @@ import com.imcys.bilibilias.ui.user.folder.UserFolderViewModel
 import com.imcys.bilibilias.ui.user.history.UserPlayHistoryViewModel
 import com.imcys.bilibilias.ui.user.like.LikeVideoViewModel
 import com.imcys.bilibilias.ui.user.work.WorkListViewModel
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -36,41 +40,46 @@ import org.koin.dsl.module
 val appModule = module {
     single { androidContext().assets }
     single { androidContext().contentResolver }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { QRCodeLoginViewModel(get(), get(), get(), get(), get()) }
-    viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(), get()) }
-    viewModel { UserViewModel(get(),get()) }
-    viewModel { AnalysisViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { DownloadViewModel(get(), get(), get()) }
-    viewModel { PlayVoucherErrorViewModel(get()) }
-    viewModel { RoamViewModel(get(), get(), get(), get(), get()) }
-    viewModel { WorkListViewModel(get()) }
-    viewModel { BangumiFollowViewModel(get()) }
-    viewModel { UserFolderViewModel(get()) }
-    viewModel { LikeVideoViewModel(get()) }
-    viewModel { SettingViewModel(get(),get(),get(),get(),get(),get()) }
-    viewModel { LayoutTypesetViewModel(get()) }
-    viewModel { UserPlayHistoryViewModel(get()) }
-    viewModel { FrameExtractorViewModel(get(), get(), get()) }
-    viewModel { CookieLoginViewModel(get(), get(), get(),get(),get()) }
-    viewModel { DonateViewModel(get()) }
-    viewModel { StorageManagementViewModel(get()) }
-    viewModel { NamingConventionViewModel(get()) }
-    viewModel { RequestFrequentViewModel(get()) }
-    viewModel{ LineConfigViewModel(get(),get()) }
-    viewModel{ WebParserViewModel(get()) }
-    viewModel{ ParsePlatformViewModel(get(),get(),get(),get(),get()) }
-    factory { androidContext().userAppSettingsStore }
+    single<DataStore<AppSettings>> {
+        DataStoreFactory.create(AppSettingsSerializer) {
+            androidContext().dataStoreFile("app_setting.pb")
+        }
+    }
+    viewModelOf(::HomeViewModel)
+    viewModelOf(::HomeViewModel)
+    viewModelOf(::QRCodeLoginViewModel)
+    viewModelOf(::BILIBILIASAppViewModel)
+    viewModelOf(::UserViewModel)
+    viewModelOf(::AnalysisViewModel)
+    viewModelOf(::DownloadViewModel)
+    viewModelOf(::PlayVoucherErrorViewModel)
+    viewModelOf(::RoamViewModel)
+    viewModelOf(::WorkListViewModel)
+    viewModelOf(::BangumiFollowViewModel)
+    viewModelOf(::UserFolderViewModel)
+    viewModelOf(::LikeVideoViewModel)
+    viewModelOf(::SettingViewModel)
+    viewModelOf(::LayoutTypesetViewModel)
+    viewModelOf(::UserPlayHistoryViewModel)
+    viewModelOf(::FrameExtractorViewModel)
+    viewModelOf(::CookieLoginViewModel)
+    viewModelOf(::DonateViewModel)
+    viewModelOf(::StorageManagementViewModel)
+    viewModelOf(::NamingConventionViewModel)
+    viewModelOf(::RequestFrequentViewModel)
+    viewModelOf(::LineConfigViewModel)
+    viewModelOf(::WebParserViewModel)
+    viewModelOf(::ParsePlatformViewModel)
     single {
         DownloadManager(
-            androidContext() as BILIBILIASApplication,
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(qualifier = named("DownloadHttpClient")),
-            get(),
+            context = androidApplication(),
+            downloadTaskRepository = get(),
+            videoInfoRepository = get(),
+            appAPIService = get(),
+            json = get(),
+            okHttpClient = get(),
+            httpClient = get(qualifier = named("DownloadHttpClient")),
+            appSettingsRepository = get(),
         )
     }
 }
