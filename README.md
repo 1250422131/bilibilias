@@ -51,6 +51,7 @@ BILIBILIAS 依托于B站开发，尊重并支持哔哩哔哩的各项规则和�
 alt="下载应用，请到 F-Droid"
 height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
 
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.imcys.bilibilias)
 
 
 ## 特征
@@ -58,6 +59,10 @@ height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
 - 登录
     - [x] 扫码登录
     - [x] Cookie登录
+- 平台支持
+  - [x] Web
+  - [x] TV
+  - [ ] Mobile
 - 支持解析类型
     - [x] 普通视频
     - [x] 番剧、影视视频
@@ -89,7 +94,13 @@ height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
     - [x] 2.x基础功能实现
 - [ ] 版本 3.2.0
     - [ ] 下载完成列表排序
-    - [ ] 缓存代码进一步封装
+    - [x] 支持TV和Web平台切换和解析
+    - [ ] 更强大的视频处理能力
+      - [x] 前置下载任务
+      - [x] 后置下载任务
+      - [ ] FFmpeg命令行功能接入
+      - [ ] 字幕嵌入视频功能
+      - [ ] 元数据嵌入媒体文件功能
     - [ ] 完善平板UI适配
     - [ ] APP使用文档
 

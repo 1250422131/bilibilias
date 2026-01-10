@@ -33,6 +33,12 @@ enum class DownloadState {
 
     /** 已取消 */
     CANCELLED,
+
+    /** 前置任务 */
+    PRE_TASK,
+
+    /** 后置任务 */
+    POST_TASK,
 }
 
 enum class DownloadSubTaskType {
