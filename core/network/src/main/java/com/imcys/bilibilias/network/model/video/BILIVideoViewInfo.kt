@@ -429,6 +429,9 @@ data class Subtitle(
         @SerialName("type")
         val type: Long
     ) {
+        val finalSubtitleUrl: String
+            get() = subtitleUrl.takeIf { it.isNotEmpty() } ?: subtitleUrlV2 ?: ""
+
         @Serializable
         data class Author(
             @SerialName("birthday")

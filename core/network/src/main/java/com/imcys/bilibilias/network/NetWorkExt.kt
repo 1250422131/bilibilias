@@ -9,12 +9,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flowOn
 
 fun <T> emptyNetWorkResult(data: T? = null) = NetWorkResult.Default<T>(data, null)
 
@@ -75,70 +75,43 @@ enum class ApiStatus {
 
 typealias FlowNetWorkResult<Data> = Flow<NetWorkResult<Data?>>
 
-suspend inline fun <reified Data> HttpClient.httpRequest(
+inline fun <reified Data> HttpClient.httpRequest(
     crossinline request: suspend HttpClient.() -> HttpResponse
-): FlowNetWorkResult<Data?> =
-    withContext(Dispatchers.IO) {
-        flow {
-            runCatching {
-                emit(NetWorkResult.Loading(true))
-                val response = request(this@httpRequest)
-                val body = runCatching {
-                    response.body<BiliApiResponse<Data?>>().apply {
-                        // 请求参数补充
-                        responseHeader = response.headers.entries()
-                    }
-                }.getOrNull()
-                if (body != null) {
-                    // 如果成功解析为 BiliApiResponse，使用原有逻辑
-                    Pair(response, body)
-                } else {
-                    val directData = response.body<Data?>()
-                    val mockResponse = BiliApiResponse<Data?>(
-                        code = 0,
-                        data = directData,
-                        result = null,
-                        message = null,
-                        ttl = 0,
-                        responseHeader = response.headers.entries()
-                    )
-                    Pair(response, mockResponse)
-                }
-            }.onSuccess {
-                val body = it.second
-                val response = it.first
-                // 异形JSON
-                val mData = body.data ?: body.result
-                when (body.code) {
-                    0 -> {
-                        emit(NetWorkResult.Success(mData, body))
-                    }
-
-                    -101 -> {
-                        sendLoginErrorEvent()
-                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
-                    }
-
-                    -509 -> {
-                        sendRequestFrequentEvent(url = response.request.url.toString())
-                        emit(
-                            NetWorkResult.Error(
-                                mData,
-                                body,
-                                exception = body.message ?: "请求过于频繁，请稍后再试"
-                            )
-                        )
-                    }
-
-                    else -> {
-                        emit(NetWorkResult.Error(mData, body, exception = body.message ?: ""))
-                    }
-                }
-            }.onFailure {
-                emit(NetWorkResult.Error(null, null, it.message ?: ""))
+): Flow<NetWorkResult<Data?>> =
+    flow {
+        emit(NetWorkResult.Loading(true))
+        try {
+            val response = request(this@httpRequest)
+            val body = response.body<BiliApiResponse<Data?>>().apply {
+                // 请求参数补充
+                responseHeader = response.headers.entries()
             }
+            val (data, apiResponse) = (body.data ?: body.result) to body
+            handleSuccess(data, apiResponse, response)
+        } catch (e: Exception) {
+            emit(NetWorkResult.Error(null, null, e.message ?: ""))
         }
+    }.flowOn(Dispatchers.IO)
+
+@PublishedApi
+internal suspend fun <Data> FlowCollector<NetWorkResult<Data?>>.handleSuccess(
+    data: Data?,
+    apiResponse: BiliApiResponse<Data?>,
+    response: HttpResponse
+) {
+    when (apiResponse.code) {
+        0 -> emit(NetWorkResult.Success(data, apiResponse))
+        -101 -> {
+            sendLoginErrorEvent()
+            emit(NetWorkResult.Error(data, apiResponse, apiResponse.message ?: ""))
+        }
+        -509 -> {
+            sendRequestFrequentEvent(url = response.request.url.toString())
+            emit(NetWorkResult.Error(data, apiResponse, apiResponse.message ?: "请求过于频繁，请稍后再试"))
+        }
+        else -> emit(NetWorkResult.Error(data, apiResponse, apiResponse.message ?: ""))
     }
+}
 
 inline fun <T, R> NetWorkResult<T>.mapData(transform: (T?, BiliApiResponse<T?>?) -> R?): NetWorkResult<R> {
     return when (this) {

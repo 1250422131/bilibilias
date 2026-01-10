@@ -1,8 +1,9 @@
 package com.imcys.bilibilias.network.model
 
+import com.imcys.bilibilias.network.model.serializer.BiliApiResponseSerializer
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Serializable(BiliApiResponseSerializer::class)
 data class BiliApiResponse<out T>(
     val code: Int,
     val data: T?,

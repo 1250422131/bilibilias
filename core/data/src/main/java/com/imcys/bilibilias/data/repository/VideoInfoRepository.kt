@@ -51,7 +51,7 @@ class VideoInfoRepository(
         epId: Long?,
         seasonId: Long?,
         fnval: Int = 4048,
-        qn: Int = 127,
+        qn: Int = 116,
     ): Flow<NetWorkResult<BILIDonghuaPlayerSynthesize>> {
         val platformType = appSettingsRepository.getVideoParsePlatform()
         val cookieCsrf = biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
@@ -60,14 +60,14 @@ class VideoInfoRepository(
             AppSettings.VideoParsePlatform.Web,
             AppSettings.VideoParsePlatform.Mobile,
             AppSettings.VideoParsePlatform.UNRECOGNIZED -> {
-                webApiService.getDonghuaOgvPlayerInfo(epId, seasonId, qn, fnval, cookieCsrf)
+                webApiService.getDonghuaOgvPlayerInfo(epId, seasonId, qn = qn, fnval = fnval, csrf = cookieCsrf)
                     .flatMapConcat { ogvInfoResult ->
                         val check =
                             (ogvInfoResult.status == ApiStatus.SUCCESS && ogvInfoResult.responseData?.code != 0) ||
                                     (ogvInfoResult.status == ApiStatus.ERROR)
                         if (check) {
                             // 走新接口，保留类型转换
-                            webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
+                            webApiService.getDonghuaPlayerInfo(epId = epId, seasonId =  seasonId)
                                 .map { playerInfoResult ->
                                     if (playerInfoResult.status == ApiStatus.SUCCESS) {
                                         playerInfoResult.mapData { playResult, _ ->
@@ -144,7 +144,7 @@ class VideoInfoRepository(
                 tvAPIService.getDonghuaPlayerInfo(
                     aid = mAid,
                     cid = mCid,
-                    fnval = 4048,
+                    fnval = fnval,
                     qn = qn,
                     epId = epId ?: 0L,
                     accessKey = currentAccessToken,

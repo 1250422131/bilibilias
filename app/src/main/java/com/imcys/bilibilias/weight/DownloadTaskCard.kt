@@ -146,6 +146,7 @@ fun DownloadTaskCard(
 
                     DownloadState.ERROR -> {}
                     DownloadState.CANCELLED -> {}
+                    else -> {}
                 }
 
                 Spacer(Modifier.height(12.dp))
@@ -163,6 +164,8 @@ fun DownloadTaskCard(
                             DownloadState.COMPLETED -> "已完成"
                             DownloadState.ERROR -> "错误"
                             DownloadState.CANCELLED -> "已取消"
+                            DownloadState.PRE_TASK -> "前置任务中"
+                            DownloadState.POST_TASK -> "后置任务中"
                         },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400
