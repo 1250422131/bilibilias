@@ -25,8 +25,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["BAIDU_STAT_ID"] = baiduStatId
         buildConfigField("String", "BAIDU_STAT_ID", """"$baiduStatId"""".trimIndent())
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a","x86_64")
+        }
     }
-
     signingConfigs {
         create("BILIBILIASSigningConfig") {
             enableV3Signing = true
@@ -127,7 +129,9 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:data"))
-    implementation(project(":core:ffmpeg"))
+
+    // ffmpeg 第三方库
+    implementation(libs.ffmpeg.command)
 
     // Firebase 选配
     firebaseDependencies(enabledAnalytics.toBoolean())

@@ -29,6 +29,6 @@ include(":core:ui")
 include(":core:common")
 include(":core:database")
 include(":core:datastore")
-include(":core:ffmpeg")
+// include(":core:ffmpeg") 暂时废除
 include(":core:data")
 include(":core:network")

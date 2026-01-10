@@ -519,6 +519,9 @@ private fun AdvancedSetting(
     onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
     onCleanCCId: () -> Unit = {},
     onSelectDownloadMode: (DownloadMode) -> Unit,
+    updateEmbedCover: (Boolean) -> Unit,
+    updateEmbedCC: (Boolean) -> Unit,
+    updateEmbedDanmaku: (Boolean) -> Unit,
 ) {
     var downloadModeExpanded by rememberSaveable { mutableStateOf(false) }
     var selectDownloadMode by rememberSaveable { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
@@ -640,13 +643,88 @@ private fun AdvancedSetting(
                     )
                 }
 
+                AnimatedVisibility(downloadInfo?.downloadMedia == true) {
+                    Column {
+                        Text("内嵌配置")
+                        InlayConfig(
+                            downloadInfo,
+                            downloadInfo?.videoPlayerInfoV2,
+                            playerInfo,
+                            updateEmbedCover,
+                            updateEmbedCC,
+                            updateEmbedDanmaku
+                        )
+                    }
+                }
+
             }
         }
     })
 }
 
+
+/**
+ * 内嵌配置
+ */
 @Composable
-fun ExtraCache(
+private fun InlayConfig(
+    downloadInfo: DownloadViewInfo?,
+    playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
+    playerInfo: NetWorkResult<Any?>,
+    updateEmbedCover: (Boolean) -> Unit,
+    updateEmbedCC: (Boolean) -> Unit,
+    updateEmbedDanmaku: (Boolean) -> Unit,
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        FilterChip(
+            label = {
+                Text("封面", fontSize = 12.sp)
+            },
+            selected = downloadInfo?.embedCover == true,
+            leadingIcon = {
+                if (downloadInfo?.embedCover == true) {
+                    SelectedIcon()
+                }
+            },
+            onClick = {
+                downloadInfo?.let { info ->
+                    updateEmbedCover(!info.embedCover)
+                }
+            },
+        )
+        FilterChip(
+            label = {
+                Text("字幕", fontSize = 12.sp)
+            },
+            selected = downloadInfo?.embedCC == true,
+            leadingIcon = {
+                if (downloadInfo?.embedCC == true) {
+                    SelectedIcon()
+                }
+            },
+            onClick = {
+                downloadInfo?.let { info ->
+                    updateEmbedCC(!info.embedCC)
+                }
+            },
+        )
+    }
+}
+
+
+@Composable
+private fun SelectedIcon() {
+    Icon(
+        Icons.Outlined.Check,
+        contentDescription = "已选中图标",
+        modifier = Modifier.size(15.dp)
+    )
+}
+
+@Composable
+private fun ExtraCache(
     isSelectSingleModel: Boolean,
     downloadInfo: DownloadViewInfo?,
     playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>?,
@@ -1615,10 +1693,12 @@ private fun AnalysisDownloadConfigContent(
                 },
                 onCheckMediaDownload = {
                     viewModel.updateDownloadMedia(it)
-                }
-            ) {
-                viewModel.updateDownloadMode(it)
-            }
+                },
+                onSelectDownloadMode = viewModel::updateDownloadMode,
+                updateEmbedCC = viewModel::updateEmbedCC,
+                updateEmbedCover = viewModel::updateEmbedCover,
+                updateEmbedDanmaku = viewModel::updateEmbedDanmaku
+            )
         }
 
         is ASLinkResultType.BILI.Video -> {
@@ -1642,10 +1722,12 @@ private fun AnalysisDownloadConfigContent(
                 },
                 onCleanCCId = {
                     viewModel.clearCCIdList()
-                }
-            ) {
-                viewModel.updateDownloadMode(it)
-            }
+                },
+                onSelectDownloadMode = viewModel::updateDownloadMode,
+                updateEmbedCC = viewModel::updateEmbedCC,
+                updateEmbedCover = viewModel::updateEmbedCover,
+                updateEmbedDanmaku = viewModel::updateEmbedDanmaku
+            )
         }
 
         else -> {}

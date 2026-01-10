@@ -25,6 +25,9 @@ data class DownloadViewInfo(
     val downloadMedia : Boolean = true,
     val downloadCover: Boolean = false,
     val downloadDanmaku: Boolean = false,
+    val embedCover   : Boolean = false,
+    val embedDanmaku : Boolean = false,
+    val embedCC      : Boolean = false,
     val selectAudioLanguage: BILIVideoLanguageItem? = null,
     val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表
     val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型

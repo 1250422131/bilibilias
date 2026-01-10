@@ -49,3 +49,6 @@
 }
 
 -keep class com.baidu.bottom.** { *; }
+
+-keep class com.coder.ffmpeg.** {*;}
+-dontwarn  com.coder.ffmpeg.**

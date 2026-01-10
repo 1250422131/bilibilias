@@ -132,7 +132,8 @@ fun DownloadTaskCard(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-
+                    DownloadState.PRE_TASK,
+                    DownloadState.POST_TASK,
                     DownloadState.PAUSE,
                     DownloadState.MERGING,
                     DownloadState.DOWNLOADING -> {
@@ -146,7 +147,6 @@ fun DownloadTaskCard(
 
                     DownloadState.ERROR -> {}
                     DownloadState.CANCELLED -> {}
-                    else -> {}
                 }
 
                 Spacer(Modifier.height(12.dp))

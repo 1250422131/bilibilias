@@ -34,7 +34,6 @@ add_library(fftools SHARED IMPORTED)
 set_target_properties(fftools PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/libfftools.so)
 
 file(GLOB_RECURSE BILI_AS_FFMPEG_SOURCES "src/*.cpp")
-#file(GLOB_RECURSE BILI_AS_FFMPEG_MODULES "src/*.ixx")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED ${BILI_AS_FFMPEG_SOURCES})
 
@@ -63,5 +62,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         atomic
 )
 
-set(ARCH_LINK_FLAGS "-Wl,-z,max-page-size=16384" )
-target_link_options(${CMAKE_PROJECT_NAME} PUBLIC ${ARCH_LINK_FLAGS} )
+set(ARCH_LINK_FLAGS "-Wl,-z,max-page-size=16384")
+target_link_options(${CMAKE_PROJECT_NAME} PUBLIC ${ARCH_LINK_FLAGS})

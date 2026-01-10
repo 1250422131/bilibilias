@@ -93,7 +93,6 @@ import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.download.AppDownloadTask
-import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.app.AppUpdateConfigInfo
 import com.imcys.bilibilias.network.model.app.BulletinConfigInfo
@@ -343,7 +342,7 @@ private fun HomeContent(
 
     val currentSHA1 = rememberSignatureSHA1(context)
     LaunchedEffect(currentSHA1) {
-        if (currentSHA1 == null || !FFmpegManger.checkSign(currentSHA1)) {
+        if (currentSHA1 == null || !checkSign(currentSHA1)) {
             unknownAppSign = true
         }
     }
@@ -1112,6 +1111,12 @@ private fun rememberSignatureSHA1(context: Context = LocalContext.current): Stri
     }
 }
 
+private fun checkSign(actual: String?) : Boolean {
+    val officeSign = "8E:B3:80:FB:C0:32:86:98:5B:8F:86:59:B2:79:16:75:A0:AB:21:DB"
+    val officeAlphaSign = "7F:44:47:60:4B:BF:FB:A8:06:FD:13:DF:7F:E3:5D:AA:70:4B:D5:54"
+    return isSignatureSHA1Match(actual, officeSign) ||
+            isSignatureSHA1Match(actual, officeAlphaSign)
+}
 
 private fun isSignatureSHA1Match(actual: String?, expected: String): Boolean {
     return actual?.equals(expected, ignoreCase = true) == true

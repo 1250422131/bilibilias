@@ -12,7 +12,6 @@ import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.download.DownloadManager
-import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -65,12 +64,12 @@ class FrameExtractorViewModel(
                 "${context.externalCacheDir?.absolutePath}/frameTemp"
             deleteCacheDir(context)
             // 获取临时存储路径
-            val tempVideoPath = FFmpegManger.getVideoTempPath(
-                context,
-                videoPath.toUri(),
-                cacheDir
-            )
-            updateSelectFps(tempVideoPath, fps)
+//            val tempVideoPath = FFmpegManger.getVideoTempPath(
+//                context,
+//                videoPath.toUri(),
+//                cacheDir
+//            )
+//            updateSelectFps(tempVideoPath, fps)
         }
     }
 
@@ -91,54 +90,54 @@ class FrameExtractorViewModel(
                 }
             }
 
-            val videoFps = FFmpegManger.getVideoFrameRate(tempVideoPath ?: return@withContext)
-            val bitmapList = mutableListOf<Bitmap>()
-
-            runCatching {
-                FFmpegManger.getVideoFramesJNI(
-                    tempVideoPath,
-                    currentFps,
-                    object : FFmpegManger.FFmpegFrameListener {
-                        override fun onFrame(
-                            data: ByteArray,
-                            width: Int,
-                            height: Int,
-                            index: Int
-                        ) {
-                            val bitmap = createBitmap(width, height)
-                            val buffer = ByteBuffer.wrap(data)
-                            val pixels = IntArray(width * height)
-                            var i = 0
-                            while (buffer.remaining() >= 3 && i < pixels.size) {
-                                val r = buffer.get().toInt() and 0xFF
-                                val g = buffer.get().toInt() and 0xFF
-                                val b = buffer.get().toInt() and 0xFF
-                                pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
-                                i++
-                            }
-                            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
-                            bitmapList.add(bitmap)
-                        }
-
-                        override fun onProgress(progress: Int) {
-                            uiState.value = UIState.Importing(
-                                progress = progress / 100f,
-                                selectVideoPath = tempVideoPath
-                            )
-                        }
-
-                        override fun onComplete() {
-                            uiState.value =
-                                UIState.ImportSuccess(
-                                    videoFps = videoFps,
-                                    frameList = bitmapList,
-                                    selectFps = currentFps,
-                                    videoPath = tempVideoPath
-                                )
-                        }
-
-                    })
-            }
+//            val videoFps = FFmpegManger.getVideoFrameRate(tempVideoPath ?: return@withContext)
+//            val bitmapList = mutableListOf<Bitmap>()
+//
+//            runCatching {
+//                FFmpegManger.getVideoFramesJNI(
+//                    tempVideoPath,
+//                    currentFps,
+//                    object : FFmpegManger.FFmpegFrameListener {
+//                        override fun onFrame(
+//                            data: ByteArray,
+//                            width: Int,
+//                            height: Int,
+//                            index: Int
+//                        ) {
+//                            val bitmap = createBitmap(width, height)
+//                            val buffer = ByteBuffer.wrap(data)
+//                            val pixels = IntArray(width * height)
+//                            var i = 0
+//                            while (buffer.remaining() >= 3 && i < pixels.size) {
+//                                val r = buffer.get().toInt() and 0xFF
+//                                val g = buffer.get().toInt() and 0xFF
+//                                val b = buffer.get().toInt() and 0xFF
+//                                pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+//                                i++
+//                            }
+//                            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+//                            bitmapList.add(bitmap)
+//                        }
+//
+//                        override fun onProgress(progress: Int) {
+//                            uiState.value = UIState.Importing(
+//                                progress = progress / 100f,
+//                                selectVideoPath = tempVideoPath
+//                            )
+//                        }
+//
+//                        override fun onComplete() {
+//                            uiState.value =
+//                                UIState.ImportSuccess(
+//                                    videoFps = videoFps,
+//                                    frameList = bitmapList,
+//                                    selectFps = currentFps,
+//                                    videoPath = tempVideoPath
+//                                )
+//                        }
+//
+//                    })
+//            }
         }
 
 

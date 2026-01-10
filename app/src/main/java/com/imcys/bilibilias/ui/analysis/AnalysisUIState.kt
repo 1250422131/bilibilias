@@ -16,6 +16,5 @@ data class AnalysisUIState(
     val appOldSoFreezeBean: AppOldSoFreezeBean? = null,
     val analysisBaseInfo: AnalysisBaseInfo = AnalysisBaseInfo(),
     val isSelectSingleModel: Boolean = true,
-    val  episodeListMode : AppSettings.EpisodeListMode = AppSettings.EpisodeListMode.EpisodeListMode_Grid,
-
+    val episodeListMode: AppSettings.EpisodeListMode = AppSettings.EpisodeListMode.EpisodeListMode_Grid,
     )

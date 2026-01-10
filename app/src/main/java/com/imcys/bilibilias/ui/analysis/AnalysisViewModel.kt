@@ -788,6 +788,23 @@ class AnalysisViewModel(
         )
     }
 
+    fun updateEmbedCover(state: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(embedCover = state)
+        )
+    }
+    fun updateEmbedCC(state: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(embedCC = state)
+        )
+    }
+
+    fun updateEmbedDanmaku(state: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(embedDanmaku = state)
+        )
+    }
+
     fun updateAudioLanguage(language: BILIVideoLanguageItem) {
         if (language == _uiState.value.downloadInfo?.selectAudioLanguage) {
             _uiState.value = _uiState.value.copy(

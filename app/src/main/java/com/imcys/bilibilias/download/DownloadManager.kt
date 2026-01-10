@@ -16,6 +16,10 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import com.coder.ffmpeg.call.IFFmpegCallBack
+import com.coder.ffmpeg.jni.FFmpegCommand
+import com.coder.ffmpeg.jni.FFmpegConfig
+import com.coder.ffmpeg.utils.CommandParams
 import com.imcys.bilibilias.common.utils.autoRequestRetry
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
 import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
@@ -42,7 +46,6 @@ import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import com.imcys.bilibilias.database.entity.download.donghuaNamingRules
 import com.imcys.bilibilias.database.entity.download.videoNamingRules
 import com.imcys.bilibilias.download.service.DownloadService
-import com.imcys.bilibilias.ffmpeg.FFmpegManger
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
@@ -57,12 +60,15 @@ import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.service.AppAPIService
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.head
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.contentLength
 import io.ktor.utils.io.readAvailable
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +87,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import kotlinx.serialization.json.Json
@@ -89,6 +96,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.RandomAccessFile
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.resumeWithException
 
 /**
  * 下载管理器
@@ -580,17 +588,15 @@ class DownloadManager(
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private suspend fun executeTaskDownload(task: AppDownloadTask) {
         downloadService?.let { service ->
-
             // 前置任务
-            handlePredecessor(task)
+            handlePredecessor(task, service)
 
             val downloadResult = downloadAppTask(task, service)
-            if (downloadResult && task.downloadSubTasks.size >= 2) {
-                mergeTask(task, service)
-            }
+
+            if (!downloadResult) throw Exception("下载失败")
 
             // 后置任务
-            handleSuccessor(task)
+            handleSuccessor(task, service)
 
             val finalTask = findTaskById(task.downloadSegment.segmentId)
             if (finalTask?.downloadState == DownloadState.COMPLETED) {
@@ -603,14 +609,87 @@ class DownloadManager(
     /**
      * 前置下载任务
      */
-    private suspend fun handlePredecessor(task: AppDownloadTask) {}
+    private suspend fun handlePredecessor(task: AppDownloadTask, service: DownloadService) {
+        updateTaskState(task, DownloadState.PRE_TASK)
+        // 处理字幕
+        handelEmbedCCDownload(task)
+        // 处理封面
+        handelEmbedCoverDownload(task)
+        updateTaskState(task, DownloadState.WAITING)
+    }
+
+    /**
+     * 需要内嵌的封面下载
+     */
+    private suspend fun handelEmbedCoverDownload(task: AppDownloadTask) {
+        if (!task.downloadViewInfo.embedCover) return
+        val bytes = httpClient.get(task.cover?.toHttps() ?: "").bodyAsBytes()
+
+        // 存储在临时文件夹cacheDir/cover
+        val tempDir = File(context.externalCacheDir, "cover")
+        if (!tempDir.exists()) tempDir.mkdirs()
+        val tempFile = File(tempDir, "embed_cover_${task.downloadSegment.segmentId}.jpg")
+
+        // 完整存储路径
+        val filePath = tempFile.absolutePath
+        FileOutputStream(tempFile).use { outputStream ->
+            outputStream.write(bytes)
+            outputStream.flush()
+        }
+        task.updateRuntimeInfo(
+            task.taskRuntimeInfo.copy(
+                coverPath = filePath
+            )
+        )
+    }
+
+
+    /**
+     * 需要内嵌的字幕下载（不区分语言）
+     */
+    private suspend fun handelEmbedCCDownload(task: AppDownloadTask) {
+        if (!task.downloadViewInfo.embedCC) return
+        val localSubtitles = mutableListOf<LocalSubtitle>()
+        task.downloadViewInfo.videoPlayerInfoV2.data?.let { v2Info ->
+            v2Info.subtitle.subtitles.forEach { subtitle ->
+                val url = subtitle.finalSubtitleUrl
+                val finalUrl = if (!url.contains("https")) "https:" else ""
+                val language = subtitle.lan
+                val langDoc = subtitle.lanDoc
+                runCatching {
+                    videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
+                }.onSuccess { cCInfo ->
+                    // 转化为Srt格式
+                    val fileContentStr = CCJsonToSrt.jsonToSrt(cCInfo)
+                    // 存储在临时文件夹cacheDir/cc
+                    val tempDir = File(context.externalCacheDir, "cc")
+                    if (!tempDir.exists()) tempDir.mkdirs()
+                    val tempFile =
+                        File(tempDir, "embed_cc_${task.downloadSegment.segmentId}_${language}.srt")
+                    val filePath = tempFile.absolutePath
+                    FileOutputStream(tempFile).use { outputStream ->
+                        outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
+                        outputStream.flush()
+                    }
+                    localSubtitles.add(LocalSubtitle(language, langDoc = langDoc, filePath))
+                }
+            }
+        }
+        task.updateRuntimeInfo(
+            task.taskRuntimeInfo.copy(
+                subtitles = localSubtitles
+            )
+        )
+    }
 
 
     /**
      * 后置下载任务
      */
-    private suspend fun handleSuccessor(task: AppDownloadTask) {
+    private suspend fun handleSuccessor(task: AppDownloadTask, service: DownloadService) {
 
+        // 处理下载资源
+        handleDownloadResource(task, service)
 
         val segment = downloadTaskRepository.getSegmentBySegmentId(task.downloadSegment.segmentId)
         if (segment == null) {
@@ -637,6 +716,243 @@ class DownloadManager(
     }
 
 
+    private suspend fun handleDownloadResource(task: AppDownloadTask, service: DownloadService) {
+        val progressCallback = createProgressCallback(task, service, "合并阶段")
+        val tempOutputFile = createTempOutputFile(task)
+
+        try {
+            executeFfmpegMerge(task, tempOutputFile, progressCallback)
+            updateTaskAndCleanup(task, tempOutputFile)
+        } catch (e: Exception) {
+            tempOutputFile.deleteIfExists()
+            throw e
+        }
+    }
+
+    // 创建临时输出文件
+    private fun createTempOutputFile(task:  AppDownloadTask): File {
+        val saveDir = task.downloadSubTasks.first().savePath.substringBeforeLast("/")
+        val extension = getMimeType(task.downloadSegment.downloadMode).substringAfterLast("/", "mp4")
+        val timestamp = System.currentTimeMillis()
+
+        return File(saveDir, "${task.downloadSegment.segmentId}_$timestamp.$extension").apply {
+            parentFile?.mkdirs()
+        }
+    }
+
+    /**
+     *  执行 FFmpeg 合并
+     */
+    private suspend fun executeFfmpegMerge(
+        task: AppDownloadTask,
+        outputFile: File,
+        progressCallback: (Float) -> Unit
+    ) {
+        val command = buildFfmpegCommand(task, outputFile)
+
+        FFmpegConfig.setDebug(true)
+
+        suspendCancellableCoroutine { continuation ->
+            val taskId = FFmpegCommand.runCmd(command.get(), createFfmpegCallback(
+                outputFile = outputFile,
+                progressCallback = progressCallback,
+                continuation = continuation
+            ))
+            continuation.invokeOnCancellation {
+                taskId?.let { FFmpegCommand.cancel(it) }
+            }
+        }
+    }
+
+    /**
+     * 构建 FFmpeg 命令
+     */
+    private fun buildFfmpegCommand(task: AppDownloadTask, outputFile: File): CommandParams {
+        val context = FfmpegCommandContext(task)
+
+        return CommandParams().apply {
+            // 基础参数
+            append("-y").append("-strict").append("-2")
+
+            // 输入文件
+            context.addInputFiles(this)
+
+            // 流映射
+            context.addStreamMappings(this)
+
+            // 编解码器配置
+            context.addCodecConfig(this)
+
+            // 字幕元数据
+            context.addSubtitleMetadata(this)
+
+            // 封面配置
+            context.addCoverConfig(this)
+
+            // 输出文件
+            append(outputFile.absolutePath)
+        }
+    }
+
+    private data class FfmpegCommandContext(
+        val task: AppDownloadTask
+    ) {
+        private val mediaInputs = task.downloadSubTasks.map { it.savePath }
+        private val subtitles = task.taskRuntimeInfo.subtitles
+        private val coverPath = task.taskRuntimeInfo.coverPath
+
+        private val videoEnabled:  Boolean
+        private val audioEnabled: Boolean
+
+        init {
+            when (task.downloadSegment.downloadMode) {
+                DownloadMode.VIDEO_ONLY -> {
+                    videoEnabled = true
+                    audioEnabled = false
+                }
+                DownloadMode. AUDIO_ONLY -> {
+                    videoEnabled = false
+                    audioEnabled = true
+                }
+                DownloadMode.AUDIO_VIDEO -> {
+                    videoEnabled = true
+                    audioEnabled = true
+                }
+            }. let { }
+        }
+
+        private val videoFileIdx = 0
+        private val audioFileIdx = 1
+        private val subFileStartIdx = mediaInputs.size
+        private val audioStreamCount = task.downloadSubTasks.count {
+            it.subTaskType == DownloadSubTaskType.AUDIO
+        }
+        private val coverIdx = if (coverPath. isNotBlank()) mediaInputs.size + subtitles.size else -1
+
+        fun addInputFiles(command: CommandParams) {
+            mediaInputs.forEach { command.append("-i").append(it) }
+            subtitles.forEach { command. append("-i").append(it.path) }
+            if (coverIdx >= 0) {
+                command.append("-i").append(coverPath)
+            }
+        }
+
+        fun addStreamMappings(command: CommandParams) {
+            // 视频流
+            if (videoEnabled) {
+                command.append("-map").append("$videoFileIdx:v:0")
+            }
+
+            // 音频流
+            if (audioEnabled) {
+                repeat(audioStreamCount) { i ->
+                    command.append("-map").append("$audioFileIdx:a:$i")
+                }
+            }
+
+            // 字幕流
+            subtitles.forEachIndexed { sIdx, _ ->
+                command.append("-map").append("${subFileStartIdx + sIdx}:s:0")
+            }
+
+            // 封面流
+            if (coverIdx >= 0) {
+                command.append("-map").append("$coverIdx:v:0")
+            }
+        }
+
+        fun addCodecConfig(command: CommandParams) {
+            if (videoEnabled) {
+                command.append("-c:v").append("copy")
+            }
+            if (audioEnabled) {
+                command.append("-c:a").append("copy")
+            }
+        }
+
+        fun addSubtitleMetadata(command:  CommandParams) {
+            if (subtitles.isEmpty() || ! videoEnabled) return
+
+            command.append("-c:s").append("mov_text")
+
+            subtitles.forEachIndexed { sIdx, subtitle ->
+                command.append("-metadata:s:s:$sIdx").append("language=${subtitle.lang}")
+                command.append("-metadata:s:s:$sIdx").append("title=${subtitle.langDoc}")
+            }
+        }
+
+        fun addCoverConfig(command: CommandParams) {
+            if (coverIdx < 0) return
+
+            val coverStreamIndex = if (videoEnabled) 1 else 0
+            command.append("-c:v:$coverStreamIndex").append("mjpeg")
+            command.append("-disposition:v:$coverStreamIndex").append("attached_pic")
+            command.append("-metadata:s:v: $coverStreamIndex").append("title=Cover")
+        }
+    }
+
+    /**
+     * FFmpeg 回调
+     */
+    private fun createFfmpegCallback(
+        outputFile: File,
+        progressCallback: (Float) -> Unit,
+        continuation: CancellableContinuation<Unit>
+    ) = object : IFFmpegCallBack {
+        override fun onStart() {}
+
+        override fun onProgress(progress: Int, pts: Long) {
+            progressCallback(progress / 100f)
+        }
+
+        override fun onComplete() {
+            when {
+                ! outputFile.exists() -> {
+                    continuation.resumeWithException(Exception("输出文件未生成"))
+                }
+                outputFile.length() == 0L -> {
+                    outputFile.deleteIfExists()
+                    continuation.resumeWithException(Exception("输出文件为空"))
+                }
+                else -> {
+                    continuation.resume(Unit) { _, _, _ -> }
+                }
+            }
+        }
+
+        override fun onCancel() {
+            outputFile.deleteIfExists()
+            continuation.resumeWithException(CancellationException("任务被取消"))
+        }
+
+        override fun onError(errorCode: Int, errorMsg: String?) {
+            outputFile.deleteIfExists()
+            continuation.resumeWithException(
+                Exception("FFmpeg 执行失败: $errorMsg (code: $errorCode)")
+            )
+        }
+    }
+
+    /**
+     * 更新任务并清理临时文件
+     */
+    private suspend fun updateTaskAndCleanup(task: AppDownloadTask, outputFile: File) {
+        downloadTaskRepository.updateSegment(
+            task.downloadSegment.copy(savePath = outputFile.absolutePath)
+        )
+        task.downloadSubTasks.forEach {
+            File(it.savePath).deleteIfExists()
+        }
+    }
+
+    /**
+     * 安全删除文件
+     */
+    private fun File. deleteIfExists() {
+        if (exists()) {
+            delete()
+        }
+    }
 
     /**
      * 获取最终导出的文件名
@@ -848,52 +1164,6 @@ class DownloadManager(
         }
     }
 
-
-    /**
-     * 合并音视频文件
-     */
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private suspend fun mergeTask(
-        task: AppDownloadTask,
-        downloadService: DownloadService,
-    ) {
-        updateTaskStage(task, DownloadStage.MERGE)
-        val progressCallback = createProgressCallback(task, downloadService, "合并阶段")
-
-        val mergeResult = FFmpegManger.mergeVideoAndAudioSuspend(
-            task.downloadSubTasks[0].savePath,
-            task.downloadSubTasks[1].savePath,
-            "${task.downloadSubTasks[0].savePath}_merged.mp4",
-            task.downloadSegment.title,
-            task.downloadTask.description,
-            buildRefererUrl(task),
-            createMergeListener(task, progressCallback)
-        )
-
-        mergeResult.onSuccess {
-            handleMergeSuccess(task)
-        }
-    }
-
-    /**
-     * 创建合并监听器
-     */
-    private fun createMergeListener(
-        task: AppDownloadTask,
-        progressCallback: (Float) -> Unit
-    ) = object : FFmpegManger.FFmpegMergeListener {
-        override fun onProgress(progress: Int) {
-            progressCallback(progress / 100f)
-        }
-
-        override fun onError(errorMsg: String) {
-            updateTaskState(task, DownloadState.ERROR)
-        }
-
-        override fun onComplete() {
-            updateTaskState(task, DownloadState.COMPLETED)
-        }
-    }
 
     /**
      * 通用命名规则方法，支持所有类型变量替换并自动加后缀
@@ -1670,7 +1940,7 @@ class DownloadManager(
     ): DownloadSubTask {
         val savePath = getSaveTempSubTaskPath(
             subTaskType = type
-        ) + "/${segment.platformId}_${segment.title.take(10)}.${
+        ) + "/${segment.platformId}_${System.currentTimeMillis()}.${
             when (type) {
                 DownloadSubTaskType.VIDEO -> "mp4"
                 DownloadSubTaskType.AUDIO -> "m4a"

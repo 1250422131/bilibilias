@@ -35,6 +35,26 @@ object FFmpegManger {
         System.loadLibrary("ffmpeg")
     }
 
+    external fun handleAppDownloadTask(
+        taskJson: String,
+        listener: FFmpegMergeListener
+    )
+
+    suspend fun handleAppDownloadTaskSuspend(
+        taskJson: String,
+        listener: FFmpegMergeListener
+    ): Result<String> {
+        return FFmpegExecutor.executeFFmpeg {
+            runCatching {
+                handleAppDownloadTask(
+                    taskJson,
+                    listener
+                )
+                "成功"
+            }
+        }
+    }
+
     suspend fun mergeVideoAndAudioSuspend(
         videoPath: String,
         audioPath: String,
@@ -106,5 +126,5 @@ object FFmpegManger {
         videoPath: String
     ): Int
 
-    external fun checkSign(apkSign: String):Boolean
+    external fun checkSign(apkSign: String): Boolean
 }
