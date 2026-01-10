@@ -109,13 +109,6 @@ height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
 我们在项目中引入了一些CPP库，比如FFmpeg，为了将他们顺利迁移到Android平台，我们需要重新构建这些仓库。
 为此，我们创建了多个构建和发行的仓库，以便为BILIBILIAS项目提供支持：详细见：[ecology](https://github.com/1250422131/bilibilias/tree/main/ecology)
 
-### 下载与配置
-
-在运行项目之前，你需要先前往仓库下载构建产物，这是因为二进制文件很大，不应该被用作为Git仓库的一部分，所以我们使用GitHub
-Releases来托管它们。
-
-请前往[BILIBILIAS-FFmpeg Releases](https://github.com/1250422131/bilibilias-ffmpeg/releases)下载最新版本，
-并将其解压到`BILIBILIAS\core\ffmpeg\src\main\cpp`目录下。
 
 ## 设计
 

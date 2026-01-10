@@ -4,6 +4,5 @@
 因为部分的功能需要额外的支持工具，比如FFmpeg等，为了将其应用在安卓设备上，我们需要进行自己的编译和发布，这里会将其他子仓库加入进来，方便大家统筹管理。
 
 ## BILIBILIAS-FFmpeg
-
-本项目所采用的[FFmpeg](https://github.com/FFmpeg/FFmpeg/)
-由[BILIBILIAS-FFmpeg](https://github.com/1250422131/bilibilias-ffmpeg)进行构建，完全使用FFmpeg的源代码。
+进入维护阶段，目前改用第三方库[FFmpegCommand](https://github.com/AnJoiner/FFmpegCommand/)。
+这并不意味着我们放弃了BILIBILIAS-FFmpeg，只是现阶段我们需要快速的为大家补全功能，后续会继续完善BILIBILIAS-FFmpeg，期待再次相遇。
