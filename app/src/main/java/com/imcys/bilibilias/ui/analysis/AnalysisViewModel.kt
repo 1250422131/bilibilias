@@ -191,11 +191,7 @@ class AnalysisViewModel(
         )
     }
 
-    fun clearCCIdList() {
-        _uiState.value = _uiState.value.copy(
-            downloadInfo = _uiState.value.downloadInfo?.clearCCIdList()
-        )
-    }
+
 
     fun updateSelectedPlayerInfo(
         cid: Long,
@@ -324,7 +320,6 @@ class AnalysisViewModel(
                 _uiState.emit(
                     _uiState.value.copy(
                         downloadInfo = _uiState.value.downloadInfo?.copy(
-                            selectedCCId = emptyList(),
                             videoPlayerInfoV2 = it
                         )
                     )
@@ -717,7 +712,6 @@ class AnalysisViewModel(
 
     fun updateSelectSingleModel(isSelectSingleModel: Boolean) {
         viewModelScope.launch {
-            clearCCIdList()
             val currentState = _uiState.replayCache.firstOrNull() ?: AnalysisUIState()
             _uiState.emit(
                 currentState.copy(
