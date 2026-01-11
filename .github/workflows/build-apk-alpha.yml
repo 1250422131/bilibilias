@@ -76,8 +76,11 @@ jobs:
       - name: List outputs (debug)
         if: github.event_name != 'pull_request'
         run: |
-          echo "Outputs under app/build/outputs:"
-          ls -R app/build/outputs || true
+          echo "=== Outputs under app/build/outputs/apk/alpha/release ==="
+          ls -lh app/build/outputs/apk/alpha/release/ || true
+          echo ""
+          echo "=== All APK files ==="
+          find app/build/outputs/apk -name "*.apk" -type f || true
 
       # 上传通用 APK（包含所有 ABI）
       - name: Upload Universal APK
@@ -85,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: APK-alpha-universal
-          path: app/build/outputs/apk/alpha/release/app-alpha-universal-release.apk
+          path: app/build/outputs/apk/alpha/release/*universal*.apk
           if-no-files-found: error
 
       # 上传 arm64-v8a APK
@@ -94,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: APK-alpha-arm64-v8a
-          path: app/build/outputs/apk/alpha/release/app-alpha-arm64-v8a-release.apk
+          path: app/build/outputs/apk/alpha/release/*arm64-v8a*.apk
           if-no-files-found: error
 
       # 上传 armeabi-v7a APK
@@ -103,7 +106,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: APK-alpha-armeabi-v7a
-          path: app/build/outputs/apk/alpha/release/app-alpha-armeabi-v7a-release.apk
+          path: app/build/outputs/apk/alpha/release/*armeabi-v7a*.apk
           if-no-files-found: error
 
       # 上传 x86_64 APK
@@ -112,5 +115,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: APK-alpha-x86_64
-          path: app/build/outputs/apk/alpha/release/app-alpha-x86_64-release.apk
+          path: app/build/outputs/apk/alpha/release/*x86_64*.apk
           if-no-files-found: error
