@@ -16,10 +16,9 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import com.coder.ffmpeg.call.IFFmpegCallBack
-import com.coder.ffmpeg.jni.FFmpegCommand
-import com.coder.ffmpeg.jni.FFmpegConfig
-import com.coder.ffmpeg.utils.CommandParams
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFprobeKit
+import com.arthenica.ffmpegkit.ReturnCode
 import com.imcys.bilibilias.common.utils.autoRequestRetry
 import com.imcys.bilibilias.common.utils.download.CCJsonToAss
 import com.imcys.bilibilias.common.utils.download.CCJsonToSrt
@@ -96,6 +95,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.RandomAccessFile
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 /**
@@ -730,9 +730,10 @@ class DownloadManager(
     }
 
     // 创建临时输出文件
-    private fun createTempOutputFile(task:  AppDownloadTask): File {
+    private fun createTempOutputFile(task: AppDownloadTask): File {
         val saveDir = task.downloadSubTasks.first().savePath.substringBeforeLast("/")
-        val extension = getMimeType(task.downloadSegment.downloadMode).substringAfterLast("/", "mp4")
+        val extension =
+            getMimeType(task.downloadSegment.downloadMode).substringAfterLast("/", "mp4")
         val timestamp = System.currentTimeMillis()
 
         return File(saveDir, "${task.downloadSegment.segmentId}_$timestamp.$extension").apply {
@@ -740,26 +741,125 @@ class DownloadManager(
         }
     }
 
-    /**
-     *  执行 FFmpeg 合并
-     */
+    private suspend fun getMediaDuration(task: AppDownloadTask): Long {
+        return suspendCancellableCoroutine { continuation ->
+            val firstInputFile = task.downloadSubTasks.firstOrNull()?.savePath
+
+            if (firstInputFile.isNullOrBlank()) {
+                Log.w("FFmpeg", "没有找到输入文件，使用数据库时长")
+                continuation.resume(task.downloadSegment.duration ?: 0L)
+                return@suspendCancellableCoroutine
+            }
+
+            try {
+                val mediaInfoSession = FFprobeKit.getMediaInformation(firstInputFile)
+
+                if (ReturnCode.isSuccess(mediaInfoSession.returnCode)) {
+                    val mediaInfo = mediaInfoSession.mediaInformation
+
+                    if (mediaInfo != null) {
+                        // 获取时长（秒）
+                        val durationInSeconds = mediaInfo.duration?.toDoubleOrNull() ?: 0.0
+                        val durationInMillis = (durationInSeconds * 1000).toLong()
+
+                        // 打印详细媒体信息用于调试
+                        Log.d(
+                            "FFmpeg", """
+                        ========== 媒体信息 ==========
+                        文件:  ${File(firstInputFile).name}
+                        时长: ${durationInSeconds}s (${durationInMillis}ms)
+                        格式: ${mediaInfo.format}
+                        比特率: ${mediaInfo.bitrate}
+                        大小: ${mediaInfo.size} bytes
+                        视频流数:  ${mediaInfo.streams?.count { it.type == "video" } ?: 0}
+                        音频流数: ${mediaInfo.streams?.count { it.type == "audio" } ?: 0}
+                        =============================
+                    """.trimIndent())
+
+                        // 可选：打印流详细信息
+                        mediaInfo.streams?.forEach { stream ->
+                            Log.d(
+                                "FFmpeg", """
+                            流 #${stream.index}:
+                              类型: ${stream.type}
+                              编解码器: ${stream.codec}
+                              ${if (stream.type == "video") "分辨率:  ${stream.width}x${stream.height}" else ""}
+                              ${if (stream.type == "audio") "采样率: ${stream.sampleRate}Hz" else ""}
+                        """.trimIndent()
+                            )
+                        }
+
+                        continuation.resume(durationInMillis)
+                    } else {
+                        Log.w("FFmpeg", "无法获取媒体信息，使用数据库时长")
+                        continuation.resume(task.downloadSegment.duration ?: 0L)
+                    }
+                } else {
+                    Log.w(
+                        "FFmpeg",
+                        "FFprobe 执行失败:  ${mediaInfoSession.returnCode}, ${mediaInfoSession.failStackTrace}"
+                    )
+                    continuation.resume(task.downloadSegment.duration ?: 0L)
+                }
+            } catch (e: Exception) {
+                continuation.resume(task.downloadSegment.duration ?: 0L)
+            }
+        }
+    }
+
+    // 执行 FFmpeg 合并
     private suspend fun executeFfmpegMerge(
         task: AppDownloadTask,
         outputFile: File,
         progressCallback: (Float) -> Unit
     ) {
-        val command = buildFfmpegCommand(task, outputFile)
-
-        FFmpegConfig.setDebug(true)
-
+        val commandString = buildFfmpegCommand(task, outputFile)
+        val actualDuration = getMediaDuration(task)
         suspendCancellableCoroutine { continuation ->
-            val taskId = FFmpegCommand.runCmd(command.get(), createFfmpegCallback(
-                outputFile = outputFile,
-                progressCallback = progressCallback,
-                continuation = continuation
-            ))
+            val session = FFmpegKit.executeAsync(
+                commandString,
+                { session ->
+                    when {
+                        ReturnCode.isSuccess(session.returnCode) -> {
+                            if (!outputFile.exists() || outputFile.length() == 0L) {
+                                continuation.resumeWithException(Exception("输出文件生成失败"))
+                            } else {
+                                Log.d("FFmpeg", "合并完成:  ${outputFile.absolutePath}")
+                                continuation.resume(Unit)
+                            }
+                        }
+
+                        ReturnCode.isCancel(session.returnCode) -> {
+                            outputFile.deleteIfExists()
+                            Log.w("FFmpeg", "任务被取消")
+                            continuation.resumeWithException(CancellationException("任务被取消"))
+                        }
+
+                        else -> {
+                            outputFile.deleteIfExists()
+                            Log.e("FFmpeg", "执行失败: ${session.failStackTrace}")
+                            continuation.resumeWithException(
+                                Exception("FFmpeg 执行失败: ${session.failStackTrace} (rc: ${session.returnCode})")
+                            )
+                        }
+                    }
+                },
+                { _ -> },
+                { statistics ->
+                    if (statistics.time > 0 && actualDuration > 0) {
+                        val progress = statistics.time.toFloat() / actualDuration.toFloat()
+                        val clampedProgress = progress.coerceIn(0f, 1f)
+                        Log.d(
+                            "FFmpeg",
+                            "进度: ${(clampedProgress * 100).toInt()}% (${statistics.time}ms / ${actualDuration}ms)"
+                        )
+                        progressCallback(clampedProgress)
+                    }
+                }
+            )
             continuation.invokeOnCancellation {
-                taskId?.let { FFmpegCommand.cancel(it) }
+                Log.w("FFmpeg", "协程取消，停止 FFmpeg 会话")
+                FFmpegKit.cancel(session.sessionId)
             }
         }
     }
@@ -767,33 +867,14 @@ class DownloadManager(
     /**
      * 构建 FFmpeg 命令
      */
-    private fun buildFfmpegCommand(task: AppDownloadTask, outputFile: File): CommandParams {
+    private fun buildFfmpegCommand(task: AppDownloadTask, outputFile: File): String {
         val context = FfmpegCommandContext(task)
-
-        return CommandParams().apply {
-            // 基础参数
-            append("-y").append("-strict").append("-2")
-
-            // 输入文件
-            context.addInputFiles(this)
-
-            // 流映射
-            context.addStreamMappings(this)
-
-            // 编解码器配置
-            context.addCodecConfig(this)
-
-            // 字幕元数据
-            context.addSubtitleMetadata(this)
-
-            // 封面配置
-            context.addCoverConfig(this)
-
-            // 输出文件
-            append(outputFile.absolutePath)
-        }
+        return context.buildCommand(outputFile)
     }
 
+    /**
+     * FFmpeg 命令构建上下文
+     */
     private data class FfmpegCommandContext(
         val task: AppDownloadTask
     ) {
@@ -801,7 +882,7 @@ class DownloadManager(
         private val subtitles = task.taskRuntimeInfo.subtitles
         private val coverPath = task.taskRuntimeInfo.coverPath
 
-        private val videoEnabled:  Boolean
+        private val videoEnabled: Boolean
         private val audioEnabled: Boolean
 
         init {
@@ -810,15 +891,17 @@ class DownloadManager(
                     videoEnabled = true
                     audioEnabled = false
                 }
-                DownloadMode. AUDIO_ONLY -> {
+
+                DownloadMode.AUDIO_ONLY -> {
                     videoEnabled = false
                     audioEnabled = true
                 }
+
                 DownloadMode.AUDIO_VIDEO -> {
                     videoEnabled = true
                     audioEnabled = true
                 }
-            }. let { }
+            }
         }
 
         private val videoFileIdx = 0
@@ -827,114 +910,124 @@ class DownloadManager(
         private val audioStreamCount = task.downloadSubTasks.count {
             it.subTaskType == DownloadSubTaskType.AUDIO
         }
-        private val coverIdx = if (coverPath. isNotBlank()) mediaInputs.size + subtitles.size else -1
+        private val coverIdx = if (coverPath.isNotBlank()) mediaInputs.size + subtitles.size else -1
 
-        fun addInputFiles(command: CommandParams) {
-            mediaInputs.forEach { command.append("-i").append(it) }
-            subtitles.forEach { command. append("-i").append(it.path) }
+        fun buildCommand(outputFile: File): String = buildList {
+            addBaseParams()
+            addInputFiles()
+            addStreamMappings()
+            addCodecConfig()
+            addSubtitleMetadata()
+            addCoverConfig()
+            add(outputFile.absolutePath)
+        }.joinToString(" ") { it.escape() }.also {
+            // 打印完整命令用于调试
+            Log.d("FFmpeg", "执行命令: $it")
+        }
+
+        private fun MutableList<String>.addBaseParams() {
+            add("-y")
+            add("-strict")
+            add("-2")
+        }
+
+        private fun MutableList<String>.addInputFiles() {
+            // 媒体文件
+            mediaInputs.forEach {
+                add("-i")
+                add(it)
+            }
+
+            // 字幕文件
+            subtitles.forEach {
+                add("-i")
+                add(it.path)
+            }
+
+            // 封面文件
             if (coverIdx >= 0) {
-                command.append("-i").append(coverPath)
+                add("-i")
+                add(coverPath)
             }
         }
 
-        fun addStreamMappings(command: CommandParams) {
+        private fun MutableList<String>.addStreamMappings() {
             // 视频流
             if (videoEnabled) {
-                command.append("-map").append("$videoFileIdx:v:0")
+                add("-map")
+                add("$videoFileIdx:v:0")
             }
 
             // 音频流
             if (audioEnabled) {
                 repeat(audioStreamCount) { i ->
-                    command.append("-map").append("$audioFileIdx:a:$i")
+                    add("-map")
+                    add("$audioFileIdx:a:$i")
                 }
             }
 
             // 字幕流
             subtitles.forEachIndexed { sIdx, _ ->
-                command.append("-map").append("${subFileStartIdx + sIdx}:s:0")
+                add("-map")
+                add("${subFileStartIdx + sIdx}:s:0")
             }
 
             // 封面流
             if (coverIdx >= 0) {
-                command.append("-map").append("$coverIdx:v:0")
+                add("-map")
+                add("$coverIdx:v:0")
             }
         }
 
-        fun addCodecConfig(command: CommandParams) {
+        private fun MutableList<String>.addCodecConfig() {
             if (videoEnabled) {
-                command.append("-c:v").append("copy")
+                add("-c:v")
+                add("copy")
             }
+
             if (audioEnabled) {
-                command.append("-c:a").append("copy")
+                add("-c:a")
+                add("copy")
             }
         }
 
-        fun addSubtitleMetadata(command:  CommandParams) {
-            if (subtitles.isEmpty() || ! videoEnabled) return
+        private fun MutableList<String>.addSubtitleMetadata() {
+            if (subtitles.isEmpty() || !videoEnabled) return
 
-            command.append("-c:s").append("mov_text")
+            add("-c:s")
+            add("mov_text")
 
             subtitles.forEachIndexed { sIdx, subtitle ->
-                command.append("-metadata:s:s:$sIdx").append("language=${subtitle.lang}")
-                command.append("-metadata:s:s:$sIdx").append("title=${subtitle.langDoc}")
+                add("-metadata:s:s:$sIdx")
+                add("language=${subtitle.lang}")
+                add("-metadata:s:s:$sIdx")
+                add("title=${subtitle.langDoc}")
             }
         }
 
-        fun addCoverConfig(command: CommandParams) {
+        private fun MutableList<String>.addCoverConfig() {
             if (coverIdx < 0) return
 
             val coverStreamIndex = if (videoEnabled) 1 else 0
-            command.append("-c:v:$coverStreamIndex").append("mjpeg")
-            command.append("-disposition:v:$coverStreamIndex").append("attached_pic")
-            command.append("-metadata:s:v: $coverStreamIndex").append("title=Cover")
-        }
-    }
-
-    /**
-     * FFmpeg 回调
-     */
-    private fun createFfmpegCallback(
-        outputFile: File,
-        progressCallback: (Float) -> Unit,
-        continuation: CancellableContinuation<Unit>
-    ) = object : IFFmpegCallBack {
-        override fun onStart() {}
-
-        override fun onProgress(progress: Int, pts: Long) {
-            progressCallback(progress / 100f)
+            add("-c:v:$coverStreamIndex")
+            add("mjpeg")
+            add("-disposition:v:$coverStreamIndex")
+            add("attached_pic")
+            add("-metadata:s:v:$coverStreamIndex")
+            add("title=Cover")
         }
 
-        override fun onComplete() {
-            when {
-                ! outputFile.exists() -> {
-                    continuation.resumeWithException(Exception("输出文件未生成"))
-                }
-                outputFile.length() == 0L -> {
-                    outputFile.deleteIfExists()
-                    continuation.resumeWithException(Exception("输出文件为空"))
-                }
-                else -> {
-                    continuation.resume(Unit) { _, _, _ -> }
-                }
+        private fun String.escape(): String = when {
+            contains(" ") || contains("\"") || contains("'") -> {
+                "\"${replace("\"", "\\\"")}\""
             }
-        }
 
-        override fun onCancel() {
-            outputFile.deleteIfExists()
-            continuation.resumeWithException(CancellationException("任务被取消"))
-        }
-
-        override fun onError(errorCode: Int, errorMsg: String?) {
-            outputFile.deleteIfExists()
-            continuation.resumeWithException(
-                Exception("FFmpeg 执行失败: $errorMsg (code: $errorCode)")
-            )
+            else -> this
         }
     }
 
     /**
-     * 更新任务并清理临时文件
+     *  更新任务并清理临时文件
      */
     private suspend fun updateTaskAndCleanup(task: AppDownloadTask, outputFile: File) {
         downloadTaskRepository.updateSegment(
@@ -948,7 +1041,7 @@ class DownloadManager(
     /**
      * 安全删除文件
      */
-    private fun File. deleteIfExists() {
+    private fun File.deleteIfExists() {
         if (exists()) {
             delete()
         }

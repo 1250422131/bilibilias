@@ -102,6 +102,17 @@ android {
         }
 
     }
+
+    val isDebug = gradle.startParameter.taskNames.any { it.contains("debug", true) }
+    splits {
+        abi {
+            isEnable = isDebug
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
     buildFeatures {
         buildConfig = true
         compose = true
@@ -130,8 +141,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:data"))
 
-    // ffmpeg 第三方库
-    implementation(libs.ffmpeg.command)
+    implementation(libs.ffmpeg.kit.x6kb)
 
     // Firebase 选配
     firebaseDependencies(enabledAnalytics.toBoolean())

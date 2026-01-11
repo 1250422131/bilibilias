@@ -47,12 +47,7 @@ BILIBILIAS 依托于B站开发，尊重并支持哔哩哔哩的各项规则和�
 |:-------:|:------------------------------------------------------------:|:------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png"
-alt="下载应用，请到 F-Droid"
-height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
-
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.imcys.bilibilias)
-
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png" alt="F-Droid" height="80">](https://f-droid.org/packages/com.imcys.bilibilias) [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Google Play" height="80">](https://play.google.com/store/apps/details?id=com.imcys.bilibilias)
 
 ## 特征
 
