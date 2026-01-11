@@ -781,26 +781,24 @@ private fun ExtraCache(
             },
         )
 
-        if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty()) {
-            FilterChip(
-                label = {
-                    Text(stringResource(R.string.analysis_download_subtitle), fontSize = 12.sp)
-                },
-                selected = selectACCDownload,
-                leadingIcon = {
-                    if (selectACCDownload) {
-                        Icon(
-                            Icons.Outlined.Check,
-                            contentDescription = "已选中图标",
-                            modifier = Modifier.size(15.dp)
-                        )
-                    }
-                },
-                onClick = {
-                },
-            )
-        }
-
+        FilterChip(
+            label = {
+                Text(stringResource(R.string.analysis_download_subtitle), fontSize = 12.sp)
+            },
+            selected = selectACCDownload,
+            leadingIcon = {
+                if (selectACCDownload) {
+                    Icon(
+                        Icons.Outlined.Check,
+                        contentDescription = "已选中图标",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            },
+            onClick = {
+                onSelectCCId(!selectACCDownload,downloadInfo?.ccFileType ?: CCFileType.SRT)
+            },
+        )
 
         FilterChip(
             label = {
