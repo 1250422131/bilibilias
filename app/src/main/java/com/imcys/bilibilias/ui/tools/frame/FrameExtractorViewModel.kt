@@ -3,28 +3,31 @@ package com.imcys.bilibilias.ui.tools.frame
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFprobeKit
+import com.arthenica.ffmpegkit.ReturnCode
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
-import com.imcys.bilibilias.download.DownloadManager
+import com.imcys.bilibilias.download.NewDownloadManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import androidx.core.graphics.createBitmap
 import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import java.nio.ByteBuffer
 
 class FrameExtractorViewModel(
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val contentResolver: ContentResolver
 ) : ViewModel() {
@@ -60,84 +63,112 @@ class FrameExtractorViewModel(
 
     fun importVideo(context: Context, videoPath: String, fps: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val cacheDir =
-                "${context.externalCacheDir?.absolutePath}/frameTemp"
+            val cacheDir = "${context.externalCacheDir?.absolutePath}/frameTemp"
             deleteCacheDir(context)
-            // 获取临时存储路径
-//            val tempVideoPath = FFmpegManger.getVideoTempPath(
-//                context,
-//                videoPath.toUri(),
-//                cacheDir
-//            )
-//            updateSelectFps(tempVideoPath, fps)
+            File(cacheDir).mkdirs()
+
+            // 复制视频到临时目录（如果是content URI）
+            val tempVideoPath = if (videoPath.startsWith("content://")) {
+                val tempFile = File(cacheDir, "temp_video.mp4")
+                context.contentResolver.openInputStream(videoPath.toUri())?.use { input ->
+                    tempFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                tempFile.absolutePath
+            } else {
+                videoPath
+            }
+
+            updateSelectFps(tempVideoPath, fps)
         }
     }
 
     suspend fun updateSelectFps(videoPath: String? = null, currentFps: Int) =
         withContext(Dispatchers.IO) {
-
             val tempVideoPath = videoPath ?: when (uiState.value) {
-                is UIState.Importing -> {
-                    (uiState.value as UIState.Importing).selectVideoPath
-                }
-
-                is UIState.ImportSuccess -> {
-                    (uiState.value as UIState.ImportSuccess).videoPath
-                }
-
-                else -> {
-                    return@withContext
-                }
+                is UIState.Importing -> (uiState.value as UIState.Importing).selectVideoPath
+                is UIState.ImportSuccess -> (uiState.value as UIState.ImportSuccess).videoPath
+                else -> return@withContext
             }
 
-//            val videoFps = FFmpegManger.getVideoFrameRate(tempVideoPath ?: return@withContext)
-//            val bitmapList = mutableListOf<Bitmap>()
-//
-//            runCatching {
-//                FFmpegManger.getVideoFramesJNI(
-//                    tempVideoPath,
-//                    currentFps,
-//                    object : FFmpegManger.FFmpegFrameListener {
-//                        override fun onFrame(
-//                            data: ByteArray,
-//                            width: Int,
-//                            height: Int,
-//                            index: Int
-//                        ) {
-//                            val bitmap = createBitmap(width, height)
-//                            val buffer = ByteBuffer.wrap(data)
-//                            val pixels = IntArray(width * height)
-//                            var i = 0
-//                            while (buffer.remaining() >= 3 && i < pixels.size) {
-//                                val r = buffer.get().toInt() and 0xFF
-//                                val g = buffer.get().toInt() and 0xFF
-//                                val b = buffer.get().toInt() and 0xFF
-//                                pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
-//                                i++
-//                            }
-//                            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
-//                            bitmapList.add(bitmap)
-//                        }
-//
-//                        override fun onProgress(progress: Int) {
-//                            uiState.value = UIState.Importing(
-//                                progress = progress / 100f,
-//                                selectVideoPath = tempVideoPath
-//                            )
-//                        }
-//
-//                        override fun onComplete() {
-//                            uiState.value =
-//                                UIState.ImportSuccess(
-//                                    videoFps = videoFps,
-//                                    frameList = bitmapList,
-//                                    selectFps = currentFps,
-//                                    videoPath = tempVideoPath
-//                                )
-//                        }
-//
-//                    })
-//            }
+            if (tempVideoPath == null) return@withContext
+
+            try {
+                // 获取视频帧率
+                val videoFps = getVideoFrameRate(tempVideoPath)
+
+                // 提取帧
+                val bitmapList = extractFrames(tempVideoPath, currentFps)
+
+                uiState.value = UIState.ImportSuccess(
+                    videoFps = videoFps,
+                    frameList = bitmapList,
+                    selectFps = currentFps,
+                    videoPath = tempVideoPath
+                )
+            } catch (e: Exception) {
+                uiState.value = UIState.Default
+            }
+        }
+
+    private suspend fun getVideoFrameRate(videoPath: String): Int = withContext(Dispatchers.IO) {
+        val session = FFprobeKit.getMediaInformation(videoPath)
+        if (ReturnCode.isSuccess(session.returnCode)) {
+            val mediaInfo = session.mediaInformation
+            val videoStream = mediaInfo?.streams?.firstOrNull { it.type == "video" }
+            val fpsStr = videoStream?.averageFrameRate
+            if (fpsStr != null && fpsStr.contains("/")) {
+                val parts = fpsStr.split("/")
+                val num = parts[0].toDoubleOrNull() ?: 30.0
+                val den = parts[1].toDoubleOrNull() ?: 1.0
+                (num / den).toInt()
+            } else {
+                30
+            }
+        } else {
+            30
+        }
+    }
+
+    private suspend fun extractFrames(videoPath: String, fps: Int): List<Bitmap> =
+        withContext(Dispatchers.IO) {
+            val cacheDir = File(videoPath).parent ?: return@withContext emptyList()
+            val framesDir = File(cacheDir, "frames").apply { mkdirs() }
+
+            // 清理旧帧
+            framesDir.listFiles()?.forEach { it.delete() }
+
+            uiState.value = UIState.Importing(progress = 0f, selectVideoPath = videoPath)
+
+            // FFmpeg命令：提取帧
+            val command = "-i \"$videoPath\" -vf fps=$fps \"${framesDir.absolutePath}/frame_%04d.png\""
+
+            val session = FFmpegKit.execute(command)
+
+            if (!ReturnCode.isSuccess(session.returnCode)) {
+                Log.e("FrameExtractor", "FFmpeg failed: ${session.failStackTrace}")
+                return@withContext emptyList()
+            }
+
+            // 加载提取的帧
+            val frameFiles = framesDir.listFiles()?.sortedBy { it.name }
+            val bitmapList = mutableListOf<Bitmap>()
+
+            frameFiles?.forEachIndexed { index, file ->
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                if (bitmap != null) {
+                    bitmapList.add(bitmap)
+                }
+
+                val progress = (index + 1).toFloat() / frameFiles.size
+                uiState.value = UIState.Importing(
+                    progress = progress,
+                    selectVideoPath = videoPath
+                )
+            }
+
+            bitmapList
         }
 
 

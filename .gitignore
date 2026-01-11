@@ -16,3 +16,5 @@ app/debug
 app/beta
 app/official
 /build-logic/build/
+.claude
+CLAUDE.md

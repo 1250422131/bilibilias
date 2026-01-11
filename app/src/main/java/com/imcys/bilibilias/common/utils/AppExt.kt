@@ -15,11 +15,15 @@ import kotlinx.coroutines.flow.last
 
 fun Context.openLink(url: String) {
     if (url.isEmpty()) return
-    val intent = Intent().apply {
-        action = "android.intent.action.VIEW"
-        data = url.toUri()
-    }
-    startActivity(intent)
+   try {
+       val intent = Intent().apply {
+           action = "android.intent.action.VIEW"
+           data = url.toUri()
+       }
+       startActivity(intent)
+   } catch (e: Exception) {
+         Toast.makeText(this, "无法打开链接", Toast.LENGTH_SHORT).show()
+   }
 }
 
 fun String.copyText(context: Context, title: String) {

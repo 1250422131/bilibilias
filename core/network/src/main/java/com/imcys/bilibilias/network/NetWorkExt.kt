@@ -73,16 +73,16 @@ enum class ApiStatus {
     DEFAULT,
 }
 
-typealias FlowNetWorkResult<Data> = Flow<NetWorkResult<Data?>>
+typealias FlowNetWorkResult<Data> = Flow<NetWorkResult<Data>>
 
 inline fun <reified Data> HttpClient.httpRequest(
     crossinline request: suspend HttpClient.() -> HttpResponse
-): Flow<NetWorkResult<Data?>> =
+): FlowNetWorkResult<Data> =
     flow {
         emit(NetWorkResult.Loading(true))
         try {
             val response = request(this@httpRequest)
-            val body = response.body<BiliApiResponse<Data?>>().apply {
+            val body = response.body<BiliApiResponse<Data>>().apply {
                 // 请求参数补充
                 responseHeader = response.headers.entries()
             }
@@ -94,9 +94,9 @@ inline fun <reified Data> HttpClient.httpRequest(
     }.flowOn(Dispatchers.IO)
 
 @PublishedApi
-internal suspend fun <Data> FlowCollector<NetWorkResult<Data?>>.handleSuccess(
+internal suspend fun <Data> FlowCollector<NetWorkResult<Data>>.handleSuccess(
     data: Data?,
-    apiResponse: BiliApiResponse<Data?>,
+    apiResponse: BiliApiResponse<Data>,
     response: HttpResponse
 ) {
     when (apiResponse.code) {

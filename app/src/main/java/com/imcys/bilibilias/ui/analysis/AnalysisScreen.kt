@@ -134,7 +134,6 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
-import com.imcys.bilibilias.weight.ASCommonSelectGrid
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
@@ -516,8 +515,7 @@ private fun AdvancedSetting(
     onCheckCoverDownload: (Boolean) -> Unit,
     onCheckDownloadDanmaku: (Boolean) -> Unit,
     onCheckMediaDownload: (Boolean) -> Unit,
-    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
-    onCleanCCId: () -> Unit = {},
+    onSelectCCId: (Boolean, CCFileType) -> Unit = { _, _ -> },
     onSelectDownloadMode: (DownloadMode) -> Unit,
     updateEmbedCover: (Boolean) -> Unit,
     updateEmbedCC: (Boolean) -> Unit,
@@ -639,7 +637,6 @@ private fun AdvancedSetting(
                         onCheckDownloadDanmaku = onCheckDownloadDanmaku,
                         onCheckMediaDownload = onCheckMediaDownload,
                         onSelectCCId = onSelectCCId,
-                        onCleanCCId = onCleanCCId,
                     )
                 }
 
@@ -732,18 +729,13 @@ private fun ExtraCache(
     onCheckCoverDownload: (Boolean) -> Unit,
     onCheckDownloadDanmaku: (Boolean) -> Unit,
     onCheckMediaDownload: (Boolean) -> Unit,
-    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
-    onCleanCCId: () -> Unit = {},
+    onSelectCCId: (Boolean, CCFileType) -> Unit = { _, _ -> },
 ) {
-
-    var selectACCDownload by rememberSaveable { mutableStateOf(false) }
 
     val isDonghua = playerInfo.data is BILIDonghuaPlayerInfo
     val isVideo = playerInfo.data is BILIVideoPlayerInfo
-
-    LaunchedEffect(isSelectSingleModel) {
-        selectACCDownload = false
-    }
+    var selectACCDownload by remember(downloadInfo?.downloadCC)
+    { mutableStateOf(downloadInfo?.downloadCC == true) }
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -789,7 +781,7 @@ private fun ExtraCache(
             },
         )
 
-        if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty() && isSelectSingleModel) {
+        if (!playerInfoV2?.data?.subtitle?.subtitles.isNullOrEmpty()) {
             FilterChip(
                 label = {
                     Text(stringResource(R.string.analysis_download_subtitle), fontSize = 12.sp)
@@ -805,10 +797,6 @@ private fun ExtraCache(
                     }
                 },
                 onClick = {
-                    selectACCDownload = !selectACCDownload
-                    if (!selectACCDownload) {
-                        onCleanCCId()
-                    }
                 },
             )
         }
@@ -834,7 +822,7 @@ private fun ExtraCache(
         )
     }
 
-    if (selectACCDownload && isSelectSingleModel) {
+    if (selectACCDownload) {
         Text(stringResource(R.string.analysis_download_subtitle))
         Spacer(Modifier.height(5.dp))
         SelectACCCard(downloadInfo, onSelectCCId = onSelectCCId)
@@ -846,85 +834,73 @@ private fun ExtraCache(
 @Composable
 fun SelectACCCard(
     downloadInfo: DownloadViewInfo?,
-    onSelectCCId: (Long, CCFileType) -> Unit = { _, _ -> },
+    onSelectCCId: (Boolean, CCFileType) -> Unit = { _, _ -> },
 ) {
     var selectType by rememberSaveable { mutableStateOf(CCFileType.SRT) }
     var ccFileTypeExpanded by rememberSaveable { mutableStateOf(false) }
-    if (downloadInfo?.videoPlayerInfoV2 == null) return
-    AsAutoError(downloadInfo.videoPlayerInfoV2, onSuccessContent = {
-        Column {
-            ExposedDropdownMenuBox(
-                expanded = ccFileTypeExpanded,
-                onExpandedChange = {
-                    ccFileTypeExpanded = it
-                },
+
+    Column {
+        ExposedDropdownMenuBox(
+            expanded = ccFileTypeExpanded,
+            onExpandedChange = {
+                ccFileTypeExpanded = it
+                onSelectCCId(true, selectType)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .shimmer(downloadInfo.videoPlayerInfoV2.status != ApiStatus.SUCCESS),
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                        .fillMaxWidth(),
-                    textStyle = LocalTextStyle.current.copy(
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 12.sp
+                ),
+                value = selectType.name,
+                onValueChange = {},
+                readOnly = true,
+                singleLine = false,
+                label = {
+                    Text(
+                        stringResource(R.string.analysis_select_subtitle_type),
                         fontSize = 12.sp
-                    ),
-                    value = selectType.name,
-                    onValueChange = {},
-                    readOnly = true,
-                    singleLine = false,
-                    label = {
-                        Text(
-                            stringResource(R.string.analysis_select_subtitle_type),
-                            fontSize = 12.sp
-                        )
-                    },
-                    trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    ),
-                    shape = CardDefaults.shape
-                )
+                    )
+                },
+                trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
+                shape = CardDefaults.shape
+            )
 
-                ExposedDropdownMenu(
-                    expanded = ccFileTypeExpanded,
-                    onDismissRequest = { ccFileTypeExpanded = false },
-                    shape = CardDefaults.shape
-                ) {
-                    CCFileType.entries.forEach {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    it.name,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            },
-                            onClick = {
-                                ccFileTypeExpanded = false
-                                selectType = it
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        )
-                    }
+            ExposedDropdownMenu(
+                expanded = ccFileTypeExpanded,
+                onDismissRequest = { ccFileTypeExpanded = false },
+                shape = CardDefaults.shape
+            ) {
+                CCFileType.entries.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                it.name,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        onClick = {
+                            ccFileTypeExpanded = false
+                            selectType = it
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    )
                 }
-
             }
 
-            Spacer(Modifier.height(5.dp))
-
-            ASCommonSelectGrid(
-                items = downloadInfo.videoPlayerInfoV2.data?.subtitle?.subtitles ?: emptyList(),
-                key = { it.id },
-                title = { it.lanDoc },
-                onClick = { onSelectCCId.invoke(it.id, selectType) },
-                selected = { downloadInfo.selectedCCId.contains(it.id) }
-            )
         }
-    })
+    }
 }
 
 
@@ -1717,11 +1693,8 @@ private fun AnalysisDownloadConfigContent(
                 onCheckMediaDownload = {
                     viewModel.updateDownloadMedia(it)
                 },
-                onSelectCCId = { id, type ->
-                    viewModel.updateSelectCCIdList(id, type)
-                },
-                onCleanCCId = {
-                    viewModel.clearCCIdList()
+                onSelectCCId = { state, type ->
+                    viewModel.updateSelectDownloadCC(state, type)
                 },
                 onSelectDownloadMode = viewModel::updateDownloadMode,
                 updateEmbedCC = viewModel::updateEmbedCC,

@@ -20,13 +20,11 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
-import com.imcys.bilibilias.download.DownloadManager
+import com.imcys.bilibilias.download.NewDownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
-import com.imcys.bilibilias.network.mapData
 import com.imcys.bilibilias.network.model.app.AppOldCommonBean
-import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILISteinEdgeInfo
@@ -54,7 +52,7 @@ class AnalysisViewModel(
     usersDataSource: UsersDataSource,
     private val videoInfoRepository: VideoInfoRepository,
     private val userInfoRepository: UserInfoRepository,
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val appSettingsRepository: AppSettingsRepository,
     private val appAPIService: AppAPIService,
 ) : ViewModel() {
@@ -303,16 +301,15 @@ class AnalysisViewModel(
     }
 
 
-    fun updateSelectCCIdList(ccId: Long?, ccFileType: CCFileType) {
-        ccId?.let {
-            if (_uiState.value.asLinkResultType is ASLinkResultType.BILI.Video) {
-                viewModelScope.launch {
-                    _uiState.value = _uiState.value.copy(
-                        downloadInfo = _uiState.value.downloadInfo?.toggleCCId(it)?.copy(
-                            ccFileType = ccFileType
-                        )
+    fun updateSelectDownloadCC(selected: Boolean, ccFileType: CCFileType) {
+        if (_uiState.value.asLinkResultType is ASLinkResultType.BILI.Video) {
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(
+                    downloadInfo = _uiState.value.downloadInfo?.copy(
+                        ccFileType = ccFileType,
+                        downloadCC = selected
                     )
-                }
+                )
             }
         }
     }

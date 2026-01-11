@@ -13,7 +13,7 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettingsSerializer
 import com.imcys.bilibilias.datastore.source.UsersDataSource
-import com.imcys.bilibilias.download.DownloadManager
+import com.imcys.bilibilias.download.NewDownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.config.API.App.SSE_HOST
@@ -44,7 +44,7 @@ class HomeViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val usersDataSource: UsersDataSource,
     private val riskManagementRepository: RiskManagementRepository,
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val appSettingsRepository: AppSettingsRepository,
     private val appAPIService: AppAPIService
 

@@ -29,6 +29,7 @@ import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.data.model.download.lowercase
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
@@ -47,7 +48,6 @@ import com.imcys.bilibilias.database.entity.download.videoNamingRules
 import com.imcys.bilibilias.download.service.DownloadService
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
-import com.imcys.bilibilias.network.model.danmuku.DanmakuElem
 import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
@@ -56,7 +56,6 @@ import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
-import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.service.AppAPIService
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -67,7 +66,6 @@ import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.contentLength
 import io.ktor.utils.io.readAvailable
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,10 +79,14 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -93,6 +95,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 import java.io.RandomAccessFile
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
@@ -101,6 +104,7 @@ import kotlin.coroutines.resumeWithException
 /**
  * 下载管理器
  */
+@Deprecated("废弃", replaceWith = ReplaceWith("NewDownloadManager"))
 class DownloadManager(
     private val context: Application,
     private val downloadTaskRepository: DownloadTaskRepository,
@@ -197,16 +201,6 @@ class DownloadManager(
         val taskResult =
             downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
 
-        // 处理单体下载任务
-        if (downloadViewInfo.selectedCCId.isNotEmpty()) {
-            handelCCDownload(
-                asLinkResultType,
-                downloadViewInfo.videoPlayerInfoV2,
-                downloadViewInfo.selectedCCId,
-                downloadViewInfo.ccFileType
-            )
-        }
-
         taskResult.onSuccess { taskTree ->
             processDownloadTree(taskTree, downloadViewInfo)
         }.onFailure { error ->
@@ -218,117 +212,54 @@ class DownloadManager(
         }
     }
 
-    // 处理字幕下载任务
-    private fun handelCCDownload(
-        asLinkResultType: ASLinkResultType,
-        playerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?>,
-        selectedCCId: List<Long>,
+    /**
+     * 主入口：批量保存用户选中的字幕
+     */
+    private suspend fun handleCCDownload(
+        task: AppDownloadTask,
         ccFileType: CCFileType
-    ) {
-        when (asLinkResultType) {
-            is ASLinkResultType.BILI.Video -> {
-                GlobalScope.launch(Dispatchers.IO) {
-                    selectedCCId.forEach {
-                        val ccUrlInfo =
-                            playerInfoV2.data?.subtitle?.subtitles?.firstOrNull { item ->
-                                item.id == it
-                            }
-                        val url = if (ccUrlInfo?.subtitleUrl.isNullOrEmpty()) {
-                            ccUrlInfo?.subtitleUrlV2 ?: ""
-                        } else {
-                            ccUrlInfo.subtitleUrl ?: ""
-                        }
-
-                        val languageName = ccUrlInfo?.lan ?: "未知语言"
-
-                        // 协议头
-                        val finalUrl = if (!url.contains("https")) "https:" else ""
-                        runCatching {
-                            videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
-                        }.onSuccess { cCInfo ->
-                            saveCCFile(
-                                asLinkResultType.viewInfo.data,
-                                ccFileType,
-                                cCInfo,
-                                languageName
-                            )
-                        }
-                    }
-                }
-            }
-
-            else -> {}
+    ) = withContext(Dispatchers.IO) {
+        task.downloadViewInfo.videoPlayerInfoV2.data?.subtitle?.subtitles?.forEach { cc ->
+            val url = cc.finalSubtitleUrl
+            val finalUrl = if (!url.contains("https")) "https:" else ""
+            val videoCCInfo = videoInfoRepository.getVideoCCInfo((finalUrl + url).toHttps())
+            val content = convertCc(videoCCInfo, ccFileType)
+            val title = "${task.downloadSegment.title}_${cc.lan}_${ccFileType.lowercase()}"
+            resolveCcOutputStream(title, ccFileType)
+                .use { it.write(content.toByteArray(Charsets.UTF_8)) }
         }
     }
 
-    private fun saveCCFile(
-        videoInfo: BILIVideoViewInfo?,
-        ccFileType: CCFileType,
-        biliVideoCCInfo: BILIVideoCCInfo,
-        languageName: String
-    ) {
-        val fileContentStr = when (ccFileType) {
-            CCFileType.ASS -> {
-                CCJsonToAss.jsonToAss(
-                    biliVideoCCInfo,
-                    title = videoInfo?.title ?: "字幕",
-                    playResX = videoInfo?.dimension?.width?.toString() ?: "1920",
-                    playResY = videoInfo?.dimension?.height?.toString() ?: "1080"
-                )
-            }
 
-            CCFileType.SRT -> {
-                CCJsonToSrt.jsonToSrt(biliVideoCCInfo)
-            }
+    private fun convertCc(cc: BILIVideoCCInfo, type: CCFileType): String = when (type) {
+        CCFileType.ASS -> CCJsonToAss.jsonToAss(cc, "字幕", "1920", "1080")
+        CCFileType.SRT -> CCJsonToSrt.jsonToSrt(cc)
+    }
+
+
+    private fun resolveCcOutputStream(fileName: String, type: CCFileType): OutputStream {
+        val mime = when (type) {
+            CCFileType.ASS -> "text/x-ass"
+            CCFileType.SRT -> "application/x-subrip"
         }
-
-        val title = " ${videoInfo?.title}_${languageName}"
-        val fileName = when (ccFileType) {
-            CCFileType.ASS -> "$title.ass"
-            CCFileType.SRT -> "$title.srt"
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val resolver = context.contentResolver
-            val values = ContentValues().apply {
-                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
-                put(
-                    MediaStore.Downloads.MIME_TYPE,
-                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
-                )
-                put(
-                    MediaStore.Downloads.RELATIVE_PATH,
-                    Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS"
-                )
-            }
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-            if (uri != null) {
-                resolver.openOutputStream(uri)?.use { outputStream ->
-                    outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
-                    outputStream.flush()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val uri = context.contentResolver.insert(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                    put(MediaStore.Downloads.MIME_TYPE, mime)
+                    put(MediaStore.Downloads.RELATIVE_PATH, "Download/BILIBILIAS")
                 }
-            }
+            ) ?: throw Exception("MediaStore insert failed")
+            context.contentResolver.openOutputStream(uri)
         } else {
-            val downloadsDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val targetDir = File(downloadsDir, "BILIBILIAS")
-            if (!targetDir.exists()) targetDir.mkdirs()
-            val targetFile = File(targetDir, fileName)
-            FileOutputStream(targetFile).use { outputStream ->
-                outputStream.write(fileContentStr.toByteArray(Charsets.UTF_8))
-                outputStream.flush()
-            }
-            MediaScannerConnection.scanFile(
-                context,
-                arrayOf(targetFile.absolutePath),
-                arrayOf(
-                    if (ccFileType == CCFileType.ASS) "text/x-ass" else "application/x-subrip"
-                ),
-                null
-            )
-        }
+            val dir = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "BILIBILIAS"
+            ).apply { mkdirs() }
+            FileOutputStream(File(dir, fileName))
+        }.let { checkNotNull(it) { "OutputStream == null" } }
     }
-
 
     /**
      * 暂停指定任务
@@ -615,7 +546,33 @@ class DownloadManager(
         handelEmbedCCDownload(task)
         // 处理封面
         handelEmbedCoverDownload(task)
+
+        handleAdditionalDownload(task)
+
         updateTaskState(task, DownloadState.WAITING)
+    }
+
+    private suspend fun handleAdditionalDownload(task: AppDownloadTask) {
+        val downloadViewInfo = task.downloadViewInfo
+
+        // 下载封面图片
+        if (downloadViewInfo.downloadCover) {
+            downloadCoverImageForTask(task)
+        }
+
+        // 下载弹幕
+        if (downloadViewInfo.downloadDanmaku) {
+            downloadDanmakuForTask(task)
+        }
+
+        // 处理单体下载任务
+        if (downloadViewInfo.downloadCC) {
+            handleCCDownload(
+                task,
+                downloadViewInfo.ccFileType
+            )
+        }
+
     }
 
     /**
@@ -647,8 +604,8 @@ class DownloadManager(
     /**
      * 需要内嵌的字幕下载（不区分语言）
      */
-    private suspend fun handelEmbedCCDownload(task: AppDownloadTask) {
-        if (!task.downloadViewInfo.embedCC) return
+    private suspend fun handelEmbedCCDownload(task: AppDownloadTask): List<LocalSubtitle> {
+        if (!task.downloadViewInfo.embedCC) return emptyList()
         val localSubtitles = mutableListOf<LocalSubtitle>()
         task.downloadViewInfo.videoPlayerInfoV2.data?.let { v2Info ->
             v2Info.subtitle.subtitles.forEach { subtitle ->
@@ -680,6 +637,7 @@ class DownloadManager(
                 subtitles = localSubtitles
             )
         )
+        return localSubtitles
     }
 
 
@@ -879,6 +837,14 @@ class DownloadManager(
         val task: AppDownloadTask
     ) {
         private val mediaInputs = task.downloadSubTasks.map { it.savePath }
+
+        private val videoFileCount = task.downloadSubTasks.count {
+            it.subTaskType == DownloadSubTaskType.VIDEO
+        }
+        private val audioFileCount = task.downloadSubTasks.count {
+            it.subTaskType == DownloadSubTaskType.AUDIO
+        }
+
         private val subtitles = task.taskRuntimeInfo.subtitles
         private val coverPath = task.taskRuntimeInfo.coverPath
 
@@ -905,11 +871,8 @@ class DownloadManager(
         }
 
         private val videoFileIdx = 0
-        private val audioFileIdx = 1
+        private val audioFileStartIdx = videoFileCount
         private val subFileStartIdx = mediaInputs.size
-        private val audioStreamCount = task.downloadSubTasks.count {
-            it.subTaskType == DownloadSubTaskType.AUDIO
-        }
         private val coverIdx = if (coverPath.isNotBlank()) mediaInputs.size + subtitles.size else -1
 
         fun buildCommand(outputFile: File): String = buildList {
@@ -960,9 +923,9 @@ class DownloadManager(
 
             // 音频流
             if (audioEnabled) {
-                repeat(audioStreamCount) { i ->
+                repeat(audioFileCount) { i ->
                     add("-map")
-                    add("$audioFileIdx:a:$i")
+                    add("${audioFileStartIdx + i}:a:$i")
                 }
             }
 
@@ -1600,13 +1563,6 @@ class DownloadManager(
                         downloadStage = DownloadStage.DOWNLOAD,
                         cover = cover,
                     )
-                    // 下载封面图片
-                    if (downloadViewInfo.downloadCover) {
-                        downloadCoverImageForTask(newTask)
-                    }
-                    if (downloadViewInfo.downloadDanmaku) {
-                        downloadDanmakuForTask(newTask)
-                    }
                     currentTasks.add(newTask)
                 }
             }
@@ -1625,92 +1581,72 @@ class DownloadManager(
 
 
     /**
-     * 下载任务的弹幕
+     * 下载并保存弹幕 XML（已精简）
      */
-    private fun downloadDanmakuForTask(newTask: AppDownloadTask) {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            val oid = newTask.downloadSegment.platformUniqueId
-            val danmakuElemList = mutableListOf<DanmakuElem>()
-            var index = 0
-            suspend fun getDanmakuPage(index: Int) =
-                videoInfoRepository.getDanmaku(oid = oid.toLong(), segmentIndex = index)
+    private suspend fun downloadDanmakuForTask(task: AppDownloadTask) {
+        val oid = task.downloadSegment.platformUniqueId.toLong()
+        val title = getLastFileName(task, "xml")
+        val elms = flow {
+            var page = 0
             while (true) {
-                val result = getDanmakuPage(index)
-                result.getOrNull()?.let {
-                    danmakuElemList.addAll(it.elems)
-                } ?: run { break }
-                index++
+                val list = videoInfoRepository.getDanmaku(oid = oid, segmentIndex = page)
+                    .getOrNull()?.elems
+                if (list.isNullOrEmpty()) break
+                emitAll(list.asFlow())
+                page++
             }
-            val danmakuStr =
-                DanmakuXmlUtil.toBilibiliDanmakuXml(danmakuElemList, oid.toLong())
-
-            val fileName = "${newTask.downloadSegment.title}.xml"
-            val resolver = context.contentResolver
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val values = ContentValues().apply {
-                    put(MediaStore.Downloads.DISPLAY_NAME, fileName)
-                    put(MediaStore.Downloads.MIME_TYPE, "application/xml")
-                    put(
-                        MediaStore.Downloads.RELATIVE_PATH,
-                        Environment.DIRECTORY_DOWNLOADS + "/BILIBILIAS/Danmaku"
-                    )
-                }
-                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-                uri?.let {
-                    resolver.openOutputStream(it)?.use { outputStream ->
-                        outputStream.write(danmakuStr.toByteArray(Charsets.UTF_8))
-                        outputStream.flush()
-                    }
-                }
-            } else {
-                val downloadsDir =
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val targetDir = File(downloadsDir, "BILIBILIAS/Danmaku")
-                if (!targetDir.exists()) targetDir.mkdirs()
-                val targetFile = File(targetDir, fileName)
-                try {
-                    FileOutputStream(targetFile).use { out ->
-                        out.write(danmakuStr.toByteArray(Charsets.UTF_8))
-                        out.flush()
-                    }
-                    MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(targetFile.absolutePath),
-                        arrayOf("application/xml"),
-                        null
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+        }.toList()
+        val xml = DanmakuXmlUtil.toBilibiliDanmakuXml(elms, oid)
+        resolveDanmakuOutput(title).use { os ->
+            os.write(xml.toByteArray(Charsets.UTF_8))
         }
     }
 
     /**
+     * 创建弹幕输出流
+     */
+    private suspend fun resolveDanmakuOutput(title: String): OutputStream =
+        withContext(Dispatchers.IO) {
+            val fileName = "$title.xml"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val uri = context.contentResolver.insert(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    ContentValues().apply {
+                        put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                        put(MediaStore.Downloads.MIME_TYPE, "application/xml")
+                        put(MediaStore.Downloads.RELATIVE_PATH, "Download/BILIBILIAS/Danmaku")
+                    }
+                ) ?: throw Exception("MediaStore insert failed")
+                context.contentResolver.openOutputStream(uri)
+            } else {
+                val dir = File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                    "BILIBILIAS/Danmaku"
+                ).apply { mkdirs() }
+                FileOutputStream(File(dir, fileName))
+            }.let { checkNotNull(it) { "OutputStream == null" } }
+        }
+
+    /**
      * 下载任务的封面图片
      */
-    private fun downloadCoverImageForTask(
+    private suspend fun downloadCoverImageForTask(
         task: AppDownloadTask,
     ) {
+        val type = task.cover?.substringAfterLast(".")
+        val fileName = when (task.downloadTask.type) {
+            DownloadTaskType.BILI_DONGHUA,
+            DownloadTaskType.BILI_VIDEO -> "${task.downloadSegment.platformId}_pic.${type}"
 
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            val type = task.cover?.substringAfterLast(".")
-            val fileName = when (task.downloadTask.type) {
-                DownloadTaskType.BILI_DONGHUA,
-                DownloadTaskType.BILI_VIDEO -> "${task.downloadSegment.platformId}_pic.${type}"
-
-                // 如果是合集，封面得找到对应的任务
-                DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != null -> {
-                    val realTask =
-                        downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
-                    "${realTask?.platformId}_pic.${type}"
-                }
-
-                DownloadTaskType.BILI_VIDEO_SECTION -> error("封面所属任务类型异常")
+            DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != null -> {
+                val realTask =
+                    downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
+                "${realTask?.platformId}_pic.${type}"
             }
-            downloadImageToAlbum(task.cover?.toHttps() ?: "", fileName, "BILIBILIAS")
+
+            DownloadTaskType.BILI_VIDEO_SECTION -> error("封面所属任务类型异常")
         }
+        downloadImageToAlbum(task.cover?.toHttps() ?: "", fileName, "BILIBILIAS")
 
     }
 

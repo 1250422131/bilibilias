@@ -52,7 +52,7 @@ class VideoInfoRepository(
         seasonId: Long?,
         fnval: Int = 4048,
         qn: Int = 116,
-    ): Flow<NetWorkResult<BILIDonghuaPlayerSynthesize>> {
+    ): FlowNetWorkResult<BILIDonghuaPlayerSynthesize> {
         val platformType = appSettingsRepository.getVideoParsePlatform()
         val cookieCsrf = biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
             .firstOrNull { cookie -> cookie.name == "bili_jct" }?.value
@@ -184,7 +184,7 @@ class VideoInfoRepository(
         qn: Int = 127,
         curLanguage: String? = null,
         curProductionType: Int? = null,
-    ): Flow<NetWorkResult<BILIVideoPlayerInfo?>> {
+    ): FlowNetWorkResult<BILIVideoPlayerInfo> {
         val platformType = appSettingsRepository.getVideoParsePlatform()
         val tryLook = if (usersDataSource.isLogin()) null else "1"
         return when (platformType) {

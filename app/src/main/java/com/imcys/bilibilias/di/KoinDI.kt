@@ -5,7 +5,14 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettingsSerializer
+import com.imcys.bilibilias.download.DownloadExecutor
 import com.imcys.bilibilias.download.DownloadManager
+import com.imcys.bilibilias.download.FfmpegMerger
+import com.imcys.bilibilias.download.FileOutputManager
+import com.imcys.bilibilias.download.NamingConventionHandler
+import com.imcys.bilibilias.download.NewDownloadManager
+import com.imcys.bilibilias.download.SubtitleDownloader
+import com.imcys.bilibilias.download.VideoInfoFetcher
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel
@@ -70,6 +77,14 @@ val appModule = module {
     viewModelOf(::LineConfigViewModel)
     viewModelOf(::WebParserViewModel)
     viewModelOf(::ParsePlatformViewModel)
+
+    single { VideoInfoFetcher(get(), get(), get()) }
+    single { FileOutputManager(androidApplication()) }
+    single { DownloadExecutor(get(qualifier = named("DownloadHttpClient")), get()) }
+    single { FfmpegMerger(androidApplication()) }
+    single { NamingConventionHandler(get()) }
+    single { SubtitleDownloader(get(), get(), androidApplication()) }
+
     single {
         DownloadManager(
             context = androidApplication(),
@@ -80,6 +95,23 @@ val appModule = module {
             okHttpClient = get(),
             httpClient = get(qualifier = named("DownloadHttpClient")),
             appSettingsRepository = get(),
+        )
+    }
+
+    single {
+        NewDownloadManager(
+            context = androidApplication(),
+            downloadTaskRepository = get(),
+            videoInfoRepository = get(),
+            httpClient = get(qualifier = named("DownloadHttpClient")),
+            okHttpClient = get(),
+            appSettingsRepository = get(),
+            videoInfoFetcher = get(),
+            fileOutputManager = get(),
+            downloadExecutor = get(),
+            ffmpegMerger = get(),
+            namingConventionHandler = get(),
+            subtitleDownloader = get()
         )
     }
 }

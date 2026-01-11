@@ -98,11 +98,7 @@ fun WebParserContent(
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
-                    if (request?.url?.toString()?.contains("bilibili://") == true) {
-                        context.openLink(request.url?.toString() ?: "")
-                        return true
-                    }
-                    return super.shouldOverrideUrlLoading(view, request)
+                    return true
                 }
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)

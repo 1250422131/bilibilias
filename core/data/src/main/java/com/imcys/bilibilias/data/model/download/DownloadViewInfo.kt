@@ -8,6 +8,8 @@ import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoLanguage
 import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
+import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.TreeSet
 
 
@@ -15,6 +17,9 @@ enum class CCFileType {
     ASS,
     SRT,
 }
+
+fun CCFileType.lowercase() = name.lowercase(getDefault())
+
 data class DownloadViewInfo(
     val selectVideoQualityId: Long? = null,
     val selectVideoCode: String = "",
@@ -25,11 +30,11 @@ data class DownloadViewInfo(
     val downloadMedia : Boolean = true,
     val downloadCover: Boolean = false,
     val downloadDanmaku: Boolean = false,
+    val downloadCC : Boolean = false,
     val embedCover   : Boolean = false,
     val embedDanmaku : Boolean = false,
     val embedCC      : Boolean = false,
     val selectAudioLanguage: BILIVideoLanguageItem? = null,
-    val selectedCCId: List<Long> = listOf(), // 字幕 ID 列表
     val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型
     val videoPlayerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?> = emptyNetWorkResult()
 ) {
@@ -62,18 +67,6 @@ data class DownloadViewInfo(
     )
 
 
-    fun clearCCIdList(): DownloadViewInfo = copy(
-        selectedCCId = emptyList()
-    )
-
-    fun toggleCCId(ccId: Long): DownloadViewInfo = copy(
-        selectedCCId = if (selectedCCId.contains(ccId)) {
-            selectedCCId - ccId
-        } else {
-            // 使用 TreeSet 去重并排序
-            (TreeSet(selectedCCId) + ccId).toList()
-        }
-    )
 
 
 
