@@ -10,6 +10,7 @@ import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.datastore.AppSettings
+import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.download.NewDownloadManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class DownloadViewModel(
-    private val downloadManager: NewDownloadManager,
+    private val downloadManager: DownloadManager,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val contentResolver: ContentResolver,
     private val appSettingsRepository: AppSettingsRepository

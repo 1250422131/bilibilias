@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui.tools.frame
 
+import android.app.DownloadManager
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
@@ -27,7 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 class FrameExtractorViewModel(
-    private val downloadManager: NewDownloadManager,
+    private val downloadManager: DownloadManager,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val contentResolver: ContentResolver
 ) : ViewModel() {
