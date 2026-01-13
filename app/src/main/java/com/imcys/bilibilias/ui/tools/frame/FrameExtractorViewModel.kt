@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 class FrameExtractorViewModel(
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val downloadTaskRepository: DownloadTaskRepository,
     private val contentResolver: ContentResolver
 ) : ViewModel() {

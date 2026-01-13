@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
@@ -93,7 +95,6 @@ class LineConfigViewModel(
                     setLineHost(line.copy(speed = null, checkSpeeding = true))
                 }
             }
-
             videoInfoRepository.getVideoPlayerInfo(cid = 1622441837L, bvId = "BV1Cf421q78E")
                 .collect {
                     if (it.status == ApiStatus.SUCCESS) {
@@ -130,6 +131,8 @@ class LineConfigViewModel(
      * 线路测速
      */
     private suspend fun speedTest(lineHost: BILILineHostItem, rawUrl: String) = try {
+        val platformType = appSettingsRepository.getVideoParsePlatform()
+
         withContext(Dispatchers.IO) {
             val upos = lineHost.host
             withTimeout(5000) {
@@ -139,7 +142,22 @@ class LineConfigViewModel(
                 val connection = url.openConnection()
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
+                // 加UA
+                connection.setRequestProperty(
+                    "User-Agent",
+                    when (platformType) {
+                        AppSettings.VideoParsePlatform.Mobile,
+                        AppSettings.VideoParsePlatform.UNRECOGNIZED,
+                        AppSettings.VideoParsePlatform.Web ->  BROWSER_USER_AGENT
+                        AppSettings.VideoParsePlatform.TV -> "Mozilla/5.0"
+                    }
+                )
+                if (platformType != AppSettings.VideoParsePlatform.TV) {
+                    connection.setRequestProperty("Referer","https://www.bilibili.com/video/BV1Cf421q78E/")
+                }
+
                 connection.connect()
+
                 val buffer = ByteArray(2048)
                 var size = 0
                 val start = System.currentTimeMillis()

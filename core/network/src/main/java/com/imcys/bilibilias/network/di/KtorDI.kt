@@ -1,8 +1,10 @@
 package com.imcys.bilibilias.network.di
 
 import android.util.Log
+import com.imcys.bilibilias.common.data.CommonBuildConfig
 import com.imcys.bilibilias.datastore.userAppSettingsStore
 import com.imcys.bilibilias.network.AsCookiesStorage
+import com.imcys.bilibilias.network.BuildConfig
 import com.imcys.bilibilias.network.config.BILIBILI_URL
 import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.plugin.AutoBILIInfoPlugin
@@ -102,36 +104,42 @@ val netWorkModule = module {
             install(HttpCookies) {
                 storage = get<AsCookiesStorage>()
             }
-            install(Logging) {
-                logger = object : Logger {
-                    private val json: Json = get()
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = object : Logger {
+                        private val json: Json = get()
 
-                    override fun log(message: String) {
-                        val formattedMessage = try {
-                            if (message.contains("{") && message.contains("}")) {
-                                val jsonStart = message.indexOf("{")
-                                val jsonEnd = message.lastIndexOf("}") + 1
-                                val prefix = message.substring(0, jsonStart)
-                                val jsonBody = message.substring(jsonStart, jsonEnd)
-                                val suffix = message.substring(jsonEnd)
+                        override fun log(message: String) {
+                            val formattedMessage = try {
+                                if (message.contains("{") && message.contains("}")) {
+                                    val jsonStart = message.indexOf("{")
+                                    val jsonEnd = message.lastIndexOf("}") + 1
+                                    val prefix = message.substring(0, jsonStart)
+                                    val jsonBody = message.substring(jsonStart, jsonEnd)
+                                    val suffix = message.substring(jsonEnd)
 
-                                // 解析并重新格式化 JSON
-                                val jsonElement = json.parseToJsonElement(jsonBody)
-                                val formattedJson = if (message.contains("application/octet-stream")) "" else
-                                    json.encodeToString(JsonElement.serializer(), jsonElement)
+                                    // 解析并重新格式化 JSON
+                                    val jsonElement = json.parseToJsonElement(jsonBody)
+                                    val formattedJson =
+                                        if (message.contains("application/octet-stream")) "" else
+                                            json.encodeToString(
+                                                JsonElement.serializer(),
+                                                jsonElement
+                                            )
 
-                                "$prefix\n$formattedJson$suffix"
-                            } else {
+                                    "$prefix\n$formattedJson$suffix"
+                                } else {
+                                    message
+                                }
+                            } catch (e: Exception) {
                                 message
                             }
-                        } catch (e: Exception) {
-                            message
-                        }
 
-                        Log.d("Ktor", formattedMessage)
+                            Log.d("Ktor", formattedMessage)
+                        }
                     }
+                    level = LogLevel.ALL
                 }
-                level = LogLevel.ALL
             }
         }
     }
@@ -153,13 +161,15 @@ val netWorkModule = module {
             install(AutoBILIInfoPlugin){
                 appSetting = androidContext().userAppSettingsStore
             }
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        Log.d("Ktor", message)
+            if (BuildConfig.DEBUG){
+                install(Logging) {
+                    logger = object : Logger {
+                        override fun log(message: String) {
+                            Log.d("DownloadKtor", message)
+                        }
                     }
+                    level = LogLevel.HEADERS
                 }
-                level = LogLevel.ALL
             }
 
         }

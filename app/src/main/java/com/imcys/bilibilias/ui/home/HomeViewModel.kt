@@ -45,7 +45,7 @@ class HomeViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val usersDataSource: UsersDataSource,
     private val riskManagementRepository: RiskManagementRepository,
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val appSettingsRepository: AppSettingsRepository,
     private val appAPIService: AppAPIService
 

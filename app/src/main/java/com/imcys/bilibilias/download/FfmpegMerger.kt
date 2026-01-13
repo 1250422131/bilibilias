@@ -89,6 +89,8 @@ class FfmpegMerger(
         onProgress: (Float) -> Unit
     ) {
         suspendCancellableCoroutine { continuation ->
+            var lastProgressEmit = 0L
+
             val session = FFmpegKit.executeAsync(
                 command,
                 { session ->
@@ -122,8 +124,12 @@ class FfmpegMerger(
                 },
                 { statistics ->
                     if (statistics.time > 0 && duration > 0) {
-                        val progress = (statistics.time.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-                        onProgress(progress)
+                        val now = System.currentTimeMillis()
+                        if (now - lastProgressEmit > 100) {
+                            val progress = (statistics.time.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+                            onProgress(progress)
+                            lastProgressEmit = now
+                        }
                     }
                 }
             )

@@ -53,7 +53,7 @@ class AnalysisViewModel(
     usersDataSource: UsersDataSource,
     private val videoInfoRepository: VideoInfoRepository,
     private val userInfoRepository: UserInfoRepository,
-    private val downloadManager: DownloadManager,
+    private val downloadManager: NewDownloadManager,
     private val appSettingsRepository: AppSettingsRepository,
     private val appAPIService: AppAPIService,
 ) : ViewModel() {

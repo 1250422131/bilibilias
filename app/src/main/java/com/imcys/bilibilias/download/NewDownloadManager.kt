@@ -666,7 +666,7 @@ class NewDownloadManager(
     }
 
     private fun createSubTask(segment: DownloadSegment, type: DownloadSubTaskType): DownloadSubTask {
-        val savePath = getSaveTempSubTaskPath(type) + "/${segment.platformId}_${System.currentTimeMillis()}.${
+        val savePath = getSaveTempSubTaskPath(type) + "/${segment.platformId}_${type.name}.${
             when (type) {
                 DownloadSubTaskType.VIDEO -> "mp4"
                 DownloadSubTaskType.AUDIO -> "m4a"
@@ -732,15 +732,15 @@ class NewDownloadManager(
     }
 
     private fun updateTaskState(task: AppDownloadTask, state: DownloadState) {
-        val currentTasks = _downloadTasks.value.toMutableList()
-        val index = currentTasks.indexOfFirst { it.downloadSegment.segmentId == task.downloadSegment.segmentId }
-
-        if (index != -1) {
-            currentTasks[index] = task.copy(
-                downloadSegment = task.downloadSegment.copy(downloadState = state),
-                downloadState = state
-            )
-            _downloadTasks.value = currentTasks
+        _downloadTasks.value = _downloadTasks.value.map { existingTask ->
+            if (existingTask.downloadSegment.segmentId == task.downloadSegment.segmentId) {
+                task.copy(
+                    downloadSegment = task.downloadSegment.copy(downloadState = state),
+                    downloadState = state
+                )
+            } else {
+                existingTask
+            }
         }
     }
 

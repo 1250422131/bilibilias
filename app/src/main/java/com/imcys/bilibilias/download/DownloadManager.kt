@@ -1969,7 +1969,7 @@ class DownloadManager(
     ): DownloadSubTask {
         val savePath = getSaveTempSubTaskPath(
             subTaskType = type
-        ) + "/${segment.platformId}_${System.currentTimeMillis()}.${
+        ) + "/${segment.platformId}_${type.name}.${
             when (type) {
                 DownloadSubTaskType.VIDEO -> "mp4"
                 DownloadSubTaskType.AUDIO -> "m4a"

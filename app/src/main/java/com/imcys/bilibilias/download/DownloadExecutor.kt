@@ -7,15 +7,14 @@ import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.contentLength
+import io.ktor.utils.io.exhausted
 import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import java.io.File
-import java.io.RandomAccessFile
+import java.io.FileOutputStream
 
 /**
  * 下载执行器
@@ -28,7 +27,7 @@ class DownloadExecutor(
     companion object {
         private const val MAX_RETRY_ATTEMPTS = 5
         private const val RETRY_DELAY_MS = 3000L
-        private const val DOWNLOAD_BUFFER_SIZE = 64 * 1024
+        private const val DOWNLOAD_BUFFER_SIZE : Long = 64 * 1024
     }
 
     /**
@@ -87,62 +86,63 @@ class DownloadExecutor(
         }
     }
 
-    /**
-     * 执行实际下载
-     */
     private suspend fun performDownload(
         downloadUrl: String,
         tempFile: File,
         referer: String,
-        onProgress: (Float) -> Unit
+        onProgress: (Float) -> Unit,
+        progressStep: Float = 0.01f
     ): Boolean = withContext(Dispatchers.IO) {
         val downloaded = if (tempFile.exists()) tempFile.length() else 0L
         val finalUrl = replaceCdn(downloadUrl)
+        var lastProgress = 0f
 
-        httpClient.prepareGet(finalUrl) {
-            header("Referer", referer)
-            if (downloaded > 0) header("Range", "bytes=$downloaded-")
-        }.execute { response ->
-            val channel = response.bodyAsChannel()
-            val total = response.contentLength()?.let {
-                if (downloaded > 0) it + downloaded else it
-            } ?: -1L
+        try {
+            httpClient.prepareGet(finalUrl) {
+                header("Referer", referer)
+                if (downloaded > 0) header("Range", "bytes=$downloaded-")
+            }.execute { response ->
+                tempFile.parentFile?.mkdirs()
+                val channel = response.bodyAsChannel()
 
-            if (total == 0L) {
-                onProgress(1f)
-                return@execute true
-            }
-
-            tempFile.parentFile?.mkdirs()
-            val raf = RandomAccessFile(tempFile, "rw")
-            if (downloaded > 0) raf.seek(downloaded)
-
-            var currentDownloaded = downloaded
-            val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
-            var lastEmit = 0L
-
-            try {
-                while (!channel.isClosedForRead) {
-                    ensureActive()
-                    val bytes = channel.readAvailable(buffer, 0, buffer.size)
-                    if (bytes <= 0) break
-
-                    raf.write(buffer, 0, bytes)
-                    currentDownloaded += bytes
-
-                    val now = System.currentTimeMillis()
-                    if (now - lastEmit > 100) {
-                        if (total > 0) onProgress(currentDownloaded.toFloat() / total)
-                        lastEmit = now
-                    }
-                    yield()
+                val contentLength = response.contentLength()
+                val totalLength = if (contentLength != null && contentLength > 0) {
+                    contentLength + downloaded
+                } else {
+                    -1L
                 }
-                if (total > 0) onProgress(1f)
-            } finally {
-                raf.close()
+
+                val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE.toInt())
+                var downloadedBytes = downloaded
+
+                FileOutputStream(tempFile, downloaded > 0).use { output ->
+                    while (!channel.exhausted()) {
+                        val bytesRead = channel.readAvailable(buffer)
+                        if (bytesRead == -1) break
+
+                        output.write(buffer, 0, bytesRead)
+                        downloadedBytes += bytesRead
+
+                        val currentProgress = if (totalLength > 0) {
+                            (downloadedBytes.toFloat() / totalLength.toFloat()).coerceIn(0f, 1f)
+                        } else {
+                            0f
+                        }
+
+                        // 只在进度变化超过指定步长时回调
+                        if (currentProgress - lastProgress >= progressStep) {
+                            lastProgress = currentProgress
+                            onProgress(currentProgress)
+                        }
+                    }
+                }
+
+                onProgress(1f)
+                true
             }
+        } catch (e: Exception) {
+            false
         }
-        true
     }
 
     /**
