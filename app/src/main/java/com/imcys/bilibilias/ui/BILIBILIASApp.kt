@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +36,10 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,6 +50,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,19 +64,20 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.ToastEvent
 import com.imcys.bilibilias.common.event.loginErrorChannel
-import com.imcys.bilibilias.common.event.updateAccountChannel
+import com.imcys.bilibilias.common.event.toastEventFlow
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.navigation.BILIBILAISNavDisplay
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
-import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASIconButton
 import com.imcys.bilibilias.ui.weight.ASTextButton
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.weight.Konfetti
 import com.imcys.bilibilias.weight.rememberKonfettiState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -86,13 +95,16 @@ private fun MainScaffold() {
     val appSettings by vm.appSettings.collectAsState()
     val uiState by vm.uiState.collectAsState()
     var showPrivacyPolicyRefuseTip by remember { mutableStateOf(false) }
-
+    val snackbarHostState = remember { SnackbarHostState() }
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     // 监听注册区域
     LaunchedEffect(Unit) {
         loginErrorChannel.collect {
             vm.accountLoginStateError()
         }
     }
+    // 监听Toast事件
+    handleToastEvent(snackbarHostState)
 
     // 页面注册区域
     Box(
@@ -147,6 +159,14 @@ private fun MainScaffold() {
             }
         }
         Konfetti(konfettiState)
+
+        // Snackbar 提示
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = bottomNavHeight)
+        )
     }
 
     /**
@@ -158,6 +178,34 @@ private fun MainScaffold() {
             showPrivacyPolicyRefuseTip = false
         }
     )
+}
+
+/**
+ * 处理Toast事件
+ */
+@Composable
+private fun handleToastEvent(
+    snackbarHostState: SnackbarHostState,
+) {
+    LaunchedEffect(Unit) {
+        toastEventFlow.collect { event ->
+            val result = when (event) {
+                is ToastEvent.ActionToastEvent -> snackbarHostState
+                    .showSnackbar(
+                        message = event.message,
+                        actionLabel = event.actionLabel,
+                        duration = event.duration
+                    )
+
+                is ToastEvent.NormalToastEvent -> snackbarHostState
+                    .showSnackbar(
+                        message = event.message,
+                        duration = event.duration
+                    )
+            }
+            event.onResult.invoke(result)
+        }
+    }
 }
 
 

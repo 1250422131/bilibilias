@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.common.utils.StorageInfoData
 import com.imcys.bilibilias.common.utils.StorageUtil
 import com.imcys.bilibilias.ui.utils.rememberWidthSizeClass
@@ -214,7 +215,7 @@ fun StorageManagementSuccessScreen(
                 try {
                     context.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "未找到文件管理器", Toast.LENGTH_SHORT).show()
+                    sendToastEventOnBlocking("未找到文件管理器")
                 }
             },
         )

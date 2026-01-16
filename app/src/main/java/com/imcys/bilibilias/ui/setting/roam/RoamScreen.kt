@@ -57,6 +57,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.imcys.bilibilias.BuildConfig
+import com.imcys.bilibilias.common.event.sendToastEvent
 import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.utils.switchHapticFeedback
@@ -282,19 +283,15 @@ private fun RoamApplyContainer(
                 scope.launch(Dispatchers.IO) {
                     isLoading = true
                     val result = vm.applyRoam(applyRoamContent)
-                    launch(Dispatchers.Main) {
-                        if (result.isFailure) {
-                            Toast.makeText(
-                                context,
-                                "网络异常，请稍后重试",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        result.getOrNull()?.let { bean ->
-                            Toast.makeText(context, bean.msg, Toast.LENGTH_SHORT).show()
-                        }
-                        vm.loadRoamUIState()
+
+                    if (result.isFailure) {
+                        sendToastEvent("网络异常，请稍后重试")
                     }
+                    result.getOrNull()?.let { bean ->
+                        sendToastEvent(bean.msg)
+                    }
+                    vm.loadRoamUIState()
+
                     isLoading = false
                 }
             },

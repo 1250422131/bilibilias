@@ -97,6 +97,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
@@ -1476,7 +1477,7 @@ private fun WritePermissionRequestTipDialog(
         if (allGranted) {
             onRequest()
         } else {
-            Toast.makeText(context, "权限未被授予", Toast.LENGTH_SHORT).show()
+            sendToastEventOnBlocking("权限未被授予")
         }
     }
     PermissionRequestTipDialog(

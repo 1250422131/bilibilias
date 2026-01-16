@@ -1,11 +1,11 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.event.AnalysisEvent
 import com.imcys.bilibilias.common.event.sendAnalysisEvent
+import com.imcys.bilibilias.common.event.sendToastEvent
 import com.imcys.bilibilias.common.utils.AsRegexUtil
 import com.imcys.bilibilias.common.utils.FirebaseExt
 import com.imcys.bilibilias.common.utils.TextType
@@ -20,7 +20,6 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
-import com.imcys.bilibilias.download.DownloadManager
 import com.imcys.bilibilias.download.NewDownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
@@ -143,7 +142,7 @@ class AnalysisViewModel(
         saveDirName: String
     ) = withContext(Dispatchers.IO) {
         if (imageUrl.isNullOrEmpty()) {
-            Toast.makeText(context, "图片链接不能为空", Toast.LENGTH_SHORT).show()
+            sendToastEvent("图片链接不能为空")
             return@withContext
         }
         val type = imageUrl.substringAfterLast(".")
@@ -154,9 +153,7 @@ class AnalysisViewModel(
                 else -> "${System.currentTimeMillis()}.${type}"
             }, saveDirName
         )
-        launch(Dispatchers.Main) {
-            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
-        }
+        sendToastEvent("保存成功")
     }
 
     /**
@@ -497,10 +494,15 @@ class AnalysisViewModel(
 //                    return@launch
 //                }
 
-                downloadManager.addDownloadTask(
-                    uiState.value.asLinkResultType!!,
-                    uiState.value.downloadInfo!!
-                )
+                try {
+                    downloadManager.addDownloadTask(
+                        uiState.value.asLinkResultType!!,
+                        uiState.value.downloadInfo!!
+                    )
+                    sendToastEvent("已添加到下载队列")
+                } catch (e: Exception) {
+                    sendToastEvent("添加下载任务失败：${e.message}")
+                }
             }
             _uiState.value = _uiState.value.copy(isCreateDownloadLoading = false)
         }

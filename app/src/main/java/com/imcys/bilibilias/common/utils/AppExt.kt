@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.common.data.CommonBuildConfig
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.NetWorkResult
@@ -31,7 +32,7 @@ fun String.copyText(context: Context, title: String) {
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText(title, this)
     clipboard.setPrimaryClip(clip)
-    Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+    sendToastEventOnBlocking("已复制到剪贴板")
 }
 
 suspend fun <T> autoRequestRetry(

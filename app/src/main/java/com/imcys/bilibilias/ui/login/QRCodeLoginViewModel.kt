@@ -43,6 +43,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.core.graphics.createBitmap
+import com.imcys.bilibilias.common.event.sendToastEvent
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.toDataStoreType
 import com.imcys.bilibilias.datastore.AppSettings
@@ -204,7 +206,7 @@ class QRCodeLoginViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val imageUrl = qrCodeInfoState.value.data?.url
             if (imageUrl == null) {
-                Toast.makeText(context, "下载失败，请刷新QR查看", Toast.LENGTH_SHORT).show()
+                sendToastEvent("下载失败，请刷新QR查看")
                 return@launch
             }
             runCatching {
@@ -225,7 +227,7 @@ class QRCodeLoginViewModel(
             }.onSuccess {
                 saveImageWithMediaStore(it, context)
             }.onFailure {
-                Toast.makeText(context, "下载失败，请重新尝试。", Toast.LENGTH_SHORT).show()
+               sendToastEvent("下载失败，请重新尝试。")
             }
         }
     }
@@ -273,7 +275,7 @@ class QRCodeLoginViewModel(
                 null
             }
         }
-        Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
+        sendToastEventOnBlocking("保存成功")
     }
 
     fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {
@@ -308,11 +310,7 @@ class QRCodeLoginViewModel(
                 context.startActivity(it)
             }
         }.onFailure {
-            Toast.makeText(
-                context,
-                "你还没有安装哔哩哔哩哦~",
-                Toast.LENGTH_SHORT,
-            ).show()
+            sendToastEventOnBlocking("你还没有安装哔哩哔哩哦~")
         }
 
     }

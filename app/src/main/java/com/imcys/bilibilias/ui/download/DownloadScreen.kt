@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.sendToastEvent
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.download.navigation.DownloadRoute
@@ -92,7 +94,7 @@ fun DownloadScreen(route: DownloadRoute, onToBack: () -> Unit) {
         vm.uiEvent.collect { event ->
             when (event) {
                 is DownloadUiEvent.ShowToast -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    sendToastEvent(event.message)
                 }
 
                 is DownloadUiEvent.OpenFile -> {
@@ -229,7 +231,7 @@ private fun openFile(context: Context, segment: DownloadSegment) {
         }.getOrNull()
 
         if (fileUri == null) {
-            Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT).show()
+            sendToastEventOnBlocking("无法打开此文件，可能没有合适的应用")
             return
         }
         fileUri to (context.contentResolver.getType(fileUri) ?: "")
@@ -244,7 +246,7 @@ private fun openFile(context: Context, segment: DownloadSegment) {
     runCatching {
         context.startActivity(intent)
     }.onFailure {
-        Toast.makeText(context, "无法打开此文件，可能没有合适的应用", Toast.LENGTH_SHORT).show()
+        sendToastEventOnBlocking("无法打开此文件，可能没有合适的应用")
     }
 }
 // endregion

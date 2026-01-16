@@ -99,7 +99,6 @@ import org.koin.androidx.compose.koinViewModel
 
 /**
  * BILIBILAIS导航显示组件
- * 计划迁移到Compose Navigation 3.0
  */
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable

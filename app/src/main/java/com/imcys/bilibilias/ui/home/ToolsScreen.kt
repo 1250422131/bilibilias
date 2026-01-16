@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.sendToastEvent
 import com.imcys.bilibilias.common.utils.ASConstant.QQ_CHANNEL_URL
 import com.imcys.bilibilias.common.utils.ASConstant.QQ_GROUP_URL
 import com.imcys.bilibilias.common.utils.DeviceInfoUtils
@@ -237,7 +238,7 @@ fun FeedbackDialog(showFeedbackDialog: Boolean, onDismiss: () -> Unit) {
                                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 val clip = ClipData.newPlainText("版本信息", copyText)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                             sendToastEvent("已复制到剪贴板")
                             }
                         }) {
                             Icon(Icons.Outlined.CopyAll, contentDescription = "复制按钮")

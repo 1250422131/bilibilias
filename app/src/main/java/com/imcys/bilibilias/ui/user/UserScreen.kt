@@ -69,6 +69,8 @@ import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.AnalysisEvent
 import com.imcys.bilibilias.common.event.sendAnalysisEvent
+import com.imcys.bilibilias.common.event.sendToastEvent
+import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.common.utils.NumberUtils
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
@@ -280,10 +282,9 @@ fun FreezeAllVideosDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMode
                     launch(Dispatchers.Main) {
                         if (data?.code == 0) {
                             onDismiss.invoke()
-                            Toast.makeText(context, "冻结成功", Toast.LENGTH_SHORT).show()
+                            sendToastEvent("冻结成功")
                         } else {
-                            Toast.makeText(context, "冻结失败：${data?.msg}", Toast.LENGTH_SHORT)
-                                .show()
+                            sendToastEvent( "冻结失败：${data?.msg}")
                         }
                     }
 
@@ -346,14 +347,14 @@ fun FreezeSingleVideoDialog(show: Boolean, onDismiss: () -> Unit, vm: UserViewMo
                         launch(Dispatchers.Main) {
                             if (data?.code == 0) {
                                 onDismiss.invoke()
-                                Toast.makeText(context, "冻结成功", Toast.LENGTH_SHORT).show()
+                                sendToastEvent("冻结成功")
                             } else {
-                                Toast.makeText(context, "冻结失败", Toast.LENGTH_SHORT).show()
+                                sendToastEvent("冻结失败")
                             }
                         }
                     }
                 } else {
-                    Toast.makeText(context, "请输入BV号", Toast.LENGTH_SHORT).show()
+                    sendToastEventOnBlocking("请输入BV号")
                 }
             }) { Text("确定") }
         },
