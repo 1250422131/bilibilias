@@ -4,11 +4,12 @@ import com.imcys.bilibilias.common.utils.autoRequestRetry
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
+import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
+import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
 import com.imcys.bilibilias.network.ApiStatus
-import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -16,6 +17,8 @@ import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerSynthesize
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
+import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
+import com.imcys.bilibilias.network.model.video.convertVideoQualityIdValue
 import kotlinx.serialization.json.Json
 
 /**
@@ -103,29 +106,46 @@ class VideoInfoFetcher(
     /**
      * 从视频数据中获取下载URL
      */
-    fun getDownloadUrl(
+    suspend fun getDownloadUrl(
         videoData: Any,
         subTaskType: DownloadSubTaskType,
-        downloadViewInfo: DownloadViewInfo
+        downloadViewInfo: DownloadViewInfo,
+        onQuality: suspend ( String)-> Unit = { _ -> },
     ): String? {
+
         return when (videoData) {
             is BILIVideoDash -> {
                 when (subTaskType) {
-                    DownloadSubTaskType.VIDEO -> selectVideoQuality(
-                        videoData.video,
-                        downloadViewInfo
-                    ).finalUrl
+                    DownloadSubTaskType.VIDEO -> {
+                        val video =  selectVideoQuality(
+                            videoData.video,
+                            downloadViewInfo
+                        )
+                        if (downloadViewInfo.downloadMode != DownloadMode.AUDIO_ONLY) {
+                            onQuality(convertVideoQualityIdValue(video.id))
+                        }
+                        video.finalUrl
+                    }
 
-                    DownloadSubTaskType.AUDIO -> selectAudioQuality(
-                        videoData,
-                        downloadViewInfo
-                    ).finalUrl
+                    DownloadSubTaskType.AUDIO -> {
+                        val audio = selectAudioQuality(
+                            videoData,
+                            downloadViewInfo
+                        )
+                        if (downloadViewInfo.downloadMode == DownloadMode.AUDIO_ONLY) {
+                            onQuality(convertAudioQualityIdValue(audio.id))
+                        }
+                        audio.finalUrl
+                    }
                 }
             }
 
             is BILIVideoDurl -> {
                 when (subTaskType) {
-                    DownloadSubTaskType.VIDEO -> videoData.url
+                    DownloadSubTaskType.VIDEO -> {
+                        onQuality(convertVideoQualityIdValue(downloadViewInfo.selectVideoQualityId ?: 0L))
+                        videoData.url
+                    }
                     DownloadSubTaskType.AUDIO -> null
                 }
             }

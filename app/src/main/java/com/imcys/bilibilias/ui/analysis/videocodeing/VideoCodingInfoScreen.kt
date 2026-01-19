@@ -85,7 +85,7 @@ fun VideoCodingInfoScreen(onToBack: () -> Unit = {}) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     VideoCodingInfoScaffold(
         scrollBehavior = scrollBehavior,
-        onToBack = {}
+        onToBack = onToBack
     ) { paddingValues ->
         androidx.compose.foundation.lazy.LazyColumn(
             modifier = Modifier

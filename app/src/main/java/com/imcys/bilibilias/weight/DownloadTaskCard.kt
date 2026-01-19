@@ -296,7 +296,7 @@ fun DownloadFinishTaskCard(
 
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Surface(
                         shape = RoundedCornerShape(percent = 50),
@@ -312,6 +312,37 @@ fun DownloadFinishTaskCard(
                             fontWeight = FontWeight.W400,
                         )
                     }
+
+                    Surface(
+                        shape = RoundedCornerShape(percent = 50),
+                        color = MaterialTheme.colorScheme.primary,
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 0.dp
+                            ),
+                            text = downloadSegment.qualityDescription ?: "未知画质",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.W400,
+                        )
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(percent = 50),
+                        color = MaterialTheme.colorScheme.primary,
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 0.dp
+                            ),
+                            text = downloadSegment.mediaContainer.extension,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.W400,
+                        )
+                    }
+
                 }
             }
 

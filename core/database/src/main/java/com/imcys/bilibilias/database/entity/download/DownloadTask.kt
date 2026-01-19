@@ -14,6 +14,7 @@ import com.imcys.bilibilias.database.converter.download.DownloadStageConverter
 import com.imcys.bilibilias.database.converter.download.DownloadStateConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskNodeTypeConverter
 import com.imcys.bilibilias.database.converter.download.DownloadTaskTypeConverter
+import com.imcys.bilibilias.database.converter.download.MediaContainerConverter
 import com.imcys.bilibilias.database.converter.download.NamingConventionConverter
 import java.util.Date
 
@@ -128,7 +129,7 @@ data class DownloadTaskNode(
 @TypeConverters(
     DownloadModeConverter::class, DateConverter::class,
     DownloadStateConverter::class, DownloadStageConverter::class,
-    NamingConventionConverter::class
+    NamingConventionConverter::class, MediaContainerConverter::class
 )
 data class DownloadSegment(
     @PrimaryKey(autoGenerate = true)
@@ -162,6 +163,13 @@ data class DownloadSegment(
 
     @ColumnInfo(name = "download_mode")
     val downloadMode: DownloadMode,
+
+    @ColumnInfo(name = "media_container")
+    val mediaContainer: MediaContainer,
+
+    // 质量描述
+    @ColumnInfo(name = "quality_description")
+    val qualityDescription: String? = null,
 
     @ColumnInfo(name = "save_path")
     val savePath: String,

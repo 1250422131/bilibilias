@@ -212,7 +212,10 @@ fun convertAudioQualityIdValue(id: Long): String =
         30232L to "132K",
         30280L to "192K",
         30250L to "杜比全景声",
-        30251L to "Hi-Res无损"
+        30251L to "Hi-Res无损",
+        30257L to "64K",
+        30259L to "132K",
+        30260L to "192K"
     )[id] ?: id.toString()
 
 
@@ -230,5 +233,6 @@ fun convertVideoQualityIdValue(id: Long): String =
         120L to "4K 超清",
         125L to "HDR 真彩色",
         126L to "杜比视界",
-        127L to "8K 超高清"
+        127L to "8K 超高清",
+        129L to "HDR Vivid"
     )[id] ?: id.toString()

@@ -5,7 +5,9 @@ import android.util.Log
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFprobeKit
 import com.arthenica.ffmpegkit.ReturnCode
+import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
+import com.imcys.bilibilias.data.model.download.MediaContainerConfig
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import kotlinx.coroutines.CancellationException
@@ -32,14 +34,16 @@ class FfmpegMerger(
         subtitles: List<LocalSubtitle> = emptyList(),
         coverPath: String = "",
         duration: Long? = null,
-        onProgress: (Float) -> Unit
+        onProgress: (Float) -> Unit,
+        mediaContainerConfig: MediaContainerConfig
     ) {
         val command = buildFfmpegCommand(
             subTasks,
             downloadMode,
             outputFile,
             subtitles,
-            coverPath
+            coverPath,
+            mediaContainerConfig,
         )
 
         val actualDuration = duration ?: getMediaDuration(subTasks.firstOrNull()?.savePath)
@@ -149,7 +153,8 @@ class FfmpegMerger(
         downloadMode: DownloadMode,
         outputFile: File,
         subtitles: List<LocalSubtitle>,
-        coverPath: String
+        coverPath: String,
+        mediaContainerConfig: MediaContainerConfig
     ): String {
         val mediaInputs = subTasks.map { it.savePath }
         val videoFileCount = subTasks.count { it.subTaskType == DownloadSubTaskType.VIDEO }
@@ -215,7 +220,11 @@ class FfmpegMerger(
             // 字幕元数据
             if (subtitles.isNotEmpty() && videoEnabled) {
                 add("-c:s")
-                add("mov_text")
+                if (mediaContainerConfig.videoContainer != MediaContainer.MKV){
+                    add("mov_text")
+                } else {
+                    add("copy")
+                }
                 subtitles.forEachIndexed { sIdx, subtitle ->
                     add("-metadata:s:s:$sIdx")
                     add("language=${subtitle.lang}")
@@ -235,7 +244,7 @@ class FfmpegMerger(
                 add("title=Cover")
             }
 
-            if (!videoEnabled){
+            if (audioEnabled && mediaContainerConfig.audioContainer == MediaContainer.MP3) {
                 addAll(listOf("-codec:a", "libmp3lame", "-q:a","2"))
             }
 

@@ -2,15 +2,12 @@ package com.imcys.bilibilias.data.model.download
 
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
-import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
-import com.imcys.bilibilias.network.model.video.BILIVideoLanguage
 import com.imcys.bilibilias.network.model.video.BILIVideoLanguageItem
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfoV2
-import java.util.Locale
 import java.util.Locale.getDefault
-import java.util.TreeSet
 
 
 enum class CCFileType {
@@ -18,7 +15,14 @@ enum class CCFileType {
     SRT,
 }
 
+
 fun CCFileType.lowercase() = name.lowercase(getDefault())
+
+
+data class MediaContainerConfig(
+    val audioContainer: MediaContainer = MediaContainer.M4A,
+    val videoContainer: MediaContainer = MediaContainer.MP4,
+)
 
 data class DownloadViewInfo(
     val selectVideoQualityId: Long? = null,
@@ -27,18 +31,18 @@ data class DownloadViewInfo(
     val downloadMode: DownloadMode = DownloadMode.AUDIO_VIDEO,
     val selectedCid: List<Long> = listOf(),
     val selectedEpId: List<Long> = listOf(),
-    val downloadMedia : Boolean = true,
+    val downloadMedia: Boolean = true,
     val downloadCover: Boolean = false,
     val downloadDanmaku: Boolean = false,
-    val downloadCC : Boolean = false,
-    val embedCover   : Boolean = false,
-    val embedDanmaku : Boolean = false,
-    val embedCC      : Boolean = false,
+    val downloadCC: Boolean = false,
+    val embedCover: Boolean = false,
+    val embedDanmaku: Boolean = false,
+    val embedCC: Boolean = false,
     val selectAudioLanguage: BILIVideoLanguageItem? = null,
     val ccFileType: CCFileType = CCFileType.SRT, // 字幕文件类型
+    val mediaContainerConfig: MediaContainerConfig = MediaContainerConfig(),
     val videoPlayerInfoV2: NetWorkResult<BILIVideoPlayerInfoV2?> = emptyNetWorkResult()
 ) {
-
 
     // 清空cid列表
     fun clearCidList(): DownloadViewInfo = copy(
@@ -67,9 +71,6 @@ data class DownloadViewInfo(
     )
 
 
-
-
-
     fun updateCCFileType(fileType: CCFileType): DownloadViewInfo = copy(
         ccFileType = fileType
     )
@@ -83,6 +84,18 @@ data class DownloadViewInfo(
         selectAudioQualityId = qualityId
     )
 
+    fun updateAudioContainer(mediaContainer: MediaContainer) = copy(
+        mediaContainerConfig = mediaContainerConfig.copy(
+            audioContainer = mediaContainer
+        )
+    )
+
+    fun updateVideoContainer(mediaContainer: MediaContainer) = copy(
+        mediaContainerConfig = mediaContainerConfig.copy(
+            videoContainer = mediaContainer
+        )
+    )
+
     /**
      * 根据媒体类型智能更新配置，确保只保留相关选中项
      */
@@ -91,13 +104,15 @@ data class DownloadViewInfo(
         qualityId: Long?,
         code: String,
         audioQualityId: Long?,
+        mediaContainerConfig: MediaContainerConfig,
         defaultCid: Long? = null,
-        defaultEpId: Long? = null
+        defaultEpId: Long? = null,
     ): DownloadViewInfo = when (mediaType) {
         is ASLinkResultType.BILI.Video -> copy(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
+            mediaContainerConfig = mediaContainerConfig,
             // 防止重复添加和 0L 添加
             selectedCid = (if (defaultCid != null && !selectedCid.contains(defaultCid)) selectedCid + defaultCid else selectedCid).filter { it != 0L },
             selectedEpId = emptyList() // 清空番剧选择
@@ -107,6 +122,7 @@ data class DownloadViewInfo(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
+            mediaContainerConfig = mediaContainerConfig,
             // 防止重复添加和 0L 添加
             selectedEpId = (if (defaultEpId != null && !selectedEpId.contains(defaultEpId)) selectedEpId + defaultEpId else selectedEpId).filter { it != 0L },
             selectedCid = emptyList() // 清空视频选择

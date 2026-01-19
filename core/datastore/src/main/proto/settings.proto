@@ -95,4 +95,8 @@ message AppSettings {
     DownloadSort_SizeAsc = 5;   // 文件大小升序
   }
 
+  string use_video_container = 18;
+  string use_audio_container = 19;
+
+
 }

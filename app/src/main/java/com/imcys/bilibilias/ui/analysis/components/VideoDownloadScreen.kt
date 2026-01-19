@@ -58,6 +58,7 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASCommonExposedDropdownMenu
 import com.imcys.bilibilias.weight.ASCommonSelectGrid
 import com.imcys.bilibilias.weight.ASEpisodeSelection
 import com.imcys.bilibilias.weight.ASEpisodeTitle
@@ -256,11 +257,14 @@ fun VideoDownloadScreen(
                             .animateContentSize()
                             .shimmer(viewInfo.status != ApiStatus.SUCCESS)
                     ) {
-                        ASEpisodeTitle("选择缓存子集",
+                        ASEpisodeTitle(
+                            "选择缓存子集",
                             isSelectSingleModel = isSelectSingleModel,
-                            episodeListMode =  episodeListMode, onSelectAllClick = {
-                                onUpdateSelectCidList(viewInfo.data?.pages?.map { it.cid } ?: emptyList())
-                        }, onUpdateEpisodeListMode)
+                            episodeListMode = episodeListMode, onSelectAllClick = {
+                                onUpdateSelectCidList(viewInfo.data?.pages?.map { it.cid }
+                                    ?: emptyList())
+                            }, onUpdateEpisodeListMode
+                        )
                         VideoPageScreen(
                             viewInfo,
                             downloadInfo,
@@ -351,7 +355,7 @@ fun InteractiveVideoPageScreen(
         ASEpisodeTitle(
             stringResource(R.string.analysis_select_interactive_video),
             episodeListMode = episodeListMode,
-            isSelectSingleModel= isSelectSingleModel,
+            isSelectSingleModel = isSelectSingleModel,
             onUpdateEpisodeListMode = onUpdateEpisodeListMode,
             onSelectAllClick = {
                 onUpdateSelectCidList(steinEdgeInfo?.storyList?.map { it.cid } ?: emptyList())
@@ -420,8 +424,6 @@ fun UgcSeasonPageScreen(
     onUpdateSelectedCid: UpdateSelectedCid,
 ) {
 
-    var videoEpisodeExpanded by remember { mutableStateOf(false) }
-
     val epVideoList = (viewInfo.data?.ugcSeason?.sections?.firstOrNull {
         it.id == selectSectionId
     }?.episodes ?: emptyList()).filterWithMultiplePages()
@@ -429,77 +431,31 @@ fun UgcSeasonPageScreen(
     // 合计内章节子集分P视频
     epVideoList.takeIf { it.isNotEmpty() }?.let { episodes ->
 
-        ExposedDropdownMenuBox(
-            expanded = videoEpisodeExpanded,
-            onExpandedChange = {
-                videoEpisodeExpanded = it
+        ASCommonExposedDropdownMenu(
+            text = episodes.firstOrNull { it.id == selectEpisodeId }?.title
+                ?: "",
+            label = stringResource(R.string.analysis_select_part_video),
+            values = episodes,
+            onValue = { it.title },
+            onSelect = {
+                onSelectEpisodeId.invoke(it.id)
+            },
+            onItemModifier = {
+                Modifier.background(
+                    if (it.pages.any { page ->
+                            page.cid in (downloadInfo?.selectedCid
+                                ?: emptyList())
+                        }) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        Color.Transparent
+                    }
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp),
-        ) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp
-                ),
-                value = episodes.firstOrNull { it.id == selectEpisodeId }?.title
-                    ?: "",
-                onValueChange = {},
-                readOnly = true,
-                singleLine = false,
-                label = {
-                    Text(
-                        stringResource(R.string.analysis_select_part_video),
-                        fontSize = 12.sp
-                    )
-                },
-                trailingIcon = { TrailingIcon(expanded = videoEpisodeExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                shape = CardDefaults.shape
-            )
-
-            ExposedDropdownMenu(
-                expanded = videoEpisodeExpanded,
-                onDismissRequest = { videoEpisodeExpanded = false },
-                shape = CardDefaults.shape
-            ) {
-                episodes.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                it.title,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        onClick = {
-                            videoEpisodeExpanded = false
-                            onSelectEpisodeId.invoke(it.id)
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        modifier = Modifier.background(
-                            if (it.pages.any { page ->
-                                    page.cid in (downloadInfo?.selectedCid
-                                        ?: emptyList())
-                                }) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                Color.Transparent
-                            }
-                        )
-                    )
-                }
-            }
-        }
-
+                .padding(vertical = 10.dp)
+        )
 
         val episodeList = episodes.firstOrNull { selectEpisodeId == it.id }?.pages ?: emptyList()
         ASEpisodeSelection(

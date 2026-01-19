@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -53,24 +52,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -100,10 +92,13 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.sendToastEventOnBlocking
 import com.imcys.bilibilias.common.utils.copyText
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.database.entity.download.audioContainer
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.database.entity.download.videoContainer
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettingsSerializer
 import com.imcys.bilibilias.network.ApiStatus
@@ -135,11 +130,13 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.ASErrorTip
 import com.imcys.bilibilias.ui.weight.tip.ASWarringTip
+import com.imcys.bilibilias.weight.ASCommonExposedDropdownMenu
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
 import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import kotlinx.coroutines.launch
-import kotlin.text.ifEmpty
+
+private typealias SendIntent = (AnalysisIntent) -> Unit
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -521,9 +518,20 @@ private fun AdvancedSetting(
     updateEmbedCover: (Boolean) -> Unit,
     updateEmbedCC: (Boolean) -> Unit,
     updateEmbedDanmaku: (Boolean) -> Unit,
+    sendIntent: SendIntent
 ) {
+
     var downloadModeExpanded by rememberSaveable { mutableStateOf(false) }
     var selectDownloadMode by rememberSaveable { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
+
+    val downloadModeList by remember(dash) {
+        mutableStateOf(DownloadMode.entries.filter {
+            // 如果没有音频资源，则不显示音视频分离选项
+            if (dash?.audio.isNullOrEmpty() && (it == DownloadMode.AUDIO_VIDEO || it == DownloadMode.AUDIO_ONLY)) {
+                false
+            } else true
+        })
+    }
 
     LaunchedEffect(dash?.audio) {
         if (dash != null && dash.audio.isEmpty()) {
@@ -547,71 +555,47 @@ private fun AdvancedSetting(
             ) {
                 Text(stringResource(R.string.analysis_cache_config))
                 Column {
-                    ExposedDropdownMenuBox(
-                        expanded = downloadModeExpanded,
-                        onExpandedChange = {
-                            downloadModeExpanded = it
-                        },
+                    ASCommonExposedDropdownMenu(
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth(),
-                            textStyle = LocalTextStyle.current.copy(
-                                fontSize = 12.sp
-                            ),
-                            value = selectDownloadMode.title,
-                            onValueChange = {
-
-                            },
-                            readOnly = true,
-                            singleLine = false,
-                            label = {
-                                Text(
-                                    stringResource(R.string.analysis_select_cache_mode),
-                                    fontSize = 12.sp
-                                )
-                            },
-                            trailingIcon = { TrailingIcon(expanded = downloadModeExpanded) },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                focusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            ),
-                            shape = CardDefaults.shape
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = downloadModeExpanded,
-                            onDismissRequest = { downloadModeExpanded = false },
-                            shape = CardDefaults.shape,
-                        ) {
-                            DownloadMode.entries.filter {
-                                // 如果没有音频资源，则不显示音视频分离选项
-                                if (dash?.audio.isNullOrEmpty() && (it == DownloadMode.AUDIO_VIDEO || it == DownloadMode.AUDIO_ONLY)) {
-                                    false
-                                } else true
-                            }.forEach {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            it.title,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    },
-                                    onClick = {
-                                        downloadModeExpanded = false
-                                        selectDownloadMode = it
-                                        onSelectDownloadMode(it)
-                                    },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                )
-                            }
+                        values = downloadModeList,
+                        onValue = { it.title },
+                        label = stringResource(R.string.analysis_select_cache_mode),
+                        text = selectDownloadMode.title,
+                        onSelect = {
+                            selectDownloadMode = it
+                            onSelectDownloadMode(it)
+                        }
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        if (selectDownloadMode != DownloadMode.AUDIO_ONLY){
+                            ASCommonExposedDropdownMenu(
+                                modifier = Modifier.weight(1f),
+                                values = videoContainer,
+                                onValue = { it.extension },
+                                label = "视频封装格式",
+                                text = downloadInfo?.mediaContainerConfig?.videoContainer?.extension
+                                    ?: MediaContainer.M4A.extension,
+                                onSelect = {
+                                    sendIntent(AnalysisIntent.UpdateVideoContainer(it))
+                                }
+                            )
                         }
 
+                        if (selectDownloadMode != DownloadMode.VIDEO_ONLY){
+                            ASCommonExposedDropdownMenu(
+                                modifier = Modifier
+                                    .weight(1f),
+                                values = audioContainer,
+                                onValue = { it.extension },
+                                label = "音频封装格式",
+                                text = downloadInfo?.mediaContainerConfig?.audioContainer?.extension
+                                    ?: MediaContainer.M4A.extension,
+                                onSelect = {
+                                    sendIntent(AnalysisIntent.UpdateAudioContainer(it))
+                                }
+                            )
+                        }
                     }
                     Spacer(Modifier.height(4.dp))
                     ASWarringTip {
@@ -797,7 +781,7 @@ private fun ExtraCache(
                 }
             },
             onClick = {
-                onSelectCCId(!selectACCDownload,downloadInfo?.ccFileType ?: CCFileType.SRT)
+                onSelectCCId(!selectACCDownload, downloadInfo?.ccFileType ?: CCFileType.SRT)
             },
         )
 
@@ -836,69 +820,19 @@ fun SelectACCCard(
     onSelectCCId: (Boolean, CCFileType) -> Unit = { _, _ -> },
 ) {
     var selectType by rememberSaveable { mutableStateOf(CCFileType.SRT) }
-    var ccFileTypeExpanded by rememberSaveable { mutableStateOf(false) }
-
     Column {
-        ExposedDropdownMenuBox(
-            expanded = ccFileTypeExpanded,
-            onExpandedChange = {
-                ccFileTypeExpanded = it
+        ASCommonExposedDropdownMenu(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = selectType.name,
+            values = CCFileType.entries,
+            label = stringResource(R.string.analysis_select_subtitle_type),
+            onSelect = {
+                selectType = it
                 onSelectCCId(true, selectType)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp
-                ),
-                value = selectType.name,
-                onValueChange = {},
-                readOnly = true,
-                singleLine = false,
-                label = {
-                    Text(
-                        stringResource(R.string.analysis_select_subtitle_type),
-                        fontSize = 12.sp
-                    )
-                },
-                trailingIcon = { TrailingIcon(expanded = ccFileTypeExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                shape = CardDefaults.shape
-            )
-
-            ExposedDropdownMenu(
-                expanded = ccFileTypeExpanded,
-                onDismissRequest = { ccFileTypeExpanded = false },
-                shape = CardDefaults.shape
-            ) {
-                CCFileType.entries.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                it.name,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        onClick = {
-                            ccFileTypeExpanded = false
-                            selectType = it
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    )
-                }
-            }
-
-        }
+            onValue = { it.name }
+        )
     }
 }
 
@@ -1672,7 +1606,8 @@ private fun AnalysisDownloadConfigContent(
                 onSelectDownloadMode = viewModel::updateDownloadMode,
                 updateEmbedCC = viewModel::updateEmbedCC,
                 updateEmbedCover = viewModel::updateEmbedCover,
-                updateEmbedDanmaku = viewModel::updateEmbedDanmaku
+                updateEmbedDanmaku = viewModel::updateEmbedDanmaku,
+                sendIntent = viewModel::sendUIIntent
             )
         }
 
@@ -1698,7 +1633,8 @@ private fun AnalysisDownloadConfigContent(
                 onSelectDownloadMode = viewModel::updateDownloadMode,
                 updateEmbedCC = viewModel::updateEmbedCC,
                 updateEmbedCover = viewModel::updateEmbedCover,
-                updateEmbedDanmaku = viewModel::updateEmbedDanmaku
+                updateEmbedDanmaku = viewModel::updateEmbedDanmaku,
+                sendIntent = viewModel::sendUIIntent
             )
         }
 

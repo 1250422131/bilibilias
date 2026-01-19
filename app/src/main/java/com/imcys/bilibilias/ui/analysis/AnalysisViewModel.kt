@@ -12,12 +12,14 @@ import com.imcys.bilibilias.common.utils.TextType
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.CCFileType
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.data.model.download.MediaContainerConfig
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.database.entity.download.DownloadMode
+import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.download.NewDownloadManager
@@ -37,10 +39,12 @@ import com.imcys.bilibilias.network.model.video.SelectEpisodeType
 import com.imcys.bilibilias.network.service.AppAPIService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -59,6 +63,8 @@ class AnalysisViewModel(
 
     private val _uiState = MutableStateFlow(AnalysisUIState())
     val uiState = _uiState.asStateFlow()
+
+    private val uiIntent = MutableSharedFlow<AnalysisIntent>()
 
     val appSettings = appSettingsRepository.appSettingsFlow
 
@@ -103,7 +109,6 @@ class AnalysisViewModel(
                         }
                     }
                 }
-
             }
         }
 
@@ -122,11 +127,55 @@ class AnalysisViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            appSettings.collect {
-                _uiState.update { it.copy(episodeListMode = it.episodeListMode) }
+            appSettings.collect { appSetting->
+                _uiState.update {
+                    it.copy(
+                        episodeListMode = it.episodeListMode,
+                        downloadInfo = _uiState.value.downloadInfo?.updateVideoContainer(
+                            mediaContainer = appSettingsRepository.storeMediaContainerFromExtension(appSetting.useVideoContainer)
+                        )?.updateAudioContainer(
+                            mediaContainer = appSettingsRepository.storeMediaContainerFromExtension(appSetting.useAudioContainer)
+                        )
+                    )
+
+                }
             }
         }
 
+        viewModelScope.launch(Dispatchers.IO) {
+            uiIntent.collect {
+                handleIntent(it)
+            }
+        }
+
+    }
+
+    private suspend fun handleIntent(intent: AnalysisIntent) {
+        when(intent){
+            is AnalysisIntent.UpdateAudioContainer -> {
+                updateAudioContainer(intent.mediaContainer)
+            }
+
+            is AnalysisIntent.UpdateVideoContainer -> {
+                updateVideoContainer(intent.mediaContainer)
+
+            }
+        }
+    }
+
+    private suspend fun updateAudioContainer(mediaContainer: MediaContainer) {
+        appSettingsRepository.updateUseAudioContainer(mediaContainer)
+    }
+
+    private suspend fun updateVideoContainer(mediaContainer: MediaContainer) {
+        appSettingsRepository.updateUseVideoContainer(mediaContainer)
+    }
+
+
+    fun sendUIIntent(intent: AnalysisIntent) {
+        viewModelScope.launch {
+            uiIntent.emit(intent)
+        }
     }
 
     suspend fun loadBoostVideoInfo(): Result<AppOldCommonBean> {
@@ -188,7 +237,6 @@ class AnalysisViewModel(
             downloadInfo = _uiState.value.downloadInfo?.clearEpIdList()
         )
     }
-
 
 
     fun updateSelectedPlayerInfo(
@@ -374,8 +422,10 @@ class AnalysisViewModel(
 
                     _uiState.value = _uiState.value.copy(
                         asLinkResultType = ASLinkResultType.BILI.Donghua(
-                            (if (it.data?.episodes?.isEmpty() != true) (it.data?.episodes[0]?.epId ?: 0L) else
-                                if (it.data?.section?.isEmpty() != true) it.data?.section[0]?.episodes[0]?.epId ?: 0L else -1L),
+                            (if (it.data?.episodes?.isEmpty() != true) (it.data?.episodes[0]?.epId
+                                ?: 0L) else
+                                if (it.data?.section?.isEmpty() != true) it.data?.section[0]?.episodes[0]?.epId
+                                    ?: 0L else -1L),
                             it
                         )
                     )
@@ -437,18 +487,21 @@ class AnalysisViewModel(
 
                             val currentMediaType = _uiState.value.asLinkResultType
                             if (currentMediaType is ASLinkResultType.BILI.Donghua) {
+                                val mediaContainerConfig = getCurrentMediaContainerConfig()
                                 _uiState.value = _uiState.value.copy(
                                     downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
                                         mediaType = currentMediaType,
                                         qualityId = selectVideoQualityId,
                                         code = selectVideoCode,
                                         audioQualityId = selectAudioQualityId,
-                                        defaultEpId = defaultEpId
+                                        defaultEpId = defaultEpId,
+                                        mediaContainerConfig = mediaContainerConfig
                                     ) ?: DownloadViewInfo(
                                         selectVideoCode = selectVideoCode,
                                         selectVideoQualityId = selectVideoQualityId,
                                         selectAudioQualityId = selectAudioQualityId,
-                                        selectedEpId = listOf(defaultEpId).filter { ep -> ep != 0L }
+                                        selectedEpId = listOf(defaultEpId).filter { ep -> ep != 0L },
+                                        mediaContainerConfig = mediaContainerConfig
                                     )
                                 )
                             }
@@ -525,10 +578,10 @@ class AnalysisViewModel(
             // Dash模式
             val mVideoCodingList = mutableSetOf<String>()
             mSupportFormats?.forEach { format ->
-                if (format.codecs.isEmpty()){
+                if (format.codecs.isEmpty()) {
                     dashVideoList.forEach { video ->
                         val code = video.codecs.split(".")[0]
-                        if (code !in mVideoCodingList){
+                        if (code !in mVideoCodingList) {
                             mVideoCodingList.add(code)
                         }
                     }
@@ -566,8 +619,8 @@ class AnalysisViewModel(
         aid: Long? = null,
     ) {
         viewModelScope.launch {
+            val mediaContainerConfig = getCurrentMediaContainerConfig()
             videoInfoRepository.getVideoPlayerInfo(cid, bvId, aid).collect {
-
                 _videoPlayerInfo.value = it
                 if (it.status == ApiStatus.SUCCESS) {
 
@@ -593,12 +646,14 @@ class AnalysisViewModel(
                                     qualityId = selectVideoQualityId,
                                     code = selectVideoCode,
                                     audioQualityId = selectAudioQualityId,
-                                    defaultCid = cid
+                                    defaultCid = cid,
+                                    mediaContainerConfig = mediaContainerConfig
                                 ) ?: DownloadViewInfo(
                                     selectVideoCode = selectVideoCode,
                                     selectVideoQualityId = selectVideoQualityId,
                                     selectAudioQualityId = selectAudioQualityId,
                                     selectedCid = listOf(cid).filter { cid -> cid != 0L },
+                                    mediaContainerConfig = mediaContainerConfig
                                 )
                             )
                         }
@@ -787,6 +842,7 @@ class AnalysisViewModel(
             downloadInfo = _uiState.value.downloadInfo?.copy(embedCover = state)
         )
     }
+
     fun updateEmbedCC(state: Boolean) {
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(embedCC = state)
@@ -817,6 +873,14 @@ class AnalysisViewModel(
         )
     }
 
+    private suspend fun getCurrentMediaContainerConfig(): MediaContainerConfig {
+        val settings = appSettings.first()
+        return MediaContainerConfig(
+            videoContainer = appSettingsRepository.storeMediaContainerFromExtension(settings.useVideoContainer),
+            audioContainer = appSettingsRepository.storeMediaContainerFromExtension(settings.useAudioContainer)
+        )
+    }
+
     fun onUpdateSelectCidList(cidList: List<Long>) {
         // 判断cidList是不是在_uiState.value.downloadInfo.selectedCid里都有
         if (_uiState.value.downloadInfo?.selectedCid?.containsAll(cidList) == true) {
@@ -841,6 +905,7 @@ class AnalysisViewModel(
         }
 
     }
+
     fun onUpdateSelectEpIdList(epIdList: List<Long>) {
         if (_uiState.value.downloadInfo?.selectedEpId?.containsAll(epIdList) == true) {
             // 排除后更新

@@ -6,7 +6,7 @@
     <target android:name="leftTextA">
         <aapt:attr name="android:animation">
             <objectAnimator
-                android:duration="1000"
+                android:duration="500"
                 android:interpolator="@android:interpolator/fast_out_slow_in"
                 android:propertyName="fillAlpha"
                 android:startOffset="0"
@@ -19,7 +19,7 @@
     <target android:name="rightTextS">
         <aapt:attr name="android:animation">
             <objectAnimator
-                android:duration="1000"
+                android:duration="500"
                 android:interpolator="@android:interpolator/fast_out_slow_in"
                 android:propertyName="fillAlpha"
                 android:startOffset="0"

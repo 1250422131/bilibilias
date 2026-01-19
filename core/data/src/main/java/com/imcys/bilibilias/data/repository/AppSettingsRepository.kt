@@ -2,6 +2,7 @@ package com.imcys.bilibilias.data.repository
 
 import androidx.datastore.core.DataStore
 import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.copy
 import kotlinx.coroutines.flow.Flow
@@ -204,7 +205,31 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun updateUseVideoContainer(
+        videoContainer: MediaContainer
+    ) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                useVideoContainer = videoContainer.extension
+            }
+        }
+    }
+
+    suspend fun updateUseAudioContainer(
+        audioContainer: MediaContainer
+    ) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.copy {
+                useAudioContainer = audioContainer.extension
+            }
+        }
+    }
+
+    fun storeMediaContainerFromExtension(extension: String): MediaContainer {
+        return  MediaContainer.entries.first { it.extension == extension }
+    }
 }
+
 
 fun AppSettings.VideoParsePlatform.getDescription(): String = this.name
 

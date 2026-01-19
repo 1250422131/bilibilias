@@ -25,6 +25,8 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         .addAllUseToolHistory(listOf("WebParser","FrameExtractor"))
         .setEnabledClipboardAutoHandling(true)
         .setVideoParsePlatform(AppSettings.VideoParsePlatform.Web)
+        .setUseVideoContainer("mp4")
+        .setUseAudioContainer("m4a")
         .build()
 
 
@@ -53,6 +55,14 @@ object AppSettingsSerializer : Serializer<AppSettings> {
             }
             if (!parsed.hasVideoParsePlatform()){
                 builder.setVideoParsePlatform(defaultValue.videoParsePlatform)
+                modified = true
+            }
+            if (parsed.useVideoContainer.isNullOrEmpty()){
+                builder.setVideoParsePlatform(defaultValue.videoParsePlatform)
+                modified = true
+            }
+            if (parsed.useAudioContainer.isNullOrEmpty()){
+                builder.setUseAudioContainer(defaultValue.useAudioContainer)
                 modified = true
             }
             return if (modified) builder.build() else parsed

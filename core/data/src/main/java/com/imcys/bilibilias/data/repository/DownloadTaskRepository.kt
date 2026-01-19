@@ -4,12 +4,14 @@ import com.imcys.bilibilias.common.data.commonAnalyticsSafe
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.data.model.download.MediaContainerConfig
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadPlatform
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
+import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadTask
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNode
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
@@ -50,7 +52,8 @@ class DownloadTaskRepository(
                 createDonghuaDownloadTask(
                     downloadViewInfo.downloadMode,
                     asLinkResultType.currentEpId,
-                    downloadViewInfo.selectedEpId
+                    downloadViewInfo.selectedEpId,
+                    downloadViewInfo.mediaContainerConfig
                 )
             }
 
@@ -58,7 +61,8 @@ class DownloadTaskRepository(
                 createVideoDownloadTask(
                     downloadViewInfo.downloadMode,
                     asLinkResultType.currentBvId,
-                    downloadViewInfo.selectedCid
+                    downloadViewInfo.selectedCid,
+                    downloadViewInfo.mediaContainerConfig
                 )
             }
 
@@ -125,7 +129,8 @@ class DownloadTaskRepository(
     private suspend fun createDonghuaDownloadTask(
         downloadMode: DownloadMode,
         currentEpId: Long,
-        selectedEpId: List<Long>
+        selectedEpId: List<Long>,
+        mediaContainerConfig: MediaContainerConfig
     ): Result<DownloadTaskTree> = runCatching {
         val donghuaInfo = autoRequestRetry(onErrorTip = { donghuaInfo ->
             "番剧接口异常:${donghuaInfo?.errorMsg}"
@@ -144,7 +149,7 @@ class DownloadTaskRepository(
             title = data.title,
         )
         val roots =
-            buildDonghuaTree(task.taskId, data, selectedEpId, downloadMode, namingConventionInfo)
+            buildDonghuaTree(task.taskId, data, selectedEpId, downloadMode, namingConventionInfo,mediaContainerConfig)
 
 
         // 提交下载数据到后台备份
@@ -177,7 +182,8 @@ class DownloadTaskRepository(
     private suspend fun createVideoDownloadTask(
         downloadMode: DownloadMode,
         bvid: String,
-        selectedCid: List<Long>
+        selectedCid: List<Long>,
+        mediaContainerConfig: MediaContainerConfig
     ): Result<DownloadTaskTree> = runCatching {
         val videoInfo = videoInfoRepository.getVideoView(bvid).last()
         if (videoInfo.status != ApiStatus.SUCCESS) error("视频接口异常:${videoInfo.errorMsg}")
@@ -235,7 +241,8 @@ class DownloadTaskRepository(
                     data,
                     selectedCid,
                     downloadMode,
-                    namingConventionInfo
+                    namingConventionInfo,
+                    mediaContainerConfig
                 )
             }
 
@@ -246,7 +253,8 @@ class DownloadTaskRepository(
                     data,
                     selectedCid,
                     downloadMode,
-                    namingConventionInfo
+                    namingConventionInfo,
+                    mediaContainerConfig
                 )
             }
 
@@ -263,7 +271,8 @@ class DownloadTaskRepository(
                             pages,
                             downloadMode,
                             namingConventionInfo = namingConventionInfo,
-                            allPages = data.pages ?: emptyList()
+                            allPages = data.pages ?: emptyList(),
+                            mediaContainerConfig = mediaContainerConfig
                         )
                     )
                 }
@@ -316,7 +325,8 @@ class DownloadTaskRepository(
         data: BILIDonghuaSeasonInfo,
         selectedEpId: List<Long>,
         downloadMode: DownloadMode,
-        namingConventionInfo: NamingConventionInfo.Donghua
+        namingConventionInfo: NamingConventionInfo.Donghua,
+        mediaContainerConfig: MediaContainerConfig
     ): List<DownloadTreeNode> {
         val roots = mutableListOf<DownloadTreeNode>()
 
@@ -341,6 +351,7 @@ class DownloadTaskRepository(
                     downloadMode,
                     namingConventionInfo,
                     episodes,
+                    mediaContainerConfig
                 )
             }
         }
@@ -354,7 +365,8 @@ class DownloadTaskRepository(
                     section,
                     filteredEpisodes,
                     downloadMode,
-                    namingConventionInfo
+                    namingConventionInfo,
+                    mediaContainerConfig
                 )
             }
         }
@@ -363,7 +375,7 @@ class DownloadTaskRepository(
         // 3. 构建特殊的正片
         val epList = data.episodes.filter { selectedEpId.contains(it.epId) }
         if (epList.isNotEmpty()) {
-            roots += buildNoeEpisodeNode(taskId, data, epList, downloadMode, namingConventionInfo)
+            roots += buildNoeEpisodeNode(taskId, data, epList, downloadMode, namingConventionInfo,mediaContainerConfig)
         }
         return roots
     }
@@ -377,7 +389,8 @@ class DownloadTaskRepository(
         data: BILIVideoViewInfo,
         selectedCid: List<Long>,
         downloadMode: DownloadMode,
-        namingConventionInfo: NamingConventionInfo.Video
+        namingConventionInfo: NamingConventionInfo.Video,
+        mediaContainerConfig: MediaContainerConfig
     ): List<DownloadTreeNode> {
 
 
@@ -399,6 +412,7 @@ class DownloadTaskRepository(
                     downloadMode,
                     selectedCid,
                     namingConventionInfo,
+                    mediaContainerConfig
                 )
             } else null
         } ?: emptyList()
@@ -414,7 +428,8 @@ class DownloadTaskRepository(
         data: BILIVideoViewInfo,
         selectedCid: List<Long>,
         downloadMode: DownloadMode,
-        namingConventionInfo: NamingConventionInfo.Video
+        namingConventionInfo: NamingConventionInfo.Video,
+        mediaContainerConfig: MediaContainerConfig
     ): List<DownloadTreeNode> {
         val playerInfoV2 = videoInfoRepository.getVideoPlayerInfoV2(
             cid = data.pages?.firstOrNull()?.cid ?: 0,
@@ -455,7 +470,8 @@ class DownloadTaskRepository(
                     platformInfo = json.encodeToString(story),
                     duration = 0,
                     downloadMode = downloadMode,
-                    mNamingConventionInfo = mNamingConvention  // 互动视频不需要子任务
+                    mNamingConventionInfo = mNamingConvention,  // 互动视频不需要子任务
+                    mediaContainerConfig = mediaContainerConfig
                 )
 
                 nodeList.add(
@@ -484,7 +500,8 @@ class DownloadTaskRepository(
         parentNodeId: Long? = null,
         childTaskId: Long? = null,
         namingConventionInfo: NamingConventionInfo.Video,
-        allPages: List<BILIVideoViewInfo.Page>
+        allPages: List<BILIVideoViewInfo.Page>,
+        mediaContainerConfig: MediaContainerConfig,
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -508,12 +525,13 @@ class DownloadTaskRepository(
                 cover = task.cover,
                 platformId = page.cid.toString(),
                 platformUniqueId = page.cid.toString(),
-                segmentOrder = page.page.toLong(),
+                segmentOrder = page.page,
                 platformInfo = json.encodeToString(page),
                 duration = page.duration,
                 downloadMode = downloadMode,
                 childTaskId = childTaskId,
-                mNamingConventionInfo = mNamingConvention  // 普通视频不需要子任务
+                mNamingConventionInfo = mNamingConvention,  // 普通视频不需要子任务
+                mediaContainerConfig = mediaContainerConfig
             )
         }
 
@@ -530,6 +548,7 @@ class DownloadTaskRepository(
         downloadMode: DownloadMode,
         namingConventionInfo: NamingConventionInfo.Donghua,
         allEpisodes: List<BILIDonghuaSeasonInfo.Episode>,
+        mediaContainerConfig: MediaContainerConfig
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -557,7 +576,8 @@ class DownloadTaskRepository(
                 platformInfo = json.encodeToString(episode),
                 duration = episode.duration,
                 downloadMode = downloadMode,
-                mNamingConventionInfo = mNamingConvention  // 番剧不需要子任务
+                mNamingConventionInfo = mNamingConvention,  // 番剧不需要子任务
+                mediaContainerConfig = mediaContainerConfig
             )
         }
 
@@ -573,6 +593,7 @@ class DownloadTaskRepository(
         episodes: List<BILIDonghuaSeasonInfo.Episode>,
         downloadMode: DownloadMode,
         namingConventionInfo: NamingConventionInfo.Donghua,
+        mediaContainerConfig:MediaContainerConfig
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -597,7 +618,8 @@ class DownloadTaskRepository(
                 platformInfo = json.encodeToString(episode),
                 duration = episode.duration,
                 downloadMode = downloadMode,
-                mNamingConventionInfo = mNamingConvention  // 番剧预告不需要子任务
+                mNamingConventionInfo = mNamingConvention,  // 番剧预告不需要子任务
+                mediaContainerConfig = mediaContainerConfig
             )
         }
 
@@ -613,7 +635,8 @@ class DownloadTaskRepository(
         data: BILIDonghuaSeasonInfo,
         episodes: List<BILIDonghuaSeasonInfo.Episode>,
         downloadMode: DownloadMode,
-        namingConventionInfo: NamingConventionInfo.Donghua
+        namingConventionInfo: NamingConventionInfo.Donghua,
+        mediaContainerConfig: MediaContainerConfig
     ): DownloadTreeNode {
 
         val node = getOrCreateNode(
@@ -640,7 +663,8 @@ class DownloadTaskRepository(
                 platformInfo = json.encodeToString(episode),
                 duration = episode.duration,
                 downloadMode = downloadMode,
-                mNamingConventionInfo = mNamingConvention  // 番剧正片不需要子任务
+                mNamingConventionInfo = mNamingConvention,  // 番剧正片不需要子任务
+                mediaContainerConfig = mediaContainerConfig
             )
         }
 
@@ -658,7 +682,8 @@ class DownloadTaskRepository(
         episodes: List<BILIVideoViewInfo.UgcSeason.Section.Episode>,
         downloadMode: DownloadMode,
         selectedCid: List<Long>,
-        namingConventionInfo: NamingConventionInfo.Video
+        namingConventionInfo: NamingConventionInfo.Video,
+        mediaContainerConfig: MediaContainerConfig
     ): DownloadTreeNode {
         val node = getOrCreateNode(
             taskId = taskId,
@@ -691,6 +716,7 @@ class DownloadTaskRepository(
                     childTaskId = newTask.taskId,  // 关联子任务ID
                     namingConventionInfo,
                     episode.pages,
+                    mediaContainerConfig = mediaContainerConfig,
                 ).segments
 
             } else null
@@ -727,7 +753,8 @@ class DownloadTaskRepository(
                 duration = episode.page?.duration,
                 downloadMode = downloadMode,
                 childTaskId = childTask.taskId,  // 关联子任务ID
-                mNamingConvention
+                mediaContainerConfig = mediaContainerConfig,
+                mNamingConventionInfo = mNamingConvention
             )
         }
 
@@ -776,7 +803,9 @@ class DownloadTaskRepository(
         duration: Long?,
         downloadMode: DownloadMode,
         childTaskId: Long? = null,  // 新增：子任务ID参数
-        mNamingConventionInfo: NamingConventionInfo
+        qualityDescription: String? = null,
+        mNamingConventionInfo: NamingConventionInfo,
+        mediaContainerConfig: MediaContainerConfig,
     ): DownloadSegment {
         return downloadTaskDao.getSegmentByNodeIdAndPlatformId(nodeId, platformId)?.copy(
             title = title,
@@ -787,9 +816,18 @@ class DownloadTaskRepository(
             updateTime = Date(),
             downloadMode = downloadMode,
             taskId = childTaskId,  // 更新子任务关联
-            namingConventionInfo = mNamingConventionInfo
-        )?.also {
-            downloadTaskDao.updateSegment(it)
+            namingConventionInfo = mNamingConventionInfo,
+            mediaContainer = when(downloadMode){
+                DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer
+                else -> mediaContainerConfig.videoContainer
+            },
+            qualityDescription = qualityDescription
+        )?.let {
+            if (it.downloadState != DownloadState.COMPLETED) {
+                downloadTaskDao.updateSegment(it)
+                return@let it
+            }
+            null
         } ?: DownloadSegment(
             nodeId = nodeId,
             taskId = childTaskId,  // 关联子任务
@@ -803,7 +841,12 @@ class DownloadTaskRepository(
             downloadMode = downloadMode,
             savePath = "",
             fileSize = 0,
-            namingConventionInfo = mNamingConventionInfo
+            namingConventionInfo = mNamingConventionInfo,
+            qualityDescription = qualityDescription,
+            mediaContainer = when (downloadMode) {
+                DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer
+                else -> mediaContainerConfig.videoContainer
+            }
         ).let {
             val segmentId = downloadTaskDao.insertSegment(it)
             it.copy(segmentId = segmentId)
@@ -865,6 +908,9 @@ class DownloadTaskRepository(
 
     suspend fun updateSegment(segment: DownloadSegment) =
         downloadTaskDao.updateSegment(segment)
+
+    suspend fun deleteSegmentById(segmentId: Long) =
+        downloadTaskDao.deleteSegmentById(segmentId)
 
 
     suspend fun deleteTask(taskId: Long) =

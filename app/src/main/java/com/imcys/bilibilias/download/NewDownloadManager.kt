@@ -17,6 +17,7 @@ import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.DownloadTaskTree
 import com.imcys.bilibilias.data.model.download.DownloadTreeNode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
+import com.imcys.bilibilias.data.model.download.MediaContainerConfig
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.DownloadTaskRepository
@@ -128,7 +129,8 @@ class NewDownloadManager(
         asLinkResultType: ASLinkResultType,
         downloadViewInfo: DownloadViewInfo
     ) {
-        val taskResult = downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
+        val taskResult =
+            downloadTaskRepository.createDownloadTask(asLinkResultType, downloadViewInfo)
 
         taskResult.onSuccess { taskTree ->
             processDownloadTree(taskTree, downloadViewInfo)
@@ -256,7 +258,8 @@ class NewDownloadManager(
                 )
             }
             val noActiveJobs = activeDownloadJobs.isEmpty()
-            val noWaitingTasks = _downloadTasks.value.none { it.downloadState == DownloadState.WAITING }
+            val noWaitingTasks =
+                _downloadTasks.value.none { it.downloadState == DownloadState.WAITING }
 
             if (noActiveJobs && noWaitingTasks && (allTasksFinished || _downloadTasks.value.isEmpty())) {
                 break
@@ -301,13 +304,15 @@ class NewDownloadManager(
 
 
             // 下载
-            if (task.downloadViewInfo.downloadMedia){
-                val downloadResult = downloadAppTask(task, service)
+            var quality: String? = null
+            if (task.downloadViewInfo.downloadMedia) {
+                val (downloadResult, downloadQuality) = downloadAppTask(task, service)
                 if (!downloadResult) throw Exception("下载失败")
+                quality = downloadQuality
             }
 
             // 后置任务
-            handleSuccessor(task, service)
+            handleSuccessor(task, service, quality)
 
             val finalTask = findTaskById(task.downloadSegment.segmentId)
             if (finalTask?.downloadState == DownloadState.COMPLETED) {
@@ -364,8 +369,8 @@ class NewDownloadManager(
     private suspend fun downloadAppTask(
         task: AppDownloadTask,
         downloadService: DownloadService
-    ): Boolean {
-        if (task.downloadSubTasks.isEmpty()) return false
+    ): Pair<Boolean, String?> {
+        if (task.downloadSubTasks.isEmpty()) return Pair(false, null)
 
         val progressCallback = createProgressCallback(task, downloadService, "下载阶段")
 
@@ -379,7 +384,7 @@ class NewDownloadManager(
     private suspend fun downloadMultipleSubTasks(
         task: AppDownloadTask,
         progressCallback: (Float) -> Unit
-    ): Boolean = withContext(Dispatchers.IO) {
+    ): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
         val videoTask = task.downloadSubTasks.first()
         val audioTask = task.downloadSubTasks.last()
 
@@ -400,20 +405,25 @@ class NewDownloadManager(
             }
         }
 
-        videoResult.await() && audioResult.await()
+        val (videoSuccess, videoQuality) = videoResult.await()
+        val (audioSuccess, audioQuality) = audioResult.await()
+
+        val quality = videoQuality ?: audioQuality
+        Pair(videoSuccess && audioSuccess, quality)
     }
 
     private suspend fun downloadSingleSubTask(
         task: AppDownloadTask,
         progressCallback: (Float) -> Unit
-    ): Boolean {
+    ): Pair<Boolean, String?> {
         val subTask = task.downloadSubTasks.first()
-        val result = downloadSubTask(subTask, task, progressCallback)
+        val (result, quality) = downloadSubTask(subTask, task, progressCallback)
 
         if (result) {
             val newTask = task.copy(
                 downloadSegment = task.downloadSegment.copy(
                     savePath = subTask.savePath,
+                    qualityDescription = quality,
                     downloadState = DownloadState.COMPLETED
                 )
             )
@@ -421,16 +431,17 @@ class NewDownloadManager(
             downloadTaskRepository.updateSegment(newTask.downloadSegment)
         }
 
-        return result
+        return Pair(result, quality)
     }
 
     private suspend fun downloadSubTask(
         subTask: DownloadSubTask,
         task: AppDownloadTask,
         onUpdateProgress: (Float) -> Unit
-    ): Boolean = withContext(Dispatchers.IO) {
-        val nodeType = downloadTaskRepository.getTaskNodeByNodeId(task.downloadSegment.nodeId)?.nodeType
-            ?: return@withContext false
+    ): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
+        val nodeType =
+            downloadTaskRepository.getTaskNodeByNodeId(task.downloadSegment.nodeId)?.nodeType
+                ?: return@withContext Pair(false, null)
 
         val playerInfo = videoInfoFetcher.fetchVideoPlayerInfo(
             task.downloadSegment,
@@ -439,27 +450,31 @@ class NewDownloadManager(
         )
 
         val videoData = videoInfoFetcher.extractVideoData(playerInfo, task.downloadViewInfo)
-            ?: return@withContext false
+            ?: return@withContext Pair(false, null)
 
+        var quality: String? = null
         val downloadUrl = videoInfoFetcher.getDownloadUrl(
             videoData,
             subTask.subTaskType,
-            task.downloadViewInfo
-        ) ?: return@withContext false
+            task.downloadViewInfo,
+            onQuality = { quality = it }
+        ) ?: return@withContext Pair(false, null)
 
         Log.d("downloadUrl", "下载地址: $downloadUrl -- ${subTask.subTaskType}")
 
         val referer = buildRefererUrl(task)
 
-        downloadExecutor.downloadFile(
+        val result = downloadExecutor.downloadFile(
             downloadUrl = downloadUrl,
             savePath = subTask.savePath,
             referer = referer,
             onProgress = onUpdateProgress
         )
+
+        Pair(result, quality)
     }
 
-    private suspend fun handleSuccessor(task: AppDownloadTask, service: DownloadService) {
+    private suspend fun handleSuccessor(task: AppDownloadTask, service: DownloadService, quality: String?) {
         val progressCallback = createProgressCallback(task, service, "合并阶段")
         val tempOutputFile = createTempOutputFile(task)
 
@@ -471,7 +486,8 @@ class NewDownloadManager(
                 subtitles = task.taskRuntimeInfo.subtitles,
                 coverPath = task.taskRuntimeInfo.coverPath,
                 duration = task.downloadSegment.duration,
-                onProgress = progressCallback
+                onProgress = progressCallback,
+                task.downloadViewInfo.mediaContainerConfig,
             )
 
             updateTaskAndCleanup(task, tempOutputFile)
@@ -487,8 +503,9 @@ class NewDownloadManager(
         }
 
         val lastFile = File(segment.savePath)
-        val mimeType = getMimeType(task.downloadSegment.downloadMode)
-        val extension = mimeType.substringAfterLast("/", "mp4")
+        val mimeType =
+            getMimeType(task.downloadSegment.downloadMode, task.downloadViewInfo.mediaContainerConfig)
+        val extension = getResExtension(task.downloadSegment.downloadMode, task.downloadViewInfo.mediaContainerConfig)
         val lastFileName = namingConventionHandler.buildFileName(
             task.downloadSegment.namingConventionInfo,
             extension
@@ -499,6 +516,7 @@ class NewDownloadManager(
             val newTask = task.copy(
                 downloadSegment = segment.copy(
                     savePath = uriStr,
+                    qualityDescription = quality,
                     downloadState = DownloadState.COMPLETED
                 )
             )
@@ -511,7 +529,11 @@ class NewDownloadManager(
 
     private fun createTempOutputFile(task: AppDownloadTask): File {
         val saveDir = task.downloadSubTasks.first().savePath.substringBeforeLast("/")
-        val extension = getMimeType(task.downloadSegment.downloadMode).substringAfterLast("/", "mp4")
+        val extension =
+            getResExtension(
+                task.downloadSegment.downloadMode,
+                task.downloadViewInfo.mediaContainerConfig
+            )
         val timestamp = System.currentTimeMillis()
 
         return File(saveDir, "${task.downloadSegment.segmentId}_$timestamp.$extension").apply {
@@ -549,11 +571,22 @@ class NewDownloadManager(
         }
     }
 
-    private fun getMimeType(mode: DownloadMode): String {
+    private fun getMimeType(mode: DownloadMode, mediaContainerConfig: MediaContainerConfig): String {
         return when (mode) {
             DownloadMode.AUDIO_VIDEO,
-            DownloadMode.VIDEO_ONLY -> "video/mp4"
-            DownloadMode.AUDIO_ONLY -> "audio/mp3"
+            DownloadMode.VIDEO_ONLY -> mediaContainerConfig.videoContainer.mimeType
+            DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer.mimeType
+        }
+    }
+
+    /**
+     * 获取资源后缀
+     */
+    private fun getResExtension(mode: DownloadMode, mediaContainerConfig: MediaContainerConfig): String {
+        return when (mode) {
+            DownloadMode.AUDIO_VIDEO,
+            DownloadMode.VIDEO_ONLY -> mediaContainerConfig.videoContainer.extension
+            DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer.extension
         }
     }
 
@@ -606,7 +639,8 @@ class NewDownloadManager(
         suspend fun processNode(node: DownloadTreeNode) {
             node.segments.forEach { segment ->
                 if (!currentTasks.any { it.downloadSegment.platformId == segment.platformId }) {
-                    val downloadSubTasks = createSubTasksForSegment(segment, node.node.nodeType, downloadViewInfo)
+                    val downloadSubTasks =
+                        createSubTasksForSegment(segment, node.node.nodeType, downloadViewInfo)
                     val cover = getCoverForSegment(segment)
 
                     val newTask = AppDownloadTask(
@@ -641,21 +675,45 @@ class NewDownloadManager(
             is BILIVideoDash -> {
                 when (segment.downloadMode) {
                     DownloadMode.AUDIO_VIDEO -> listOf(
-                        createSubTask(segment, DownloadSubTaskType.VIDEO),
-                        createSubTask(segment, DownloadSubTaskType.AUDIO)
+                        createSubTask(
+                            segment,
+                            DownloadSubTaskType.VIDEO,
+                            downloadViewInfo.mediaContainerConfig
+                        ),
+                        createSubTask(
+                            segment,
+                            DownloadSubTaskType.AUDIO,
+                            downloadViewInfo.mediaContainerConfig
+                        )
                     )
+
                     DownloadMode.VIDEO_ONLY -> listOf(
-                        createSubTask(segment, DownloadSubTaskType.VIDEO)
+                        createSubTask(
+                            segment,
+                            DownloadSubTaskType.VIDEO,
+                            downloadViewInfo.mediaContainerConfig
+                        )
                     )
+
                     DownloadMode.AUDIO_ONLY -> listOf(
-                        createSubTask(segment, DownloadSubTaskType.AUDIO)
+                        createSubTask(
+                            segment,
+                            DownloadSubTaskType.AUDIO,
+                            downloadViewInfo.mediaContainerConfig
+                        )
                     )
                 }
             }
 
             is BILIVideoDurl -> {
                 downloadTaskRepository.updateSegment(segment.copy(downloadMode = DownloadMode.VIDEO_ONLY))
-                listOf(createSubTask(segment, DownloadSubTaskType.VIDEO))
+                listOf(
+                    createSubTask(
+                        segment,
+                        DownloadSubTaskType.VIDEO,
+                        downloadViewInfo.mediaContainerConfig
+                    )
+                )
             }
 
             else -> throw IllegalStateException("不支持的下载数据类型")
@@ -665,11 +723,15 @@ class NewDownloadManager(
         return subTasks
     }
 
-    private fun createSubTask(segment: DownloadSegment, type: DownloadSubTaskType): DownloadSubTask {
+    private fun createSubTask(
+        segment: DownloadSegment,
+        type: DownloadSubTaskType,
+        mediaContainerConfig: MediaContainerConfig
+    ): DownloadSubTask {
         val savePath = getSaveTempSubTaskPath(type) + "/${segment.platformId}_${type.name}.${
             when (type) {
-                DownloadSubTaskType.VIDEO -> "mp4"
-                DownloadSubTaskType.AUDIO -> "m4a"
+                DownloadSubTaskType.VIDEO -> mediaContainerConfig.videoContainer.extension
+                DownloadSubTaskType.AUDIO -> mediaContainerConfig.audioContainer.extension
             }
         }"
         return DownloadSubTask(

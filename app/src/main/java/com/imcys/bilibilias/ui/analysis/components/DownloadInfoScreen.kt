@@ -3,18 +3,7 @@ package com.imcys.bilibilias.ui.analysis.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,20 +12,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.toMenuVideoCode
-import com.imcys.bilibilias.common.utils.toVideoCode
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
 import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
-import kotlin.collections.forEach
+import com.imcys.bilibilias.weight.ASCommonExposedDropdownMenu
 
 /**
  * 音频质量选择
@@ -50,7 +36,6 @@ fun AudioQualitySelectScreen(
     audioList: List<BILIVideoDash.Audio>?,
     onAudioQualityChange: (Long?) -> Unit = {}
 ) {
-    var modelExpanded by remember { mutableStateOf(false) }
     var selectValue: Long by remember { mutableLongStateOf(0) }
 
     LaunchedEffect(downloadInfo?.selectAudioQualityId) {
@@ -59,58 +44,17 @@ fun AudioQualitySelectScreen(
 
     if (apiStatus == ApiStatus.ERROR) { return }
     if (!audioList.isNullOrEmpty() || apiStatus != ApiStatus.SUCCESS) {
-        ExposedDropdownMenuBox(
-            expanded = modelExpanded,
-            onExpandedChange = {
-                modelExpanded = it
-            },
+        ASCommonExposedDropdownMenu(
             modifier = modifier,
-        ) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp
-                ),
-                value = convertAudioQualityIdValue(selectValue),
-                onValueChange = {},
-                readOnly = true,
-                singleLine = false,
-                label = { Text(stringResource(R.string.analysis_select_audio_quality), fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = modelExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                shape = CardDefaults.shape,
-            )
-            ExposedDropdownMenu(
-                expanded = modelExpanded,
-                onDismissRequest = { modelExpanded = false },
-                shape = CardDefaults.shape
-            ) {
-                audioList?.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                convertAudioQualityIdValue(it.id),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        onClick = {
-                            modelExpanded = false
-                            selectValue = it.id
-                            onAudioQualityChange(it.id)
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    )
-                }
+            text = convertAudioQualityIdValue(selectValue),
+            label = stringResource(R.string.analysis_select_audio_quality),
+            values = audioList ?: emptyList(),
+            onValue = { convertAudioQualityIdValue(it.id) },
+            onSelect = {
+                selectValue = it.id
+                onAudioQualityChange(it.id)
             }
-        }
+        )
     }
 }
 
@@ -128,8 +72,6 @@ fun VideoSupportFormatsSelectScreen(
     onVideoQualityChange: (Long?) -> Unit = {},
     onVideoCodeChange: (String) -> Unit = {}
 ) {
-    var videoModelExpanded by remember { mutableStateOf(false) }
-    var videoCodeModelExpanded by remember { mutableStateOf(false) }
     // 选择的视频分辨率
     var selectVideoFormatValue: String by remember { mutableStateOf("") }
     // 选择的视频编码
@@ -194,120 +136,31 @@ fun VideoSupportFormatsSelectScreen(
         modifier.animateContentSize(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = videoModelExpanded,
-            onExpandedChange = {
-                videoModelExpanded = it
-            },
+
+        ASCommonExposedDropdownMenu(
             modifier = Modifier.weight(1f),
-        ) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp
-                ),
-                value = selectVideoFormatValue,
-                onValueChange = {
-
-                },
-                readOnly = true,
-                singleLine = false,
-                label = { Text(stringResource(R.string.analysis_select_resolution), fontSize = 12.sp) },
-                trailingIcon = { TrailingIcon(expanded = videoModelExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                shape = CardDefaults.shape
-            )
-
-            ExposedDropdownMenu(
-                expanded = videoModelExpanded,
-                onDismissRequest = { videoModelExpanded = false },
-                shape = CardDefaults.shape
-            ) {
-                supportFormats.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                it.description.ifBlank { it.newDescription },
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        onClick = {
-                            videoModelExpanded = false
-                            selectVideoFormatValue = it.description.ifBlank { it.newDescription }
-                            onVideoQualityChange(it.quality)
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    )
-                }
+            text = selectVideoFormatValue,
+            label = stringResource(R.string.analysis_select_resolution),
+            values = supportFormats,
+            onValue = { it.description.ifBlank { it.newDescription } },
+            onSelect = {
+                selectVideoFormatValue = it.description.ifBlank { it.newDescription }
+                onVideoQualityChange(it.quality)
             }
-
-        }
+        )
 
         if (videoCodingList.isNotEmpty()) {
-            ExposedDropdownMenuBox(
-                expanded = videoCodeModelExpanded,
-                onExpandedChange = {
-                    videoCodeModelExpanded = it
-                },
+            ASCommonExposedDropdownMenu(
                 modifier = Modifier.weight(1f),
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                        .fillMaxWidth(),
-                    textStyle = LocalTextStyle.current.copy(
-                        fontSize = 12.sp
-                    ),
-                    value = selectVideoCodeValue.toVideoCode(),
-                    onValueChange = {
-
-                    },
-                    readOnly = true,
-                    singleLine = false,
-                    label = { Text(stringResource(R.string.analysis_select_codec), fontSize = 12.sp) },
-                    trailingIcon = { TrailingIcon(expanded = videoCodeModelExpanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    ),
-                    shape = CardDefaults.shape
-                )
-
-                ExposedDropdownMenu(
-                    expanded = videoCodeModelExpanded,
-                    onDismissRequest = { videoCodeModelExpanded = false },
-                    shape = CardDefaults.shape
-                ) {
-                    videoCodingList.forEach {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    it.toMenuVideoCode(),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            },
-                            onClick = {
-                                videoCodeModelExpanded = false
-                                selectVideoCodeValue = it
-                                onVideoCodeChange(it)
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        )
-                    }
+                text = selectVideoCodeValue.toMenuVideoCode(),
+                label = stringResource(R.string.analysis_select_codec),
+                values = videoCodingList.toList(),
+                onValue = { it.toMenuVideoCode() },
+                onSelect = {
+                    selectVideoCodeValue = it
+                    onVideoCodeChange(it)
                 }
-
-            }
+            )
         }
     }
 }
