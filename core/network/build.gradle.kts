@@ -8,7 +8,6 @@ android {
     namespace = "com.imcys.bilibilias.network"
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildFeatures {
