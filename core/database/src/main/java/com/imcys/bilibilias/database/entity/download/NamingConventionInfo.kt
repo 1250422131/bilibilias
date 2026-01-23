@@ -41,6 +41,7 @@ sealed class FileNamePlaceholder(
         object P : Video("{p}", "分P序号")
 
         object CollectionTitle : Video("{collection_title}", "合集标题")
+
         // 合集章节
         object CollectionSeasonTitle : Video("{collection_season_title}", "合集章节标题")
 
@@ -55,6 +56,7 @@ sealed class FileNamePlaceholder(
         object EpisodeTitle : Donghua("{episode_title}", "动画集标题")
         object EpisodeNumber : Donghua("{episode_number}", "动画集数")
         object Cid : Donghua("{cid}", "CID号")
+
         // 季度标题
         object SeasonTitle : Donghua("{season_title}", "季度标题")
     }

@@ -742,7 +742,6 @@ private fun BulletinDialog(
                 modifier = Modifier
             ) {
                 Text(bulletinConfigInfo?.content ?: "")
-                Text(bulletinConfigInfo?.publishDateTime ?: "")
             }
         },
         confirmButton = {

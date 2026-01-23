@@ -20,8 +20,8 @@ android {
     defaultConfig {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias"
-        versionCode = 315
-        versionName = "3.1.5"
+        versionCode = 316
+        versionName = "3.1.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["BAIDU_STAT_ID"] = baiduStatId
         buildConfigField("String", "BAIDU_STAT_ID", """"$baiduStatId"""".trimIndent())
@@ -159,27 +159,10 @@ dependencies {
     implementation(libs.androidx.documentfile)
 
     // Google Play 选配
-    val googlePlayLibs = listOf(
-        libs.play.app.update.kts,
-        libs.play.app.review.kts
-    )
-    googlePlayLibs.forEach {
-        if (enabledPlayAppMode.toBoolean()) {
-            implementation(it)
-        } else {
-            compileOnly(it)
-        }
-    }
+    googlePlayDependencies(enabledPlayAppMode.toBoolean())
 
     // 百度统计
-    val baiduJar = fileTree("libs") { include("Baidu_Mtj_android_*.jar") }
-    if (!baiduJar.isEmpty) {
-        if (enabledAnalytics.toBoolean() && !enabledPlayAppMode.toBoolean()) {
-            implementation(baiduJar)
-        } else {
-            compileOnly(baiduJar)
-        }
-    }
+    baiduStatDependencies()
 
     // Shizuku
     implementation(libs.shizuku.api)
@@ -196,6 +179,33 @@ dependencies {
 
 
 }
+
+// 百度统计依赖配置
+fun DependencyHandlerScope.baiduStatDependencies() {
+    val baiduJar = fileTree("libs") { include("Baidu_Mtj_android_*.jar") }
+    if (!baiduJar.isEmpty) {
+        if (enabledAnalytics.toBoolean() && !enabledPlayAppMode.toBoolean()) {
+            implementation(baiduJar)
+        } else {
+            compileOnly(baiduJar)
+        }
+    }
+}
+// Google Play 依赖配置
+fun DependencyHandlerScope.googlePlayDependencies(enabled: Boolean) {
+    val googlePlayLibs = listOf(
+        libs.play.app.update.kts,
+        libs.play.app.review.kts
+    )
+    googlePlayLibs.forEach {
+        if (enabled) {
+            implementation(it)
+        } else {
+            compileOnly(it)
+        }
+    }
+}
+
 
 // Firebase 依赖配置
 fun DependencyHandlerScope.firebaseDependencies(enabled: Boolean) {

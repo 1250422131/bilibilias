@@ -82,7 +82,7 @@ val appModule = module {
     single { VideoInfoFetcher(get(), get(), get()) }
     single { FileOutputManager(androidApplication()) }
     single { DownloadExecutor(get(qualifier = named("DownloadHttpClient")), get()) }
-    single { FfmpegMerger(androidApplication()) }
+    single { FfmpegMerger(androidApplication(),get()) }
     single { NamingConventionHandler(get()) }
     single { SubtitleDownloader(get(), get(), androidApplication()) }
 

@@ -29,6 +29,7 @@ import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskType
+import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import com.imcys.bilibilias.download.service.DownloadService
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurl
@@ -81,6 +82,27 @@ class NewDownloadManager(
     companion object {
         private const val MAX_CONCURRENT_DOWNLOADS = 1
         private const val QUEUE_CHECK_INTERVAL_MS = 1000L
+
+        suspend fun buildRefererUrl(downloadTaskRepository: DownloadTaskRepository, task: AppDownloadTask): String {
+            return when (task.downloadTask.type) {
+                DownloadTaskType.BILI_VIDEO,
+                DownloadTaskType.BILI_DONGHUA -> {
+                    val platformId = task.downloadTask.platformId
+                    if (platformId.all { it.isDigit() }) {
+                        "https://www.bilibili.com/bangumi/play/ss$platformId"
+                    } else {
+                        "https://www.bilibili.com/video/$platformId"
+                    }
+                }
+
+                DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != 0L -> {
+                    val realTask = downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
+                    "https://www.bilibili.com/video/${realTask?.platformId}"
+                }
+
+                DownloadTaskType.BILI_VIDEO_SECTION -> error("构造Referer URL失败")
+            }
+        }
     }
 
     private val _downloadTasks = MutableStateFlow<List<AppDownloadTask>>(emptyList())
@@ -392,14 +414,14 @@ class NewDownloadManager(
         var audioProgress = 0f
 
         val videoResult = async {
-            downloadSubTask(videoTask, task) {
+            downloadSubTask(videoTask, task, task.downloadSegment.namingConventionInfo) {
                 videoProgress = it
                 progressCallback((videoProgress + audioProgress) / 2f)
             }
         }
 
         val audioResult = async {
-            downloadSubTask(audioTask, task) {
+            downloadSubTask(audioTask, task, task.downloadSegment.namingConventionInfo) {
                 audioProgress = it
                 progressCallback((videoProgress + audioProgress) / 2f)
             }
@@ -417,7 +439,12 @@ class NewDownloadManager(
         progressCallback: (Float) -> Unit
     ): Pair<Boolean, String?> {
         val subTask = task.downloadSubTasks.first()
-        val (result, quality) = downloadSubTask(subTask, task, progressCallback)
+        val (result, quality) = downloadSubTask(
+            subTask,
+            task,
+            task.downloadSegment.namingConventionInfo,
+            progressCallback
+        )
 
         if (result) {
             val newTask = task.copy(
@@ -437,6 +464,7 @@ class NewDownloadManager(
     private suspend fun downloadSubTask(
         subTask: DownloadSubTask,
         task: AppDownloadTask,
+        namingConventionInfo: NamingConventionInfo?,
         onUpdateProgress: (Float) -> Unit
     ): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
         val nodeType =
@@ -457,12 +485,13 @@ class NewDownloadManager(
             videoData,
             subTask.subTaskType,
             task.downloadViewInfo,
+            namingConventionInfo,
             onQuality = { quality = it }
         ) ?: return@withContext Pair(false, null)
 
         Log.d("downloadUrl", "下载地址: $downloadUrl -- ${subTask.subTaskType}")
 
-        val referer = buildRefererUrl(task)
+        val referer = buildRefererUrl(downloadTaskRepository,task)
 
         val result = downloadExecutor.downloadFile(
             downloadUrl = downloadUrl,
@@ -474,12 +503,17 @@ class NewDownloadManager(
         Pair(result, quality)
     }
 
-    private suspend fun handleSuccessor(task: AppDownloadTask, service: DownloadService, quality: String?) {
+    private suspend fun handleSuccessor(
+        task: AppDownloadTask,
+        service: DownloadService,
+        quality: String?
+    ) {
         val progressCallback = createProgressCallback(task, service, "合并阶段")
         val tempOutputFile = createTempOutputFile(task)
 
         try {
             ffmpegMerger.mergeMedia(
+                task,
                 subTasks = task.downloadSubTasks,
                 downloadMode = task.downloadSegment.downloadMode,
                 outputFile = tempOutputFile,
@@ -488,6 +522,7 @@ class NewDownloadManager(
                 duration = task.downloadSegment.duration,
                 onProgress = progressCallback,
                 task.downloadViewInfo.mediaContainerConfig,
+                task.downloadSegment.namingConventionInfo,
             )
 
             updateTaskAndCleanup(task, tempOutputFile)
@@ -503,9 +538,16 @@ class NewDownloadManager(
         }
 
         val lastFile = File(segment.savePath)
+        val fileSize = lastFile.length()
         val mimeType =
-            getMimeType(task.downloadSegment.downloadMode, task.downloadViewInfo.mediaContainerConfig)
-        val extension = getResExtension(task.downloadSegment.downloadMode, task.downloadViewInfo.mediaContainerConfig)
+            getMimeType(
+                task.downloadSegment.downloadMode,
+                task.downloadViewInfo.mediaContainerConfig
+            )
+        val extension = getResExtension(
+            task.downloadSegment.downloadMode,
+            task.downloadViewInfo.mediaContainerConfig
+        )
         val lastFileName = namingConventionHandler.buildFileName(
             task.downloadSegment.namingConventionInfo,
             extension
@@ -517,6 +559,7 @@ class NewDownloadManager(
                 downloadSegment = segment.copy(
                     savePath = uriStr,
                     qualityDescription = quality,
+                    fileSize = fileSize,
                     downloadState = DownloadState.COMPLETED
                 )
             )
@@ -550,31 +593,16 @@ class NewDownloadManager(
         }
     }
 
-    private suspend fun buildRefererUrl(task: AppDownloadTask): String {
-        return when (task.downloadTask.type) {
-            DownloadTaskType.BILI_VIDEO,
-            DownloadTaskType.BILI_DONGHUA -> {
-                val platformId = task.downloadTask.platformId
-                if (platformId.all { it.isDigit() }) {
-                    "https://www.bilibili.com/bangumi/play/ss$platformId"
-                } else {
-                    "https://www.bilibili.com/video/$platformId"
-                }
-            }
 
-            DownloadTaskType.BILI_VIDEO_SECTION if task.downloadSegment.taskId != 0L -> {
-                val realTask = downloadTaskRepository.getTaskById(task.downloadSegment.taskId ?: 0L)
-                "https://www.bilibili.com/video/${realTask?.platformId}"
-            }
 
-            DownloadTaskType.BILI_VIDEO_SECTION -> error("构造Referer URL失败")
-        }
-    }
-
-    private fun getMimeType(mode: DownloadMode, mediaContainerConfig: MediaContainerConfig): String {
+    private fun getMimeType(
+        mode: DownloadMode,
+        mediaContainerConfig: MediaContainerConfig
+    ): String {
         return when (mode) {
             DownloadMode.AUDIO_VIDEO,
             DownloadMode.VIDEO_ONLY -> mediaContainerConfig.videoContainer.mimeType
+
             DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer.mimeType
         }
     }
@@ -582,10 +610,14 @@ class NewDownloadManager(
     /**
      * 获取资源后缀
      */
-    private fun getResExtension(mode: DownloadMode, mediaContainerConfig: MediaContainerConfig): String {
+    private fun getResExtension(
+        mode: DownloadMode,
+        mediaContainerConfig: MediaContainerConfig
+    ): String {
         return when (mode) {
             DownloadMode.AUDIO_VIDEO,
             DownloadMode.VIDEO_ONLY -> mediaContainerConfig.videoContainer.extension
+
             DownloadMode.AUDIO_ONLY -> mediaContainerConfig.audioContainer.extension
         }
     }
@@ -815,4 +847,6 @@ class NewDownloadManager(
     private fun File.deleteIfExists() {
         if (exists()) delete()
     }
+
+
 }

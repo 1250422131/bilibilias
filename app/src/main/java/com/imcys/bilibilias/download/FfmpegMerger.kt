@@ -8,8 +8,10 @@ import com.arthenica.ffmpegkit.ReturnCode
 import com.imcys.bilibilias.database.entity.download.MediaContainer
 import com.imcys.bilibilias.data.model.download.DownloadSubTask
 import com.imcys.bilibilias.data.model.download.MediaContainerConfig
+import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
+import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
@@ -21,13 +23,15 @@ import kotlin.coroutines.resumeWithException
  * 负责视频/音频合并和字幕/封面嵌入
  */
 class FfmpegMerger(
-    private val context: Application
+    private val context: Application,
+    private val downloadTaskRepository: DownloadTaskRepository
 ) {
 
     /**
      * 合并视频和音频
      */
     suspend fun mergeMedia(
+        appDownloadTask: AppDownloadTask,
         subTasks: List<DownloadSubTask>,
         downloadMode: DownloadMode,
         outputFile: File,
@@ -35,7 +39,8 @@ class FfmpegMerger(
         coverPath: String = "",
         duration: Long? = null,
         onProgress: (Float) -> Unit,
-        mediaContainerConfig: MediaContainerConfig
+        mediaContainerConfig: MediaContainerConfig,
+        namingConventionInfo: NamingConventionInfo?
     ) {
         val command = buildFfmpegCommand(
             subTasks,
@@ -44,6 +49,8 @@ class FfmpegMerger(
             subtitles,
             coverPath,
             mediaContainerConfig,
+            namingConventionInfo,
+            appDownloadTask
         )
 
         val actualDuration = duration ?: getMediaDuration(subTasks.firstOrNull()?.savePath)
@@ -148,13 +155,15 @@ class FfmpegMerger(
     /**
      * 构建FFmpeg命令
      */
-    private fun buildFfmpegCommand(
+    private suspend fun buildFfmpegCommand(
         subTasks: List<DownloadSubTask>,
         downloadMode: DownloadMode,
         outputFile: File,
         subtitles: List<LocalSubtitle>,
         coverPath: String,
-        mediaContainerConfig: MediaContainerConfig
+        mediaContainerConfig: MediaContainerConfig,
+        namingConventionInfo: NamingConventionInfo?,
+        task: AppDownloadTask,
     ): String {
         val mediaInputs = subTasks.map { it.savePath }
         val videoFileCount = subTasks.count { it.subTaskType == DownloadSubTaskType.VIDEO }
@@ -248,8 +257,17 @@ class FfmpegMerger(
                 addAll(listOf("-codec:a", "libmp3lame", "-q:a","2"))
             }
 
+            add("-metadata")
+            add("title=\"${task.downloadSegment.title}\"")
+
+            add("-metadata")
+            add("description=\"${task.downloadTask.description}\"")
+
+            add("-metadata")
+            add("copyright=\"${NewDownloadManager.buildRefererUrl(downloadTaskRepository, task)}\"")
+
             add(outputFile.absolutePath)
-        }.joinToString(" ") { it.escape() }.also {
+        }.joinToString(" ") { it }.also {
             Log.d("FFmpeg", "执行命令: $it")
         }
     }

@@ -6,9 +6,9 @@ import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
 import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.database.entity.download.DownloadSegment
-import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.database.entity.download.DownloadSubTaskType
 import com.imcys.bilibilias.database.entity.download.DownloadTaskNodeType
+import com.imcys.bilibilias.database.entity.download.NamingConventionInfo
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaOgvPlayerInfo
@@ -110,8 +110,11 @@ class VideoInfoFetcher(
         videoData: Any,
         subTaskType: DownloadSubTaskType,
         downloadViewInfo: DownloadViewInfo,
-        onQuality: suspend ( String)-> Unit = { _ -> },
+        namingConventionInfo: NamingConventionInfo?,
+        onQuality: suspend (String) -> Unit = { _ -> },
     ): String? {
+
+
 
         return when (videoData) {
             is BILIVideoDash -> {
