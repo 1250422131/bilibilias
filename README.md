@@ -41,13 +41,6 @@ BILIBILIAS 依托于B站开发，尊重并支持哔哩哔哩的各项规则和�
 
 我们希望为B站正常用户提供便利的同时，尊重并保护哔哩哔哩及其内容创作者的合法权益，项目也在积极的探索版权保护和合理使用的平衡点，并积极研制对本项目下载内容的版权保护措施。
 
-## 下载
-
-|   系统    |                            GitHub                            |                  官网                  |
-|:-------:|:------------------------------------------------------------:|:------------------------------------:|
-| Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png" alt="F-Droid" height="80">](https://f-droid.org/packages/com.imcys.bilibilias) [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Google Play" height="80">](https://play.google.com/store/apps/details?id=com.imcys.bilibilias)
 
 ## 特征
 
